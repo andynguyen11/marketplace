@@ -187,7 +187,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 DEFAULT_FILE_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
 STATICFILES_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
-STATIC_URL = 'https://devquity.s3.amazonaws.com/'
+STATIC_URL = 'https://devquity-market.s3.amazonaws.com/'
 
 STRIPE_KEY = "sk_test_elUHA0YAFHJ2H4Wcw9zjvYbu" if ENVIRONMENT != 'prod' else 'sk_live_BeJIGPEO3OPDg8YwG5gIqyvg'
 PUBLIC_STRIPE_KEY = 'pk_test_CANPk8WGjQh2GpvfIDNhxsyy' if ENVIRONMENT != 'prod' else 'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'
