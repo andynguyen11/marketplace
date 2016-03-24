@@ -29,7 +29,7 @@ DEBUG = True if ENVIRONMENT != 'prod' else False
 ALLOWED_HOSTS = ['*']
 
 ADMINS = (('Server Errors', 'admin@lawncall.com'), )
-SERVER_EMAIL = 'django@lawncall.com'
+SERVER_EMAIL = 'info@devquity.com'
 
 AUTH_USER_MODEL = 'accounts.Profile'
 
