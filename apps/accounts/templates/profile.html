@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block bodyclass %}customer-portal{% endblock %}
+
+{% block content %}
+<div id="portal">
+    <div class="row">
+      <div class="container">
+        <div id="service">
+            <div class="col-md-9">
+              <div id="profile" data-id="{{ user.customer.id }}"></div>
+            </div>
+
+
+  <div class="col-md-3">
+    <div class="panel panel-default">
+      <h3>Need other services?</h3>
+      <p>
+        Our network of trusted providers provide a full suite of property
+        maintenance services beyond mowing.  Send us an email at
+        <a href="mailto:service@lawncall.com?Subject=Need%20another%20service" target="_top">service@lawncall.com</a>
+      </p>
+    </div>
+  </div>
+        </div></div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/require.js' %}"></script>
+<script>
+    //Load common code that includes config, then load the app
+    //logic for this page. Do the requirejs calls here instead of
+    //a separate file so after a build there are only 2 HTTP
+    //requests instead of three.
+    requirejs(["{% static 'js/common.js' %}"], function (common) {
+        //js/common sets the baseUrl to be js/ so
+        //can just ask for 'app/main1' here instead
+        //of 'js/app/main1'
+        requirejs(["{% static 'js/app/profile.js' %}"]);
+    });
+</script>
+
+<script type="text/javascript">
+
+  //var stripe_key = {% if ENVIRONMENT == 'prod' %}'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'{% else %}'pk_test_CANPk8WGjQh2GpvfIDNhxsyy'{% endif %};
+  //Stripe.setPublishableKey(stripe_key);
+
+</script>
+{% endblock %}

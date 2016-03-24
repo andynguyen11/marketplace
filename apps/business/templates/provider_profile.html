@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<!-- PROVIDER HEADER -->
+<div id="provider-headerr">
+  <div class="row">
+    <div class="container">
+      <div class="overlay"></div>
+      <div class="col-md-4">
+        <img class="img-responsive center-block" id="provider-logo" src="{% static 'images/h-logo.png' %}"/>
+      </div>
+      <div class="col-md-8 text-center">
+        <h1 id="provider-name" style="color: white">{{ provider.name }}</h1>
+        <input id="avg-star-rating" value={{ avg_rating|default_if_none:0 }}>
+        <button id="book-button" class="btn-lg btn-default" type="button">Book Now</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT PROVIDER-->
+<div id="about-provider">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-10 col-md-offset-1">
+        <h1 class="text-center">About {{ provider.name }}</h1>
+        <p class="text-center">{{ provider.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr style="border-color: #575757">
+</div>
+
+<!-- PROVIDER FACTS AND SERVICES -->
+<div id="provider-facts">
+  <div class="row text-center">
+    <div class="container">
+      <div class="col-md-4">
+        <i class="fa fa-usd fa-3x"></i>
+        <h1>Up-front Pricing</h1>
+        <p>No more hourly rate quotes and job estimates. See the actual price you'll pay before you book.</p>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center">
+          <i class="fa fa-tag fa-3x"></i>
+          <h1>Our Services</h1>
+
+          {% if provider.services.length < 2 %}
+            <h3>Expert Mowing</h3>
+          {% else %}
+            <ul>
+            {% for service in provider.services.all %}
+              <li>{{ service.name }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+      </div>
+      <div class="col-md-4">
+        <i class="fa fa-trophy fa-3x"></i>
+        <h1>Our Objective</h1>
+        <p>We're here to make sure your experience meets your expectations, from start to finish!</p>
+      </div>
+    </div>
+      <button class="btn-lg btn-primary provider-profile-btns" type="button">Get Quote</button>
+      <button class="btn-lg btn-primary provider-profile-btns" type="button">Request Service</button>
+  </div>
+</div>
+
+<div class="container">
+  <hr style="border-color: #575757">
+</div>
+
+<!-- PROVIDER EMAIL PHONE ADDRESS -->
+<div id="provider-contact">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-4">
+        <div class="text-center">
+          <h3 id="provider-email">
+            <span class="fa-stack fa-lg">
+              <i class="fa fa-square-o fa-stack-2x"></i>
+              <i class="fa fa-envelope fa-stack-1x"></i>
+            </span>
+            <br>
+            <a href="mailto: service@lawncall.com">&nbsp;service@lawncall.com</a>
+          </h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center">
+          <h3 id="provider-location">
+            <span class="fa-stack fa-lg">
+              <i class="fa fa-square-o fa-stack-2x"></i>
+              <i class="fa fa-map-marker fa-stack-1x"></i>
+            </span>
+            <br>
+            &nbsp;{{ provider.city }}, {{ provider.state }}
+          </h3>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="text-center">
+          <h3 id="provider-phone">
+            <span class="fa-stack- fa-lg">
+              <i class="fa fa-square-o fa-stack-2x"></i>
+              <i class="fa fa-phone fa-stack"></i>
+            </span>
+            <br>
+            &nbsp;512.527.4527
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <hr style="border-color: #575757">
+</div>
+
+<!-- REVIEWS -->
+<div id="provider-reviews">
+  <div class="row">
+    <div class="container">
+      <h1 class="text-center">Customer Reviews</h1>
+      {% for review in featured %}
+        <div class="col-md-4">
+          <blockquote>
+            <p id="review-comment">
+              <i class="fa fa-quote-left fa-2x fa-pull-left fa-border"></i>
+              {{ review.notes }}
+            </p>
+            <footer>
+              {% if review.job.customer.user.get_full_name %}
+                {{ review.job.customer.user.get_full_name }}
+              {% else %}
+                {{ review.job.customer.user.email }}
+              {% endif %}
+            </footer>
+          </blockquote>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+<script src="{% static 'js/library/jquery.js' %}"></script>
+<script src="{% static 'js/library/star-rating.min.js' %}"></script>
+<link href="{% static 'css/star-rating.min.css' %}" media="all" rel="stylesheet" type="text/css" />
+<link href="{% static 'css/provider_profile.css' %}" media="all" rel="stylesheet" type="text/css" />
+
+<script>
+  $(document).ready(function(){
+    $('#avg-star-rating').rating({
+		  size: 'xs',
+		  showClear: false,
+		  disabled: true,
+	 })
+  });
+
+  L.mapbox.accessToken = 'pk.eyJ1IjoiaW5ub3ZlcnRlZCIsImEiOiJhZmU3NTUzMjA2MTVhYWMwMjY5ZDNjYTU1YWY4YTc2MyJ9.ybhRWckkJ3v2IudwBFV5Cw';
+  var geocoder = L.mapbox.geocoder('mapbox.places'), map = L.mapbox.map('map', 'mapbox.streets');
+  geocoder.query('{{ provider.address }} {{ provider.city }}, {{ provider.state }}, {{ provider.zipcode }}', showMap);
+
+  function showMap(err, data) {
+    if (data.lbounds) {
+      map.fitBounds(data.lbounds);
+    } else if (data.latlng) {
+      map.setView([data.latlng[0], data.latlng[1]], 13);
+    }
+  }
+</script>
+{% endblock scripts %}

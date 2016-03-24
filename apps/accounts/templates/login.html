@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block bodyclass %}home{% endblock %}
+{% block fixednav %}navbar-fixed-top{% endblock %}
+
+{% block content %}
+<div id="hero">
+  <div class="row">
+	  <div class="overlay"></div>
+    <div class="col-md-4 col-md-offset-4 panel">
+      {% if error %}
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+      </div>
+      {% endif %}
+      {% if messages %}
+          {% for message in messages %}
+            <div class="alert
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}alert-danger{% endif %}
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}alert-success{% endif %}
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}alert-warning{% endif %}
+              " role="alert">
+              {{ message }}
+            </div>
+          {% endfor %}
+      {% endif %}
+      <div>
+        <form id="login" action="." method="post">
+          {% csrf_token %}
+          <div class="form-group">
+                <label>Email</label>
+                <input class="form-control" type="text" id="email" name="email"  />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input class="form-control" type="password" id="password" name="password"  />
+            </div>
+           <div class="form-group">
+              <a class="pull-left" href="{% url 'password_reset' %}">Forgot Password?</a>
+               <input class="btn btn-primary pull-right" type="submit" value="Log In" />
+             <div class="clearfix"></div>
+           </div>
+        </form>
+      </div>
+    </div>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/library/jquery.js' %}" ></script>
+  <script src="{% static 'js/library/bootstrap.js' %}" ></script>
+<script src="{% static 'js/library/formValidation.popular.min.js' %}" ></script>
+<script src="{% static 'js/library/validation.bootstrap.min.js' %}" ></script>
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#login').formValidation({
+        framework: 'bootstrap',
+        icon: {
+          valid: 'glyphicon glyphicon-ok',
+          invalid: 'glyphicon glyphicon-remove',
+          validating: 'glyphicon glyphicon-refresh'
+        },
+        err: {
+            container: 'tooltip'
+        },
+        fields: {
+          email: {
+            validators: {
+              notEmpty: {
+                message: 'An email address is required'
+              },
+              emailAddress: {
+                message: 'Not a valid email address'
+              }
+            }
+          },
+          password: {
+            validators: {
+              notEmpty: {
+                message: 'A password is required'
+              }
+            }
+          }
+        }
+      })
+});
+</script>
+{% endblock %}

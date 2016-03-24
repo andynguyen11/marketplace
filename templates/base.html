@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+{% load i18n %}
+{% load staticfiles %}
+{% load require %}
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+  <title>{% block title %}LawnCall{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}{% endblock %}" />
+  <meta name="author" content="{% block meta_author %}{% endblock %}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
+  <link href='//fonts.googleapis.com/css?family=Muli:300,400,500,700|Merriweather' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Merriweather' rel='stylesheet' type='text/css'>
+  <link type="text/css" rel="stylesheet" charset="utf-8" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
+  <link type="text/css" rel="stylesheet" href="{% static 'css/formValidation.min.css' %}" />
+  <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap-datepicker3.min.css' %}" />
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v2.2.1/mapbox.css' rel='stylesheet' />
+  {% block css %}{% endblock %}
+  {% block fb_pixel %}{% endblock %}
+</head>
+
+<body class="{% block bodyclass %}customer-portal{% endblock %}" id="{% block bodyid %}{% endblock %}">
+  <div id="wrap" class="{% block fluid %}{% endblock %}">
+    <!--[if lt IE 7]>
+    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+    <![endif]-->
+
+  <div class="header row">
+    <nav class="navbar navbar-default {% block fixednav %}{% endblock %}">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/"></a>
+        </div>
+      {% if user.is_authenticated %}
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            {% if user.customer %}
+            <li><a class="book-service" href="#appointments">Book Service</a></li>
+            <li><a class="edit-profile" href="#profile">Profile</a></li>
+            {% endif %}
+            <li><a class="contact" href="#">Contact</a></li>
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+          </ul>
+        </div>
+      {% else %}
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/about-us/">About Us</a></li>
+            <li><a href="/faq/">FAQ</a></li>
+            <li><a class="contact" href="#">Contact</a></li>
+            <li><a href="{% url 'login' %}">Log In</a>
+            </li>
+          </ul>
+        </div>
+      {% endif %}
+      -->
+      </div>
+    </nav>
+  </div>
+
+  {% block content %}{% endblock content %}
+<!--
+  <div id="footer">
+    <div class="row">
+      <div class="container">
+        <div class="col-md-6">
+          <img class="logo" src="{% static 'images/logo.png' %}" />
+          <p>LawnCall is a technology platform that matches and connects people seeking lawn care services in Austin, Texas with compatible,
+            trusted, local lawn care professionals. Offering one-time service, up-front pricing, easy online booking, and guaranteed satisfaction,
+            LawnCall is a better way to book lawn care service.
+          </p>
+          <p>
+            <a href="/about-us/">Learn More >></a>
+          </p>
+
+        </div>
+        <div class="col-md-3">
+          <h3>More Links</h3>
+          <a href="/faq/">FAQ</a><br />
+          <a href="/terms/">Terms</a><br />
+          <a href="/privacy/">Privacy</a><br />
+          <a href="/about-us/">About Us</a><br />
+          <a href="/providers/">Service Provider</a><br />
+          <a class="contact" href="#">Contact</a>
+        </div>
+        <div class="col-md-3">
+          <h3>Contact Us</h3>
+          <p>
+            <h4><i class="fa fa-phone"></i> <a href="tel:5125374527">(512) 537-4527</a></h4>
+            <h4><i class="fa fa-envelope"></i> <a href="mailto:service@lawncall.com">service@lawncall.com</a></h4>
+            <h4><i class="fa fa-facebook-square"></i> <a href="https://www.facebook.com/LawnCall/">Facebook</a></h4>
+            <h4><i class="fa fa-twitter-square"></i> <a href="https://twitter.com/lawncallteam">Twitter</a></h4>
+          </p>
+
+        </div>
+        <div class="col-md-12" style="margin-top:60px;">
+          <p class="text-center">
+            Copyright &copy; LawnCall, All rights reserved.
+          </p>
+          <p class="security text-center">
+            <img src="/static/images/stripe.png" />
+            <img src="/static/images/zillow-logo.png" />
+            <img src="/static/images/comodo_secure_76x26_transp.png" />
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+-->
+<script type="text/javascript">
+
+{% if ENVIRONMENT != 'prod' %}
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var n=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(n?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var o=document.getElementsByTagName("script")[0];o.parentNode.insertBefore(a,o);for(var r=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=r(p[c])};
+  heap.load("537870790");
+{% elif ENVIRONMENT == 'prod' %}
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var n=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(n?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var o=document.getElementsByTagName("script")[0];o.parentNode.insertBefore(a,o);for(var r=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["clearEventProperties","identify","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=r(p[c])};
+  heap.load("3737412898");
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-67804673-1', 'auto', {'siteSpeedSampleRate': 100});
+  ga('send', 'pageview');
+
+  (function(h,o,t,j,a,r){
+      h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+      h._hjSettings={hjid:161627,hjsv:5};
+      a=o.getElementsByTagName('head')[0];
+      r=o.createElement('script');r.async=1;
+      r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+      a.appendChild(r);
+  })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+{% else %}
+{% endif %}
+
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,369 @@
+
+/* Home page */
+body#hm {
+  background: #fff;
+}
+
+body#hm .fa-stack {
+  color: #3c7376;
+}
+
+.header {
+  background: #3c7376;
+  padding: 10px 0;
+}
+
+.header .logo {
+  width: 300px;
+}
+
+.btn-facebook {
+  background: #395699;
+}
+
+.btn-google {
+  background: #D14837;
+}
+
+.btn-google:hover, .btn-facebook:hover, .btn-google, .btn-facebook, .btn-google:focus, .btn-facebook:focus {
+  color: #fff;
+}
+
+.icon {
+  width: 80px;
+}
+
+#hm-hero {
+  position: relative;
+  padding: 235px 0;
+  background-image: url('../images/living-room-dog.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-bottom: #3c7376 5px solid;
+}
+
+#hm-hero .logo {
+  width: 300px;
+  position: absolute;
+  top: 10px;
+}
+
+#hm-hero .spacer {
+  border-bottom: #3c7376 5px solid;
+  width: 50px;
+  padding-top: 25px;
+  margin-bottom: 25px;
+}
+
+#hm #how-it-works {
+  background: #3c7376;
+  padding: 15px 0;
+}
+
+#hm-hero .overlay {
+  position: absolute;
+  background: #fff;
+  opacity: .6;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+}
+
+#hm-hero h1 {
+  font-size: 43px;
+}
+
+#hm-footer .logo {
+  width: 200px;
+}
+
+#hm-footer {
+  padding: 30px 0;
+  background: #666;
+  color: #fff;
+}
+
+#hm-footer img {
+  width: 100px;
+  margin-top: 30px;
+}
+
+#hm-footer a {
+  color: #fff;
+}
+
+#hm-footer h4 {
+  font-weight: bold;
+}
+
+
+/* App */
+#app-container {
+  margin-bottom: 30px;
+}
+
+.app-right-rail {
+  margin: 60px 0;
+}
+
+.app-right-rail .panel {
+  position: relative;
+  padding-top: 40px;
+}
+
+.app-right-rail h3 {
+  color: #3c7376;
+  font-weight: bold;
+}
+
+.app-right-rail .signup-values li {
+  padding: 15px 0;
+  border-top: 1px solid #ccc;
+}
+
+.satisfaction {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  padding: 0 10px;
+}
+
+.satisfaction img {
+  width: 90px;
+}
+
+.category-picker, .upcoming-services, .booking-details, .meals-container {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: 15px;
+}
+
+.category-picker li {
+  float: left;
+  text-align: center;
+  text-transform: uppercase;
+  height: 200px;
+  background: #f6f6f6;
+  cursor: pointer;
+  border: 1px solid #fff;
+  font-weight: bold;
+  position: relative;
+  font-size: 18px;
+}
+
+.category-picker li img {
+  width: 140px;
+}
+
+.category-picker li img, .category-picker li span {
+  position: relative;
+}
+
+.category-picker .overlay {
+  background: #fff;
+  opacity: .85;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: absolute;
+  z-index: 0;
+}
+
+.category-picker li.lawn-icon {
+  background: url(../images/lawn-bg.jpg) no-repeat bottom;
+  background-size: cover;
+}
+
+.category-picker li.clean-icon {
+  background: url(../images/clean-bg.jpg) no-repeat #f6f6f6 bottom;
+  background-size: cover;
+}
+
+.category-picker li.grocery-icon {
+  background: url(../images/grocery-bg.jpg) no-repeat #f6f6f6 bottom;
+  background-size: cover;
+}
+
+.category-picker li.meal-icon {
+  background: url(../images/meal1.jpg) no-repeat #f6f6f6 bottom;
+  background-size: cover;
+}
+
+.category-picker li.car-icon {
+  background: url(../images/car-bg.jpg) no-repeat #f6f6f6 0 -30px;
+  background-size: cover;
+}
+
+.category-picker li.dog-icon {
+  background: url(../images/dog-bg.jpg) no-repeat #f6f6f6 bottom;
+  background-size: cover;
+}
+
+.category-picker li.active {
+  background-color: #d6d6d6;
+}
+
+.upcoming-services .date {
+  background: #e1e1e1;
+  padding: 10px;
+  margin-right: 10px;
+  width: 125px;
+}
+
+.upcoming-services li {
+  background: #fff;
+  margin-bottom: 10px;
+}
+
+.fix-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+.price-container {
+  background: #3c7376;
+  padding: 0 15px;
+  color: #fff;
+}
+
+.booking-details li {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.booking-details li:after {
+  clear: both;
+}
+
+.booking-details .fa {
+  margin-right: 15px;
+}
+
+.meals-container li {
+  float: left;
+  margin: 10px;
+  position: relative;
+}
+
+.meals-container li img {
+  width: 300px;
+}
+
+.meals-container .meal-controls {
+  position: absolute;
+  top: 165px;
+  width: 100%;
+}
+
+#services {
+  background: #fff;
+  color: #575757;
+  padding: 30px 0;
+}
+
+#value-props, #customer-service, .onboard {
+  padding: 30px 0;
+  background: #F8F8F8;
+}
+
+#booking {
+  position: relative;
+}
+
+/* Custom Dropdown */
+.hm-dropdown--large {
+  font-size: 1.5em;
+}
+
+.hm-dropdown--small {
+  font-size: .7em;
+}
+
+.hm-dropdown__select{
+  font-size: inherit; /* inherit size from .hm-dropdown */
+  padding: .5em; /* add some space*/
+  margin: 0; /* remove default margins */
+  text-align: right;
+}
+
+.hm-dropdown__select--white {
+    background-color: #fff;
+    color: #444;
+}
+
+@supports (pointer-events: none) and
+      ((-webkit-appearance: none) or
+      (-moz-appearance: none) or
+      (appearance: none)) {
+
+  .hm-dropdown {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .hm-dropdown__select {
+    padding-right: 2.5em; /* accommodate with the pseudo elements for the dropdown arrow */
+    border: 0;
+    border-radius: 3px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+
+  .hm-dropdown::before,
+  .hm-dropdown::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .hm-dropdown::after { /*  Custom dropdown arrow */
+    content: "\25BC";
+    height: 1em;
+    font-size: .625em;
+    line-height: 1;
+    right: 1.2em;
+    top: 50%; margin-top: -.5em;
+  }
+
+  .hm-dropdown::before { /*  Custom dropdown arrow cover */
+    width: 2em;
+    right: 0; top: 0; bottom: 0;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .hm-dropdown__select[disabled] {
+    color: rgba(0,0,0,.3);
+  }
+
+  .hm-dropdown.hm-dropdown--disabled::after {
+    color: rgba(0,0,0,.1);
+  }
+
+  /* White dropdown style */
+  .hm-dropdown--white::before {
+    background-color: #fff;
+    border-left: 1px solid rgba(0,0,0,.1);
+  }
+
+  .hm-dropdown--white::after {
+    color: rgba(0,0,0,.9);
+  }
+
+  /* FF only temp fix */
+  @-moz-document url-prefix() {
+    .hm-dropdown__select             { padding-right: .9em }
+    .hm-dropdown--large .hm-dropdown__select { padding-right: 1.3em }
+    .hm-dropdown--small .hm-dropdown__select { padding-right: .5em }
+  }
+}

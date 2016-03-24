@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load require %}
+
+{% block bodyclass %}home{% endblock %}
+{% block fixednav %}navbar-fixed-top{% endblock %}
+
+{% block content %}
+
+<div id="hero">
+  <div class="row">
+    <div class="container">
+      <div class="overlay"></div>
+      <div class="col-md-10 col-md-offset-1 text-center" id="hero-copy">
+        <h1>LawnCall is Closing</h1>
+        <div class="features">
+          <p>We Sincerely Thank You for Your Support</p>
+        </div>
+      </div>
+     </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+  {% require_module 'app/landing-page' %}
+{% endblock %}

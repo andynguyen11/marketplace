@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="customer-signup" class="onboard">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="signup-steps text-center">
+            <ul id="progressbar">
+              <li class="active">Price</li>
+              <li class="active">Book</li>
+              <li>Relax</li>
+            </ul>
+          </div>
+        <h3>Payment Verification</h3>
+        <p class="text-muted">Please enter your payment information to complete the booking.  Your credit card will NOT be charged until service is complete.<p>
+        {% if error %}<p class="bg-danger">{{ error }}</p>{% endif %}
+        <p class="payment-errors bg-danger hidden"></p>
+        <form action="{% url 'save-cc' %}" method="POST" id="payment-form" class="form-horizontal">
+          {% csrf_token %}
+          <div class="form-group">
+            <div class="col-xs-6">
+              <input class="form-control" type="text" name="first_name" placeholder="First Name" />
+            </div>
+            <div class="col-xs-6">
+              <input class="form-control" type="text" name="last_name" placeholder="Last Name" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-8">
+              <input class="form-control" type="text" data-stripe="number" name="number" placeholder="Credit Card Number"/>
+            </div>
+            <div class="col-md-4">
+              <i class="fa fa-cc-visa fa-2x"></i>
+              <i class="fa fa-cc-mastercard fa-2x"></i>
+              <i class="fa fa-cc-discover fa-2x"></i>
+              <i class="fa fa-cc-amex fa-2x"></i>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-4">
+              <input class="form-control" type="text" data-stripe="cvc" name="cvc" placeholder="CVC"/>
+            </div>
+            <div class="col-xs-4">
+              <input class="form-control" type="text" data-stripe="exp-month" name="month" placeholder="MM"/>
+            </div>
+            <div class="col-xs-4">
+              <input class="form-control" type="text" data-stripe="exp-year" name="year" placeholder="YYYY"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <input class="form-control" type="text" name="phone_number" placeholder="Phone Number" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+            <button type="submit" class="btn btn-success pull-left">Verify Credit Card</button>
+            <div class="security pull-right">
+              Secured by
+              <img src="{% static 'images/comodo_secure_76x26_transp.png' %}" />
+              <img src="{% static 'images/stripe.png' %}" />
+            </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+
+          <h3>Summary</h3>
+          <div class="panel panel-info">
+            <strong>Service Address</strong>
+            <p class="text-muted">{{ customer.service_address }}, {{ customer.service_city }}, {{ customer.service_state }} {{ customer.service_zipcode }}</p>
+            <strong>Estimated Service Time</strong>
+            <p class="text-muted">Within 3 Business Days</p>
+            <strong>Price*</strong>
+            <p class="text-muted">
+              $<span class="price">{{ price }}</span>
+            </p>
+            <p class="text-muted small">
+              *Your credit card will NOT be charged until service is complete.  Price includes Sales Tax, as applicable.  Additional charge may apply for exceptionally oversized or overgrown lawns.
+            </p>
+          </div>
+          <div class="signup-img text-center">
+            <img src="{% static 'images/satisfaction_badge.png' %}" />
+          </div>
+          <div class="panel-group" id="signup-faq" role="tablist" aria-multiselectable="true">
+            <div class="panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a role="button" class="faq collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <i class="fa fa-plus-square"></i> What's included with my mow?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  Your mowing service always includes mowing, edging, and blowing.
+                </div>
+              </div>
+            </div>
+            <div class="panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="faq collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    <i class="fa fa-plus-square"></i> When will my lawn be mowed?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                  All lawns are serviced within five business days of booking, with most serviced within three days.
+                  Long stretches of inclement weather may occasionally affect normal service schedules.
+                </div>
+              </div>
+            </div>
+            <div class="panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                  <a class="faq collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fa fa-plus-square"></i> How do I know I'll receive high-quality work?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div class="panel-body">
+                  At LawnCall, we personally screen lawn care professionals and select only the best to provide you service.
+                  Our pros are highly experienced with proven track records of exceptional performance and customer service.
+                  Further, we stand behind our service - 100%. If you're not satisfied, we'll send out another lawn care
+                  professional to ensure your lawn meets both your expectations and our high standards. If you still aren't
+                  completely happy with your lawn, we'll refund your money."
+                </div>
+              </div>
+            </div>
+          <div class="panel-default">
+              <div class="panel-heading" role="tab" id="headingFour">
+                <h4 class="panel-title">
+                  <a class="faq collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fa fa-plus-square"></i> What if I need to cancel my booking?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                <div class="panel-body">
+                  There is no fee to cancel your booking. Cancel any time before your lawn is serviced, and you will not be charged.
+                </div>
+              </div>
+            </div>
+          <div class="panel-default">
+              <div class="panel-heading" role="tab" id="headingFive">
+                <h4 class="panel-title">
+                  <a class="faq collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
+                    <i class="fa fa-plus-square"></i> Still have questions?
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+                <div class="panel-body">
+                  <p>Contact us anytime! We can be reached through <a class="contact" href="#">chat</a>, email and phone.</p>
+                  <p>
+                    <i class="fa fa-envelope"></i> Email: info@lawncall.com<br />
+                    <i class="fa fa-phone"></i> Phone: (512) 537-4527
+                  </p>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        </div>
+      </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<script type="text/javascript">
+  var stripe_key = {% if ENVIRONMENT == 'prod' %}'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'{% else %}'pk_test_CANPk8WGjQh2GpvfIDNhxsyy'{% endif %};
+  Stripe.setPublishableKey(stripe_key);
+
+  function stripeResponseHandler(status, response) {
+    var $form = $('#payment-form');
+
+    if (response.error) {
+      // Show the errors on the form
+      $('.payment-errors').removeClass('hidden').text(response.error.message);
+      $('button').prop('disabled', false);
+    } else {
+      // response contains id and card, which contains additional card details
+      var token = response.id;
+      // Insert the token into the form so it gets submitted to the server
+      $form.append($('<input type="hidden" name="stripeToken" />').val(token));
+      // and submit
+      $form.get(0).submit();
+    }
+  };
+
+  jQuery(function($) {
+    $('a.faq').on('click', function() {
+      $(this).find('i').toggleClass('fa-plus-square').toggleClass('fa-minus-square-o');
+    });
+
+    $('#payment-form').formValidation({
+        framework: 'bootstrap',
+        icon: {
+          valid: 'glyphicon glyphicon-ok',
+          invalid: 'glyphicon glyphicon-remove',
+          validating: 'glyphicon glyphicon-refresh'
+        },
+        fields: {
+          first_name: {
+            validators: {
+              notEmpty: {
+                message: 'An first name is required'
+              }
+            }
+          },
+          last_name: {
+            validators: {
+              notEmpty: {
+                  message: 'A last name is required'
+              }
+            }
+          },
+          phone_number: {
+            validators: {
+              notEmpty: {
+                  message: 'A phone number is required'
+              }
+            }
+          },
+          number: {
+            validators: {
+              notEmpty: {
+                  message: 'A credit card number is required'
+              }
+            }
+          },
+          cvc: {
+            validators: {
+              notEmpty: {
+                  message: 'CVC is required'
+              }
+            }
+          },
+          month: {
+            validators: {
+              notEmpty: {
+                  message: 'An expiry month is required'
+              }
+            }
+          },
+          year: {
+            validators: {
+              notEmpty: {
+                  message: 'An expiry year is required'
+              }
+            }
+          }
+        }
+      })
+      .on('success.form.fv', function(e) {
+            // Prevent form submission
+            e.preventDefault();
+        });
+
+    $('#payment-form').submit(function(event) {
+      var $form = $(this);
+      // Disable the submit button to prevent repeated clicks
+      $form.find('button').prop('disabled', true);
+      Stripe.card.createToken($form, stripeResponseHandler);
+      // Prevent the form from submitting with the default action
+      return false;
+    });
+  });
+</script>
+{% endblock %}
