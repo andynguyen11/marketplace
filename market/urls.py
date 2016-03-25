@@ -27,6 +27,10 @@ from apps.landing_pages.views import error404, error500
 
 urlpatterns = patterns('apps',
     url(r'^admin/', include(admin.site.urls)),
+    url('', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^$', 'accounts.views.login'),
+    url(r'^home/$', 'accounts.views.home'),
+    url(r'^logout/$', 'accounts.views.logout'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 handler404 = error404

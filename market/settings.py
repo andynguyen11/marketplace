@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'social.apps.django_app.default',
     'collectfast',
     'password_reset',
     'require',
@@ -69,6 +70,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 AUTHENTICATION_BACKENDS = (
+    'social.backends.linkedin.LinkedinOAuth2',
     'apps.accounts.auth.CaseInsensitiveModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
@@ -88,6 +90,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'market.context_processors.global_settings',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
@@ -216,6 +220,30 @@ LOGIN_URL = '/login/'
 REQUIRE_BASE_URL = 'js'
 REQUIRE_BUILD_PROFILE = 'build.js'
 BASE_URL = 'https://dev.devquity.com' if ENVIRONMENT != 'prod' else 'https://devquity.com'
+
+SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '786yjyq5pud726'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'UmgWxvWjPKYYGTJo'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = [
+    'public-profile-url',
+    'email-address',
+    'interests',
+    'skills',
+]
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/home/'
+SOCIAL_AUTH_LOGIN_URL = '/'
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+    'social.pipeline.social_auth.auth_allowed',
+    'social.pipeline.social_auth.social_user',
+    'social.pipeline.user.get_username',
+    'social.pipeline.user.create_user',
+    'apps.accounts.views.save_social_profile',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+)
 
 try:
     from local_settings import *
