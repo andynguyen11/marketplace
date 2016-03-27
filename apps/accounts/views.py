@@ -3,6 +3,8 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 
+from apps.accounts.models import Profile
+
 
 def login(request):
     return render_to_response('login.html', context=RequestContext(request))
