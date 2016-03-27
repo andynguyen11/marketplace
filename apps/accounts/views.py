@@ -8,7 +8,6 @@ def login(request):
     return render_to_response('login.html', context=RequestContext(request))
 
 
-@login_required(login_url='/')
 def home(request):
     return render_to_response('home.html')
 
@@ -16,6 +15,18 @@ def home(request):
 def logout(request):
     auth_logout(request)
     return redirect('/')
+
+@login_required
+def edit_developer_profile(request):
+    user = request.user
+    social = user.social_auth.get(provider='linkedin-oauth2')
+    return render_to_response('edit-profile.html', {'user': user, 'social': social}, context_instance=RequestContext(request))
+
+
+def developer_profile(request):
+    user = request.user
+    social = user.social_auth.get(provider='linkedin-oauth2')
+    return render_to_response('profile.html', {'user': user, 'social': social}, context_instance=RequestContext(request))
 
 
 def save_social_profile(backend, user, response, *args, **kwargs):

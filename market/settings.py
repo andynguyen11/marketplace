@@ -226,11 +226,29 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'UmgWxvWjPKYYGTJo'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = [
     'public-profile-url',
     'email-address',
-    'interests',
+    'location',
+    'headline',
     'skills',
+    'summary',
+    'positions',
+    'industry',
+    'specialties',
+    'picture-url',
 ]
+SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
+                                   ('firstName', 'first_name'),
+                                   ('lastName', 'last_name'),
+                                   ('emailAddress', 'email_address'),
+                                   ('headline', 'headline'),
+                                   ('summary', 'summary'),
+                                   ('skills', 'skills'),
+                                   ('positions', 'positions'),
+                                   ('specialties', 'specialties'),
+                                   ('pictureUrl', 'picture_url'),
+                                   ('industry', 'industry')]
+
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/home/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/developer/profile/edit/'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
@@ -239,7 +257,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_user',
     'social.pipeline.user.get_username',
     'social.pipeline.user.create_user',
-    'apps.accounts.views.save_social_profile',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',

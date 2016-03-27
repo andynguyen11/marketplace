@@ -1,7 +1,36 @@
-{% if user and not user.is_anonymous %}
-  <a>Hello, {{ user.get_full_name }}!</a>
-  <br>
-  <a href="/logout">Logout</a>
-{% else %}
-  <a href="{% url 'social:begin' backend='linkedin-oauth2' %}">Login with Linkedin</a>
-{% endif %}
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  <div id="login">
+    <div class="row">
+      <div class="container">
+        <div class="panel panel-default panel-login text-center">
+          <div class="login-hero pull-left">
+            <div class="overlay"></div>
+            <div class="login-hero-content">
+              <h3 class="text-yellow">Devquity</h3>
+              <h4 class="text-skinny">Sign in with LinkedIn or AngelList to create a Devquity account.</h4>
+            </div>
+          </div>
+          <div class="login-content pull-left">
+            <p>
+              <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+                <i class="fa fa-linkedin"></i>
+                Sign In with LinkedIn
+              </a>
+            </p>
+            <p>
+              <a class="btn btn-angellist" href="{% url 'social:begin' backend='angellist-oauth2' %}">
+                <i class="fa fa-angellist"></i>
+                Sign In with AngelList
+              </a>
+            </p>
+            <p class="text-muted small">We will never post to LinkedIn or AngelList without your permission.</p>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

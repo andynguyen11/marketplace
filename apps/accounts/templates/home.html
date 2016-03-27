@@ -1,3 +1,50 @@
-<h1>Welcome</h1>
-<br>
-<p><a href="/logout">Logout</a>
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block header_class %}home{% endblock %}
+
+{% block content %}
+<div id="hero">
+  <div class="row">
+    <div class="overlay"></div>
+    <div class="container text-center">
+      <h1 class="text-skinny">
+        Code for equity. <br/>
+        <span class="text-yellow">On projects you love.</span>
+      </h1>
+      <button class="btn btn-foggy">Find a Project</button>
+    </div>
+  </div>
+</div>
+
+<div id="featured">
+  <div class="row">
+    <div class="container">
+      <h2>featured project</h2>
+      <div class="panel panel-project">
+        <div class="project-image"></div>
+        <div class="project-content">
+          <h3 class="project-title">PIE Cookbook</h3>
+          <div>
+            <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+            <div class="project-byline pull-left">
+              <div class="project-manager">Andy Nguyen</div>
+              <div class="project-company">Devquity</div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+          <div class="project-description">
+
+          </div>
+          <div class="project-skills"></div>
+          <ul class="project-specs">
+            <li class="project-hours"></li>
+            <li class="project-equity"></li>
+            <li class="project-cash"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

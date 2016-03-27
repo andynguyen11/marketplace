@@ -1,0 +1,208 @@
+@dark-gray: #31302f;
+@black: #31302f;
+@yellow: #f6b900;
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+}
+
+h1, h2, h3, h4, h5 {
+  font-weight: 700;
+}
+
+.overlay {
+  position: absolute;
+  background: #000;
+  opacity: .7;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 0;
+}
+
+.text-yellow {
+  color: @yellow;
+}
+
+.text-skinny {
+  color: #fff;
+}
+
+.text-skinny {
+  font-weight: 100;
+}
+
+.row {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+//BUTTONS
+.btn {
+  text-transform: uppercase;
+
+  &.btn-transparent {
+    border: 1px solid #fff;
+    color: #fff;
+    background: transparent;
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  &.btn-foggy {
+    color: #fff;
+    background: fade(#fff, 60%);
+    &:hover {
+      color:#fff;
+    }
+  }
+
+  &.btn-yb {
+    color: @black;
+    border: 1px solid @yellow;
+  }
+
+  &.btn-linkedin {
+    text-transform: none;
+    color: #fff;
+    background: #0077B5;
+    .fa {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+  }
+
+  &.btn-angellist {
+    text-transform: none;
+    color: @black;
+    background: #fff;
+    border: 1px solid @black;
+    .fa {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+  }
+}
+
+// HEADER
+#header {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+  width: 100%;
+  padding: 15px 0;
+
+  .logo {
+    width: 150px;
+    height: 44px;
+    background: url(../images/devquity-yb.png) no-repeat;
+    background-size: cover;
+  }
+
+  &.home {
+    .logo {
+      background-image: url(../images/devquity-wy.png);
+    }
+  }
+
+}
+
+// HOME HERO
+#hero {
+  color: #fff;
+  position: relative;
+
+  h1 {
+    font-size: 40px;
+  }
+
+  .row {
+    background: url(../images/home-hero-2g.jpg) no-repeat center;
+    background-size: cover;
+    padding: 150px 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+// FOOTER
+#footer {
+
+  .row {
+    color: #fff;
+    background: @dark-gray;
+    padding: 75px 0;
+    font-size: 16px;
+    font-weight: 100;
+  }
+
+  .logo {
+    width: 150px;
+    display: block;
+    margin-top: 50px;
+  }
+
+  .fa {
+    border: 1px solid #fff;
+    border-radius: 20px;
+    padding: 8px;
+    margin-right: 7px;
+    width: 35px;
+    text-align: center;
+  }
+
+  a, a:hover, a:visited {
+    color: #fff;
+  }
+
+  h5 {
+    color: @yellow;
+    font-size: 16px;
+  }
+
+  .copyright {
+    color: #666;
+    font-size: 12px;
+  }
+}
+
+#login {
+  margin: 100px 0 75px;
+
+  .panel-login {
+    width: 475px;
+    margin: auto;
+  }
+
+  .login-hero {
+    background: url('../images/login-2g.jpg') no-repeat center;
+    background-size: cover;
+    padding: 30px;
+    width: 50%;
+    position: relative;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+
+    .login-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .overlay {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+  }
+
+  .login-content {
+    width: 50%;
+    padding: 25px;
+  }
+}
