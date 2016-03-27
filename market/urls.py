@@ -32,6 +32,7 @@ urlpatterns = patterns('apps',
     url(r'^login/$', 'accounts.views.login', name='login'),
     url(r'^logout/$', 'accounts.views.logout', name='logout'),
     url(r'^developer/profile/$', 'accounts.views.developer_profile', name='developer-profile'),
+    url(r'^developer/profile/(?P<user_id>[0-9]+)/$', 'accounts.views.developer_profile', name='developer-profile'),
     url(r'^developer/profile/edit/$', 'accounts.views.edit_developer_profile', name='edit-developer-profile'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 

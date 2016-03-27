@@ -23,8 +23,11 @@ def edit_developer_profile(request):
     return render_to_response('edit-profile.html', {'user': user, 'social': social}, context_instance=RequestContext(request))
 
 
-def developer_profile(request):
-    user = request.user
+def developer_profile(request, user_id=None):
+    if user_id:
+        user = Profile.objects.get(id=user_id)
+    else:
+        user = request.user
     social = user.social_auth.get(provider='linkedin-oauth2')
     return render_to_response('profile.html', {'user': user, 'social': social}, context_instance=RequestContext(request))
 

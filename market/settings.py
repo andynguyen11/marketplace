@@ -234,6 +234,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_FIELD_SELECTORS = [
     'industry',
     'specialties',
     'picture-url',
+    'picture-urls::(original)',
 ]
 SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('firstName', 'first_name'),
@@ -245,10 +246,12 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('positions', 'positions'),
                                    ('specialties', 'specialties'),
                                    ('pictureUrl', 'picture_url'),
+                                   ('pictureUrls', 'picture_urls'),
+                                   ('location', 'location'),
                                    ('industry', 'industry')]
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/developer/profile/edit/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/developer/profile/'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',

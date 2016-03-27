@@ -5,10 +5,16 @@
 <div id="developer-profile">
   <div class="row">
     <div class="container">
-      <img src="{{ social.extra_data.picture_url }}" />
-      {{ user.first_name }}
-      {{ social.extra_data.summary }}
-      {{ social.extra_data.location }}
+      <img src="{{ social.extra_data.picture_url }}" class="pull-left profile-photo" />
+      <h1 class="pull-left">{{ user.first_name }}</h1>
+      <div class="clearfix"></div>
+      <p>{{ social.extra_data.summary }}</p>
+      <p><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ social.extra_data.location.name }}</p>
+      <p>
+        <a class="btn btn-yb">Hire {{ user.first_name }}</a>
+        <a class="btn btn-yb">Review {{ user.first_name }}</a>
+        <a class="btn btn-yb">See on LinkedIn</a>
+      </p>
     </div>
   </div>
 </div>
