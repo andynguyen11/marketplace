@@ -16,46 +16,46 @@
     </div>
   </div>
 </div>
-{{ featured }}
+  {{ featured.project_manager. }}
 <div id="featured-project">
   <div class="row">
     <div class="container">
       <h2 class="text-center">featured project</h2>
       <div class="panel panel-project">
-        <div class="project-image col-md-7" style="background-image: url('{% static "images/login-2g.jpg" %}');">
+        <div class="project-image col-md-7" style="background-image: url('{% static '' %}{{ featured.image }}');">
           <div class="overlay"></div>
-          <h3 class="text-skinny text-center">An open guide for startup accelerators.</h3>
+          <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
         </div>
         <div class="project-content col-md-5 drop-padding">
           <div class="project-copy">
-            <h4 class="project-title">PIE Cookbook</h4>
+            <h4 class="project-title">{{ featured.title }}</h4>
             <div>
-              <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+              <img class="project-manager-photo pull-left" src="{{ social.extra_data.picture_url }}" />
               <div class="project-byline pull-left">
                 <p>
-                  <span class="project-manager">Andy Nguyen</span> <br />
-                  <span class="project-company">Devquity</span>
+                  <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
+                  <span class="project-company">{{ featured.company.name }}</span>
                 </p>
               </div>
               <div class="clearfix"></div>
             </div>
             <div class="project-description">
-              Building a startup accelerator is hard. That's why PIE wants to open source its learnings. So anyone can build one for their community.
+              {{ featured.description }}
             </div>
             <div class="project-skills"></div>
           </div>
           <div class="project-specs text-center">
             <ul>
               <li class="project-hours">
-                <h5>12</h5>
+                <h5>{{ featured.estimated_hours }}</h5>
                 hours
               </li>
               <li class="project-equity">
-                <h5>1.2%</h5>
+                <h5>{{ featured.estimated_equity }}%</h5>
                 equity
               </li>
               <li class="project-cash">
-                <h5>$2200</h5>
+                <h5>${{ featured.estimated_cash }}</h5>
                 cash
               </li>
             </ul>

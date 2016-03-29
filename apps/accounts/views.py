@@ -13,9 +13,8 @@ def login(request):
 
 def home(request):
     featured = Project.objects.filter(featured=1)[:1].get()
-    new_projects = Project.objects.all()[:3].get()
-    developers = Profile.objects.all()[:3].get()
-    return render_to_response('home.html', {'featured': featured, 'new_projects': new_projects, 'developers': developers}, context_instance=RequestContext(request))
+    featured_user_social = featured.project_manager.social_auth.get(provider='linkedin-oauth2')
+    return render_to_response('home.html', {'featured': featured, 'social': featured_user_social }, context_instance=RequestContext(request))
 
 
 def logout(request):
