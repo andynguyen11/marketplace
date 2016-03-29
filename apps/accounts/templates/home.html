@@ -16,32 +16,236 @@
     </div>
   </div>
 </div>
-
-<div id="featured">
+{{ featured }}
+<div id="featured-project">
   <div class="row">
     <div class="container">
-      <h2>featured project</h2>
+      <h2 class="text-center">featured project</h2>
       <div class="panel panel-project">
-        <div class="project-image"></div>
-        <div class="project-content">
-          <h3 class="project-title">PIE Cookbook</h3>
-          <div>
-            <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
-            <div class="project-byline pull-left">
-              <div class="project-manager">Andy Nguyen</div>
-              <div class="project-company">Devquity</div>
+        <div class="project-image col-md-7" style="background-image: url('{% static "images/login-2g.jpg" %}');">
+          <div class="overlay"></div>
+          <h3 class="text-skinny text-center">An open guide for startup accelerators.</h3>
+        </div>
+        <div class="project-content col-md-5 drop-padding">
+          <div class="project-copy">
+            <h4 class="project-title">PIE Cookbook</h4>
+            <div>
+              <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">Andy Nguyen</span> <br />
+                  <span class="project-company">Devquity</span>
+                </p>
+              </div>
+              <div class="clearfix"></div>
             </div>
-            <div class="clearfix"></div>
+            <div class="project-description">
+              Building a startup accelerator is hard. That's why PIE wants to open source its learnings. So anyone can build one for their community.
+            </div>
+            <div class="project-skills"></div>
           </div>
-          <div class="project-description">
+          <div class="project-specs text-center">
+            <ul>
+              <li class="project-hours">
+                <h5>12</h5>
+                hours
+              </li>
+              <li class="project-equity">
+                <h5>1.2%</h5>
+                equity
+              </li>
+              <li class="project-cash">
+                <h5>$2200</h5>
+                cash
+              </li>
+            </ul>
+            <div class="project-for">
+              for
+            </div>
+            <div class="project-or">
+              or
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
+<div id="new-projects">
+  <div class="row">
+    <div class="container">
+      <h2 class="text-center">newly added projects</h2>
+      <button class="btn btn-yb">see more</button>
+      <div class="panel panel-project col-md-4 drop-padding">
+        <div class="project-image" style="background-image: url('{% static "images/login-2g.jpg" %}');"></div>
+        <div class="project-content">
+          <div class="project-copy">
+            <h4 class="project-title">PIE Cookbook</h4>
+            <div>
+              <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">Andy Nguyen</span> <br />
+                  <span class="project-company">Devquity</span>
+                </p>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            <div class="project-description">
+              Building a startup accelerator is hard. That's why PIE wants to open source its learnings. So anyone can build one for their community.
+            </div>
+            <div class="project-skills"></div>
           </div>
-          <div class="project-skills"></div>
-          <ul class="project-specs">
-            <li class="project-hours"></li>
-            <li class="project-equity"></li>
-            <li class="project-cash"></li>
-          </ul>
+          <div class="project-specs text-center">
+            <ul>
+              <li class="project-hours">
+                <h5>12</h5>
+                hours
+              </li>
+              <li class="project-equity">
+                <h5>1.2%</h5>
+                equity
+              </li>
+              <li class="project-cash">
+                <h5>$2200</h5>
+                cash
+              </li>
+            </ul>
+            <div class="project-for">
+              for
+            </div>
+            <div class="project-or">
+              or
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="browse-category">
+  <div class="row">
+    <div class="container text-center">
+      <h2>browse by category</h2>
+      <div class="col-md-4">
+        <a id="art">
+          <div class="overlay"></div>
+          <h3>Art and Design</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="technology">
+          <div class="overlay"></div>
+          <h3>Technology</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="gaming">
+          <div class="overlay"></div>
+          <h3>Gaming</h3>
+        </a>
+      </div>
+
+      <div class="col-md-4">
+        <a id="nonprofit">
+          <div class="overlay"></div>
+          <h3>Non-profit</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="social">
+          <div class="overlay"></div>
+          <h3>Social</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="news">
+          <div class="overlay"></div>
+          <h3>News and Publishing</h3>
+        </a>
+      </div>
+
+      <div class="col-md-4">
+        <a id="music">
+          <div class="overlay"></div>
+          <h3>Music and Media</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="location">
+          <div class="overlay"></div>
+          <h3>Location Based</h3>
+        </a>
+      </div>
+      <div class="col-md-4">
+        <a id="health">
+          <div class="overlay"></div>
+          <h3>Health and Fitness</h3>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="developers">
+  <div class="row">
+    <div class="container">
+      <h2 class="text-center">meet developers</h2>
+      <div class="col-md-4">
+        <div class="profile text-center" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg');">
+          <div class="overlay"></div>
+          <div class="profile-content">
+            <img src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+            <h5>James</h5>
+            <p class="text-yellow">Front-End</p>
+            <h3>15 hrs / week</h3>
+            <a class="btn btn-foggy">Hire James</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="how">
+  <div class="row">
+    <div class="container">
+      <h2 class="text-center">how devquity works</h2>
+      <button class="btn btn-yb">see more</button>
+      <div class="col-md-4">
+        <div id="discover" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2>discover<br/>
+          <span class="text-skinny text-yellow">
+            amazing <br/>
+            projects
+          </span>
+          </h2>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div id="invest" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2>invest<br/>
+          <span class="text-skinny text-yellow">
+            your spare <br/>
+            dev time</span>
+          </h2>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div id="earn" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2>earn<br/>
+          <span class="text-skinny text-yellow">
+            equity <br/>
+            or cash</span>
+          </h2>
+
         </div>
       </div>
     </div>

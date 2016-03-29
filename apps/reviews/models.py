@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.business.models import Company, Job
-from apps.accounts.models import Developer
+from apps.accounts.models import Profile
 
 
 class Review(models.Model):
@@ -14,7 +14,7 @@ class Review(models.Model):
 
 
 class DeveloperReview(Review):
-    developer = models.ForeignKey(Developer)
+    developer = models.ForeignKey(Profile)
 
 
 class CompanyReview(Review):

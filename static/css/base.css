@@ -1,7 +1,8 @@
 body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 14px;
+  background: #f5f5f5;
 }
 h1,
 h2,
@@ -10,13 +11,19 @@ h4,
 h5 {
   font-weight: 700;
 }
+h5 {
+  font-size: 18px;
+}
+.drop-padding {
+  padding: 0;
+}
 .icon {
   height: 35px;
 }
 .overlay {
   position: absolute;
   background: #000;
-  opacity: .7;
+  opacity: .6;
   top: 0;
   right: 0;
   bottom: 0;
@@ -27,9 +34,6 @@ h5 {
   color: #f6b900;
 }
 .text-skinny {
-  color: #fff;
-}
-.text-skinny {
   font-weight: 100;
 }
 .row {
@@ -37,7 +41,7 @@ h5 {
   margin-right: auto;
 }
 .btn {
-  text-transform: uppercase;
+  font-weight: 600;
 }
 .btn.btn-transparent {
   border: 1px solid #fff;
@@ -57,6 +61,7 @@ h5 {
 .btn.btn-yb {
   color: #31302f;
   border: 1px solid #f6b900;
+  background: transparent;
 }
 .btn.btn-linkedin {
   text-transform: none;
@@ -109,6 +114,9 @@ h5 {
   position: relative;
   z-index: 1;
 }
+#footer {
+  margin-top: 25px;
+}
 #footer .row {
   color: #fff;
   background: #31302f;
@@ -155,26 +163,251 @@ h5 {
   padding: 30px;
   width: 50%;
   position: relative;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 #login .login-hero .login-hero-content {
   position: relative;
   z-index: 1;
 }
 #login .login-hero .overlay {
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 #login .login-content {
   width: 50%;
   padding: 25px;
 }
-#developer-profile {
+#profile {
   margin: 100px 0 75px;
 }
-#developer-profile .profile-photo {
+#profile .profile-photo {
   height: 150px;
   margin-right: 15px;
   margin-bottom: 15px;
+}
+.panel-project {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.project-manager-photo {
+  border-radius: 45px;
+  height: 45px;
+  margin-right: 5px;
+}
+.project-company {
+  color: #f6b900;
+  font-weight: 700;
+}
+.project-description {
+  color: #a5a5a5;
+}
+.project-copy {
+  padding: 15px;
+}
+.project-image {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.project-specs {
+  width: 100%;
+}
+.project-specs ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  border-top: 1px solid #ccc;
+}
+.project-specs li {
+  float: left;
+  width: 33.33%;
+  padding: 15px 0;
+}
+.project-specs li:not(:first-child) {
+  border-left: 1px solid #ccc;
+}
+.project-specs .project-for,
+.project-specs .project-or {
+  position: absolute;
+  border: 1px solid #ccc;
+  width: 38px;
+  border-radius: 50px;
+  padding: 8px;
+  background: #fff;
+  color: #a5a5a5;
+}
+#featured-project .overlay {
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+#featured-project .project-image {
+  color: #fff;
+  min-height: 300px;
+  position: relative;
+  padding: 100px 50px;
+  background-size: cover;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
+#featured-project .project-image h3 {
+  position: relative;
+  z-index: 2;
+}
+#featured-project .project-content {
+  min-height: 300px;
+  position: relative;
+}
+#featured-project .project-content .project-specs {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+#featured-project .project-content .project-specs ul {
+  list-style-type: none;
+  padding: 0;
+  width: 100%;
+  border-top: 1px solid #ccc;
+}
+#featured-project .project-content .project-specs li {
+  float: left;
+  width: 33.33%;
+  padding: 15px 0;
+}
+#featured-project .project-content .project-specs li:not(:first-child) {
+  border-left: 1px solid #ccc;
+}
+#featured-project .project-content .project-specs .project-for,
+#featured-project .project-content .project-specs .project-or {
+  top: 30%;
+}
+#featured-project .project-content .project-specs .project-for {
+  left: 29%;
+}
+#featured-project .project-content .project-specs .project-or {
+  left: 63%;
+}
+#new-projects .container {
+  position: relative;
+}
+#new-projects .btn {
+  position: absolute;
+  top: 25px;
+  right: 0;
+}
+#new-projects .project-image {
+  width: 100%;
+  height: 175px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+#new-projects .project-for,
+#new-projects .project-or {
+  bottom: 25px;
+}
+#new-projects .project-for {
+  left: 28%;
+}
+#new-projects .project-or {
+  left: 61%;
+}
+#browse-category a,
+#browse-category a:visited,
+#browse-category a:hover {
+  color: #fff;
+  text-decoration: none;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: relative;
+  display: block;
+}
+#browse-category a h3,
+#browse-category a:visited h3,
+#browse-category a:hover h3 {
+  text-transform: uppercase;
+  position: relative;
+  z-index: 2;
+  padding: 125px 0;
+}
+#browse-category #art {
+  background-image: url('../images/art.jpg');
+}
+#browse-category #technology {
+  background-image: url('../images/technology.jpg');
+}
+#browse-category #gaming {
+  background-image: url('../images/game.jpg');
+}
+#browse-category #health {
+  background-image: url('../images/health.jpg');
+}
+#browse-category #nonprofit {
+  background-image: url('../images/nonprofit.jpg');
+}
+#browse-category #social {
+  background-image: url('../images/social.jpg');
+}
+#browse-category #location {
+  background-image: url('../images/location.jpg');
+}
+#browse-category #music {
+  background-image: url('../images/music.jpg');
+}
+#browse-category #news {
+  background-image: url('../images/news.jpg');
+}
+#developers .profile {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom;
+  position: relative;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 50px 0;
+}
+#developers .profile img {
+  border: 2px solid #ccc;
+  border-radius: 40px;
+  height: 40px;
+}
+#developers .overlay {
+  filter: blur(2px);
+  -webkit-filter: blur(2px);
+  overflow: hidden;
+  top: 0px;
+  bottom: -1px;
+  left: 0px;
+  right: 0px;
+}
+#developers .profile-content {
+  position: relative;
+  z-index: 2;
+}
+#how .container {
+  position: relative;
+}
+#how .btn {
+  position: absolute;
+  top: 25px;
+  right: 0;
+}
+#how .panel-how {
+  color: #fff;
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  padding: 60px 0;
+}
+#how h2 {
+  position: relative;
+  z-index: 2;
+}
+#how #discover {
+  background-image: url('../images/discover.jpg');
+}
+#how #invest {
+  background-image: url('../images/invest.jpg');
+}
+#how #earn {
+  background-image: url('../images/earn.jpg');
 }

@@ -1,15 +1,31 @@
 @dark-gray: #31302f;
+@light-gray: #a5a5a5;
 @black: #31302f;
 @yellow: #f6b900;
+@border-radius: 5px;
+
+.blur(@value){
+    filter: blur(@value);
+    -webkit-filter: blur(@value);
+}
 
 body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 14px;
+  background: #f5f5f5;
 }
 
 h1, h2, h3, h4, h5 {
   font-weight: 700;
+}
+
+h5 {
+  font-size: 18px;
+}
+
+.drop-padding {
+  padding: 0;
 }
 
 .icon {
@@ -19,7 +35,7 @@ h1, h2, h3, h4, h5 {
 .overlay {
   position: absolute;
   background: #000;
-  opacity: .7;
+  opacity: .6;
   top: 0;
   right: 0;
   bottom: 0;
@@ -29,10 +45,6 @@ h1, h2, h3, h4, h5 {
 
 .text-yellow {
   color: @yellow;
-}
-
-.text-skinny {
-  color: #fff;
 }
 
 .text-skinny {
@@ -46,8 +58,7 @@ h1, h2, h3, h4, h5 {
 
 //BUTTONS
 .btn {
-  text-transform: uppercase;
-
+  font-weight: 600;
   &.btn-transparent {
     border: 1px solid #fff;
     color: #fff;
@@ -68,6 +79,7 @@ h1, h2, h3, h4, h5 {
   &.btn-yb {
     color: @black;
     border: 1px solid @yellow;
+    background: transparent;
   }
 
   &.btn-linkedin {
@@ -138,7 +150,7 @@ h1, h2, h3, h4, h5 {
 
 // FOOTER
 #footer {
-
+  margin-top: 25px;
   .row {
     color: #fff;
     background: @dark-gray;
@@ -191,8 +203,8 @@ h1, h2, h3, h4, h5 {
     padding: 30px;
     width: 50%;
     position: relative;
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+    border-top-left-radius: @border-radius;
+    border-bottom-left-radius: @border-radius;
 
     .login-hero-content {
       position: relative;
@@ -200,8 +212,8 @@ h1, h2, h3, h4, h5 {
     }
 
     .overlay {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
+      border-top-left-radius: @border-radius;
+      border-bottom-left-radius: @border-radius;
     }
   }
 
@@ -211,12 +223,255 @@ h1, h2, h3, h4, h5 {
   }
 }
 
-#developer-profile {
+#profile {
   margin: 100px 0 75px;
 
   .profile-photo {
     height: 150px;
     margin-right: 15px;
     margin-bottom: 15px;
+  }
+}
+
+.panel-project {
+  border: 1px solid #ccc;
+  border-radius: @border-radius;
+}
+
+// PROJECT PANELS
+.project-manager-photo {
+  border-radius: 45px;
+  height: 45px;
+  margin-right: 5px;
+}
+.project-company {
+  color: @yellow;
+  font-weight: 700;
+}
+.project-description {
+  color: @light-gray;
+}
+
+.project-copy {
+  padding: 15px;
+}
+
+.project-image {
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.project-specs {
+  width: 100%;
+  ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+    border-top: 1px solid #ccc;
+  }
+  li {
+    float: left;
+    width: 33.33%;
+    padding: 15px 0;
+    &:not(:first-child) {
+      border-left: 1px solid #ccc;
+    }
+  }
+  .project-for, .project-or {
+    position: absolute;
+    border: 1px solid #ccc;
+    width: 38px;
+    border-radius: 50px;
+    padding: 8px;
+    background: #fff;
+    color: @light-gray;
+  }
+}
+
+#featured-project {
+  .overlay {
+    border-bottom-left-radius: @border-radius;
+    border-top-left-radius: @border-radius;
+  }
+
+  .project-image {
+    color: #fff;
+    min-height: 300px;
+    position: relative;
+    padding: 100px 50px;
+    background-size: cover;
+    border-bottom-left-radius: @border-radius;
+    border-top-left-radius: @border-radius;
+    h3 {
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  .project-content {
+    min-height: 300px;
+    position: relative;
+    .project-specs {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      ul {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+        border-top: 1px solid #ccc;
+      }
+      li {
+        float: left;
+        width: 33.33%;
+        padding: 15px 0;
+        &:not(:first-child) {
+          border-left: 1px solid #ccc;
+        }
+      }
+      .project-for, .project-or {
+        top: 30%;
+      }
+      .project-for {
+        left: 29%;
+      }
+      .project-or {
+        left: 63%
+      }
+    }
+  }
+}
+
+#new-projects {
+  .container {
+    position: relative;
+  }
+  .btn {
+    position: absolute;
+    top: 25px;
+    right: 0;
+  }
+  .project-image {
+    width: 100%;
+    height: 175px;
+    border-top-left-radius: @border-radius;
+    border-top-right-radius: @border-radius;
+  }
+  .project-for, .project-or {
+    bottom: 25px;
+  }
+  .project-for {
+    left: 28%;
+  }
+  .project-or {
+    left: 61%
+  }
+}
+
+#browse-category {
+
+  a, a:visited, a:hover {
+    color: #fff;
+    text-decoration: none;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    display: block;
+      h3 {
+        text-transform: uppercase;
+        position: relative;
+        z-index: 2;
+        padding: 125px 0;
+      }
+  }
+  #art {
+    background-image: url('../images/art.jpg');
+  }
+  #technology {
+    background-image: url('../images/technology.jpg');
+  }
+  #gaming {
+    background-image: url('../images/game.jpg');
+  }
+  #health {
+    background-image: url('../images/health.jpg');
+  }
+  #nonprofit {
+    background-image: url('../images/nonprofit.jpg');
+  }
+  #social {
+    background-image: url('../images/social.jpg');
+  }
+  #location {
+    background-image: url('../images/location.jpg');
+  }
+  #music {
+    background-image: url('../images/music.jpg');
+  }
+  #news {
+    background-image: url('../images/news.jpg');
+  }
+}
+
+#developers {
+  .profile {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom;
+    position: relative;
+    color: #fff;
+    text-transform: uppercase;
+    padding: 50px 0;
+  }
+  .profile img {
+    border: 2px solid #ccc;
+    border-radius: 40px;
+    height: 40px;
+  }
+  .overlay {
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+    overflow: hidden;
+    top: 0px;
+    bottom: -1px;
+    left: 0px;
+    right: 0px;
+  }
+
+  .profile-content{
+    position: relative;
+    z-index: 2;
+  }
+}
+
+#how {
+  .container {
+    position: relative;
+  }
+  .btn {
+    position: absolute;
+    top: 25px;
+    right: 0;
+  }
+  .panel-how {
+    color: #fff;
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    padding: 60px 0;
+  }
+  h2 {
+    position: relative;
+    z-index: 2;
+  }
+  #discover {
+    background-image: url('../images/discover.jpg');
+  }
+  #invest {
+    background-image: url('../images/invest.jpg');
+  }
+  #earn {
+    background-image: url('../images/earn.jpg');
   }
 }

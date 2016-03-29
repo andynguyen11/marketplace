@@ -1,4 +1,4 @@
-import tagulous
+import tagulous.models
 
 from datetime import datetime, timedelta
 
@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-from apps.accounts.models import Developer, ProjectManager, Profile
+from apps.accounts.models import Profile
 
 
 class Company(models.Model):
@@ -35,8 +35,9 @@ class Company(models.Model):
 
 class Project(models.Model):
     company = models.ForeignKey(Company)
-    project_manager = models.ForeignKey(ProjectManager)
+    project_manager = models.ForeignKey(Profile)
     title = models.CharField(max_length=255)
+    image = models.ImageField(blank=True, upload_to='project')
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     category = tagulous.models.SingleTagField()
@@ -46,6 +47,8 @@ class Project(models.Model):
     skills = tagulous.models.TagField()
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
+    featured = models.BooleanField(default=True)
+    featured_tagline = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['-date_created']
@@ -53,7 +56,7 @@ class Project(models.Model):
 
 class Job(models.Model):
     project = models.ForeignKey(Project)
-    developer = models.ForeignKey(Developer)
+    developer = models.ForeignKey(Profile)
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
