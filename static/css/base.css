@@ -210,6 +210,8 @@ h5 {
   background-size: cover;
 }
 .project-specs {
+  position: absolute;
+  bottom: 0;
   width: 100%;
 }
 .project-specs ul {
@@ -257,11 +259,6 @@ h5 {
   min-height: 300px;
   position: relative;
 }
-#featured-project .project-content .project-specs {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
 #featured-project .project-content .project-specs ul {
   list-style-type: none;
   padding: 0;
@@ -287,6 +284,10 @@ h5 {
   left: 63%;
 }
 #new-projects .container {
+  position: relative;
+}
+#new-projects .panel-project {
+  height: 550px;
   position: relative;
 }
 #new-projects .btn {

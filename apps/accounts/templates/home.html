@@ -16,13 +16,12 @@
     </div>
   </div>
 </div>
-  {{ featured.project_manager. }}
 <div id="featured-project">
   <div class="row">
     <div class="container">
       <h2 class="text-center">featured project</h2>
       <div class="panel panel-project">
-        <div class="project-image col-md-7" style="background-image: url('{% static '' %}{{ featured.image }}');">
+        <div class="project-image col-md-7" style="background-image: url('{% static "" %}{{ featured.image }}');">
           <div class="overlay"></div>
           <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
         </div>
@@ -30,7 +29,7 @@
           <div class="project-copy">
             <h4 class="project-title">{{ featured.title }}</h4>
             <div>
-              <img class="project-manager-photo pull-left" src="{{ social.extra_data.picture_url }}" />
+              <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
               <div class="project-byline pull-left">
                 <p>
                   <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
@@ -78,38 +77,40 @@
     <div class="container">
       <h2 class="text-center">newly added projects</h2>
       <button class="btn btn-yb">see more</button>
-      <div class="panel panel-project col-md-4 drop-padding">
-        <div class="project-image" style="background-image: url('{% static "images/login-2g.jpg" %}');"></div>
+      {% for project in new %}
+      <div class="col-md-4">
+      <div class="panel panel-project">
+        <div class="project-image" style="background-image: url('{% static "" %}{{ featured.image }}');"></div>
         <div class="project-content">
           <div class="project-copy">
-            <h4 class="project-title">PIE Cookbook</h4>
+            <h4 class="project-title">{{ project.title }}</h4>
             <div>
-              <img class="project-manager-photo pull-left" src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
+              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
               <div class="project-byline pull-left">
                 <p>
-                  <span class="project-manager">Andy Nguyen</span> <br />
-                  <span class="project-company">Devquity</span>
+                  <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                  <span class="project-company">{{ project.company.name }}</span>
                 </p>
               </div>
               <div class="clearfix"></div>
             </div>
             <div class="project-description">
-              Building a startup accelerator is hard. That's why PIE wants to open source its learnings. So anyone can build one for their community.
+              {{ project.description }}
             </div>
             <div class="project-skills"></div>
           </div>
           <div class="project-specs text-center">
             <ul>
               <li class="project-hours">
-                <h5>12</h5>
+                <h5>{{ project.estimated_hours }}</h5>
                 hours
               </li>
               <li class="project-equity">
-                <h5>1.2%</h5>
+                <h5>{{ project.estimated_equity }}%</h5>
                 equity
               </li>
               <li class="project-cash">
-                <h5>$2200</h5>
+                <h5>${{ project.estimated_cash }}</h5>
                 cash
               </li>
             </ul>
@@ -123,6 +124,8 @@
         </div>
         <div class="clearfix"></div>
       </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
 </div>
@@ -195,18 +198,20 @@
   <div class="row">
     <div class="container">
       <h2 class="text-center">meet developers</h2>
+      {% for developer in developers %}
       <div class="col-md-4">
-        <div class="profile text-center" style="background-image: url('https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg');">
+        <div class="profile text-center" style="background-image: url('{{ developer.linkedin.extra_data.picture_url }}');">
           <div class="overlay"></div>
           <div class="profile-content">
-            <img src="https://s3.amazonaws.com/uifaces/faces/twitter/andynguyen/73.jpg" />
-            <h5>James</h5>
+            <img src="{{ developer.linkedin.extra_data.picture_url }}" />
+            <h5>{{ developer.first_name }}</h5>
             <p class="text-yellow">Front-End</p>
             <h3>15 hrs / week</h3>
-            <a class="btn btn-foggy">Hire James</a>
+            <a class="btn btn-foggy">Hire {{ developer.first_name }}</a>
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
   </div>
 </div>
