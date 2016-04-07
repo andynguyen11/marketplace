@@ -493,6 +493,9 @@ a.project-link:hover {
   font-weight: 600;
   margin-bottom: 10px;
 }
+#project .project-image {
+  width: 100%;
+}
 #project .specs ul {
   list-style: none;
   padding: 0;
