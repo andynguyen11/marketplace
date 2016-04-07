@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="project" class="section-first">
+  <div class="row">
+    <div class="container">
+      <h2 class="section-header text-center sub-section">
+        {{ project.title }} <br />
+        <span class="text-yellow">by {{ project.company.name }}</span>
+      </h2>
+      <div class="sub-section">
+        <div class="col-md-6">
+          <img src="{% static "" %}{{ project.image }}" />
+          <ul class="project-meta">
+            <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> Austin, TX</li>
+            <li><img class="icon" src="{% static 'images/icon-category.png' %}" />Technology</li>
+            <li><img class="icon" src="{% static 'images/icon-skill.png' %}" /> Python, Javascript, HTML, CSS</li>
+          </ul>
+        </div>
+        <div class="specs col-md-3">
+          <h5>THE COMPANY</h5>
+          <ul>
+            <li class="project-hours">
+              <h5>{{ project.estimated_hours }}</h5>
+              est. hours needed
+            </li>
+            <li class="project-equity">
+              <h5>{{ project.estimated_equity }}%</h5>
+              equity offered
+            </li>
+            <li>
+              or
+            </li>
+            <li class="project-cash">
+              <h5>${{ project.estimated_cash }}</h5>
+              cash offered
+            </li>
+          </ul>
+          <button class="btn btn-dark">BID ON PROJECT</button>
+        </div>
+        <div class="specs col-md-3">
+          <h5>THE COMMUNITY</h5>
+          <ul>
+            <li class="project-hours">
+              <h5>246</h5>
+              total hours offered
+            </li>
+            <li class="project-equity">
+              <h5>0.5%</h5>
+              lowest equity request
+            </li>
+            <li>or</li>
+            <li class="project-cash">
+              <h5>$2100</h5>
+              lowest cash request
+            </li>
+          </ul>
+          <p class="text-muted"><i class="fa fa-star-o"></i> send me alerts on this project</p>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="section">
+        <ul class="nav nav-tabs">
+          <li role="presentation" class="active"><a href="#">Overview</a></li>
+          <li role="presentation"><a href="#">Business Plan <i class="fa fa-lock"></i></a></li>
+          <li role="presentation"><a href="#">Training Docs <i class="fa fa-lock"></i></a></li>
+          <li role="presentation"><a href="#">Technology Stack <i class="fa fa-lock"></i></a></li>
+          <li role="presentation"><a href="#">Financials <i class="fa fa-lock"></i></a></li>
+        </ul>
+        <div class="sub-section">
+          <div class="col-md-8">
+            <h2 class="section-header">Project Overview</h2>
+            <p>{{ project.description }}</p>
+          </div>
+          <div class="col-md-4">
+            <h5>Posted by</h5>
+            <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                  <span class="project-company">{{ project.company.name }}</span>
+                </p>
+              </div>
+              <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

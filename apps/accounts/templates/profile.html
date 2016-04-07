@@ -2,19 +2,238 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="profile">
+<div id="profile" class="section-first">
   <div class="row">
     <div class="container">
-      <img src="{{ social.extra_data.picture_url }}" class="pull-left profile-photo" />
-      <h1 class="pull-left">{{ user.first_name }}</h1>
+      <div class="col-md-2">
+        <img src="{{ social.extra_data.picture_url }}" class="profile-photo" />
+      </div>
+      <div class="col-md-10">
+        <h2 class="section-header">
+          {{ user.first_name }} <br />
+          <span class="text-yellow text-skinny">Full-Stack Developer</span>
+        </h2>
+        <p>{{ social.extra_data.summary }}</p>
+        <ul class="project-meta">
+          <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ social.extra_data.location.name }}</li>
+          <li><img class="icon" src="{% static 'images/icon-skill.png' %}" /> Python, Javascript, HTML, CSS</li>
+        </ul>
+        <p>
+          <a class="btn btn-dark">Hire {{ user.first_name }}</a>
+          <a class="btn btn-dark">Review {{ user.first_name }}</a>
+          <a class="btn btn-dark">See on LinkedIn</a>
+        </p>
+      </div>
       <div class="clearfix"></div>
-      <p>{{ social.extra_data.summary }}</p>
-      <p><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ social.extra_data.location.name }}</p>
-      <p>
-        <a class="btn btn-yb">Hire {{ user.first_name }}</a>
-        <a class="btn btn-yb">Review {{ user.first_name }}</a>
-        <a class="btn btn-yb">See on LinkedIn</a>
-      </p>
+    </div>
+  </div>
+</div>
+
+<div id="reviews" class="section">
+  <div class="row">
+    <div class="container">
+      <h2 class="section-header">2 Reviews of Andy</h2>
+      <div class="review-stars text-yellow">
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star"></i>
+        <i class="fa fa-star-half-full"></i>
+        <i class="fa fa-star-o"></i>
+        <span class="text-dark">Andy's Overall Rating</span>
+      </div>
+      <hr />
+      <h3>Review Summary</h3>
+      <div class="sub-section">
+        <div class="col-md-6">
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Accuracy</span>
+          </div>
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Timeliness</span>
+          </div>
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Code Quality</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Flexibility</span>
+          </div>
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Attn to Detail</span>
+          </div>
+          <div class="review-stars text-yellow">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-full"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark"> Documentation</span>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="review sub-section">
+        <div class="col-md-2 text-center">
+          <img class="img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/adellecharles/73.jpg" />
+          <h5>Samantha</h5>
+        </div>
+        <div class="col-md-10">
+          <p class="review-content">
+            “I found Sarah to be very easy to work with. Her code is always clean and she is quick to respond to
+            requests. When the project required something that was out of scope, she was quick to offer a solution
+            and be a constructive part of the team. Even though she worked remotely, she still feels like a part of
+            the team and we’re glad she’s now part of our future. I highly recommend her.”
+          </p>
+          <h5 class="review-recommendation text-success">
+            <i class="fa fa-thumbs-o-up"></i> I would work with this developer again.
+          </h5>
+          <p class="review-date">
+            February 2016
+          </p>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      <div class="review sub-section">
+        <div class="col-md-2 text-center">
+          <img class="img-circle" src="https://s3.amazonaws.com/uifaces/faces/twitter/mattsince87/73.jpg" />
+          <h5>Johnathan</h5>
+        </div>
+        <div class="col-md-10">
+          <p class="review-content">
+            “I found Sarah to be very easy to work with. Her code is always clean and she is quick to respond to
+            requests. When the project required something that was out of scope, she was quick to offer a solution
+            and be a constructive part of the team. Even though she worked remotely, she still feels like a part of
+            the team and we’re glad she’s now part of our future. I highly recommend her.”
+          </p>
+          <h5 class="review-recommendation text-danger">
+            <i class="fa fa-thumbs-o-down"></i> I would work with this developer again.
+          </h5>
+          <p class="review-date">
+            February 2016
+          </p>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="past-projects" class="section">
+  <div class="row">
+    <div class="container">
+      <h2 class="text-center section-header">Andy's Past Projects</h2>
+      <div class="sub-section">
+      {% if not jobs %}
+      <h3 class="text-center">No past projects</h3>
+      {% endif %}
+      {% for job in jobs %}
+      <div class="col-md-4">
+      <div class="panel panel-project">
+        <div class="project-image" style="background-image: url('{% static "" %}{{ job.project.image }}');"></div>
+        <div class="project-content">
+          <div class="project-copy">
+            <h4 class="project-title">{{ job.project.title }}</h4>
+            <div>
+              <img class="project-manager-photo pull-left" src="{{ job.project.project_manager.linkedin.extra_data.picture_url }}" />
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">{{ job.project.project_manager.first_name }} {{ job.project.project_manager.last_name }}</span> <br />
+                  <span class="project-company">{{ job.project.company.name }}</span>
+                </p>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            <div class="project-description">
+              {{ job.project.description }}
+            </div>
+            <div class="project-skills"></div>
+          </div>
+          <div class="project-specs text-center">
+            <ul>
+              <li class="project-hours">
+                <h5>{{ job.hours }}</h5>
+                hours
+              </li>
+              <li class="project-equity">
+                <h5>{{ job.equity }}%</h5>
+                equity
+              </li>
+              <li class="project-cash">
+                <h5>${{ job.cash }}</h5>
+                cash
+              </li>
+            </ul>
+            <div class="project-for">
+              for
+            </div>
+            <div class="project-or">
+              or
+            </div>
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+      </div>
+    {% endfor %}
+    </div>
+    </div>
+  </div>
+</div>
+
+<div id="experience" class="section">
+  <div class="row">
+    <div class="container">
+      <h2 class="section-header text-center">
+        Andy's stack experience
+      </h2>
+      <div class="sub-section text-center">
+        <div class="skill nginx col-md-3">
+          <div class="skill-image center-block"></div>
+          nginx <br />
+          <span class="text-muted">Web Servers</span>
+        </div>
+        <div class="skill cloudfront col-md-3">
+          <div class="skill-image center-block"></div>
+          Amazon CloudFront <br />
+          <span class="text-muted">Content Delivery Network</span>
+        </div>
+        <div class="skill javascript col-md-3">
+          <div class="skill-image center-block"></div>
+          Javascript <br />
+          <span class="text-muted">Language</span>
+        </div>
+        <div class="skill rubyonrails col-md-3">
+          <div class="skill-image center-block"></div>
+          Ruby on Rails <br />
+          <span class="text-muted">Application Framework</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>

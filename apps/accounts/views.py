@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 
 from apps.accounts.models import Profile
-from apps.business.models import Project
+from apps.business.models import Project, Job
 
 
 def login(request):
@@ -34,8 +34,9 @@ def view_profile(request, user_id=None):
         user = Profile.objects.get(id=user_id)
     else:
         user = request.user
+    jobs = Job.objects.filter(developer=user)
     social = user.social_auth.get(provider='linkedin-oauth2')
-    return render_to_response('profile.html', {'user': user, 'social': social}, context_instance=RequestContext(request))
+    return render_to_response('profile.html', {'user': user, 'social': social, 'jobs': jobs}, context_instance=RequestContext(request))
 
 
 def save_social_profile(backend, user, response, *args, **kwargs):

@@ -31,9 +31,10 @@ urlpatterns = patterns('apps',
     url(r'^$', 'accounts.views.home', name='home'),
     url(r'^login/$', 'accounts.views.login', name='login'),
     url(r'^logout/$', 'accounts.views.logout', name='logout'),
-    url(r'^developer/profile/$', 'accounts.views.view_profile', name='developer-profile'),
-    url(r'^developer/profile/(?P<user_id>[0-9]+)/$', 'accounts.views.view_profile', name='developer-profile'),
-    url(r'^developer/profile/edit/$', 'accounts.views.edit_profile', name='edit-developer-profile'),
+    url(r'^profile/$', 'accounts.views.view_profile', name='profile'),
+    url(r'^profile/(?P<user_id>[0-9]+)/$', 'accounts.views.view_profile', name='public-profile'),
+    url(r'^profile/edit/$', 'accounts.views.edit_profile', name='edit-profile'),
+    url(r'^project/(?P<project_id>[0-9]+)/$', 'business.views.view_project', name='project'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 handler404 = error404
