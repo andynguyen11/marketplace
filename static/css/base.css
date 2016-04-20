@@ -14,13 +14,20 @@ h4,
 h5 {
   font-weight: 700;
 }
-h2.section-header {
+ul {
+  list-style: none;
+  padding: 0;
+}
+.section-header {
   font-weight: 100;
   font-size: 42px;
   margin-top: 0;
 }
 h5 {
   font-size: 18px;
+}
+.wrapper {
+  margin-top: 75px;
 }
 .nav-tabs > li > a {
   border-color: #ddd;
@@ -32,6 +39,47 @@ a.project-link {
 }
 a.project-link:hover {
   text-decoration: none;
+}
+.progress-bar {
+  list-style: none;
+  padding: 0;
+}
+.progress-bar li {
+  float: left;
+  padding: 25px;
+  border: 1px solid #f6b900;
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+.progress-bar li.active {
+  background: #f6b900;
+  color: #fff;
+}
+.progress-bar li:first-child {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+.progress-bar li:last-child {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+.progress-state {
+  list-style: none;
+  padding: 0;
+  margin: 0 5px;
+}
+.progress-state li {
+  float: left;
+  padding: 25px;
+  border: 1px solid #f6b900;
+  border-radius: 5px;
+  margin: 0 5px;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+  color: #f6b900;
 }
 .drop-padding {
   padding: 0;
@@ -89,6 +137,11 @@ a.project-link:hover {
 .btn.btn-foggy:hover {
   color: #fff;
 }
+.btn.btn-yellow {
+  background: #f6b900;
+  border: 1px solid #f6b900;
+  color: #fff;
+}
 .btn.btn-yb {
   color: #31302f;
   border: 1px solid #f6b900;
@@ -121,6 +174,28 @@ a.project-link:hover {
   font-size: 18px;
   margin-right: 8px;
 }
+.account-nav {
+  background: #31302f;
+  height: auto;
+}
+.account-nav ul {
+  padding: 0;
+  margin: 0;
+}
+.account-nav ul li {
+  display: inline-block;
+  padding: 15px 20px;
+}
+.account-nav ul li.active {
+  background: #2b3237;
+}
+.account-nav ul li a {
+  color: #fff;
+  font-weight: bold;
+}
+.account-nav ul li .badge {
+  background: #d9534f;
+}
 #header {
   position: absolute;
   top: 0;
@@ -136,6 +211,20 @@ a.project-link:hover {
 }
 #header.home .logo {
   background-image: url(../images/devquity-wy.png);
+}
+#header .btn {
+  margin: 0 5px;
+}
+#header .header-action a:hover {
+  text-decoration: none;
+}
+#header .header-action img {
+  width: 30px;
+  margin: 0 20px;
+}
+#header .header-action .badge {
+  margin-left: -30px;
+  background: #d9534f;
 }
 #hero {
   color: #fff;
@@ -529,4 +618,166 @@ a.project-link:hover {
 }
 #experience .skill.rubyonrails .skill-image {
   background-image: url('../images/logo-rubyonrails.png');
+}
+#dashboard h2 {
+  margin: 30px 0;
+}
+#dashboard .section {
+  padding: 0;
+  margin-bottom: 25px;
+  background: #fff;
+}
+#dashboard .section .section-header {
+  background: #31302f;
+  color: #f6b900;
+  padding: 10px;
+}
+#dashboard .section .section-body {
+  padding: 15px;
+}
+#dashboard .section ul li {
+  padding: 15px 20px;
+  border-bottom: 1px solid #ccc;
+}
+#dashboard .section a.btn {
+  width: 80%;
+}
+#dashboard .section a,
+#dashboard .section a:hover,
+#dashboard .section a:visited {
+  color: #f6b900;
+  text-decoration: none;
+}
+#dashboard .section a.social,
+#dashboard .section a.social:hover,
+#dashboard .section a.social:visited {
+  color: #31302f;
+}
+#dashboard .section a.btn-linkedin,
+#dashboard .section a.btn-linkedin:hover,
+#dashboard .section a.btn-linkedin:visited {
+  color: #fff;
+}
+#dashboard .profile-photo {
+  width: 100%;
+}
+#postman table {
+  width: 100%;
+}
+#postman tr td {
+  padding: 20px 15px;
+  background: #f7f7f7;
+  color: #444;
+  border-top: 1px solid #e7e7e7;
+}
+#postman tr.unread td {
+  background: #fff;
+  color: #000;
+  font-weight: bold;
+}
+#postman tr td.photo-container {
+  width: 60px;
+}
+#postman .profile-photo {
+  width: 60px;
+}
+#postman button {
+  border: none;
+  margin-top: 3px;
+}
+#postman .section-header {
+  background: #31302f;
+  color: #f6b900;
+  padding: 10px;
+  font-size: 14px;
+}
+#postman #message-wrapper {
+  background: #fff;
+}
+#postman .ps-messages-view-header {
+  margin: 20px 0;
+}
+#postman .ps-messages-view-header .button {
+  padding: 0.5em 1.25em;
+  border: 1px solid #ccc;
+  background: #f7f7f8;
+  border-radius: 5px;
+}
+#postman .ps-messages-view-header h3 {
+  margin: 0;
+}
+#postman #pm_messages li {
+  margin: 15px 0;
+}
+#postman #pm_messages .sent-message {
+  padding: 10px;
+  margin: 0 10px;
+  background: #ffeaa9;
+  border: 1px solid #f6b900;
+  border-radius: 5px;
+  width: 50%;
+}
+#postman #pm_messages .received-message {
+  padding: 10px;
+  margin: 0 10px;
+  background: #ccc;
+  border: 1px solid #31302f;
+  border-radius: 5px;
+  width: 50%;
+}
+#postman #pm_messages .message-date {
+  margin-top: 10px;
+}
+#postman #pm_reply textarea {
+  width: 100%;
+  border-radius: 5px;
+  padding: 10px;
+}
+.message-archive,
+.thread-archive,
+.message-unarchive,
+.thread-unarchive,
+.message-bookmark,
+.thread-bookmark,
+.message-unbookmark,
+.thread-unbookmark {
+  background: none;
+  cursor: pointer;
+}
+.message-bookmark,
+.thread-bookmark,
+.message-unbookmark,
+.thread-unbookmark {
+  margin-right: 10px;
+}
+.message-archive.button-right,
+.thread-archive.button-right,
+.message-unarchive.button-right,
+.thread-unarchive.button-right,
+.message-bookmark.button-left,
+.thread-bookmark.button-left,
+.message-unbookmark.button-left,
+.thread-unbookmark.button-left {
+  background: #f7f7f8;
+}
+.back.button-left {
+  margin-right: 15px;
+}
+.message-archive img,
+.thread-archive img,
+.message-unarchive img,
+.thread-unarchive img,
+.message-bookmark img,
+.thread-bookmark img,
+.message-unbookmark img,
+.thread-unbookmark img {
+  height: 24px;
+}
+#postman textarea {
+  margin: 15px 0;
+}
+#message-form textarea {
+  width: 100%;
+  margin: 10px 0 15px;
+  padding: 10px;
 }

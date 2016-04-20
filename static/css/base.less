@@ -5,8 +5,8 @@
 @border-radius: 5px;
 
 .blur(@value){
-    filter: blur(@value);
-    -webkit-filter: blur(@value);
+  filter: blur(@value);
+  -webkit-filter: blur(@value);
 }
 
 body {
@@ -24,7 +24,12 @@ h1, h2, h3, h4, h5 {
   font-weight: 700;
 }
 
-h2.section-header {
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.section-header {
   font-weight: 100;
   font-size: 42px;
   margin-top: 0;
@@ -32,6 +37,10 @@ h2.section-header {
 
 h5 {
   font-size: 18px;
+}
+
+.wrapper {
+  margin-top: 75px;
 }
 
 .nav-tabs>li>a {
@@ -44,6 +53,49 @@ a.project-link {
   color: @black;
   &:hover {
     text-decoration: none;
+  }
+}
+
+.progress-bar {
+  list-style: none;
+  padding: 0;
+  li {
+    float: left;
+    padding: 25px;
+    border: 1px solid @yellow;
+    margin: 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+    &.active {
+      background: @yellow;
+      color: #fff;
+    }
+    &:first-child {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+    &:last-child {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+  }
+}
+
+.progress-state {
+  list-style: none;
+  padding: 0;
+  margin: 0 5px;
+  li {
+    float: left;
+    padding: 25px;
+    border: 1px solid @yellow;
+    border-radius: 5px;
+    margin: 0 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+    color: @yellow;
   }
 }
 
@@ -115,6 +167,12 @@ a.project-link {
     }
   }
 
+  &.btn-yellow {
+    background: @yellow;
+    border: 1px solid @yellow;
+    color: #fff;
+  }
+
   &.btn-yb {
     color: @black;
     border: 1px solid @yellow;
@@ -152,6 +210,30 @@ a.project-link {
   }
 }
 
+
+.account-nav {
+  background: @dark-gray;
+  height: auto;
+  ul {
+    padding: 0;
+    margin: 0;
+  }
+  ul li {
+    display: inline-block;
+    padding: 15px 20px;
+    &.active {
+      background: #2b3237;
+    }
+    a {
+      color: #fff;
+      font-weight: bold;
+    }
+    .badge {
+      background: #d9534f;
+    }
+  }
+}
+
 // HEADER
 #header {
   position: absolute;
@@ -170,6 +252,22 @@ a.project-link {
   &.home {
     .logo {
       background-image: url(../images/devquity-wy.png);
+    }
+  }
+  .btn {
+    margin: 0 5px;
+  }
+  .header-action {
+    a:hover {
+      text-decoration: none;
+    }
+    img {
+      width: 30px;
+      margin: 0 20px;
+    }
+    .badge {
+      margin-left: -30px;
+      background: #d9534f;
     }
   }
 
@@ -453,7 +551,6 @@ a.project-link {
 }
 
 #browse-category {
-
   a, a:visited, a:hover {
     color: #fff;
     text-decoration: none;
@@ -617,5 +714,168 @@ a.project-link {
     &.rubyonrails .skill-image {
       background-image: url('../images/logo-rubyonrails.png');
     }
+  }
+}
+
+#dashboard {
+  h2 {
+    margin: 30px 0;
+  }
+  .section {
+    padding: 0;
+    margin-bottom: 25px;
+    background: #fff;
+    .section-header {
+      background: @dark-gray;
+      color: @yellow;
+      padding: 10px;
+    }
+    .section-body {
+      padding: 15px;
+    }
+    ul li {
+      padding: 15px 20px;
+      border-bottom: 1px solid #ccc;
+    }
+    a.btn {
+      width: 80%;
+    }
+    a, a:hover, a:visited {
+      color: @yellow;
+      text-decoration: none;
+    }
+    a.social, a.social:hover, a.social:visited {
+      color: @dark-gray;
+    }
+    a.btn-linkedin, a.btn-linkedin:hover, a.btn-linkedin:visited {
+      color: #fff;
+    }
+  }
+
+  .profile-photo {
+    width: 100%;
+  }
+}
+
+// MESSAGING
+#postman {
+  table {
+    width: 100%;
+  }
+  tr td {
+    padding: 20px 15px;
+    background: #f7f7f7;
+    color: #444;
+    border-top: 1px solid #e7e7e7;
+  }
+  tr.unread td {
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+  }
+  tr td.photo-container {
+    width: 60px;
+  }
+  .profile-photo {
+    width: 60px;
+  }
+  button {
+    border: none;
+    margin-top: 3px;
+  }
+  .section-header {
+    background: @dark-gray;
+    color: @yellow;
+    padding: 10px;
+    font-size: 14px;
+  }
+  #message-wrapper {
+    background: #fff;
+  }
+  .ps-messages-view-header {
+    margin: 20px 0;
+    .button {
+      padding: 0.5em 1.25em;
+      border: 1px solid #ccc;
+      background: #f7f7f8;
+      border-radius: @border-radius;
+    }
+    h3 {
+      margin: 0;
+    }
+  }
+  #pm_messages {
+    li {
+      margin: 15px 0;
+    }
+    .sent-message {
+      padding: 10px;
+      margin: 0 10px;
+      background: lighten(@yellow, 35%);
+      border: 1px solid @yellow;
+      border-radius: @border-radius;
+      width: 50%;
+    }
+    .received-message {
+      padding: 10px;
+      margin: 0 10px;
+      background: #ccc;
+      border: 1px solid @dark-gray;
+      border-radius: @border-radius;
+      width: 50%;
+    }
+    .message-date {
+      margin-top: 10px;
+    }
+  }
+  #pm_reply {
+    textarea {
+      width: 100%;
+      border-radius: @border-radius;
+      padding: 10px;
+    }
+  }
+}
+
+.message-archive, .thread-archive,
+.message-unarchive, .thread-unarchive,
+.message-bookmark, .thread-bookmark,
+.message-unbookmark, .thread-unbookmark {
+  background: none;
+  cursor: pointer;
+}
+
+.message-bookmark, .thread-bookmark,
+.message-unbookmark, .thread-unbookmark {
+  margin-right: 10px;
+}
+
+.message-archive.button-right, .thread-archive.button-right,
+.message-unarchive.button-right, .thread-unarchive.button-right,
+.message-bookmark.button-left, .thread-bookmark.button-left,
+.message-unbookmark.button-left, .thread-unbookmark.button-left {
+  background: #f7f7f8;
+}
+
+.back.button-left {
+  margin-right: 15px;
+}
+
+.message-archive img, .thread-archive img,
+.message-unarchive img, .thread-unarchive img,
+.message-bookmark img, .thread-bookmark img,
+.message-unbookmark img, .thread-unbookmark img {
+  height: 24px;
+}
+
+#postman textarea {
+  margin: 15px 0;
+}
+
+#message-form {
+  textarea {
+    width: 100%;
+    margin: 10px 0 15px;
+    padding: 10px;
   }
 }

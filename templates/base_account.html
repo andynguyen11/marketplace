@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load postman_tags %}
+
+{% postman_unread as unread_count %}
+
+{% block header_actions %}
+<button class="btn btn-yellow">Discover a Project</button>
+<button class="btn btn-yellow">List a Project</button>
+<a class="header-action" href="{% url 'postman:inbox' %}">
+  <img src="{% static 'images/icon-message.png' %}" />
+  {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+</a>
+<a class="header-action" href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications.png' %}" /></a>
+<a class="header-action" href="{% url 'postman:inbox' %}"><img src="{% static 'images/icon-profile.png' %}" /></a>
+{% endblock %}
+
+{% block content %}
+<div class="wrapper">
+<div class="account-nav">
+  <div class="row">
+    <div class="container">
+      <ul>
+        <li>
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+        </li>
+        <li>
+        {{ postman_unread }}
+          <a href="{% url 'postman:inbox' %}">
+            Messages {% if unread_count %}
+            <span class="badge">{{ unread_count }}</span>{% endif %}
+          </a>
+        </li>
+        <li>
+          <a href="">Open Projects</a>
+        </li>
+        <li>
+          <a href="" >Engaged Projects</a>
+        </li>
+        <li>
+          <a href="">Your Documents</a>
+        </li>
+        <li>
+          <a href="">Your Languages</a>
+        </li>
+        <li>
+          <a href="">Settings</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% block account_content %}
+{% endblock %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static "js/messaging.js" %}"></script>
+{% endblock %}

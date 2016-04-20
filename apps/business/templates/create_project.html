@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="create-project-header" class="section">
+  <div class="row">
+    <div class="container">
+      <ul class="progress-bar">
+        <li class="active">Basics</li>
+        <li>Project Overview</li>
+        <li>Compensation</li>
+        <li>About You</li>
+        <li>Payment</li>
+      </ul>
+      <ul class="progress-state">
+        <li>Preview</li>
+        <li>Submit for Review</li>
+      </ul>
+      <div class="clearfix"></div>
+      <div class="text-center">
+        <p class="section-header">
+          I want to create a
+          <select>
+            <option>social</option>
+          </select>
+          project <br />
+          <span class="text-yellow">with incredible developers.</span>
+        </p>
+        <p class="section-header">
+          The project will be called:
+          <input type="text" placeholder="Title project here." />
+        </p>
+        <p class="section-header" class="text-muted">
+          a few more quick details...
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

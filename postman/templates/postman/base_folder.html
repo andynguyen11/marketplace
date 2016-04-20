@@ -1,0 +1,135 @@
+{% extends "postman/base.html" %}
+{% load i18n postman_tags %}
+{% load pagination_tags %}
+{% load staticfiles %}
+
+{% comment %}
+WARNING: 'pagination_tags' is a name from the django-pagination application.
+For convenience, the design of this template is done with the use of that application.
+Django-postman will still be working, even if that application is not installed, by providing a mock
+for the template tag library.
+If the real implementation is to be used, just make sure that 'pagination' is declared before 'postman'
+in the INSTALLED_APPS setting.
+{% endcomment %}
+
+{% block account_content %}
+<div id="postman">
+<div class="row">
+  <div class="container">
+<div class="postman-header">
+  <h2 class="text-yellow pull-left">communication is key</h2>
+  {% autopaginate pm_messages 8 %}
+  <div class="pull-right">{% paginate %}</div>
+  <div class="clearfix"></div>
+</div>
+<div class="section-header">
+  <h4 class="pull-left">Messages <span class="text-skinny">({{ unread_count }} New)</span></h4>
+  {% block postman_menu %}
+  <div class="dropdown pull-right">
+    <button class="btn btn-default dropdown-toggle" type="button" id="message-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+      {% block pm_folder_title %}{% endblock %}
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="message-dropdown">
+      <li><a href="{% url 'postman:inbox' %}">&raquo;&nbsp;{% trans "Inbox" %}{% if unread_count %} <strong>({{ unread_count }})</strong>{% endif %}</a></li>
+      <li><a href="{% url 'postman:sent' %}">&raquo;&nbsp;{% trans "Sent Messages" %}</a></li>
+      <li><a href="{% url 'postman:bookmarks' %}">&raquo;&nbsp;{% trans "Important Messages" %}</a></li>
+      <li><a href="{% url 'postman:archives' %}">&raquo;&nbsp;{% trans "Archives" %}</a></li>
+    </ul>
+  </div>
+  {% endblock %}
+  <div class="clearfix"></div>
+</div>
+{% if invalid_page %}
+  <p>{% trans "Sorry, this page number is invalid." %}</p>
+{% else %}
+{% if pm_messages %}
+<table id="pm_messages">
+  <tbody>
+    {% for message in pm_messages %}
+    <tr {% if message.is_new %}class="unread"{% endif %}>
+      <td class="photo-container">
+        <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+      </td>
+      {% block pm_sender_cell %}
+      <td>
+        {{ message.obfuscated_sender|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %} <br/>
+        <span class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</span>
+      </td>
+      {% endblock %}
+      {% block pm_recipient_cell %}
+      <td>
+        {{ message.obfuscated_recipient|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %} <br/>
+        <span class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</span>
+      </td>
+      {% endblock %}
+      <td>
+        {% block pm_subject %}
+        <a href="{% if by_conversation and message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+        {% include "postman/inc_subject_ex.html" %}
+        </a>
+        {% endblock %}
+      </td>
+      <td>
+
+      </td>
+
+      <td class="text-right">
+        {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}
+          {% if message.thread_id %}
+          <button class="thread-unbookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+            <img src="{% static "images/star-active.png" %}">
+          </button>
+          {% else %}
+          <button class="message-unbookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+            <img src="{% static "images/star-active.png" %}">
+          </button>
+          {% endif %}
+        {% else %}
+          {% if message.thread_id %}
+          <button class="thread-bookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+            <img src="{% static "images/star-open.png" %}">
+          </button>
+          {% else %}
+          <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+            <img src="{% static "images/star-open.png" %}">
+          </button>
+          {% endif %}
+        {% endif %}
+
+        {% if message.sender == user and message.sender_archived or message.recipient == user and message.recipient_archived %}
+          {% if message.thread_id %}
+          <button class="thread-unarchive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+            <img src="{% static "images/unarchive.png" %}">
+          </button>
+          {% else %}
+          <button class="message-unarchive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+            <img src="{% static "images/unarchive.png" %}">
+          </button>
+          {% endif %}
+        {% else %}
+          {% if message.thread_id %}
+          <button class="thread-archive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+            <img src="{% static "images/archive.png" %}">
+          </button>
+          {% else %}
+          <button class="message-archive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+            <img src="{% static "images/archive.png" %}">
+          </button>
+          {% endif %}
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</form>
+{% else %}
+<p>{% trans "No messages." %}</p>
+{% endif %}
+{% endif %}
+{% block pm_footer_info %}{% endblock %}
+</div>
+</div>
+</div>
+{% endblock account_content %}

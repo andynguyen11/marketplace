@@ -1,0 +1,100 @@
+{% extends "postman/base.html" %}
+
+{% load i18n %}
+{% load postman_tags %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="postman">
+<div id="message-wrapper">
+<div class="row">
+<div class="container">
+<div class="ps-messages-view-header">
+  <a class="pull-left back button button-left" href="{{ next_url }}"><</a>
+  <h3 class="pull-left">
+    <span class="text-skinny">Conversation with</span>
+    <span class="text-yellow">{{ pm_messages.0.sender.first_name }}</span>
+  </h3>
+  <div class="pull-right message-tools">
+  {% if pm_messages.0.sender == user and pm_messages.0.sender_bookmarked or pm_messages.0.recipient == user and pm_messages.0.recipient_bookmarked %}
+    {% if pm_messages|length > 1 %}
+    <button class="thread-unbookmark button button-left" data-value="{{ pm_messages.0.thread_id }}" data-url="">
+      <img src="{% static "images/star-active.png" %}">
+    </button>
+    {% else %}
+    <button class="message-unbookmark button button-left" data-value="{{ pm_messages.0.pk }}" data-url="">
+      <img src="{% static "images/star-active.png" %}">
+    </button>
+    {% endif %}
+  {% else %}
+    {% if pm_messages|length > 1 %}
+    <button class="thread-bookmark button button-left" data-value="{{ pm_messages.0.thread_id }}" data-url="">
+      <img src="{% static "images/star-open.png" %}">
+    </button>
+    {% else %}
+    <button class="message-bookmark button button-left" data-value="{{ pm_messages.0.pk }}" data-url="">
+      <img src="{% static "images/star-open.png" %}">
+    </button>
+    {% endif %}
+  {% endif %}
+  {% if pm_messages.0.sender == user and pm_messages.0.sender_archived or pm_messages.0.recipient == user and pm_messages.0.recipient_archived %}
+    {% if pm_messages|length > 1 %}
+      <button class="thread-unarchive button button-right" data-url="" data-value="{{ pm_messages.0.thread_id }}">
+        <img src="{% static "images/unarchive.png" %}">
+      </button>
+    {% else %}
+      <button class="message-unarchive button button-right" data-url="" data-value="{{ pm_messages.0.pk }}">
+        <img src="{% static "images/unarchive.png" %}">
+      </button>
+    {% endif %}
+  {% else %}
+    {% if pm_messages|length > 1 %}
+      <button class="thread-archive button button-right" data-url="" data-value="{{ pm_messages.0.thread_id }}">
+        <img src="{% static "images/archive.png" %}">
+      </button>
+    {% else %}
+      <button class="message-archive button button-right" data-url="" data-value="{{ pm_messages.0.pk }}">
+        <img src="{% static "images/archive.png" %}">
+      </button>
+    {% endif %}
+  {% endif %}
+  </div>
+  <div class="clearfix"></div>
+</div>
+
+<ul id="pm_messages">
+  {% for message in pm_messages %}
+  <li>
+    {% if message.sender == request.user %}
+      <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle pull-right" />
+      <div class="sent-message pull-right">{{ message.body|linebreaksbr }}</div>
+      <div class="message-date text-muted pull-right">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
+      <div class="clearfix"></div>
+    {% else %}
+      <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle pull-left" />
+      <div class="received-message pull-left">{{ message.body|linebreaksbr }}</div>
+      <div class="message-date text-muted pull-left">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
+      <div class="clearfix"></div>
+    {% endif %}
+  </li>
+  {% endfor %}
+</ul>
+</div>
+</div>
+</div>
+
+<div id="reply-wrapper">
+<div class="row">
+<div class="container">
+{% if pm_messages.0.sender == user and pm_messages.0.sender_archived or pm_messages.0.recipient == user and pm_messages.0.recipient_archived %}
+{% else %}
+{% if reply_to_pk %}
+<form action="{% url 'postman:reply' reply_to_pk %}?next={{ next_url|urlencode }}" method="post">{% csrf_token %}
+<div id="pm_reply">{{ form.body }}</div>
+<button class="btn btn-yellow" type="submit">{% trans 'Send Message' %}</button>
+</form>{% endif %}
+{% endif %}
+</div>
+</div>
+</div>
+{% endblock %}

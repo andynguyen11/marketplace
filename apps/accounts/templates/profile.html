@@ -19,7 +19,7 @@
           <li><img class="icon" src="{% static 'images/icon-skill.png' %}" /> Python, Javascript, HTML, CSS</li>
         </ul>
         <p>
-          <a class="btn btn-dark">Hire {{ user.first_name }}</a>
+          <a class="btn btn-dark" data-toggle="modal" data-target="#message-modal">Hire {{ user.first_name }}</a>
           <a class="btn btn-dark">Review {{ user.first_name }}</a>
           <a class="btn btn-dark">See on LinkedIn</a>
         </p>
@@ -237,4 +237,30 @@
     </div>
   </div>
 </div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="message-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">
+          <span class="text-skinny">Message with</span>
+          <span class="text-yellow">{{ user.first_name }}</span>
+        </h4>
+      </div>
+      <div class="modal-body">
+        <form id="message-form">
+          <input type="hidden" name="recipient" value="{{ user.id }}" />
+          <textarea cols="40" class="required-input" id="id_message" name="message" placeholder="Write your message..." rows="7"></textarea>
+          <input type="submit" class="btn btn-yellow pull-right" value="Send Message" />
+          <div class="clearfix"></div>
+        </form>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static "js/messaging.js" %}"></script>
 {% endblock %}

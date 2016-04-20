@@ -2,6 +2,9 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load require %}
+{% load postman_tags %}
+
+{% postman_unread as unread_count %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
@@ -20,6 +23,7 @@
   <link type="text/css" rel="stylesheet" href="{% static 'css/formValidation.min.css' %}" />
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
   {% block css %}{% endblock %}
+  {% block extrahead %}{% endblock %}
   {% block fb_pixel %}{% endblock %}
 </head>
 
@@ -34,8 +38,10 @@
       <div class="container">
         <a class="pull-left logo" href="/"></a>
         <div class="pull-right">
+          {% block header_actions %}
           <button class="btn btn-transparent">Discover a Project</button>
           <button class="btn btn-transparent">List a Project</button>
+          {% endblock %}
         </div>
       </div>
     </div>
@@ -88,6 +94,10 @@
   </div>
 </div>
 
+<script type="text/javascript" src="{% static "js/library/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "js/library/bootstrap.js" %}"></script>
+<script type="text/javascript" src="{% static "js/api.js" %}"></script>
+<script type="text/javascript" src="{% static "js/main.js" %}"></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

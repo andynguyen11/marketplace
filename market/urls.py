@@ -34,7 +34,11 @@ urlpatterns = patterns('apps',
     url(r'^profile/$', 'accounts.views.view_profile', name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', 'accounts.views.view_profile', name='public-profile'),
     url(r'^profile/edit/$', 'accounts.views.edit_profile', name='edit-profile'),
+    url(r'^profile/dashboard/$', 'accounts.views.dashboard', name='dashboard'),
+    url(r'^profile/message/send/$', 'accounts.views.send_message', name='send-message'),
+    url('^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^project/(?P<project_id>[0-9]+)/$', 'business.views.view_project', name='project'),
+    url(r'^project/create/$', 'business.views.create_project', name='create-project'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 handler404 = error404

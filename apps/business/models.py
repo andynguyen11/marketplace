@@ -38,6 +38,7 @@ class Project(models.Model):
     project_manager = models.ForeignKey(Profile)
     title = models.CharField(max_length=255)
     image = models.ImageField(blank=True, upload_to='project')
+    short_blurb = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     category = tagulous.models.SingleTagField()
@@ -48,7 +49,6 @@ class Project(models.Model):
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=True)
-    featured_tagline = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['-date_created']

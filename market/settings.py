@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'apps.accounts',
     'apps.business',
     'apps.reviews',
+    'postman',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -264,6 +265,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
 )
+
+POSTMAN_DISALLOW_ANONYMOUS = True
+POSTMAN_DISALLOW_MULTIRECIPIENTS = True
+POSTMAN_DISALLOW_COPIES_ON_REPLY = True
+POSTMAN_AUTO_MODERATE_AS = True
 
 try:
     from local_settings import *

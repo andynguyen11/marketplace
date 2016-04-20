@@ -1,9 +1,7 @@
-hm_api = {
-  cc: '/api/cc/',
-  job: '/api/job/',
-  profile: '/api/customer/',
-  provider_job: '/api/provider/job/',
-  customer: '/api/customer/summary/',
-  review: '/api/review/',
-  price: '/api/price/'
+dq_api = {
+  message_send: '/profile/message/send/',
+  message_unarchive: '/profile/messages/unarchive/',
+  message_archive: '/profile/messages/archive/',
+  message_bookmark: '/profile/messages/bookmark/',
+  message_unbookmark: '/profile/messages/unbookmark/'
 };

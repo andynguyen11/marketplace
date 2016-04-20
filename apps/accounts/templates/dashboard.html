@@ -1,0 +1,85 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-12">
+        <h2 class="text-yellow">welcome to your dashboard, {{ user.first_name }}</h2>
+      </div>
+      <div class="col-md-3">
+        <div class="section text-center">
+          <img src="{{ social.extra_data.picture_url }}" class="profile-photo" />
+          <div class="section-body">
+            <h3 class="text-skinny">{{ user.first_name }}</h3>
+            <p>
+              <a href="">View Profile</a><br />
+              <a href="">Edit Profile</a>
+            </p>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <h4>Account Sync <i class="fa fa-question-circle-o"></i></h4>
+          </div>
+          <div class="section-body text-center">
+            <p>
+              <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+                <i class="fa fa-linkedin"></i>
+                 LinkedIn
+              </a><br />
+              <span class="text-success">CONFIRMED</span>
+            </p>
+            <p>
+              <a class="btn btn-angellist social" href="{% url 'social:begin' backend='angellist-oauth2' %}">
+                <i class="fa fa-angellist"></i>
+                 AngelList
+              </a><br />
+              <span class="text-danger">UNCONFIRMED</span>
+            </p>
+            <p>
+              <a class="btn btn-angellist social" href="">
+                <i class="fa fa-envelope"></i>
+                 Email Address
+              </a><br />
+              <span class="text-success">CONFIRMED</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="section">
+          <div class="section-header">
+            <h4>Notifications <span class="text-skinny">(5 New)</span></h4>
+          </div>
+          <ul class="notifications">
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">SEE MORE</a></li>
+          </ul>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h4>Messages <span class="text-skinny">(5 New)</span></h4>
+          </div>
+          <ul class="notifications">
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            <li><a href="">SEE MORE</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
