@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.business.models import Company, Job, Project
+from apps.business.models import Company, Job, Project, Document
 
 
 @admin.register(Company)
@@ -17,3 +17,8 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ('project', 'developer', 'date_created', 'status', )
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
+    list_display = ('project', 'type', 'status', )

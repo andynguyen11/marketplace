@@ -56,6 +56,24 @@ def dashboard(request):
 
 
 @login_required
+def view_bids(request):
+    projects = Project.objects.filter(project_manager=request.user)
+    return render_to_response('bids.html', {'projects': projects, }, context_instance=RequestContext(request))
+
+
+@login_required
+def view_projects(request):
+    projects = Project.objects.filter(project_manager=request.user)
+    return render_to_response('projects.html', {'projects': projects, }, context_instance=RequestContext(request))
+
+
+@login_required
+def view_documents(request):
+    projects = Project.objects.filter(project_manager=request.user)
+    return render_to_response('documents.html', {'projects': projects, }, context_instance=RequestContext(request))
+
+
+@login_required
 def send_message(request):
     if request.POST:
         recipient = Profile.objects.get(id=request.POST['recipient'])

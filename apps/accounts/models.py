@@ -15,6 +15,7 @@ class Profile(AbstractUser):
     notes = models.TextField(blank=True, null=True)
     photo = models.ImageField(blank=True, upload_to='profile')
     signup_code = models.CharField(max_length=25, blank=True, null=True)
+    role = models.CharField(max_length=100, blank=True, null=True)
 
     @property
     def linkedin(self):

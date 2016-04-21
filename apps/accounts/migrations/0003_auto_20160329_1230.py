@@ -10,6 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('reviews', '0002_auto_20160329_1230'),
         ('accounts', '0002_tag'),
+        ('business', '0002_auto_20160329_1228'),
     ]
 
     operations = [

@@ -1,0 +1,75 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-12">
+        <h2 class="text-yellow">your project documents live here</h2>
+      </div>
+      <div class="col-md-12">
+        {% for project in projects %}
+        <div class="section">
+          <div class="section-header">
+            <h4>{{ project.title }} <span class="text-skinny">(5 New)</span></h4>
+          </div>
+          <table class="dashboard-table">
+            {% if project.document_set.all %}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Location</th>
+                  <th>Doc Type</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              {% for doc in project.document_set.all %}
+              <tr>
+                <td>
+                  <img src="{{ doc.job.developer.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+                </td>
+                <td>
+                  <strong>{{ doc.job.developer.first_name }}</strong> <br/>
+                  {{ bid.date_created }}
+                </td>
+                <td>
+                  <strong>{{ doc.job.developer.role }}</strong><br/>
+                  Developer
+                </td>
+                <td>
+                  <strong>{{ doc.job.developer.city }}</strong><br/>
+                  {{ doc.job.developer.state }}
+                </td>
+                <td>
+                  <strong>{{ doc.type }}</strong>
+                </td>
+                <td>
+                  <strong>${{ bid.status }}</strong>
+                </td>
+                <td>
+                  <a href="#" class="btn btn-dark pull-left">Sign</a>
+                  <a href="#" class="btn btn-dark pull-left">View</a>
+                  <a href="#" class="btn btn-dark pull-left">Download</a>
+                  <a href="#" class="btn btn-dark pull-left">Message</a>
+                  <div class="clearfix"></div>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td><h4>There are currently no bids on this project.   <a href="#">Start searching</a> for some developers!</h4></td></tr>
+            {% endif %}
+          </table>
+        </div>
+      {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

@@ -50,6 +50,9 @@ class Project(models.Model):
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         ordering = ['-date_created']
 
@@ -63,3 +66,19 @@ class Job(models.Model):
     cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
+
+
+DOCUMENT_TYPES = (
+    (u'1', u'Non-Disclosure Agreement'),
+    (u'2', u'Contract Service Agreement'),
+    (u'3', u'Non-Compete Agreement'),
+)
+
+class Document(models.Model):
+    type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
+    status = models.CharField(max_length=100, default='PENDING')
+    project = models.ForeignKey(Project)
+    job = models.ForeignKey(Job)

@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'collectfast',
     'password_reset',
-    'require',
+    #'require',
     'rest_framework',
     'rest_framework.authtoken',
     'tagulous',
@@ -201,11 +201,11 @@ MANDRILL_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "QbM0Gq17l
 
 MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "QbM0Gq17lG1IJxxsiW78Bg"
 #EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-DEFAULT_FROM_EMAIL = "Sarah from LawnCall <service@lawncall.com>"
+DEFAULT_FROM_EMAIL = "Sarah from DevQuity <service@devquity.com>"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mandrillapp.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'innoverted@gmail.com'
+EMAIL_HOST_USER = 'info@devquity.com'
 EMAIL_HOST_PASSWORD = MANDRILL_API_KEY
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"

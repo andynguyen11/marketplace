@@ -658,7 +658,28 @@ a.project-link:hover {
 #dashboard .section a.btn-linkedin:visited {
   color: #fff;
 }
-#dashboard .profile-photo {
+#dashboard .section table.dashboard-table {
+  width: 100%;
+}
+#dashboard .section table.dashboard-table .profile-photo {
+  width: 60px;
+}
+#dashboard .section table.dashboard-table th {
+  text-transform: uppercase;
+  padding: 10px;
+  background: #777777;
+  color: #fff;
+}
+#dashboard .section table.dashboard-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+#dashboard .section table.dashboard-table .btn {
+  margin: 0 5px;
+  width: auto;
+  color: #fff;
+}
+#dashboard .profile-snapshot .profile-photo {
   width: 100%;
 }
 #postman table {
