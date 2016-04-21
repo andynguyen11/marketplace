@@ -14,18 +14,6 @@
      * dependencies will be included in the module's file when the build is
      * done. A minimum module entry is {name: "module_name"}.
      */
-    modules: [
-      {
-        name: 'app/customer'
-      },
-      {
-        name: 'app/landing-page'
-      },
-      {
-        name: 'app/signup'
-      }
-    ],
-
     stubModules: ['jsx', 'text', 'JSXTransformer'],
 
     paths: {
