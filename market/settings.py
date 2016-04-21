@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'collectfast',
     'password_reset',
-    #'require',
+    'require',
     'rest_framework',
     'rest_framework.authtoken',
     'tagulous',
