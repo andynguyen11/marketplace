@@ -252,7 +252,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('industry', 'industry')]
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/developer/profile/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard/'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
