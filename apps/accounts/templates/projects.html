@@ -6,7 +6,7 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12">
-        <h2 class="text-yellow">the hub for your project bids</h2>
+        <h2 class="text-yellow">monitor the progress of your projects</h2>
       </div>
       <div class="col-md-12">
         {% for project in projects %}
@@ -23,8 +23,8 @@
                   <th>Role</th>
                   <th>Location</th>
                   <th>Availability</th>
-                  <th>Cash</th>
-                  <th>Equity</th>
+                  <th>Progress</th>
+                  <th>Compensation</th>
                   <th></th>
                 </tr>
               </thead>
@@ -49,7 +49,9 @@
                   <strong>{{ bid.developer.capacity }} hours/wk</strong>
                 </td>
                 <td>
-                  <strong>${{ bid.cash }}</strong>
+                  <div class="progress">
+                    <div class="progress-bar" style="width: {{ bid.progress }}%;"></div>
+                  </div>
                 </td>
                 <td>
                   <strong>{{ bid.equity }}%</strong>
@@ -57,7 +59,7 @@
               </tr>
               {% endfor %}
             {% else %}
-              <tr><td><h4>There are currently no bids on this project.   <a href="#">Start searching</a> for some developers!</h4></td></tr>
+              <tr><td><h4>There are currently active jobs.   <a href="#">Accept bids</a> to get work started!</h4></td></tr>
             {% endif %}
           </table>
         </div>

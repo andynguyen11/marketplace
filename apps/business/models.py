@@ -33,10 +33,24 @@ class Company(models.Model):
         verbose_name_plural = 'companies'
 
 
+PROJECT_TYPES = (
+    (u'art', u'Art and Design'),
+    (u'technology', u'Technology'),
+    (u'gaming', u'Gaming'),
+    (u'nonprofit', u'Non-Profit'),
+    (u'social', u'Social'),
+    (u'news', u'News and Publishing'),
+    (u'music', u'Music and Media'),
+    (u'location', u'Location-Based'),
+    (u'health', u'Health and Fitness'),
+)
+
+
 class Project(models.Model):
     company = models.ForeignKey(Company)
     project_manager = models.ForeignKey(Profile)
     title = models.CharField(max_length=255)
+    type = models.CharField(max_length=100, choices=PROJECT_TYPES)
     image = models.ImageField(blank=True, upload_to='project')
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
@@ -57,6 +71,13 @@ class Project(models.Model):
         ordering = ['-date_created']
 
 
+JOB_STATUS = (
+    (u'pending', u'Pending'),
+    (u'active', u'Active'),
+    (u'completed', u'Completed'),
+)
+
+
 class Job(models.Model):
     project = models.ForeignKey(Project)
     developer = models.ForeignKey(Profile)
@@ -65,17 +86,19 @@ class Job(models.Model):
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     hours = models.IntegerField(blank=True, null=True)
-    status = models.CharField(max_length=100, blank=True, null=True)
+    status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
+    progress = models.IntegerField(default=0)
 
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
 
 
 DOCUMENT_TYPES = (
-    (u'1', u'Non-Disclosure Agreement'),
-    (u'2', u'Contract Service Agreement'),
-    (u'3', u'Non-Compete Agreement'),
+    (u'Non-Disclosure', u'Non-Disclosure Agreement'),
+    (u'Contract Service', u'Contract Service Agreement'),
+    (u'Non-Compete', u'Non-Compete Agreement'),
 )
+
 
 class Document(models.Model):
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)

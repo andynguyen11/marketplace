@@ -1,0 +1,87 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Email</label>
+          <input class="form-control" type="text" value="{{ request.user.email }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input class="form-control" type="text" value="{{ request.user.phone_number }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Password</label>
+          <input class="form-control" type="password" value="aaaaaaaaaa" />
+          <a href="#">Change Password</a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Your Company</label>
+          <input class="form-control" type="text" />
+        </div>
+        <p>
+          <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+            <i class="fa fa-linkedin"></i>
+             LinkedIn
+          </a><br />
+          <a href="#">Disconnect</a>
+        </p>
+        <p>
+          <a class="btn btn-angellist social" href="{% url 'social:begin' backend='angellist-oauth2' %}">
+            <i class="fa fa-angellist"></i>
+             AngelList
+          </a><br />
+        </p>
+        <p>
+          <a class="btn btn-angellist social" href="">
+            <i class="fa fa-minus-circle"></i>
+             Deactivate Devquity
+          </a>
+        </p>
+      </div>
+      <div class="col-md-12">
+        <h3>Notifications</h3>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> When you receive project bids
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> When you receive messages
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> When your bids are accepted
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> When your paperwork is signed by other parties
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> On cool projects that fit your skillsets well
+          </label>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox"> On news and updates from Devquity
+          </label>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -147,6 +147,48 @@ a.project-link {
   padding: 25px 0;
 }
 
+.btn-group.open .dropdown-toggle {
+  box-shadow: none;
+}
+
+.dropdown-menu {
+  text-transform: uppercase;
+  font-weight: 700;
+  top: 120%;
+  li {
+    padding: 5px;
+    a {
+      font-weight: 700;
+      &:hover {
+        color: @yellow;
+        background: none;
+      }
+    }
+  }
+  &:before {
+    position: absolute;
+    top: -7px;
+    right: 27px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    content: '';
+  }
+  &:after {
+    position: absolute;
+    top: -6px;
+    right: 28px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    content: '';
+  }
+}
+
+
 //BUTTONS
 .btn {
   font-weight: 600;
@@ -156,6 +198,7 @@ a.project-link {
     background: transparent;
     &:hover {
       color: #fff;
+      background: transparent;
     }
   }
 
@@ -164,6 +207,7 @@ a.project-link {
     background: fade(#fff, 60%);
     &:hover {
       color:#fff;
+      background: fade(#fff, 60%);
     }
   }
 
@@ -171,12 +215,19 @@ a.project-link {
     background: @yellow;
     border: 1px solid @yellow;
     color: #fff;
+    &:hover {
+      background: @yellow;
+    }
+
   }
 
   &.btn-yb {
     color: @black;
     border: 1px solid @yellow;
     background: transparent;
+    &:hover {
+      background: transparent;
+    }
   }
 
   &.btn-dark {
@@ -196,6 +247,9 @@ a.project-link {
       font-size: 18px;
       margin-right: 8px;
     }
+    &:hover {
+      background: #0077B5;
+    }
   }
 
   &.btn-angellist {
@@ -206,6 +260,9 @@ a.project-link {
     .fa {
       font-size: 18px;
       margin-right: 8px;
+    }
+    &:hover {
+      background: #fff;
     }
   }
 }
@@ -366,7 +423,6 @@ a.project-link {
 
   .login-content {
     width: 50%;
-    padding: 20px;
   }
 }
 

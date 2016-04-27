@@ -1,0 +1,52 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>First Name</label>
+          <input class="form-control" type="text" value="{{ request.user.first_name }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input class="form-control" type="text" value="{{ request.user.last_name }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Picture</label>
+          <input class="form-control" type="file" />
+        </div>
+
+        <div class="form-group">
+          <label>Biography</label>
+          <textarea></textarea>
+          <p class="help-block">300 Character Limit</p>
+        </div>
+
+        <div class="form-group">
+          <label>Weekly Availability</label>
+          <input class="form-control" type="text" value="{{ request.user.capacity }}" placeholder="Hours per week" />
+          <p class="help-block">
+            Your average weekly availability to work on contract projects.
+            This let’s project managers know how much work they can expect
+            from you to work on their project during any given week.
+          </p>
+        </div>
+        <button class="btn btn-yellow">Save Settings</button>
+
+      </div>
+      <div class="col-md-6">
+        <div class="form-group">
+          <label>Location</label>
+          <input class="form-control" type="text" />
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

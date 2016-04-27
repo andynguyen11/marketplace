@@ -16,6 +16,7 @@
   <meta name="author" content="{% block meta_author %}{% endblock %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
+  <!-- TODO concatenate into one css during build / no references to bower_components -->
   <link type="text/css" rel="stylesheet" charset="utf-8" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
   <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -93,8 +94,10 @@
   </div>
 </div>
 
+<!-- TODO Concat and minify -->
 <script type="text/javascript" src="{% static "js/library/jquery.js" %}"></script>
 <script type="text/javascript" src="{% static "js/library/bootstrap.js" %}"></script>
+<script type="text/javascript" src="{% static 'bower_components/bootstrap-material-design/dist/js/material.js' %}"></script>
 <script type="text/javascript" src="{% static "js/api.js" %}"></script>
 <script type="text/javascript" src="{% static "js/main.js" %}"></script>
 {% block scripts %}{% endblock %}
