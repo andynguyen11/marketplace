@@ -1,0 +1,76 @@
+.btn {
+  font-weight: 600;
+  &.btn-transparent {
+    border: 1px solid #fff;
+    color: #fff;
+    background: transparent;
+    &:hover {
+      color: #fff;
+      background: transparent;
+    }
+  }
+
+  &.btn-foggy {
+    color: #fff;
+    background: fade(#fff, 60%);
+    &:hover {
+      color:#fff;
+      background: fade(#fff, 60%);
+    }
+  }
+
+  &.btn-yellow {
+    background: @yellow;
+    border: 1px solid @yellow;
+    color: #fff;
+    &:hover {
+      background: @yellow;
+    }
+
+  }
+
+  &.btn-yb {
+    color: @black;
+    border: 1px solid @yellow;
+    background: transparent;
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  &.btn-dark {
+    color: #fff;
+    background: @black;
+    border: 1px solid @black;
+    &:hover {
+      color: #fff;
+    }
+  }
+
+  &.btn-linkedin {
+    text-transform: none;
+    color: #fff;
+    background: #0077B5;
+    .fa {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+    &:hover {
+      background: #0077B5;
+    }
+  }
+
+  &.btn-angellist {
+    text-transform: none;
+    color: @black;
+    background: #fff;
+    border: 1px solid @black;
+    .fa {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+    &:hover {
+      background: #fff;
+    }
+  }
+}

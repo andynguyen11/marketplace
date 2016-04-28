@@ -6,7 +6,7 @@ import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
-from apps.accounts.helpers import create_auth_token
+from accounts.helpers import create_auth_token
 from apps.transactions.helpers import calculate_total, calculate_net, calculate_tax
 
 

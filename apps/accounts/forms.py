@@ -5,7 +5,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.conf import settings
 
-from apps.accounts.models import Customer, BusinessContact
+from accounts.models import Customer, BusinessContact
 
 
 class ProfileForm(forms.ModelForm):

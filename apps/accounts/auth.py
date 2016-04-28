@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import ModelBackend
 
-from apps.accounts.models import Profile
+from accounts.models import Profile
 
 
 class CaseInsensitiveModelBackend(ModelBackend):

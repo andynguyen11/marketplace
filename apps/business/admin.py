@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from apps.business.models import Company, Job, Project, Document
+from business.models import Company, Job, Project, Document
 
 
 @admin.register(Company)

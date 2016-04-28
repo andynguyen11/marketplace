@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load postman_tags %}
+{% load active_class %}
 
 {% postman_unread as unread_count %}
 
@@ -39,29 +40,29 @@
     <div class="container">
       <ul>
         <li>
-          <a href="{% url 'dashboard' %}">Dashboard</a>
+          <a class="{% add_active request 'dashboard' %}" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
         <li>
         {{ postman_unread }}
-          <a href="{% url 'postman:inbox' %}">
+          <a class="{% add_active request 'postman:inbox' %}" href="{% url 'postman:inbox' %}">
             Messages {% if unread_count %}
             <span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
         </li>
         <li>
-          <a href="{% url 'view-bids' %}">Open Projects</a>
+          <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Open Projects</a>
         </li>
         <li>
-          <a href="{% url 'view-projects' %}" >Engaged Projects</a>
+          <a class="{% add_active request 'view-projects' %}" href="{% url 'view-projects' %}" >Engaged Projects</a>
         </li>
         <li>
-          <a href="{% url 'view-documents' %}">Your Documents</a>
+          <a class="{% add_active request 'view-documents' %}" href="{% url 'view-documents' %}">Your Documents</a>
         </li>
         <li>
           <a href="">Your Languages</a>
         </li>
         <li>
-          <a href="">Settings</a>
+          <a class="{% add_active request 'account-settings' %}" href="{% url 'account-settings' %}">Settings</a>
         </li>
       </ul>
     </div>

@@ -1,7 +1,7 @@
-{% extends "base_account.html" %}
+{% extends "settings-base.html" %}
 {% load staticfiles %}
 
-{% block account_content %}
+{% block settings_content %}
 <div id="dashboard">
   <div class="row">
     <div class="container">
@@ -27,25 +27,16 @@
           <label>Your Company</label>
           <input class="form-control" type="text" />
         </div>
-        <p>
-          <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
-            <i class="fa fa-linkedin"></i>
-             LinkedIn
-          </a><br />
-          <a href="#">Disconnect</a>
-        </p>
-        <p>
-          <a class="btn btn-angellist social" href="{% url 'social:begin' backend='angellist-oauth2' %}">
-            <i class="fa fa-angellist"></i>
-             AngelList
-          </a><br />
-        </p>
-        <p>
-          <a class="btn btn-angellist social" href="">
-            <i class="fa fa-minus-circle"></i>
-             Deactivate Devquity
-          </a>
-        </p>
+
+        <h4><i class="fa fa-linkedin"></i> LinkedIn</h4>
+        <a href="#">Disconnect</a>
+
+         <h4><i class="fa fa-angellist"></i> AngelList</h4>
+        <a>Connect</a>
+
+        <h4>Devquity</h4>
+        <a>Deactivate Account</a>
+
       </div>
       <div class="col-md-12">
         <h3>Notifications</h3>

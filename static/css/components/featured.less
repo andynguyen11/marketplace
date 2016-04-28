@@ -1,0 +1,50 @@
+#featured-project {
+  .overlay {
+    border-bottom-left-radius: @border-radius;
+    border-top-left-radius: @border-radius;
+  }
+
+  .project-image {
+    color: #fff;
+    min-height: 300px;
+    position: relative;
+    padding: 100px 50px;
+    background-size: cover;
+    border-bottom-left-radius: @border-radius;
+    border-top-left-radius: @border-radius;
+    h3 {
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  .project-content {
+    min-height: 300px;
+    position: relative;
+    .project-specs {
+      ul {
+        list-style-type: none;
+        padding: 0;
+        width: 100%;
+        border-top: 1px solid #ccc;
+      }
+      li {
+        float: left;
+        width: 33.33%;
+        padding: 15px 0;
+        &:not(:first-child) {
+          border-left: 1px solid #ccc;
+        }
+      }
+      .project-for, .project-or {
+        top: 30%;
+      }
+      .project-for {
+        left: 29%;
+      }
+      .project-or {
+        left: 63%
+      }
+    }
+  }
+}

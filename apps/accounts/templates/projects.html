@@ -15,7 +15,7 @@
             <h4>{{ project.title }} <span class="text-skinny">(5 New)</span></h4>
           </div>
           <table class="dashboard-table">
-            {% if project.job_set.all %}
+            {% if project.active_jobs %}
               <thead>
                 <tr>
                   <th></th>
@@ -28,7 +28,7 @@
                   <th></th>
                 </tr>
               </thead>
-              {% for bid in project.job_set.all %}
+              {% for bid in project.active_jobs %}
               <tr>
                 <td>
                   <img src="{{ bid.developer.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
@@ -56,6 +56,9 @@
                 <td>
                   <strong>{{ bid.equity }}%</strong>
                 </td>
+                <td>
+                  <a href="{% url 'postman:view_conversation' thread_id=bid.message %}" class="btn btn-dark pull-left">Message</a>
+                </td>
               </tr>
               {% endfor %}
             {% else %}
@@ -69,6 +72,8 @@
     </div>
   </div>
 </div>
+
+
 
 
 {% endblock %}

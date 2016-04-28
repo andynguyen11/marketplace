@@ -22,7 +22,7 @@ from django.conf.urls import handler404, handler500
 from django.views.generic.base import TemplateView
 from password_reset.views import Recover
 
-from apps.landing_pages.views import error404, error500
+from accounts.views import error404, error500
 
 
 urlpatterns = patterns('apps',
@@ -31,6 +31,8 @@ urlpatterns = patterns('apps',
     url(r'^$', 'accounts.views.home', name='home'),
     url(r'^login/$', 'accounts.views.login', name='login'),
     url(r'^logout/$', 'accounts.views.logout', name='logout'),
+    url(r'^message/send/$', 'business.views.send_message', name='send-message'),
+    url(r'^bid/send/$', 'business.views.send_bid', name='send-bid'),
     url(r'^profile/$', 'accounts.views.view_profile', name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', 'accounts.views.view_profile', name='public-profile'),
     url(r'^profile/edit/$', 'accounts.views.edit_profile', name='edit-profile'),
@@ -38,7 +40,9 @@ urlpatterns = patterns('apps',
     url(r'^profile/bids/$', 'accounts.views.view_bids', name='view-bids'),
     url(r'^profile/projects/$', 'accounts.views.view_projects', name='view-projects'),
     url(r'^profile/documents/$', 'accounts.views.view_documents', name='view-documents'),
-    url(r'^profile/message/send/$', 'accounts.views.send_message', name='send-message'),
+    url(r'^profile/settings/account/$', 'accounts.views.account_settings', name='account-settings'),
+    url(r'^profile/settings/profile/$', 'accounts.views.profile_settings', name='profile-settings'),
+    url(r'^profile/settings/billing/$', 'accounts.views.profile_settings', name='billing-settings'),
     url('^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^project/(?P<project_id>[0-9]+)/$', 'business.views.view_project', name='project'),
     url(r'^project/create/$', 'business.views.create_project', name='create-project'),

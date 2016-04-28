@@ -62,6 +62,23 @@
   <div class="clearfix"></div>
 </div>
 
+{% if job %}
+<ul class="text-center bid-details">
+  <li class="project-hours">
+    <h5>{{ job.hours }}</h5>
+    est. hours
+  </li>
+  <li class="project-equity">
+    <h5>{{ job.equity }}%</h5>
+    equity offered
+  </li>
+  <li class="project-cash">
+    <h5>${{ job.cash }}</h5>
+    cash offered
+  </li>
+</ul>
+{% endif %}
+
 <ul id="pm_messages">
   {% for message in pm_messages %}
   <li>

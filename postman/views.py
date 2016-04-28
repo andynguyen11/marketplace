@@ -36,6 +36,7 @@ from postman.fields import autocompleter_app
 from postman.forms import WriteForm, AnonymousWriteForm, QuickReplyForm, FullReplyForm
 from postman.models import Message, get_order_by
 from postman.utils import format_subject, format_body
+from business.models import Job
 
 login_required_m = method_decorator(login_required)
 csrf_protect_m = method_decorator(csrf_protect)
@@ -365,6 +366,11 @@ class DisplayMixin(NamespaceMixin, object):
                 break
         else:
             archived = True
+        #try:
+        #    job = Job.objects.get(message=self.msgs[0].id)
+        #    context['job'] = job
+        #except Job.DoesNotExist:
+        #    pass
         # look for the most recent received message (and non-deleted to comply with the future perms() control), if any
         for m in reversed(self.msgs):
             if m.recipient == user and not m.recipient_deleted_at:
@@ -395,7 +401,15 @@ class ConversationView(DisplayMixin, TemplateView):
 
     def get(self, request, thread_id, *args, **kwargs):
         self.filter = Q(thread=thread_id)
-        return super(ConversationView, self).get(request, *args, **kwargs)
+        user = request.user
+        self.msgs = Message.objects.thread(user, self.filter)
+        if not self.msgs:
+            self.filter = Q(pk=thread_id)
+            self.msgs = Message.objects.thread(user, self.filter)
+            if not self.msgs:
+                raise Http404
+        Message.objects.set_read(user, self.filter)
+        return super(DisplayMixin, self).get(request, *args, **kwargs)
 
 
 class UpdateMessageMixin(object):

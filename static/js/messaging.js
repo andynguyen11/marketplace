@@ -137,3 +137,24 @@ $("#message-form").on("submit", function(e) {
     });
   return false;
 });
+
+$("#send-bid").on("click", function(e) {
+    $.ajax({
+      url: dq_api.bid_send,
+      method: 'POST',
+      data: {
+        message: $('#id_message').val(),
+        equity: $('#id_equity').val(),
+        cash: $('#id_cash').val(),
+        hours: $('#id_hours').val(),
+        recipient: $('#id_recepient').val(),
+        project_id: $('#id_project').val()
+      },
+      success: function() {
+        $('#bid-modal').modal('hide');
+        $("input[type='text']").val('');
+        $('textarea').val('');
+      }
+    });
+  return false;
+});

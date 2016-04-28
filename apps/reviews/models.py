@@ -1,7 +1,7 @@
 from django.db import models
 
-from apps.business.models import Company, Job
-from apps.accounts.models import Profile
+from business.models import Company, Job
+from accounts.models import Profile
 
 
 class Review(models.Model):

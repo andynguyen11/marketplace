@@ -1,0 +1,28 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+{% load active_class %}
+
+{% block account_content %}
+<div class="row">
+  <div class="container">
+    <div class="col-md-12">
+      <ul class="settings-nav">
+        <li><a class="{% add_active request 'account-settings' %}" href="{% url 'account-settings' %}"><h2>account settings</h2></a></li>
+        <li><a class="{% add_active request 'profile-settings' %}" href="{% url 'profile-settings' %}"><h2>profile settings</h2></a></li>
+        <li><a class="{% add_active request 'billing-settings' %}" href="{% url 'account-settings' %}"><h2>billing settings</h2></a></li>
+      </ul>
+
+      <p>
+        We’re doing our best to keep these settings updated as we learn and grow. If you need any support related
+        to your account, email <a href="emailto:support@devquity.com">support@devquity.com</a> and we’ll do our best to get it handled for you.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="settings">
+{% block settings_content %}
+{% endblock %}
+</div>
+
+{% endblock %}

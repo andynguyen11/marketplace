@@ -4,10 +4,16 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.context import RequestContext
 
-from postman.api import pm_write
+from accounts.models import Profile
+from business.models import Project, Job
 
-from apps.accounts.models import Profile
-from apps.business.models import Project, Job
+
+def error404(request):
+    return render(request, '404.html')
+
+
+def error500(request):
+    return render(request, '500.html')
 
 
 def login(request):
@@ -74,14 +80,10 @@ def view_documents(request):
 
 
 @login_required
-def send_message(request):
-    if request.POST:
-        recipient = Profile.objects.get(id=request.POST['recipient'])
-        sender = request.user
-        message = pm_write(
-            sender=sender,
-            recipient=recipient,
-            subject='New Inquiry from {0}'.format(sender.first_name),
-            body=request.POST['message'])
-        return HttpResponse(status=200)
-    return HttpResponse(status=403)
+def account_settings(request):
+    return render_to_response('account-settings.html', {}, context_instance=RequestContext(request))
+
+
+@login_required
+def profile_settings(request):
+    return render_to_response('profile-settings.html', {}, context_instance=RequestContext(request))

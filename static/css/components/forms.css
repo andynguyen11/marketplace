@@ -1,0 +1,7 @@
+.form-group label {
+  margin-left: 12px;
+}
+.form-group .form-control {
+  padding: 15px 12px;
+  height: auto;
+}

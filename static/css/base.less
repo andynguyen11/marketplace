@@ -1,19 +1,15 @@
-@dark-gray: #31302f;
-@light-gray: #777;
-@black: #31302f;
-@yellow: #f6b900;
-@border-radius: 5px;
-
-.blur(@value){
-  filter: blur(@value);
-  -webkit-filter: blur(@value);
-}
+@import "variables.less";
 
 body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
   font-size: 14px;
   background: #f5f5f5;
+}
+
+a, a:hover, a:visited {
+  color: @yellow;
+  text-decoration: none;
 }
 
 hr {
@@ -151,185 +147,6 @@ a.project-link {
   box-shadow: none;
 }
 
-.dropdown-menu {
-  text-transform: uppercase;
-  font-weight: 700;
-  top: 120%;
-  li {
-    padding: 5px;
-    a {
-      font-weight: 700;
-      &:hover {
-        color: @yellow;
-        background: none;
-      }
-    }
-  }
-  &:before {
-    position: absolute;
-    top: -7px;
-    right: 27px;
-    display: inline-block;
-    border-right: 7px solid transparent;
-    border-bottom: 7px solid #ccc;
-    border-left: 7px solid transparent;
-    border-bottom-color: rgba(0, 0, 0, 0.2);
-    content: '';
-  }
-  &:after {
-    position: absolute;
-    top: -6px;
-    right: 28px;
-    display: inline-block;
-    border-right: 6px solid transparent;
-    border-bottom: 6px solid #ffffff;
-    border-left: 6px solid transparent;
-    content: '';
-  }
-}
-
-
-//BUTTONS
-.btn {
-  font-weight: 600;
-  &.btn-transparent {
-    border: 1px solid #fff;
-    color: #fff;
-    background: transparent;
-    &:hover {
-      color: #fff;
-      background: transparent;
-    }
-  }
-
-  &.btn-foggy {
-    color: #fff;
-    background: fade(#fff, 60%);
-    &:hover {
-      color:#fff;
-      background: fade(#fff, 60%);
-    }
-  }
-
-  &.btn-yellow {
-    background: @yellow;
-    border: 1px solid @yellow;
-    color: #fff;
-    &:hover {
-      background: @yellow;
-    }
-
-  }
-
-  &.btn-yb {
-    color: @black;
-    border: 1px solid @yellow;
-    background: transparent;
-    &:hover {
-      background: transparent;
-    }
-  }
-
-  &.btn-dark {
-    color: #fff;
-    background: @black;
-    border: 1px solid @black;
-    &:hover {
-      color: #fff;
-    }
-  }
-
-  &.btn-linkedin {
-    text-transform: none;
-    color: #fff;
-    background: #0077B5;
-    .fa {
-      font-size: 18px;
-      margin-right: 8px;
-    }
-    &:hover {
-      background: #0077B5;
-    }
-  }
-
-  &.btn-angellist {
-    text-transform: none;
-    color: @black;
-    background: #fff;
-    border: 1px solid @black;
-    .fa {
-      font-size: 18px;
-      margin-right: 8px;
-    }
-    &:hover {
-      background: #fff;
-    }
-  }
-}
-
-
-.account-nav {
-  background: @dark-gray;
-  height: auto;
-  ul {
-    padding: 0;
-    margin: 0;
-  }
-  ul li {
-    display: inline-block;
-    padding: 15px 20px;
-    &.active {
-      background: #2b3237;
-    }
-    a {
-      color: #fff;
-      font-weight: bold;
-    }
-    .badge {
-      background: #d9534f;
-    }
-  }
-}
-
-// HEADER
-#header {
-  position: absolute;
-  top: 0;
-  z-index: 2;
-  width: 100%;
-  padding: 15px 0;
-
-  .logo {
-    width: 150px;
-    height: 44px;
-    background: url(../images/devquity-yb.png) no-repeat;
-    background-size: cover;
-  }
-
-  &.home {
-    .logo {
-      background-image: url(../images/devquity-wy.png);
-    }
-  }
-  .btn {
-    margin: 0 5px;
-  }
-  .header-action {
-    a:hover {
-      text-decoration: none;
-    }
-    img {
-      width: 30px;
-      margin: 0 20px;
-    }
-    .badge {
-      margin-left: -30px;
-      background: #d9534f;
-    }
-  }
-
-}
-
 // HOME HERO
 #hero {
   color: #fff;
@@ -351,80 +168,6 @@ a.project-link {
   }
 }
 
-// FOOTER
-#footer {
-  margin-top: 25px;
-  .row {
-    color: #fff;
-    background: @dark-gray;
-    padding: 75px 0;
-    font-size: 16px;
-    font-weight: 100;
-  }
-
-  .logo {
-    width: 150px;
-    display: block;
-    margin-top: 50px;
-  }
-
-  .fa {
-    border: 1px solid #fff;
-    border-radius: 20px;
-    padding: 8px;
-    margin-right: 7px;
-    width: 35px;
-    text-align: center;
-  }
-
-  a, a:hover, a:visited {
-    color: #fff;
-  }
-
-  h5 {
-    color: @yellow;
-    font-size: 16px;
-  }
-
-  .copyright {
-    color: #666;
-    font-size: 12px;
-  }
-}
-
-#login {
-  margin: 100px 0 75px;
-
-  .panel-login {
-    width: 475px;
-    margin: auto;
-  }
-
-  .login-hero {
-    background: url('../images/login-2g.jpg') no-repeat center;
-    background-size: cover;
-    padding: 30px;
-    width: 50%;
-    position: relative;
-    border-top-left-radius: @border-radius;
-    border-bottom-left-radius: @border-radius;
-
-    .login-hero-content {
-      position: relative;
-      z-index: 1;
-      color: #fff;
-    }
-
-    .overlay {
-      border-top-left-radius: @border-radius;
-      border-bottom-left-radius: @border-radius;
-    }
-  }
-
-  .login-content {
-    width: 50%;
-  }
-}
 
 #profile {
   .profile-photo {
@@ -497,57 +240,6 @@ a.project-link {
     padding: 8px;
     background: #fff;
     color: @light-gray;
-  }
-}
-
-#featured-project {
-  .overlay {
-    border-bottom-left-radius: @border-radius;
-    border-top-left-radius: @border-radius;
-  }
-
-  .project-image {
-    color: #fff;
-    min-height: 300px;
-    position: relative;
-    padding: 100px 50px;
-    background-size: cover;
-    border-bottom-left-radius: @border-radius;
-    border-top-left-radius: @border-radius;
-    h3 {
-      position: relative;
-      z-index: 2;
-    }
-  }
-
-  .project-content {
-    min-height: 300px;
-    position: relative;
-    .project-specs {
-      ul {
-        list-style-type: none;
-        padding: 0;
-        width: 100%;
-        border-top: 1px solid #ccc;
-      }
-      li {
-        float: left;
-        width: 33.33%;
-        padding: 15px 0;
-        &:not(:first-child) {
-          border-left: 1px solid #ccc;
-        }
-      }
-      .project-for, .project-or {
-        top: 30%;
-      }
-      .project-for {
-        left: 29%;
-      }
-      .project-or {
-        left: 63%
-      }
-    }
   }
 }
 
@@ -713,20 +405,6 @@ a.project-link {
   }
 }
 
-#reviews {
-  background: #fff;
-  .review-stars {
-    font-size: 36px;
-    .text-dark {
-      text-transform: uppercase;
-      font-size: 50%;
-      display: inline-block;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-  }
-}
-
 #project {
   .project-image {
     width: 100%;
@@ -773,187 +451,15 @@ a.project-link {
   }
 }
 
-#dashboard {
-  h2 {
-    margin: 30px 0;
-  }
-  .section {
-    padding: 0;
-    margin-bottom: 25px;
-    background: #fff;
-    .section-header {
-      background: @dark-gray;
-      color: @yellow;
-      padding: 10px;
-    }
-    .section-body {
-      padding: 15px;
-    }
-    ul li {
-      padding: 15px 20px;
-      border-bottom: 1px solid #ccc;
-    }
-    a.btn {
-      width: 80%;
-    }
-    a, a:hover, a:visited {
-      color: @yellow;
-      text-decoration: none;
-    }
-    a.social, a.social:hover, a.social:visited {
-      color: @dark-gray;
-    }
-    a.btn-linkedin, a.btn-linkedin:hover, a.btn-linkedin:visited {
-      color: #fff;
-    }
-    table.dashboard-table {
-      width: 100%;
-      .profile-photo {
-        width: 60px;
-      }
-      th {
-        text-transform: uppercase;
-        padding: 10px;
-        background: @light-gray;
-        color: #fff;
-      }
-      td {
-        padding: 10px;
-        border-bottom: 1px solid #ccc;
-      }
-      .btn {
-        margin: 0 5px;
-        width: auto;
-        color: #fff;
-      }
-    }
-  }
 
-  .profile-snapshot .profile-photo {
-    width: 100%;
-  }
-}
-
-
-// MESSAGING
-#postman {
-  table {
-    width: 100%;
-  }
-  tr td {
-    padding: 20px 15px;
-    background: #f7f7f7;
-    color: #444;
-    border-top: 1px solid #e7e7e7;
-  }
-  tr.unread td {
-    background: #fff;
-    color: #000;
-    font-weight: bold;
-  }
-  tr td.photo-container {
-    width: 60px;
-  }
-  .profile-photo {
-    width: 60px;
-  }
-  button {
-    border: none;
-    margin-top: 3px;
-  }
-  .section-header {
-    background: @dark-gray;
-    color: @yellow;
-    padding: 10px;
-    font-size: 14px;
-  }
-  #message-wrapper {
-    background: #fff;
-  }
-  .ps-messages-view-header {
-    margin: 20px 0;
-    .button {
-      padding: 0.5em 1.25em;
-      border: 1px solid #ccc;
-      background: #f7f7f8;
-      border-radius: @border-radius;
-    }
-    h3 {
-      margin: 0;
-    }
-  }
-  #pm_messages {
-    li {
-      margin: 15px 0;
-    }
-    .sent-message {
-      padding: 10px;
-      margin: 0 10px;
-      background: lighten(@yellow, 35%);
-      border: 1px solid @yellow;
-      border-radius: @border-radius;
-      width: 50%;
-    }
-    .received-message {
-      padding: 10px;
-      margin: 0 10px;
-      background: #ccc;
-      border: 1px solid @dark-gray;
-      border-radius: @border-radius;
-      width: 50%;
-    }
-    .message-date {
-      margin-top: 10px;
-    }
-  }
-  #pm_reply {
-    textarea {
-      width: 100%;
-      border-radius: @border-radius;
-      padding: 10px;
-    }
-  }
-}
-
-.message-archive, .thread-archive,
-.message-unarchive, .thread-unarchive,
-.message-bookmark, .thread-bookmark,
-.message-unbookmark, .thread-unbookmark {
-  background: none;
-  cursor: pointer;
-}
-
-.message-bookmark, .thread-bookmark,
-.message-unbookmark, .thread-unbookmark {
-  margin-right: 10px;
-}
-
-.message-archive.button-right, .thread-archive.button-right,
-.message-unarchive.button-right, .thread-unarchive.button-right,
-.message-bookmark.button-left, .thread-bookmark.button-left,
-.message-unbookmark.button-left, .thread-unbookmark.button-left {
-  background: #f7f7f8;
-}
-
-.back.button-left {
-  margin-right: 15px;
-}
-
-.message-archive img, .thread-archive img,
-.message-unarchive img, .thread-unarchive img,
-.message-bookmark img, .thread-bookmark img,
-.message-unbookmark img, .thread-unbookmark img {
-  height: 24px;
-}
-
-#postman textarea {
-  margin: 15px 0;
-}
-
-#message-form {
-  textarea {
-    width: 100%;
-    margin: 10px 0 15px;
-    padding: 10px;
-  }
-}
+@import "components/forms.less";
+@import "components/modals.less";
+@import "components/buttons.less";
+@import "components/header.less";
+@import "components/footer.less";
+@import "components/featured.less";
+@import "components/login.less";
+@import "components/messaging.less";
+@import "components/reviews.less";
+@import "components/account.less";
+@import "components/dashboard.less";

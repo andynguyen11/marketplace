@@ -13,6 +13,7 @@ import os
 import sys
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -52,9 +53,9 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'tagulous',
     'crispy_forms',
-    'apps.accounts',
-    'apps.business',
-    'apps.reviews',
+    'accounts',
+    'business',
+    'reviews',
     'postman',
 )
 
@@ -72,7 +73,7 @@ MIDDLEWARE_CLASSES = (
 
 AUTHENTICATION_BACKENDS = (
     'social.backends.linkedin.LinkedinOAuth2',
-    'apps.accounts.auth.CaseInsensitiveModelBackend',
+    'accounts.auth.CaseInsensitiveModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -149,7 +150,7 @@ if 'RDS_DB_NAME' in os.environ:
                     'handlers': ['stderr'],
                     'level': 'DEBUG',
                 },
-                'apps.accounts.emails': {
+                'accounts.emails': {
                     'handlers': ['stderr'],
                     'level': 'DEBUG',
                 },

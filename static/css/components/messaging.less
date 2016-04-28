@@ -1,0 +1,133 @@
+#postman {
+  table {
+    width: 100%;
+  }
+  tr td {
+    padding: 20px 15px;
+    background: #f7f7f7;
+    color: #444;
+    border-top: 1px solid #e7e7e7;
+  }
+  tr.unread td {
+    background: #fff;
+    color: #000;
+    font-weight: bold;
+  }
+  tr td.photo-container {
+    width: 60px;
+  }
+  .profile-photo {
+    width: 60px;
+  }
+  button {
+    border: none;
+    margin-top: 3px;
+  }
+  .section-header {
+    background: @dark-gray;
+    color: @yellow;
+    padding: 10px;
+    font-size: 14px;
+  }
+  #message-wrapper {
+    background: #fff;
+  }
+  .ps-messages-view-header {
+    margin: 20px 0;
+    .button {
+      padding: 0.5em 1.25em;
+      border: 1px solid #ccc;
+      background: #f7f7f8;
+      border-radius: @border-radius;
+    }
+    h3 {
+      margin: 0;
+    }
+  }
+  #pm_messages {
+    li {
+      margin: 15px 0;
+    }
+    .sent-message {
+      padding: 10px;
+      margin: 0 10px;
+      background: lighten(@yellow, 35%);
+      border: 1px solid @yellow;
+      border-radius: @border-radius;
+      width: 50%;
+    }
+    .received-message {
+      padding: 10px;
+      margin: 0 10px;
+      background: #ccc;
+      border: 1px solid @dark-gray;
+      border-radius: @border-radius;
+      width: 50%;
+    }
+    .message-date {
+      margin-top: 10px;
+    }
+  }
+  #pm_reply {
+    textarea {
+      width: 100%;
+      border-radius: @border-radius;
+      padding: 10px;
+    }
+  }
+}
+
+.message-archive, .thread-archive,
+.message-unarchive, .thread-unarchive,
+.message-bookmark, .thread-bookmark,
+.message-unbookmark, .thread-unbookmark {
+  background: none;
+  cursor: pointer;
+}
+
+.message-bookmark, .thread-bookmark,
+.message-unbookmark, .thread-unbookmark {
+  margin-right: 10px;
+}
+
+.message-archive.button-right, .thread-archive.button-right,
+.message-unarchive.button-right, .thread-unarchive.button-right,
+.message-bookmark.button-left, .thread-bookmark.button-left,
+.message-unbookmark.button-left, .thread-unbookmark.button-left {
+  background: #f7f7f8;
+}
+
+.back.button-left {
+  margin-right: 15px;
+}
+
+.message-archive img, .thread-archive img,
+.message-unarchive img, .thread-unarchive img,
+.message-bookmark img, .thread-bookmark img,
+.message-unbookmark img, .thread-unbookmark img {
+  height: 24px;
+}
+
+#postman textarea {
+  margin: 15px 0;
+}
+
+#message-form {
+  textarea {
+    width: 100%;
+    margin: 10px 0 15px;
+    padding: 10px;
+  }
+}
+
+.bid-details {
+  li {
+    display: inline-block;
+    margin: 35px;
+    background: #f3f3f3;
+    border: 1px solid #666;
+    border-radius: 4px;
+    width: 120px;
+    padding: 20px 0px;
+  }
+}

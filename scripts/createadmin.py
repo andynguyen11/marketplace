@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import django
 
-from apps.accounts.models import Profile
+from accounts.models import Profile
 
 # load app registry for models.
 django.setup()
