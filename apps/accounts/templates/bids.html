@@ -55,7 +55,9 @@
                   <strong>{{ bid.equity }}%</strong>
                 </td>
                 <td>
-                  <a href="{% url 'postman:view_conversation' thread_id=bid.message %}" class="btn btn-dark pull-left">Message</a>
+                  {% if bidd.message %}
+                    <a href="{% url 'postman:view_conversation' thread_id=bid.message %}" class="btn btn-dark pull-left">Message</a>
+                  {% endif %}
                 </td>
               </tr>
               {% endfor %}
