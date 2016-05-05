@@ -6,8 +6,9 @@ from django.http import HttpResponse
 
 from postman.api import pm_write
 
+from business.forms import ProjectForm
 from accounts.models import Profile
-from business.models import Project, Job
+from business.models import Project, Job, Company
 
 
 def view_project(request, project_id=None):
@@ -15,8 +16,33 @@ def view_project(request, project_id=None):
     return render_to_response('project.html', {'project': project, }, context_instance=RequestContext(request))
 
 
+@login_required
 def create_project(request):
-    return render_to_response('create_project.html', {}, context_instance=RequestContext(request))
+    form = ProjectForm()
+    if request.POST:
+        form = ProjectForm(request.POST, request.FILES)
+        if form.is_valid():
+            company = Company.objects.get(primary_contact=request.user)
+            new_project = Project(
+                company=company,
+                project_manager=request.user,
+                title=request.POST['title'],
+                type=request.POST['type'],
+                image=request.FILES['image'],
+                short_blurb=request.POST['short_blurb'],
+                description=request.POST['description'],
+                category=request.POST['category'],
+                secondary_category=request.POST['secondary_category'],
+                location=request.POST['location'],
+                estimated_equity=request.POST['estimated_equity'],
+                estimated_cash=request.POST['estimated_cash'],
+                estimated_hours=request.POST['estimated_hours'],
+                skills=request.POST['skills'],
+                status='pending',
+            )
+            new_project.save()
+            return redirect('view-bids')
+    return render_to_response('create_project.html', {'form': form}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -53,3 +79,10 @@ def send_bid(request):
             message=message.id)
         return HttpResponse(status=200)
     return HttpResponse(status=403)
+
+
+@login_required
+def attach_docs(request):
+    return NotImplemented
+
+

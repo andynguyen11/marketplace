@@ -42,9 +42,9 @@ def view_profile(request, user_id=None):
     return render_to_response('profile.html', {'user': user, 'social': social, 'jobs': jobs, }, context_instance=RequestContext(request))
 
 
-def save_social_profile(backend, user, response, *args, **kwargs):
-    if backend.name == 'linkedin-oauth2':
-        print(response, user)
+@login_required
+def confirm_profile(request, template):
+    return render_to_response(template, {}, context_instance=RequestContext(request))
 
 
 @login_required
@@ -78,12 +78,6 @@ def view_documents(request):
     projects = Project.objects.filter(project_manager=request.user)
     return render_to_response('documents.html', {'projects': projects, }, context_instance=RequestContext(request))
 
-
 @login_required
-def account_settings(request):
-    return render_to_response('account-settings.html', {}, context_instance=RequestContext(request))
-
-
-@login_required
-def profile_settings(request):
-    return render_to_response('profile-settings.html', {}, context_instance=RequestContext(request))
+def profile(request, template='account-settings.html'):
+    return render_to_response(template, {}, context_instance=RequestContext(request))

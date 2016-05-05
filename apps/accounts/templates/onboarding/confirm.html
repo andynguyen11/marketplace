@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="confirm-profile" class="section">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-6 col-md-offset-3">
+        <p class="text-center text-muted">
+          Create a free account <br />
+          and start getting offers.
+        </p>
+        <div class="panel panel-onboard text-center">
+          <h3 class="text-skinny">Let's make this crazy simple.</h3>
+          <h3 class="text-yellow">How do you describe yourself?</h3>
+          <a href="{% url 'onboard-developer' %}">
+            <h4>I’m a web developer looking for projects</h4>
+            <p>And I’m looking for contract work building quality web projects.</p>
+            <h4 class="text-yellow">NEXT</h4>
+          </a>
+          <h4>OR</h4>
+          <a href="{% url 'onboard-manager' %}">
+            <h4>I’m looking to hire a contract web developer</h4>
+            <p>I have a web project that I want to hire a quality web developer for.</p>
+            <h4 class="text-yellow">NEXT</h4>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-from accounts.models import Profile
+from accounts.models import Profile, Skills
 
 
 class Company(models.Model):
@@ -63,7 +63,6 @@ class Job(models.Model):
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
-    message = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
@@ -79,13 +78,15 @@ class Project(models.Model):
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     category = tagulous.models.SingleTagField()
+    secondary_category = tagulous.models.SingleTagField()
+    location = tagulous.models.SingleTagField()
     estimated_equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     estimated_hours = models.IntegerField()
-    skills = tagulous.models.TagField()
+    skills = tagulous.models.TagField(to=Skills)
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
-    featured = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
@@ -95,8 +96,6 @@ class Project(models.Model):
 
     def active_jobs(self):
         jobs = Job.objects.filter(status='active', project=self)
-        for job in jobs:
-            print(job)
         return jobs
 
 

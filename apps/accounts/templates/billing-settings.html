@@ -1,0 +1,190 @@
+{% extends "settings-base.html" %}
+{% load staticfiles %}
+
+{% block settings_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class='col-md-6 col-md-offset-3 payment'>
+        {% if request.user.stripe %}
+        <p></p>
+        <p class="text-muted">Current card:</p>
+        <div class='input-group'>
+          <div class="input-group-addon"><i id="card_brand" class='fa'></i></div>
+          <input type="text" class='form-control' disabled value='XXXX XXXX XXXX {{ request.user.get_default_payment.last4 }}' />
+        </div>
+        {% endif %}
+        <p></p>
+        <div class='clearfix'></div>
+        <div>
+          <p></p>
+          <p class="text-muted">For your security your current credit card information is hidden.</p>
+          <form method="POST" class="payment-form form-horizontal">
+            <div class="form-group">
+              <div class="col-md-12">
+                <input class="form-control" type="text" data-stripe="number" name="number" placeholder="Credit Card Number"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-xs-4">
+                <input class="form-control" type="text" data-stripe="exp-month" name="month" placeholder="MM"/>
+              </div>
+              <div class="col-xs-4">
+                <input class="form-control" type="text" data-stripe="exp-year" name="year" placeholder="YYYY"/>
+              </div>
+              <div class="col-xs-4">
+                <input class="form-control" type="text" data-stripe="cvc" name="cvc" placeholder="CVC"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-md-12">
+              <input type="hidden" class="stripe" name="stripe_token" />
+              <button type="submit" class="btn btn-yellow form-control">
+                <span class='spinner hidden'>
+                  <i class='fa load fa-circle-o-notch fa-spin' ></i>
+                </span>
+                {% if request.user.stripe %}
+                  Update
+                {% else %}
+                  Save
+                {% endif %}
+                 Credit Card
+              </button>
+              <p class="payment-errors hidden"></p>
+              <div class="security text-center">
+                Secured by
+                <img src="/static/images/comodo_secure_76x26_transp.png" />
+                <img src="/static/images/stripe.png" />
+              </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function updateCC(status, response) {
+  var $form = $('.payment-form');
+  if (response.error) {
+    // Show the errors on the form
+    $('.payment-form .payment-errors').removeClass('hidden').text(response.error.message);
+    $form.find('button').prop('disabled', false);
+  } else {
+    var token = response.id;
+    $('.stripe').val(token);
+    $.ajax({
+      url: dq_api.billing,
+      method: 'PATCH',
+      data: {'stripe_token': token},
+      success: function () {
+        window.location.reload();
+      }.bind(this)
+    });
+  }
+}
+
+function createCC(status, response) {
+  var $form = $('.payment-form');
+  if (response.error) {
+    // Show the errors on the form
+    $('.payment-form .payment-errors').removeClass('hidden').text(response.error.message);
+    $form.find('button').prop('disabled', false);
+    $form.find('.fa.load').addClass('hidden');
+  } else {
+    var token = response.id;
+    $('.stripe').val(token);
+    console.log();
+    $.ajax({
+      url: dq_api.billing,
+      method: 'POST',
+      data: $form.serialize(),
+      success: function () {
+        window.location.reload();
+      }.bind(this)
+    });
+  }
+}
+
+function handleCC(e) {
+  var stripe_key = 'pk_test_PhUrky9HrJfcAQvmstWpEna6';
+  Stripe.setPublishableKey(stripe_key);
+  var $form = $(e.currentTarget);
+  $form.find('button').prop('disabled', true);
+  Stripe.card.createToken($form,
+    {% if request.user.stripe %}
+      updateCC
+    {% else %}
+      createCC
+    {% endif %}
+  );
+}
+
+$('document').ready(function (){
+  var card_brand = '{{ request.user.get_default_payment.brand }}';
+  if (card_brand == 'American Express') {
+    card_class = 'amex';
+  } else if (card_brand == 'Diners Club') {
+    card_class = 'diners-club';
+  } else {
+    card_class = card_brand.toLowerCase()
+  }
+  $('#card_brand').addClass('fa-cc-'+card_class);
+});
+
+$('.payment-form').formValidation({
+  framework: 'bootstrap',
+  icon: {
+    valid: 'glyphicon glyphicon-ok',
+    invalid: 'glyphicon glyphicon-remove',
+    validating: 'glyphicon glyphicon-refresh'
+  },
+  err: {
+      container: 'tooltip'
+  },
+  fields: {
+    number: {
+      validators: {
+        notEmpty: {
+            message: 'A credit card number is required'
+        }
+      }
+    },
+    cvc: {
+      validators: {
+        notEmpty: {
+            message: 'CVC is required'
+        }
+      }
+    },
+    month: {
+      validators: {
+        notEmpty: {
+            message: 'An expiry month is required'
+        }
+      }
+    },
+    year: {
+      validators: {
+        notEmpty: {
+            message: 'An expiry year is required'
+        }
+      }
+    }
+  }
+})
+.on('err.form.fv', function(e) {
+  $('.spinner').addClass('hidden');
+}.bind(this))
+.on('success.form.fv', function(e) {
+    e.preventDefault();
+    $('.spinner').removeClass('hidden');
+    handleCC(e);
+}.bind(this));
+</script>
+{% endblock %}

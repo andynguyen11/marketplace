@@ -10,7 +10,7 @@ POST = 1
 DEV = 0
 
 # as of Django 1.7
-default_app_config = 'postman.apps.PostmanConfig'
+default_app_config = 'apps.postman.apps.PostmanConfig'
 
 # options
 OPTION_MESSAGES = 'm'

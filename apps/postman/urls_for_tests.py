@@ -126,7 +126,7 @@ postman_patterns = patterns('',
 
 urlpatterns = patterns('',
     (r'^accounts/login/$', 'django.contrib.auth.views.login'),  # because of the login_required decorator
-    (r'^messages/', include((postman_patterns, 'postman', 'postman'))),  # (<patterns object>, <application namespace>, <instance namespace>)
+    (r'^messages/', include((postman_patterns, 'apps.postman', 'postman'))),  # (<patterns object>, <application namespace>, <instance namespace>)
 )
 
 # because of fields.py/AutoCompleteWidget/render()/reverse()

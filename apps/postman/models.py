@@ -26,6 +26,7 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from . import OPTION_MESSAGES
 from postman.query import PostmanQuery
 from postman.utils import email_visitor, notify_user
+from business.models import Job, Project
 
 # moderation constants
 STATUS_PENDING = 'p'
@@ -307,6 +308,8 @@ class Message(models.Model):
         null=True, blank=True, verbose_name=_("moderator"))
     moderation_date = models.DateTimeField(_("moderated at"), null=True, blank=True)
     moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
+    job = models.ForeignKey(Job, blank=True, null=True)
+    project = models.ForeignKey(Project, blank=True, null=True)
 
     objects = MessageManager()
 

@@ -38,7 +38,7 @@ h5 {
 .nav-tabs > li > a {
   border-color: #ddd;
   background: #eee;
-  color: #777777;
+  color: #cccccc;
 }
 a.project-link {
   color: #31302f;
@@ -46,11 +46,12 @@ a.project-link {
 a.project-link:hover {
   text-decoration: none;
 }
-.progress-bar {
+.dq-progress-bar {
   list-style: none;
   padding: 0;
+  float: left;
 }
-.progress-bar li {
+.dq-progress-bar li {
   float: left;
   padding: 25px;
   border: 1px solid #f6b900;
@@ -59,15 +60,15 @@ a.project-link:hover {
   font-weight: bold;
   font-size: 12px;
 }
-.progress-bar li.active {
+.dq-progress-bar li.active {
   background: #f6b900;
   color: #fff;
 }
-.progress-bar li:first-child {
+.dq-progress-bar li:first-child {
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
 }
-.progress-bar li:last-child {
+.dq-progress-bar li:last-child {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
 }
@@ -87,9 +88,6 @@ a.project-link:hover {
   font-size: 12px;
   color: #f6b900;
 }
-.drop-padding {
-  padding: 0;
-}
 .icon {
   height: 35px;
 }
@@ -102,15 +100,6 @@ a.project-link:hover {
   bottom: 0;
   left: 0;
   z-index: 0;
-}
-.text-yellow {
-  color: #f6b900;
-}
-.text-skinny {
-  font-weight: 100;
-}
-.text-dark {
-  color: #31302f;
 }
 .row {
   margin-left: auto;
@@ -163,7 +152,7 @@ a.project-link:hover {
   font-weight: 700;
 }
 .project-description {
-  color: #777777;
+  color: #cccccc;
 }
 .project-copy {
   padding: 15px;
@@ -207,7 +196,7 @@ a.project-link:hover {
   border-radius: 50px;
   padding: 8px;
   background: #fff;
-  color: #777777;
+  color: #cccccc;
 }
 #new-projects .container {
   position: relative;
@@ -370,7 +359,7 @@ a.project-link:hover {
 }
 #project .specs ul li {
   padding: 10px 0;
-  color: #777777;
+  color: #cccccc;
 }
 #project .specs ul li h5 {
   color: #31302f;
@@ -398,12 +387,97 @@ a.project-link:hover {
 #experience .skill.rubyonrails .skill-image {
   background-image: url('../images/logo-rubyonrails.png');
 }
+.text-yellow {
+  color: #f6b900;
+}
+.text-skinny {
+  font-weight: 100;
+}
+.text-dark {
+  color: #31302f;
+}
+.text-light {
+  color: #cccccc;
+}
+.drop-padding {
+  padding: 0;
+}
 .form-group label {
   margin-left: 12px;
 }
 .form-group .form-control {
   padding: 15px 12px;
   height: auto;
+}
+.form-big .form-group {
+  background: #ffffff;
+  padding: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 5px;
+}
+.form-big .form-group .form-control.select2-container {
+  padding: 5px;
+}
+.form-fancy .form-group .form-control.select {
+  width: auto;
+  display: inline-block;
+  font-size: 42px;
+  margin: 0 5px;
+  border: 2px solid #f6b900;
+  color: #f6b900;
+  font-weight: bold;
+}
+.form-fancy .form-group .form-control[type='text'] {
+  width: auto;
+  margin: auto;
+  display: block;
+  font-size: 42px;
+  border: none;
+  background: none;
+  border-bottom: 2px solid #f6b900;
+  border-radius: 0;
+  box-shadow: none;
+  font-weight: bold;
+}
+.form-fancy .form-group .form-control[type='text']::-webkit-input-placeholder {
+  /* Chrome/Opera/Safari */
+  color: #f6b900;
+}
+.form-fancy .form-group .form-control[type='text']::-moz-placeholder {
+  /* Firefox 19+ */
+  color: #f6b900;
+}
+.form-fancy .form-group .form-control[type='text']:-ms-input-placeholder {
+  /* IE 10+ */
+  color: #f6b900;
+}
+.form-fancy .form-group .form-control[type='text']:-moz-placeholder {
+  /* Firefox 18- */
+  color: #f6b900;
+}
+.form-fancy .btn::after,
+.form-fancy .btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  margin-top: -19px;
+  border-top: 19px solid transparent;
+  border-bottom: 19px solid transparent;
+  border-left: 1em solid;
+  right: -1em;
+}
+.form-fancy .btn::after {
+  z-index: 2;
+  border-left-color: #525252;
+}
+#project-form {
+  margin-top: 30px;
+}
+#project-form .profile-image {
+  width: 100px;
+}
+#project-form textarea {
+  height: 200px;
 }
 #bid-modal .modal-dialog {
   width: 400px;
@@ -697,6 +771,8 @@ a.project-link:hover {
 }
 #login .login-content {
   width: 50%;
+  padding: 15px;
+  margin-top: 35px;
 }
 #postman table {
   width: 100%;
@@ -872,7 +948,7 @@ a.project-link:hover {
   margin-right: 35px;
 }
 .settings-nav li a {
-  color: #777777;
+  color: #cccccc;
 }
 .settings-nav li a.active {
   color: #f6b900;
@@ -931,7 +1007,7 @@ a.project-link:hover {
 #dashboard .section table.dashboard-table th {
   text-transform: uppercase;
   padding: 10px;
-  background: #777777;
+  background: #cccccc;
   color: #fff;
 }
 #dashboard .section table.dashboard-table td {
@@ -945,4 +1021,22 @@ a.project-link:hover {
 }
 #dashboard .profile-snapshot .profile-photo {
   width: 100%;
+}
+.dashboard-header p {
+  margin: -25px 0 30px;
+}
+.security img {
+  width: 100px;
+}
+.panel-onboard {
+  border: 1px solid #f6b900;
+  padding: 20px 40px 40px;
+}
+.panel-onboard a {
+  display: block;
+  color: #31302f;
+  border-radius: 5px;
+  border: 1px solid #cccccc;
+  background: #f3f3f3;
+  padding: 15px;
 }

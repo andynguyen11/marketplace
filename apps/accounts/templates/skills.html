@@ -1,0 +1,64 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+
+{% block account_content %}
+<div id="dashboard">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-12 dashboard-header">
+        <h2 class="text-yellow">display your proficiency and get better work</h2>
+        <p class="">When you pass a test, we certify you with a public badge that says are proficient in that language.  Most project
+managers only accept bids from certified developers. The more you pass, the more (better) work you’ll quality for.</p>
+      </div>
+      <div class="col-md-12">
+        <div class="section">
+          <div class="section-header">
+            <h4>Skills</h4>
+          </div>
+          <table class="dashboard-table">
+            {% if request.user.skills %}
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Name</th>
+                  <th>Questions</th>
+                  <th>Est. Time</th>
+                  <th>Status</th>
+                  <th>Score</th>
+                  <th></th>
+                </tr>
+              </thead>
+            {% for skill in request.user.get_skills %}
+              <tr>
+                <td>
+                  {{ skill }}
+                </td>
+                <td>
+                  30
+                </td>
+                <td>
+                  35 MIN
+                </td>
+                <td>
+                  <span class="text-success">PASSED</span>
+                </td>
+                <td>
+                  <span class="text-success">90/100</span>
+                </td>
+                <td>
+                  <a href="#" class="btn btn-dark">TEST</a>
+                </td>
+              </tr>
+              {% endfor %}
+            {% else %}
+              <tr><td><h4>You currently have not added any skills.  <a href="#">Edit your profile</a> to start testing.</h4></td></tr>
+            {% endif %}
+          </table>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

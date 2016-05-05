@@ -3,7 +3,7 @@
 body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: @font-size-base;
   background: #f5f5f5;
 }
 
@@ -52,9 +52,10 @@ a.project-link {
   }
 }
 
-.progress-bar {
+.dq-progress-bar {
   list-style: none;
   padding: 0;
+  float: left;
   li {
     float: left;
     padding: 25px;
@@ -95,10 +96,6 @@ a.project-link {
   }
 }
 
-.drop-padding {
-  padding: 0;
-}
-
 .icon {
   height: 35px;
 }
@@ -112,18 +109,6 @@ a.project-link {
   bottom: 0;
   left: 0;
   z-index: 0;
-}
-
-.text-yellow {
-  color: @yellow;
-}
-
-.text-skinny {
-  font-weight: 100;
-}
-
-.text-dark {
-  color: @black;
 }
 
 .row {
@@ -451,7 +436,7 @@ a.project-link {
   }
 }
 
-
+@import "components/helpers.less";
 @import "components/forms.less";
 @import "components/modals.less";
 @import "components/buttons.less";
@@ -463,3 +448,4 @@ a.project-link {
 @import "components/reviews.less";
 @import "components/account.less";
 @import "components/dashboard.less";
+@import "components/onboard.less";

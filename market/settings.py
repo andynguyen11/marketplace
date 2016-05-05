@@ -196,11 +196,11 @@ DEFAULT_FILE_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
 STATICFILES_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
 STATIC_URL = 'https://devquity.s3.amazonaws.com/'
 
-STRIPE_KEY = "sk_test_elUHA0YAFHJ2H4Wcw9zjvYbu" if ENVIRONMENT != 'prod' else 'sk_live_BeJIGPEO3OPDg8YwG5gIqyvg'
+#TODO Make these environment variables
+STRIPE_KEY = "sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u" if ENVIRONMENT != 'prod' else 'sk_live_BeJIGPEO3OPDg8YwG5gIqyvg'
 PUBLIC_STRIPE_KEY = 'pk_test_CANPk8WGjQh2GpvfIDNhxsyy' if ENVIRONMENT != 'prod' else 'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'
-MANDRILL_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "QbM0Gq17lG1IJxxsiW78Bg"
+MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "exv8qBKcFIaKPVZa-Hhm8A"
 
-MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "QbM0Gq17lG1IJxxsiW78Bg"
 #EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
 DEFAULT_FROM_EMAIL = "Sarah from DevQuity <service@devquity.com>"
 EMAIL_USE_TLS = True
@@ -253,7 +253,8 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('industry', 'industry')]
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/dashboard/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/profile/confirm/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/profile/confirm/'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
