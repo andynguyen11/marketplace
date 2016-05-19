@@ -1,0 +1,34 @@
+import os
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'devquity',
+        'USER': 'andynguyen',
+        'PASSWORD': '',
+        'HOST': ''
+    }
+}
+DEFAULT_FILE_STORAGE = 'require.storage.OptimizedStaticFilesStorage'
+STATICFILES_STORAGE = 'require.storage.OptimizedStaticFilesStorage'
+COMPRESS_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
+
+STATIC_ROOT = os.path.join(PROJECT_ROOT, 'staticfiles/')
+
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_ROOT, 'static'),
+)
+STATIC_URL = '/static/'
+
+COMPRESS_PRECOMPILERS = (
+)
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+LOCAL_DEV = True
+
+COMPRESS_ENABLED = False
+
+BASE_URL = 'localhost:8000'
