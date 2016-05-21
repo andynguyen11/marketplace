@@ -5,7 +5,7 @@
     <div id="featured-project">
         <div class="row">
             <div class="container">
-                <h2 class="text-center project-title">{{ title|title }}
+                <h2 class="text-center project-title" style="margin-top:80px;margin-bottom:20px;">{{ title|title }}
                     <small> showing {{ count }} of {{ count }}</small>
                 </h2>
                 {% for project in projects %}
@@ -63,7 +63,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block scripts %}
-    <link href="{% static 'css/business/project-gallery.css' %}" rel="stylesheet"/ >
-{% endblock scripts %}
