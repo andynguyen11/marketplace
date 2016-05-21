@@ -86,3 +86,65 @@ def attach_docs(request):
     return NotImplemented
 
 
+def art_design_projects(request):
+    projects = Project.objects.filter(type='art')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/art.html', context, context_instance=RequestContext(request))
+
+
+def gaming_projects(request):
+    projects = Project.objects.filter(type='gaming')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/gaming.html', context, context_instance=RequestContext(request))
+
+
+def health_projects(request):
+    projects = Project.objects.filter(type='health')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/health.html', context, context_instance=RequestContext(request))
+
+
+def location_based_projects(request):
+    projects = Project.objects.filter(type='location')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/location.html', context, context_instance=RequestContext(request))
+
+
+def music_and_media_projects(request):
+    projects = Project.objects.filter(type='music')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/music.html', context, context_instance=RequestContext(request))
+
+
+def news_and_publishing_projects(request):
+    projects = Project.objects.filter(type='news')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/news.html', context, context_instance=RequestContext(request))
+
+
+def non_profit_projects(request):
+    projects = Project.objects.filter(type='nonprofit')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/nonprofit.html', context, context_instance=RequestContext(request))
+
+
+def social_projects(request):
+    projects = Project.objects.filter(type='social')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/social.html', context, context_instance=RequestContext(request))
+
+
+def technology_projects(request):
+    projects = Project.objects.filter(type='technology')
+    count = projects.count()
+    context = {'projects': projects, 'count': count}
+    return render_to_response('projects_gallery/technology.html', context, context_instance=RequestContext(request))
+

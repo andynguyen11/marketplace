@@ -61,6 +61,17 @@ urlpatterns = patterns('apps',
     url('^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^project/(?P<project_id>[0-9]+)/$', 'business.views.view_project', name='project'),
     url(r'^project/create/$', 'business.views.create_project', name='create-project'),
+
+    # Project galleries
+    url(r'^art/$', view='business.views.art_design_projects', name='art'),
+    url(r'^technology/$', view='business.views.technology_projects', name='technology'),
+    url(r'^gaming/$', view='business.views.gaming_projects', name='gaming'),
+    url(r'^nonprofit/$', view='business.views.non_profit_projects', name='nonprofit'),
+    url(r'^social/$', view='business.views.social_projects', name='social'),
+    url(r'^news/$', view='business.views.news_and_publishing_projects', name='news'),
+    url(r'^music/$', view='business.views.music_and_media_projects', name='music'),
+    url(r'^location/$', view='business.views.location_based_projects', name='location'),
+    url(r'^health/$', view='business.views.health_projects', name='health'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 handler404 = error404
