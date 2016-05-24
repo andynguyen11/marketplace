@@ -168,60 +168,14 @@
   <div class="row">
     <div class="container text-center">
       <h2>browse by category</h2>
-      <div class="col-md-4">
-        <a id="art" href="{% url 'project-gallery' type='art' %}">
-          <div class="overlay"></div>
-          <h3>Art and Design</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="technology" href="{% url 'project-gallery' type='technology' %}">
-          <div class="overlay"></div>
-          <h3>Technology</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="gaming" href="{% url 'project-gallery' type='gaming' %}">
-          <div class="overlay"></div>
-          <h3>Gaming</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="nonprofit" href="{% url 'project-gallery' type='nonprofit' %}">
-          <div class="overlay"></div>
-          <h3>Non-profit</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="social" href="{% url 'project-gallery' type='social' %}">
-          <div class="overlay"></div>
-          <h3>Social</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="news" href="{% url 'project-gallery' type='news' %}">
-          <div class="overlay"></div>
-          <h3>News and Publishing</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="music" href="{% url 'project-gallery' type='music' %}">
-          <div class="overlay"></div>
-          <h3>Music and Media</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="location" href="{% url 'project-gallery' type='location' %}">
-          <div class="overlay"></div>
-          <h3>Location Based</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="health" href="{% url 'project-gallery' type='health' %}">
-          <div class="overlay"></div>
-          <h3>Health and Fitness</h3>
-        </a>
-      </div>
+        {% for category_verbose, category in categories %}
+          <div class="col-md-4">
+            <a id="{{ category_verbose }}" href="{% url 'project-gallery' category_verbose  %}">
+              <div class="overlay"></div>
+              <h3>{{ category }}</h3>
+            </a>
+          </div>
+        {% endfor %}
     </div>
   </div>
 </div>
@@ -282,7 +236,6 @@
             equity <br/>
             or cash</span>
           </h2>
-
         </div>
       </div>
     </div>

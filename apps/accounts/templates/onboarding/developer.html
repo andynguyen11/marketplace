@@ -2,6 +2,15 @@
 {% load staticfiles %}
 
 {% block content %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <h2 style="color:red;">
+                    <strong>{{ field.name }}: {{ error|escape }}</strong>
+                </h2>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
 <div id="create-project-header" class="section">
   <div class="row">
     <div class="container">
@@ -26,7 +35,7 @@
 
           <div class="form-group">
             <div class="col-md-6">
-              <label>Name</label>
+              <label class="control-label">Name</label>
               <input type="text" class="form-control" name="first_name" placeholder="First Name" value="{{ request.user.first_name }}" />
             </div>
             <div class="col-md-6">
@@ -60,7 +69,10 @@
           <div class="form-group">
             <div class="col-md-12">
               <label>Average Weekly Availability</label>
-              <input type="text" class="form-control" name="capacity" placeholder="XX hours/week" />
+              <input type="text" class="form-control" name="capacity" placeholder="XX hours/week"
+                min="0"
+                data-fv-greaterthan-inclusive="true"
+                data-fv-greaterthan-message="The input must be greater than or equal to 0"/>
             </div>
             <div class="clearfix"></div>
           </div>
@@ -93,21 +105,28 @@ $(document).ready(function() {
             first_name: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A first name is required.'
                     }
                 }
             },
             last_name: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A last name is required.'
                     }
                 }
             },
-            'biography': {
+            biography: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A quick biography is required.'
+                    }
+                }
+            },
+            capacity: {
+                validators: {
+                    notEmpty: {
+                        message: 'Weekly availability is required.'
                     }
                 }
             }
