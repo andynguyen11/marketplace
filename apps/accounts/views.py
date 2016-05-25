@@ -58,7 +58,7 @@ def developer_onboard(request, template):
         if form.is_valid():
             request.user.role = form.cleaned_data['role']
             request.user.biography = form.cleaned_data['biography']
-            request.user.photo = form.cleaned_data['photo']
+            request.user.photo = request.FILES['image']
             request.user.capacity = form.cleaned_data['capacity']
             request.user.skills = form.cleaned_data['skills']
             request.user.save()
