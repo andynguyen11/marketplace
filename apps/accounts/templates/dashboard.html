@@ -51,14 +51,12 @@
       <div class="col-md-9">
         <div class="section">
           <div class="section-header">
-            <h4>Notifications <span class="text-skinny">(5 New)</span></h4>
+            <h4>Notifications <span class="text-skinny">({{ notification_count }} New)</span></h4>
           </div>
           <ul class="notifications">
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
+            {% for notification in notifications %}
+            <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
+            {% endfor %}
             <li><a href="">SEE MORE</a></li>
           </ul>
         </div>

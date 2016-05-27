@@ -58,7 +58,8 @@ def edit_profile(request):
 def dashboard(request):
     user = Profile.objects.get(id=request.user.id)
     social = user.social_auth.get(provider='linkedin-oauth2')
-    return render_to_response('dashboard.html', {'user': user, 'social':social, }, context_instance=RequestContext(request))
+    notifications = user.notifications.unread()
+    return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, }, context_instance=RequestContext(request))
 
 
 @login_required
