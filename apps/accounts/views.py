@@ -1,11 +1,15 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.context import RequestContext
+from django.utils.datastructures import MultiValueDictKeyError
 
+
+
+from .forms import ProfileForm
 from accounts.models import Profile
-from business.models import Project, Job
+from business.models import Project, Job, PROJECT_TYPES
 
 
 def error404(request):
@@ -24,7 +28,9 @@ def home(request):
     featured = Project.objects.filter(featured=1)[:1].get()
     new = Project.objects.all().order_by('-date_created')[:3]
     developers = Profile.objects.all().order_by('-date_joined')[:3]
-    return render_to_response('home.html', {'featured': featured, 'new': new, 'developers': developers, }, context_instance=RequestContext(request))
+    return render_to_response('home.html',
+        {'featured': featured, 'new': new, 'developers': developers, 'categories': PROJECT_TYPES, },
+        context_instance=RequestContext(request))
 
 
 def logout(request):
@@ -45,6 +51,26 @@ def view_profile(request, user_id=None):
 @login_required
 def confirm_profile(request, template):
     return render_to_response(template, {}, context_instance=RequestContext(request))
+
+
+@login_required
+def developer_onboard(request, template):
+    form = ProfileForm()
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            request.user.role = form.cleaned_data['role']
+            request.user.biography = form.cleaned_data['biography']
+            try:
+                request.user.photo = request.FILES['image']
+            except MultiValueDictKeyError:
+                pass
+            request.user.capacity = form.cleaned_data['capacity']
+            request.user.skills = form.cleaned_data['skills']
+            request.user.save()
+            return redirect('dashboard')
+        return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))
 
 
 @login_required

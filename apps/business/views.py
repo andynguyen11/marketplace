@@ -8,7 +8,7 @@ from postman.api import pm_write
 
 from business.forms import ProjectForm
 from accounts.models import Profile
-from business.models import Project, Job, Company
+from business.models import Company, Job, Project, PROJECT_TYPES
 
 
 def view_project(request, project_id=None):
@@ -86,3 +86,10 @@ def attach_docs(request):
     return NotImplemented
 
 
+def projects_by_type(request, type):
+    if type not in [category[0] for category in PROJECT_TYPES]:
+        return redirect('404.html')
+    projects = Project.objects.filter(type=type)
+    count = projects.count()
+    context =  {'projects': projects, 'count': count, 'title': type+' projects', }
+    return render_to_response('project_by_type.html', context, context_instance=RequestContext(request))

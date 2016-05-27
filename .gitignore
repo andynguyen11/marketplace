@@ -1,5 +1,8 @@
 local_settings.py
 
+# Mac OSX
+.DS_STORE
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
