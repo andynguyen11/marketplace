@@ -3,6 +3,9 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.template.context import RequestContext
+from django.utils.datastructures import MultiValueDictKeyError
+
+
 
 from .forms import ProfileForm
 from accounts.models import Profile
@@ -54,11 +57,14 @@ def confirm_profile(request, template):
 def developer_onboard(request, template):
     form = ProfileForm()
     if request.method == 'POST':
-        form = ProfileForm(request.POST or None, request.FILES or None)
+        form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             request.user.role = form.cleaned_data['role']
             request.user.biography = form.cleaned_data['biography']
-            request.user.photo = request.FILES['image']
+            try:
+                request.user.photo = request.FILES['image']
+            except MultiValueDictKeyError:
+                pass
             request.user.capacity = form.cleaned_data['capacity']
             request.user.skills = form.cleaned_data['skills']
             request.user.save()
