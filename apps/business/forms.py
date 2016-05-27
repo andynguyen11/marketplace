@@ -8,7 +8,7 @@ from business.models import Project
 
 
 class ProjectForm(forms.ModelForm):
-
+    photo = forms.ImageField(label='Choose file')
     class Meta:
         model = Project
         exclude = ['company', 'project_manager', 'date_created', 'status', 'remote', 'featured', ]

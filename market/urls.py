@@ -39,6 +39,8 @@ urlpatterns = patterns('apps',
     url(r'^skills/', autocomplete, {'tag_model': Skills}, name='skills_autocomplete'),
     url(r'^message/send/$', 'business.views.send_message', name='send-message'),
     url(r'^bid/send/$', 'business.views.send_bid', name='send-bid'),
+    url(r'^onboard/developer/$', 'accounts.views.developer_onboard',
+        {'template': 'onboarding/developer.html'}, name='onboard-developer'),
     url(r'^onboard/developer/$', 'accounts.views.confirm_profile',
         {'template': 'onboarding/developer.html'}, name='onboard-developer'),
     url(r'^onboard/manager/$', 'accounts.views.confirm_profile',
@@ -61,6 +63,7 @@ urlpatterns = patterns('apps',
     url('^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^project/(?P<project_id>[0-9]+)/$', 'business.views.view_project', name='project'),
     url(r'^project/create/$', 'business.views.create_project', name='create-project'),
+    url(r'^(?P<type>[\w-]+)/$', 'business.views.projects_by_type', name='project-gallery'),
 ) + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 handler404 = error404

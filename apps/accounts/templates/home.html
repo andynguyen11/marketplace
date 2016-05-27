@@ -168,62 +168,14 @@
   <div class="row">
     <div class="container text-center">
       <h2>browse by category</h2>
-      <div class="col-md-4">
-        <a id="art">
-          <div class="overlay"></div>
-          <h3>Art and Design</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="technology">
-          <div class="overlay"></div>
-          <h3>Technology</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="gaming">
-          <div class="overlay"></div>
-          <h3>Gaming</h3>
-        </a>
-      </div>
-
-      <div class="col-md-4">
-        <a id="nonprofit">
-          <div class="overlay"></div>
-          <h3>Non-profit</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="social">
-          <div class="overlay"></div>
-          <h3>Social</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="news">
-          <div class="overlay"></div>
-          <h3>News and Publishing</h3>
-        </a>
-      </div>
-
-      <div class="col-md-4">
-        <a id="music">
-          <div class="overlay"></div>
-          <h3>Music and Media</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="location">
-          <div class="overlay"></div>
-          <h3>Location Based</h3>
-        </a>
-      </div>
-      <div class="col-md-4">
-        <a id="health">
-          <div class="overlay"></div>
-          <h3>Health and Fitness</h3>
-        </a>
-      </div>
+        {% for category_verbose, category in categories %}
+          <div class="col-md-4">
+            <a id="{{ category_verbose }}" href="{% url 'project-gallery' category_verbose  %}">
+              <div class="overlay"></div>
+              <h3>{{ category }}</h3>
+            </a>
+          </div>
+        {% endfor %}
     </div>
   </div>
 </div>
@@ -284,7 +236,6 @@
             equity <br/>
             or cash</span>
           </h2>
-
         </div>
       </div>
     </div>
