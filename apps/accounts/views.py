@@ -7,7 +7,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 
 
-from .forms import ProfileForm
+from accounts.forms import ProfileForm, DeveloperOnboardForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
 
@@ -107,4 +107,21 @@ def view_documents(request):
 
 @login_required
 def profile(request, template='account-settings.html'):
-    return render_to_response(template, {}, context_instance=RequestContext(request))
+    form = ProfileForm()
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            request.user.first_name = form.cleaned_data['first_name']
+            request.user.last_name = form.cleaned_data['last_name']
+            request.user.capacity = form.cleaned_data['capacity']
+            request.user.location = form.cleaned_data['location']
+            request.user.biography = form.cleaned_data['biography']
+            try:
+                request.user.photo = request.FILES['photo']
+            except MultiValueDictKeyError:
+                pass
+
+            request.user.save()
+            return redirect('profile-settings')
+        return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))

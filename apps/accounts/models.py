@@ -37,6 +37,7 @@ class Profile(AbstractUser):
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     zipcode = models.IntegerField(blank=True, null=True)
+    location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     photo = models.ImageField(blank=True, upload_to='profile')
