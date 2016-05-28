@@ -2,7 +2,9 @@
 {% load staticfiles %}
 {% load postman_tags %}
 {% load active_class %}
+{% load notifications_tags %}
 
+{% notifications_unread as notification_count %}
 {% postman_unread as unread_count %}
 
 {% block content %}

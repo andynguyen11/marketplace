@@ -5,6 +5,7 @@ from django.template.context import RequestContext
 from django.http import HttpResponse
 
 from postman.api import pm_write
+from notifications.signals import notify
 
 from business.forms import ProjectForm
 from accounts.models import Profile
@@ -75,9 +76,10 @@ def send_bid(request):
             developer=sender,
             equity=request.POST['equity'],
             cash=request.POST['cash'],
-            hours=request.POST['hours'],
-            message=message.id)
+            hours=request.POST['hours'])
+        notify.send(recipient, recipient=recipient, verb=u'received a new bid', action_object=job, )
         return HttpResponse(status=200)
+
     return HttpResponse(status=403)
 
 

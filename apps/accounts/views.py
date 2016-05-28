@@ -7,7 +7,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 
 
-from .forms import ProfileForm
+from accounts.forms import ProfileForm, DeveloperOnboardForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
 
@@ -55,9 +55,9 @@ def confirm_profile(request, template):
 
 @login_required
 def developer_onboard(request, template):
-    form = ProfileForm()
+    form = DeveloperOnboardForm()
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
+        form = DeveloperOnboardForm(request.POST, request.FILES)
         if form.is_valid():
             request.user.role = form.cleaned_data['role']
             request.user.biography = form.cleaned_data['biography']
@@ -84,7 +84,8 @@ def edit_profile(request):
 def dashboard(request):
     user = Profile.objects.get(id=request.user.id)
     social = user.social_auth.get(provider='linkedin-oauth2')
-    return render_to_response('dashboard.html', {'user': user, 'social':social, }, context_instance=RequestContext(request))
+    notifications = user.notifications.unread()
+    return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, }, context_instance=RequestContext(request))
 
 
 @login_required
@@ -106,4 +107,21 @@ def view_documents(request):
 
 @login_required
 def profile(request, template='account-settings.html'):
-    return render_to_response(template, {}, context_instance=RequestContext(request))
+    form = ProfileForm()
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            request.user.first_name = form.cleaned_data['first_name']
+            request.user.last_name = form.cleaned_data['last_name']
+            request.user.capacity = form.cleaned_data['capacity']
+            request.user.location = form.cleaned_data['location']
+            request.user.biography = form.cleaned_data['biography']
+            try:
+                request.user.photo = request.FILES['photo']
+            except MultiValueDictKeyError:
+                pass
+
+            request.user.save()
+            return redirect('profile-settings')
+        return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))
