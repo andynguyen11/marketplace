@@ -17,12 +17,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
   <!-- TODO concatenate into one css during build / no references to bower_components -->
-  <link type="text/css" rel="stylesheet" charset="utf-8" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
-  <link type="text/css" rel="stylesheet" href="{% static 'css/select2.css' %}" />
-  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
-  <link type="text/css" rel="stylesheet" href="{% static 'css/formValidation.min.css' %}" />
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
   {% block fb_pixel %}{% endblock %}
@@ -120,17 +117,15 @@
   </div>
 </div>
 
-<!-- TODO Concat and minify -->
-<script type="text/javascript" src="{% static "js/library/jquery.js" %}"></script>
-<script type="text/javascript" src="{% static "js/library/bootstrap.js" %}"></script>
-<script type="text/javascript" src="{% static "js/library/select2.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/library/tagulous.js" %}"></script>
-<script type="text/javascript" src="{% static "js/library/select2-adaptor.js" %}"></script>
-<script type="text/javascript" src="{% static 'js/library/formValidation.popular.min.js' %}" ></script>
-<script type="text/javascript" src="{% static 'js/library/validation.bootstrap.min.js' %}" ></script>
-<script type="text/javascript" src="{% static "js/api.js" %}"></script>
-<script type="text/javascript" src="{% static "js/main.js" %}"></script>
+
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/vendor/select2.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/vendor/tagulous.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/vendor/select2-adaptor.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/vendor/formValidation.popular.min.js' %}" ></script>
+<script type="text/javascript" src="{% static 'js/vendor/validation.bootstrap.min.js' %}" ></script>
 <script type="text/javascript" src="https://js.stripe.com/v2/?sensor=false"></script>
+
 {% if ENVIRONMENT == 'prod' %}
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

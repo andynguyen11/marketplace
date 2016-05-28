@@ -191,12 +191,9 @@
 {% endblock %}
 
 {% block scripts %}
-  <script src="{% static 'js/api.js' %}" ></script>
-<script src="{% static 'js/library/jquery.js' %}" ></script>
-  <script src="{% static 'js/library/bootstrap.js' %}" ></script>
-<script src="{% static 'js/library/formValidation.popular.min.js' %}" ></script>
-<script src="{% static 'js/library/validation.bootstrap.min.js' %}" ></script>
-  <script src="https://js.stripe.com/v2/?sensor=false"></script>
+<script src="{% static 'js/vendor/formValidation.popular.min.js' %}" ></script>
+<script src="{% static 'js/vendor/validation.bootstrap.min.js' %}" ></script>
+<script src="https://js.stripe.com/v2/?sensor=false"></script>
 <script type="text/javascript">
 var stripe_key = {% if ENVIRONMENT == 'prod' %}'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'{% else %}'pk_test_CANPk8WGjQh2GpvfIDNhxsyy'{% endif %};
 $(document).ready(function() {
