@@ -55,9 +55,9 @@ def confirm_profile(request, template):
 
 @login_required
 def developer_onboard(request, template):
-    form = ProfileForm()
+    form = DeveloperOnboardForm()
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
+        form = DeveloperOnboardForm(request.POST, request.FILES)
         if form.is_valid():
             request.user.role = form.cleaned_data['role']
             request.user.biography = form.cleaned_data['biography']
