@@ -5,9 +5,7 @@ from django.http import HttpResponse
 from django.template.context import RequestContext
 from django.utils.datastructures import MultiValueDictKeyError
 
-
-
-from accounts.forms import ProfileForm, DeveloperOnboardForm
+from accounts.forms import ProfileForm, DeveloperOnboardForm, ManagerOnboardForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
 
@@ -70,7 +68,29 @@ def developer_onboard(request, template):
             request.user.save()
             return redirect('dashboard')
         return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
-    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))\
+
+
+@login_required
+def manager_onboard(request, template):
+    form = ManagerOnboardForm()
+    if request.method == 'POST':
+        form = ManagerOnboardForm(request.POST, request.FILES)
+        if form.is_valid():
+            request.user.first_name = form.cleaned_data['first_name']
+            request.user.last_name = form.cleaned_data['last_name']
+            request.user.title = form.cleaned_data['title']
+            request.user.biography = form.cleaned_data['biography']
+            request.user.location = form.cleaned_data['location']
+            request.user.skills = form.cleaned_data['skills']
+            try:
+                request.user.photo = request.FILES['image']
+            except MultiValueDictKeyError:
+                pass
+            request.user.save()
+            return redirect('dashboard')
+        return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
 
 
 @login_required
@@ -105,6 +125,7 @@ def view_documents(request):
     projects = Project.objects.filter(project_manager=request.user)
     return render_to_response('documents.html', {'projects': projects, }, context_instance=RequestContext(request))
 
+
 @login_required
 def profile(request, template='account-settings.html'):
     form = ProfileForm()
@@ -124,4 +145,4 @@ def profile(request, template='account-settings.html'):
             request.user.save()
             return redirect('profile-settings')
         return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
-    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))
+    return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
