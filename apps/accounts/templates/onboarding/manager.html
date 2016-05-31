@@ -89,21 +89,35 @@ $(document).ready(function() {
             first_name: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A first name is required.'
                     }
                 }
             },
             last_name: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A last name is required.'
                     }
                 }
             },
-            'biography': {
+            title: {
                 validators: {
                     notEmpty: {
-                        message: 'Required'
+                        message: 'A title is required.'
+                    }
+                }
+            },
+            biography: {
+                validators: {
+                    notEmpty: {
+                        message: 'A biography is required'
+                    }
+                }
+            },
+            location: {
+                validators: {
+                    notEmpty: {
+                        message: 'A location is required.'
                     }
                 }
             }
