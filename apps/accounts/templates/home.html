@@ -4,8 +4,18 @@
 {% block header_class %}home{% endblock %}
 
 {% block header_actions %}
-  <button class="btn btn-transparent">Discover a Project</button>
-  <button class="btn btn-transparent">List a Project</button>
+  <div class="header-btn-group" role="group">
+    <button class="btn btn-transparent">Discover a Project</button>
+    <button class="btn btn-transparent">List a Project</button>
+  </div>
+  <div class="search-bar input-group pull-left">
+    <span class="input-group-btn">
+      <button id="search-btn" class="btn btn-default" type="submit">
+        <i class="fa fa-search"></i>
+      </button>
+    </span>
+    <input type="text" class="form-control" placeholder="SEARCH PROJECTS">
+  </div>
   {% if request.user.is_authenticated %}
   <a class="header-action" href="{% url 'postman:inbox' %}">
     <img src="{% static 'images/icon-message-white.png' %}" />
@@ -30,6 +40,12 @@
       <li><a href="{% url 'logout' %}">Log Out</a></li>
     </ul>
   </div>
+  {% else %}
+    <div class="header-links">
+      <a href="{% url 'home' %}">Help</a>
+      <a href="{% url 'home' %}">Sign-up</a>
+      <a href="{% url 'login' %}">Login</a>
+    </div>
   {% endif %}
 {% endblock %}
 
