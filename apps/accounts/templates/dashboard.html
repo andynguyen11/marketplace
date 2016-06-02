@@ -1,7 +1,10 @@
 {% extends "base_account.html" %}
 {% load staticfiles %}
 
+{% load notifications_tags %}
+
 {% block account_content %}
+
 <div id="dashboard">
   <div class="row">
     <div class="container">
@@ -51,7 +54,7 @@
       <div class="col-md-9">
         <div class="section">
           <div class="section-header">
-            <h4>Notifications <span class="text-skinny">({{ notification_count }} New)</span></h4>
+            <h4>Notifications <span class="text-skinny">({% notifications_unread %} New)</span></h4>
           </div>
           <ul class="notifications">
             {% for notification in notifications %}

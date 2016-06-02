@@ -49,13 +49,14 @@ INSTALLED_APPS = (
     'social.apps.django_app.default',
     'collectfast',
     'password_reset',
-    'require',
+    'storages',
     'rest_framework',
     'rest_framework.authtoken',
     'tagulous',
     'crispy_forms',
     'accounts',
     'business',
+    'api',
     'reviews',
     'postman',
 )
@@ -194,8 +195,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-DEFAULT_FILE_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
-STATICFILES_STORAGE = 'require_s3.storage.OptimizedCachedStaticFilesStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATIC_URL = 'https://devquity.s3.amazonaws.com/'
 
 #TODO Make these environment variables
@@ -221,8 +222,6 @@ MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 
 LOGIN_URL = '/login/'
 
-REQUIRE_BASE_URL = 'js'
-REQUIRE_BUILD_PROFILE = 'build.js'
 BASE_URL = 'https://dev.devquity.com' if ENVIRONMENT != 'prod' else 'https://devquity.com'
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '786yjyq5pud726'
@@ -252,10 +251,11 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('pictureUrl', 'picture_url'),
                                    ('pictureUrls', 'picture_urls'),
                                    ('location', 'location'),
-                                   ('industry', 'industry')]
+                                   ('industry', 'industry'),
+                                   ('name', 'name'),]
 
-SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/profile/confirm/'
+SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', ]
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/profile/dashboard/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/profile/confirm/'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_PIPELINE = (
@@ -264,6 +264,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
     'social.pipeline.user.get_username',
+    'accounts.pipeline.username',
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',

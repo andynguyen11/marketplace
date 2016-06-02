@@ -68,4 +68,4 @@ gulp.task('default', ['scripts', 'less', 'fonts', 'images'], function () {
 	gulp.watch('./assets/less/*.less', ['less']);
 	gulp.watch('./assets/fonts/*.*', ['fonts']);
 	gulp.watch('./assets/images/**/*.*', ['images']);
-})
+});

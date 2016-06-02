@@ -47,11 +47,6 @@ def view_profile(request, user_id=None):
 
 
 @login_required
-def confirm_profile(request, template):
-    return render_to_response(template, {}, context_instance=RequestContext(request))
-
-
-@login_required
 def developer_onboard(request, template):
     form = DeveloperOnboardForm()
     if request.method == 'POST':
@@ -81,8 +76,8 @@ def manager_onboard(request, template):
             request.user.last_name = form.cleaned_data['last_name']
             request.user.title = form.cleaned_data['title']
             request.user.biography = form.cleaned_data['biography']
-            request.user.location = form.cleaned_data['location']
-            request.user.skills = form.cleaned_data['skills']
+            request.user.city = form.cleaned_data['city']
+            request.user.state = form.cleaned_data['state']
             try:
                 request.user.photo = request.FILES['image']
             except MultiValueDictKeyError:
