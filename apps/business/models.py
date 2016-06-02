@@ -6,11 +6,9 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-from accounts.models import Profile, Skills
-
 
 class Company(models.Model):
-    primary_contact = models.ForeignKey(Profile)
+    primary_contact = models.ForeignKey('accounts.Profile')
     name = models.CharField(max_length=255)
     legal_entity_name = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=255)
@@ -55,7 +53,7 @@ JOB_STATUS = (
 
 class Job(models.Model):
     project = models.ForeignKey('business.Project')
-    developer = models.ForeignKey(Profile)
+    developer = models.ForeignKey('accounts.Profile')
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
@@ -70,7 +68,7 @@ class Job(models.Model):
 
 class Project(models.Model):
     company = models.ForeignKey(Company)
-    project_manager = models.ForeignKey(Profile)
+    project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES)
     image = models.ImageField(blank=True, upload_to='project')
@@ -83,7 +81,7 @@ class Project(models.Model):
     estimated_equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     estimated_hours = models.IntegerField()
-    skills = tagulous.models.TagField(to=Skills)
+    skills = tagulous.models.TagField(to='accounts.Skills')
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)

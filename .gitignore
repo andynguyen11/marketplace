@@ -25,6 +25,7 @@ sdist/
 var/
 node_modules/
 static/
+assets/less/*.css
 *.egg-info/
 .installed.cfg
 *.egg

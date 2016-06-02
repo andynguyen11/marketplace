@@ -26,14 +26,6 @@
 
           <div class="form-group">
             <div class="col-md-12">
-              <label>Your Title</label>
-              <input type="text" class="form-control" name="title" placeholder="Founder, Project Manager, Product Manager, etc." value="{{ request.user.linkedin.extra_data.headline }}" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-12">
             <label>Biography</label>
             <textarea class="form-control" name="biography" placeholder="Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself." >
               {{ request.user.linkedin.extra_data.summary }}
@@ -54,18 +46,16 @@
           </div>
 
           <div class="form-group">
-            <div class="col-md-12">
-              <label>Your Location</label>
-              <input type="text" class="form-control" name="location" placeholder="Where is the project located? (City/State? Remote?)" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
+              <div class="col-md-12">
+                <label>Your Location</label>
+              </div>
+              <div class="col-md-6">
+                <input type="text" class="form-control" name="city" placeholder="City" />
+              </div>
+              <div class="col-md-6">
+                <input type="text" class="form-control" name="state" placeholder="State" />
+              </div>
 
-          <div class="form-group">
-            <div class="col-md-12">
-            <label>Technologies</label>
-            <input class="form-control" autocomplete="off" data-tag-options="{&quot;required&quot;: true}" data-tag-url="/skills/" data-tagulous="true" id="id_skills" name="skills" type="text" />
-            </div>
             <div class="clearfix"></div>
           </div>
 
