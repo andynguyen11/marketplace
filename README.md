@@ -35,3 +35,6 @@
 * `python /path/to/manage.py runserver`
 * `gulp` in another terminal (to run css/js tasks)
 * Hit localhost:8000 in browser to access local environment
+
+##### Having trouble?
+Try `python /path/to/manage.py migrate`
