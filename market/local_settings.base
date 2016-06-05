@@ -1,14 +1,28 @@
 import os
 
-DATABASES = {
-    'default': {
+LOCAL_DB = False
+
+if LOCAL_DB:
+    database = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'devquity',
-        'USER': 'andynguyen',
+        'NAME': '',
+        'USER': '',
         'PASSWORD': '',
         'HOST': ''
     }
+else:
+    database = {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ebdb',
+        'USER': 'unicron',
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': 'aa1mirdnw6ycoiy.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
+    }
+
+DATABASES = {
+    'default': database
 }
+
 DEFAULT_FILE_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
