@@ -3,25 +3,27 @@
 @import "../../node_modules/bootstrap/less/bootstrap.less";
 @import "../../node_modules/bootstrap-datepicker/less/datepicker3.less";
 @import "../../node_modules/bootstrap-select/less/bootstrap-select.less";
-
-@import "components/account.less";
-@import "components/buttons.less";
-@import "components/dashboard.less";
-@import "components/featured.less";
-@import "components/footer.less";
-@import "components/forms.less";
-@import "components/header.less";
-@import "components/helpers.less";
-@import "components/login.less";
-@import "components/messaging.less";
-@import "components/modals.less";
-@import "components/onboard.less";
-@import "components/reviews.less";
 @import "bootstrap-datepicker3.min.css";
 @import "bootstrap-select.min.css";
+
+@import "components/buttons.less";
+@import "components/helpers.less";
+@import "components/forms.less";
+@import "components/modals.less";
 @import "formValidation.min.css";
 @import "hm-base.css";
 @import "star-rating.min.css";
+
+@import "components/home.less";
+@import "components/account.less";
+@import "components/dashboard.less";
+@import "components/featured.less";
+@import "components/footer.less";
+@import "components/header.less";
+@import "components/login.less";
+@import "components/messaging.less";
+@import "components/onboard.less";
+@import "components/reviews.less";
 
 body {
   font-family: 'Open Sans', sans-serif;
@@ -303,113 +305,6 @@ a.project-link {
   }
   .project-or {
     left: 61%
-  }
-}
-
-#browse-category {
-  a, a:visited, a:hover {
-    color: #fff;
-    text-decoration: none;
-    background-repeat: no-repeat;
-    background-size: cover;
-    position: relative;
-    display: block;
-      h3 {
-        text-transform: uppercase;
-        position: relative;
-        z-index: 2;
-        padding: 125px 0;
-      }
-  }
-  #art {
-    background-image: url('../images/art.jpg');
-  }
-  #technology {
-    background-image: url('../images/technology.jpg');
-  }
-  #gaming {
-    background-image: url('../images/game.jpg');
-  }
-  #health {
-    background-image: url('../images/health.jpg');
-  }
-  #nonprofit {
-    background-image: url('../images/nonprofit.jpg');
-  }
-  #social {
-    background-image: url('../images/social.jpg');
-  }
-  #location {
-    background-image: url('../images/location.jpg');
-  }
-  #music {
-    background-image: url('../images/music.jpg');
-  }
-  #news {
-    background-image: url('../images/news.jpg');
-  }
-}
-
-#developers {
-  .profile {
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: bottom;
-    position: relative;
-    color: #fff;
-    text-transform: uppercase;
-    padding: 50px 0;
-  }
-  .profile img {
-    border: 2px solid #ccc;
-    border-radius: 40px;
-    height: 40px;
-  }
-  .overlay {
-    filter: blur(2px);
-    -webkit-filter: blur(2px);
-    overflow: hidden;
-    top: 0px;
-    bottom: -1px;
-    left: 0px;
-    right: 0px;
-  }
-
-  .profile-content{
-    position: relative;
-    z-index: 2;
-  }
-}
-
-#how {
-  .container {
-    position: relative;
-  }
-  .btn {
-    position: absolute;
-    top: 25px;
-    right: 0;
-  }
-  .panel-how {
-    color: #fff;
-    position: relative;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    padding: 60px 0;
-  }
-  h2 {
-    position: relative;
-    z-index: 2;
-  }
-  #discover {
-    background-image: url('../images/discover.jpg');
-  }
-  #invest {
-    background-image: url('../images/invest.jpg');
-  }
-  #earn {
-    background-image: url('../images/earn.jpg');
   }
 }
 

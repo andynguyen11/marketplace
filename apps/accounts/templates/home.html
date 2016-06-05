@@ -58,7 +58,7 @@
         Code for equity. <br/>
         <span class="text-yellow">On projects you love.</span>
       </h1>
-      <button class="btn btn-foggy">Find a Project</button>
+      <button class="btn btn-foggy btn-find-project">Find a Project</button>
     </div>
   </div>
 </div>
@@ -124,7 +124,7 @@
   <div class="row">
     <div class="container">
       <h2 class="text-center">newly added projects</h2>
-      <button class="btn btn-yb">see more</button>
+      <button class="btn btn-yb btn-more">see more</button>
       {% for project in new %}
       <div class="col-md-4">
       <a class="project-link" href="{% url 'project' project.id %}" />
@@ -222,7 +222,7 @@
   <div class="row">
     <div class="container">
       <h2 class="text-center">how devquity works</h2>
-      <button class="btn btn-yb">see more</button>
+      <button class="btn btn-yb btn-more">see more</button>
       <div class="col-md-4">
         <div id="discover" class="panel-how text-center">
           <div class="overlay"></div>
