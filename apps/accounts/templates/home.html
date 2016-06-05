@@ -68,7 +68,7 @@
       <h2 class="text-center">featured project</h2>
       <a class="project-link" href="{% url 'project' featured.id %}" />
       <div class="panel panel-project">
-        <div class="project-image col-md-7" style="background-image: url('{% static "" %}{{ featured.image }}');">
+        <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
           <div class="overlay"></div>
           <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
         </div>
@@ -129,7 +129,7 @@
       <div class="col-md-4">
       <a class="project-link" href="{% url 'project' project.id %}" />
       <div class="panel panel-project">
-        <div class="project-image" style="background-image: url('{% static "" %}{{ project.image }}');"></div>
+        <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
         <div class="project-content">
           <div class="project-copy">
             <h4 class="project-title">{{ project.title }}</h4>
