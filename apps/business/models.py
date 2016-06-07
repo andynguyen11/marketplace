@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from api import docusign
 
 
 class Company(models.Model):
@@ -103,15 +104,20 @@ DOCUMENT_TYPES = (
     (u'Non-Compete', u'Non-Compete Agreement'),
 )
 
-DOCUMENT_STATUS = (
-    (u'sent', u'Sent'),
-    (u'received', u'Received'),
-    (u'signed', u'Signed'),
-)
-
-
 class Document(models.Model):
+    docusign_document = models.OneToOneField('docusign.Document', unique=True)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
-    status = models.CharField(max_length=100, default='sent', choices=DOCUMENT_STATUS)
     project = models.ForeignKey(Project)
     job = models.ForeignKey(Job)
+
+    @property
+    def project_manager(self):
+        return self.project.project_manager
+
+    @property
+    def developer(self):
+        return self.project.developer
+
+    @property
+    def status(self):
+        return self.docusign_document.status

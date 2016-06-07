@@ -57,8 +57,10 @@ INSTALLED_APPS = (
     'accounts',
     'business',
     'api',
+    'docusign',
     'reviews',
     'postman',
+    'django_extensions'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -276,6 +278,14 @@ POSTMAN_DISALLOW_ANONYMOUS = True
 POSTMAN_DISALLOW_MULTIRECIPIENTS = True
 POSTMAN_DISALLOW_COPIES_ON_REPLY = True
 POSTMAN_AUTO_MODERATE_AS = True
+
+ 
+DOCUSIGN = {
+    'root_url': os.environ.get('DOCUSIGN_ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
+    'integrator_key': os.environ.get('DOCUSIGN_API_KEY', ''),
+    'username': os.environ.get('DOCUSIGN_USERNAME', ''),
+    'password': os.environ.get('DOCUSIGN_PASSWORD', ''),
+}
 
 try:
     from local_settings import *
