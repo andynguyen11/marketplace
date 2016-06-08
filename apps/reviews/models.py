@@ -5,7 +5,12 @@ from accounts.models import Profile
 
 
 class Review(models.Model):
-    rating = models.IntegerField()
+    availability = models.DecimalField()
+    timeliness = models.DecimalField()
+    quality = models.DecimalField()
+    skills = models.DecimalField()
+    deadlines = models.DecimalField()
+    communication = models.DecimalField()
     notes = models.TextField(blank=True, null=True)
     job = models.ForeignKey(Job)
 
