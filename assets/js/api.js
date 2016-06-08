@@ -1,4 +1,4 @@
-dq_api = {
+var dq_api = {
 	message_send: '/message/send/',
 	message_unarchive: '/profile/messages/unarchive/',
 	message_archive: '/profile/messages/archive/',

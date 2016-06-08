@@ -1,4 +1,7 @@
-var $ = jQuery = require('jquery');
+window.$ = window.jQuery = require('jquery');
+window.React = require('react');
+window.ReactDOM = require('react-dom');
+
 require('lodash');
 require('bootstrap');
 require('bootstrap-datepicker');
@@ -7,6 +10,8 @@ require('moment');
 require('./api');
 require('./csrf');
 require('./messaging');
+
+require('./routes/home');
 
 // SETUP AJAX WITH CSRF
 function getCookie(name) {

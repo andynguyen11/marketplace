@@ -11,3 +11,99 @@
     }
   }
 }
+
+.submitReview-modal {
+  background: @off-white;
+
+  .submitReview-header {
+    padding: 15px 20px;
+    position: relative;
+    font-size: 16px;
+    border-bottom: 1px solid @border-gray;
+    background: #FFF;
+  }
+  .submitReview-user-avatar {
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    right: 20px;
+    top: 100%;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    overflow: hidden;
+    background-size: cover;
+  }
+
+  .submitReview-attribute {
+    padding: 15px 95px 15px 40px;
+    border-bottom: 1px solid @border-gray;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: #FFF;
+  }
+  .submitReview-attribute-stars {
+    direction: rtl;
+  }
+  .submitReview-attribute-star {
+    width: 40px;
+    height: 30px;
+    display: inline-block;
+    background: url("../images/rating-star.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    padding-left: 7px;
+    cursor: pointer;
+  }
+  .submitReview-attribute-star-selected,
+  .submitReview-attribute-star:hover,
+  .submitReview-attribute-star:hover ~ .submitReview-attribute-star {
+    background-image: url("../images/rating-star-selected.png");
+  }
+  .submitReview-reviewText {
+    padding: 20px;
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      background: #FFF;
+      border: 1px solid @border-gray;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+  }
+  .submitReview-footer {
+    padding: 0 20px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .submitReview-recommendation {
+    display: flex;
+    font-weight: bold;
+    
+    label {
+      vertical-align: middle;
+    }
+
+    input {
+      margin-right: 7px;
+    }
+  }
+  .submitReview-recommend-true {
+    color: #44b65a;
+  }
+  .submitReview-recommend-false {
+    color: #c92313;
+  }
+  .submitReview-button {
+    color: @dark-gray;
+  }
+  .submitReview-error {
+    margin: -10px 20px 10px;
+  }
+}
