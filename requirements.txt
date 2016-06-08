@@ -50,7 +50,7 @@ psycopg2==2.6.1
 pyOpenSSL==16.0.0
 pyasn1==0.1.9
 pycparser==2.14
-pycurl==7.43.0
+pycurl==7.43.0 --global-option="--with-nss"
 pydocusign==0.13.1
 python-dateutil==2.5.1
 python-openid==2.2.5
