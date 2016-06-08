@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from api import docusign
 
 
 class Company(models.Model):
