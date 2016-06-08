@@ -5,8 +5,8 @@ from reviews.models import CompanyReview, DeveloperReview
 
 @admin.register(DeveloperReview)
 class DeveloperReviewAdmin(admin.ModelAdmin):
-    list_display = ('job', 'developer', 'rating')
+    list_display = ('job', 'developer', )
 
 @admin.register(CompanyReview)
 class CompanyReviewAdmin(admin.ModelAdmin):
-    list_display = ('job', 'company', 'rating')
+    list_display = ('job', 'company', )
