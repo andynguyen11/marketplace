@@ -8,7 +8,12 @@ except ImportError:
     from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext, ugettext_lazy as _
 
-from postman.models import Message, PendingMessage
+from postman.models import Attachment, Message, PendingMessage
+
+
+@admin.register(Attachment)
+class AttachmentAdmin(admin.ModelAdmin):
+    list_display = ('file', 'message', )
 
 
 class MessageAdminForm(forms.ModelForm):
