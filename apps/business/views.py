@@ -68,7 +68,7 @@ def send_bid(request):
     "Send bid to project manager and upload attachments to assets/filename"
     if request.POST:
         project = Project.objects.get(id=request.POST['project_id'])
-        recipient = Profile.objects.get(id=request.POST['recipient'])
+        recipient = project.project_manager
         sender = request.user
         message = pm_write(
             sender=sender,
