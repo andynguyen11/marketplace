@@ -1,64 +1,96 @@
 from rest_framework import serializers
-from .models import TemplateRole, Template, DocumentSigner, Document
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from .models import (
+        TemplateRoleTab, TemplateRole, Template,
+        DocumentSignerTab, DocumentSigner, Document,
+        DocumentAttachment )
+from .utils import to_browsable_fieldset, collapse_listview, ParentModelSerializer, RelationalModelSerializer
 
-class RoleSerializer(serializers.ModelSerializer):
+class TabSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemplateRoleTab
+        fields = ('label',)
+
+class RoleSerializer(ParentModelSerializer):
+    tabs = TabSerializer(many=True, required=False)
     class Meta:
         model = TemplateRole
-        fields = ('order', 'role_name')
+        fields = ('role_name', 'order', 'tabs')
+        parent_key = 'template_role'
+        child_fields = ('tabs',)
 
-class TemplateSerializer(serializers.ModelSerializer):
+class TemplateSerializer(ParentModelSerializer):
     roles = RoleSerializer(many=True)
 
     class Meta:
         model = Template
         fields = ('template_id', 'description', 'name', 'roles')
+        parent_key = 'template'
+        child_fields = ('roles',)
 
-    def create(self, validated_data):
-        roles = validated_data.pop('roles') or []
-        template = Template.objects.create(**validated_data)
-        for role in roles:
-            TemplateRole.objects.update_or_create(template=template, **role)
-        return template
+class SignerTabSerializer(RelationalModelSerializer):
+    label = serializers.CharField(required=False)
+    template_role_tab = serializers.PrimaryKeyRelatedField(queryset=TemplateRoleTab.objects.all(), required=False)
 
-    def update(self, instance, validated_data):
-        roles = validated_data.pop('roles') or []
-        instance.template_id = validated_data.get('template_id', instance.template_id)
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get('description', instance.description)
-        instance.save()
-        for role in roles:
-            TemplateRole.objects.update_or_create(template=instance, **role)
-        return instance
+    class Meta:
+        model = DocumentSignerTab
+        fields = ('label', 'value', 'template_role_tab')
 
+    def resolve_relations(self, obj):
+        if not hasattr(obj, 'template_role_tab'):
+            obj['template_role_tab'] = TemplateRoleTab.objects.get(
+                    label=obj.get('label'),
+                    template_role=obj['document_signer'].role)
+        return obj
 
-class SignerSerializer(serializers.ModelSerializer):
+class SignerSerializer(ParentModelSerializer):
+    tabs = SignerTabSerializer(many=True, required=False)
+    role = serializers.PrimaryKeyRelatedField(queryset=TemplateRole.objects.all(), required=False)
+    role_name = serializers.CharField(required=False)
+    status = serializers.CharField(required=False, read_only=True)
+
     class Meta:
         model = DocumentSigner
-        fields = ('role', 'profile')
+        fields = ('role', 'role_name', 'profile', 'tabs', 'status')
+        parent_key = 'document_signer'
+        child_fields = ('tabs',)
 
-def extract_signers(validated_data):
-    signers = validated_data.pop('signers')
-    signer_one = validated_data.pop('signer_one') 
-    signer_two = validated_data.pop('signer_two') 
-    if not signers: signers = []
-    if signer_one: signers.append(signer_one)
-    if signer_two: signers.append(signer_two)
-    return signers, validated_data
+    def resolve_relations(self, obj):
+        if not hasattr(obj, 'role'):
+            obj['role'] = TemplateRole.objects.get(
+                    role_name=obj.get('role_name'),
+                    template=obj['document'].template)
 
-class DocumentSerializer(serializers.ModelSerializer):
-    signers = SignerSerializer(many=True, required=False)
-    signer_one = SignerSerializer(required=False)
+        return obj
+
+
+class AttachmentSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(max_length=None, allow_empty_file=False, required=False)
+    class Meta:
+        model = DocumentSigner
+        fields = ('file',)
+
+
+class DocumentSerializer(ParentModelSerializer):
+    signers = SignerSerializer(many=True)
+    signer_one = SignerSerializer(required=False) # for testing in the BrowsableAPI
     signer_two = SignerSerializer(required=False)
+
+    attachments = AttachmentSerializer(many=True, required=False)
+    attachment_one = AttachmentSerializer(required=False)
+    attachment_two = AttachmentSerializer(required=False)
 
     class Meta:
         model = Document
-        fields = ('template', 'status',
-                'signers', 'signer_one', 'signer_two')
+        fields = tuple(['template', 'status'] + 
+                to_browsable_fieldset('signer') +
+                to_browsable_fieldset('attachment'))
+        parent_key = 'document'
+        child_fields = ('signers', 'attachments')
 
-    def create(self, validated_data):
-        signers, validated_data = extract_signers(validated_data)
-        document = Document.objects.create(**validated_data)
-        for signer in signers:
-            DocumentSigner.objects.create(document=document, **signer)
+    def create(self, data, action='create'):
+        data = collapse_listview(data, 'signer')
+        data = collapse_listview(data, 'attachment', required_fields=['file'])
+        document = ParentModelSerializer.create(self, data, action)
         document.send()
         return document

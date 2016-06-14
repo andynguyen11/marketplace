@@ -35,6 +35,7 @@ def save_docusign_template(template):
             {
                 'order': signer['routingOrder'],
                 'role_name': signer['roleName'],
+                'tabs': [{'label': tab} for tab in signer['tabs'].keys()]
             } for signer in template['recipients']['signers']
         ]
     })
