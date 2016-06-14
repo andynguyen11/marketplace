@@ -66,56 +66,179 @@
   <div class="row">
     <div class="container">
       <h2 class="text-center">featured project</h2>
-      <a class="project-link" href="{% url 'project' featured.id %}" />
-      <div class="panel panel-project">
-        <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
-          <div class="overlay"></div>
-          <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
-        </div>
-        <div class="project-content col-md-5 drop-padding">
-          <div class="project-copy">
-            <h4 class="project-title">{{ featured.title }}</h4>
-            <div>
-              <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
-              <div class="project-byline pull-left">
-                <p>
-                  <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
-                  <span class="project-company">{{ featured.company.name }}</span>
-                </p>
-              </div>
-              <div class="clearfix"></div>
+      <div id="featured-carousel" class="carousel slide" data-ride="carousel">
+
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <!-- we should put a loop here with all the projects we want to feature -->
+          <div class="item item-featured active">
+            <div class="panel panel-project">
+              <a class="project-link" href="{% url 'project' featured.id %}">
+                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
+                  <div class="overlay"></div>
+                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
+                </div>
+                <div class="project-content col-md-5 drop-padding">
+                  <div class="project-copy">
+                    <h4 class="project-title">{{ featured.title }}</h4>
+                    <div>
+                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
+                      <div class="project-byline pull-left">
+                        <p>
+                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
+                          <span class="project-company">{{ featured.company.name }}</span>
+                        </p>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="project-description">
+                      {{ featured.description }}
+                    </div>
+                    <div class="project-skills"></div>
+                  </div>
+                  <div class="project-specs text-center">
+                    <ul>
+                      <li class="project-hours">
+                        <h5>{{ featured.estimated_hours }}</h5>
+                        hours
+                      </li>
+                      <li class="project-equity">
+                        <h5>{{ featured.estimated_equity }}%</h5>
+                        equity
+                      </li>
+                      <li class="project-cash">
+                        <h5>${{ featured.estimated_cash }}</h5>
+                        cash
+                      </li>
+                    </ul>
+                    <div class="project-for">
+                      for
+                    </div>
+                    <div class="project-or">
+                      or
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </a>
             </div>
-            <div class="project-description">
-              {{ featured.description }}
-            </div>
-            <div class="project-skills"></div>
           </div>
-          <div class="project-specs text-center">
-            <ul>
-              <li class="project-hours">
-                <h5>{{ featured.estimated_hours }}</h5>
-                hours
-              </li>
-              <li class="project-equity">
-                <h5>{{ featured.estimated_equity }}%</h5>
-                equity
-              </li>
-              <li class="project-cash">
-                <h5>${{ featured.estimated_cash }}</h5>
-                cash
-              </li>
-            </ul>
-            <div class="project-for">
-              for
+          <div class="item item-featured">
+            <div class="panel panel-project">
+              <a class="project-link" href="{% url 'project' featured.id %}">
+                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
+                  <div class="overlay"></div>
+                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
+                </div>
+                <div class="project-content col-md-5 drop-padding">
+                  <div class="project-copy">
+                    <h4 class="project-title">{{ featured.title }}</h4>
+                    <div>
+                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
+                      <div class="project-byline pull-left">
+                        <p>
+                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
+                          <span class="project-company">{{ featured.company.name }}</span>
+                        </p>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="project-description">
+                      {{ featured.description }}
+                    </div>
+                    <div class="project-skills"></div>
+                  </div>
+                  <div class="project-specs text-center">
+                    <ul>
+                      <li class="project-hours">
+                        <h5>{{ featured.estimated_hours }}</h5>
+                        hours
+                      </li>
+                      <li class="project-equity">
+                        <h5>{{ featured.estimated_equity }}%</h5>
+                        equity
+                      </li>
+                      <li class="project-cash">
+                        <h5>${{ featured.estimated_cash }}</h5>
+                        cash
+                      </li>
+                    </ul>
+                    <div class="project-for">
+                      for
+                    </div>
+                    <div class="project-or">
+                      or
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </a>
             </div>
-            <div class="project-or">
-              or
+          </div>
+          <div class="item item-featured">
+            <div class="panel panel-project">
+              <a class="project-link" href="{% url 'project' featured.id %}">
+                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
+                  <div class="overlay"></div>
+                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
+                </div>
+                <div class="project-content col-md-5 drop-padding">
+                  <div class="project-copy">
+                    <h4 class="project-title">{{ featured.title }}</h4>
+                    <div>
+                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
+                      <div class="project-byline pull-left">
+                        <p>
+                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
+                          <span class="project-company">{{ featured.company.name }}</span>
+                        </p>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="project-description">
+                      {{ featured.description }}
+                    </div>
+                    <div class="project-skills"></div>
+                  </div>
+                  <div class="project-specs text-center">
+                    <ul>
+                      <li class="project-hours">
+                        <h5>{{ featured.estimated_hours }}</h5>
+                        hours
+                      </li>
+                      <li class="project-equity">
+                        <h5>{{ featured.estimated_equity }}%</h5>
+                        equity
+                      </li>
+                      <li class="project-cash">
+                        <h5>${{ featured.estimated_cash }}</h5>
+                        cash
+                      </li>
+                    </ul>
+                    <div class="project-for">
+                      for
+                    </div>
+                    <div class="project-or">
+                      or
+                    </div>
+                  </div>
+                </div>
+                <div class="clearfix"></div>
+              </a>
             </div>
           </div>
         </div>
-        <div class="clearfix"></div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#featured-carousel" role="button" data-slide="prev">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#featured-carousel" role="button" data-slide="next">
+          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
       </div>
-      </a>
     </div>
   </div>
 </div>
@@ -125,57 +248,181 @@
     <div class="container">
       <h2 class="text-center">newly added projects</h2>
       <button class="btn btn-yb btn-more">see more</button>
-      {% for project in new %}
-      <div class="col-md-4">
-      <a class="project-link" href="{% url 'project' project.id %}" />
-      <div class="panel panel-project">
-        <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
-        <div class="project-content">
-          <div class="project-copy">
-            <h4 class="project-title">{{ project.title }}</h4>
-            <div>
-              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
-              <div class="project-byline pull-left">
-                <p>
-                  <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                  <span class="project-company">{{ project.company.name }}</span>
-                </p>
-              </div>
-              <div class="clearfix"></div>
+      <div id="new-projects-carousel" class="carousel slide" data-ride="carousel">
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+          <!-- we should put a loop here with all the projects we want to feature -->
+          <div class="item item-project active">
+            {% for project in new %}
+            <div class="col-md-4">
+              <a class="project-link" href="{% url 'project' project.id %}">
+                <div class="panel panel-project">
+                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
+                  <div class="project-content">
+                    <div class="project-copy">
+                      <h4 class="project-title">{{ project.title }}</h4>
+                      <div>
+                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+                        <div class="project-byline pull-left">
+                          <p>
+                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                            <span class="project-company">{{ project.company.name }}</span>
+                          </p>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="project-description">
+                        {{ project.description }}
+                      </div>
+                      <div class="project-skills"></div>
+                    </div>
+                    <div class="project-specs text-center">
+                      <ul>
+                        <li class="project-hours">
+                          <h5>{{ project.estimated_hours }}</h5>
+                          hours
+                        </li>
+                        <li class="project-equity">
+                          <h5>{{ project.estimated_equity }}%</h5>
+                          equity
+                        </li>
+                        <li class="project-cash">
+                          <h5>${{ project.estimated_cash }}</h5>
+                          cash
+                        </li>
+                      </ul>
+                      <div class="project-for">
+                        for
+                      </div>
+                      <div class="project-or">
+                        or
+                      </div>
+                    </div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </a>
             </div>
-            <div class="project-description">
-              {{ project.description }}
-            </div>
-            <div class="project-skills"></div>
+            {% endfor %}
           </div>
-          <div class="project-specs text-center">
-            <ul>
-              <li class="project-hours">
-                <h5>{{ project.estimated_hours }}</h5>
-                hours
-              </li>
-              <li class="project-equity">
-                <h5>{{ project.estimated_equity }}%</h5>
-                equity
-              </li>
-              <li class="project-cash">
-                <h5>${{ project.estimated_cash }}</h5>
-                cash
-              </li>
-            </ul>
-            <div class="project-for">
-              for
+          <div class="item item-project">
+            {% for project in new %}
+            <div class="col-md-4">
+              <a class="project-link" href="{% url 'project' project.id %}">
+                <div class="panel panel-project">
+                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
+                  <div class="project-content">
+                    <div class="project-copy">
+                      <h4 class="project-title">{{ project.title }}</h4>
+                      <div>
+                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+                        <div class="project-byline pull-left">
+                          <p>
+                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                            <span class="project-company">{{ project.company.name }}</span>
+                          </p>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="project-description">
+                        {{ project.description }}
+                      </div>
+                      <div class="project-skills"></div>
+                    </div>
+                    <div class="project-specs text-center">
+                      <ul>
+                        <li class="project-hours">
+                          <h5>{{ project.estimated_hours }}</h5>
+                          hours
+                        </li>
+                        <li class="project-equity">
+                          <h5>{{ project.estimated_equity }}%</h5>
+                          equity
+                        </li>
+                        <li class="project-cash">
+                          <h5>${{ project.estimated_cash }}</h5>
+                          cash
+                        </li>
+                      </ul>
+                      <div class="project-for">
+                        for
+                      </div>
+                      <div class="project-or">
+                        or
+                      </div>
+                    </div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </a>
             </div>
-            <div class="project-or">
-              or
+            {% endfor %}
+          </div>
+          <div class="item item-project">
+            {% for project in new %}
+            <div class="col-md-4">
+              <a class="project-link" href="{% url 'project' project.id %}">
+                <div class="panel panel-project">
+                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
+                  <div class="project-content">
+                    <div class="project-copy">
+                      <h4 class="project-title">{{ project.title }}</h4>
+                      <div>
+                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+                        <div class="project-byline pull-left">
+                          <p>
+                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                            <span class="project-company">{{ project.company.name }}</span>
+                          </p>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                      <div class="project-description">
+                        {{ project.description }}
+                      </div>
+                      <div class="project-skills"></div>
+                    </div>
+                    <div class="project-specs text-center">
+                      <ul>
+                        <li class="project-hours">
+                          <h5>{{ project.estimated_hours }}</h5>
+                          hours
+                        </li>
+                        <li class="project-equity">
+                          <h5>{{ project.estimated_equity }}%</h5>
+                          equity
+                        </li>
+                        <li class="project-cash">
+                          <h5>${{ project.estimated_cash }}</h5>
+                          cash
+                        </li>
+                      </ul>
+                      <div class="project-for">
+                        for
+                      </div>
+                      <div class="project-or">
+                        or
+                      </div>
+                    </div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+              </a>
             </div>
+            {% endfor %}
           </div>
         </div>
-        <div class="clearfix"></div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#new-projects-carousel" role="button" data-slide="prev">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" href="#new-projects-carousel" role="button" data-slide="next">
+          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
       </div>
-      </a>
-      </div>
-      {% endfor %}
     </div>
   </div>
 </div>
