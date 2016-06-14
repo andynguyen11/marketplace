@@ -1,7 +1,7 @@
-#postman {
-  table {
-    width: 100%;
-  }
+#pm_messages {
+
+  width: 100%;
+
   tr td {
     padding: 20px 15px;
     background: #f7f7f7;
@@ -44,30 +44,30 @@
       margin: 0;
     }
   }
-  #pm_messages {
-    li {
-      margin: 15px 0;
-    }
-    .sent-message {
-      padding: 10px;
-      margin: 0 10px;
-      background: lighten(@yellow, 35%);
-      border: 1px solid @yellow;
-      border-radius: @border-radius;
-      width: 50%;
-    }
-    .received-message {
-      padding: 10px;
-      margin: 0 10px;
-      background: #ccc;
-      border: 1px solid @dark-gray;
-      border-radius: @border-radius;
-      width: 50%;
-    }
-    .message-date {
-      margin-top: 10px;
-    }
+
+  li {
+    margin: 15px 0;
   }
+  .sent-message {
+    padding: 10px;
+    margin: 0 10px;
+    background: lighten(@yellow, 35%);
+    border: 1px solid @yellow;
+    border-radius: @border-radius;
+    width: 50%;
+  }
+  .received-message {
+    padding: 10px;
+    margin: 0 10px;
+    background: #ccc;
+    border: 1px solid @dark-gray;
+    border-radius: @border-radius;
+    width: 50%;
+  }
+  .message-date {
+    margin-top: 10px;
+  }
+
   #pm_reply {
     textarea {
       width: 100%;

@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.template.context import RequestContext
 from django.utils.datastructures import MultiValueDictKeyError
 
+from postman.models import Message
 from accounts.forms import ProfileForm, DeveloperOnboardForm, ManagerOnboardForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
@@ -100,7 +101,8 @@ def dashboard(request):
     user = Profile.objects.get(id=request.user.id)
     social = user.social_auth.get(provider='linkedin-oauth2')
     notifications = user.notifications.unread()
-    return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, }, context_instance=RequestContext(request))
+    messages = Message.objects.inbox(request.user, {'is_new': True, })[:5]
+    return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, 'messages': messages, }, context_instance=RequestContext(request))
 
 
 @login_required

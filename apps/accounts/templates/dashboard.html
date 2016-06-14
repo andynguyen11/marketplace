@@ -1,7 +1,9 @@
 {% extends "base_account.html" %}
 {% load staticfiles %}
-
+{% load i18n postman_tags %}
 {% load notifications_tags %}
+
+{% postman_unread as unread_count %}
 
 {% block account_content %}
 
@@ -57,25 +59,96 @@
             <h4>Notifications <span class="text-skinny">({% notifications_unread %} New)</span></h4>
           </div>
           <ul class="notifications">
-            {% for notification in notifications %}
-            <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
-            {% endfor %}
-            <li><a href="">SEE MORE</a></li>
+            {% if notifications %}
+              {% for notification in notifications %}
+              <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
+              {% endfor %}
+            {% else %}
+              <li>There are no new notifications.</li>
+            {% endif %}
           </ul>
         </div>
 
         <div class="section">
           <div class="section-header">
-            <h4>Messages <span class="text-skinny">(5 New)</span></h4>
+            <h4>Messages <span class="text-skinny">({{ unread_count }} New)</span></h4>
           </div>
-          <ul class="notifications">
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">James</a> left you a review on a project: <a href="">COefficient</a></li>
-            <li><a href="">SEE MORE</a></li>
-          </ul>
+          <table id="pm_messages">
+            <tbody>
+              {% for message in messages %}
+              <tr>
+                <td class="photo-container">
+                  <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+                </td>
+                {% block pm_sender_cell %}
+                <td>
+                  {{ message.obfuscated_sender|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %} <br/>
+                  <span class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</span>
+                </td>
+                {% endblock %}
+                <td>
+                  {% block pm_subject %}
+                  <a href="{% if by_conversation and message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+                  {% include "postman/inc_subject_ex.html" %}
+                  </a>
+                  {% endblock %}
+                </td>
+                <td>
+
+                </td>
+
+                <td class="text-right">
+                  {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}
+                    {% if message.thread_id %}
+                    <button class="thread-unbookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/star-active.png" %}">
+                    </button>
+                    {% else %}
+                    <button class="message-unbookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/star-active.png" %}">
+                    </button>
+                    {% endif %}
+                  {% else %}
+                    {% if message.thread_id %}
+                    <button class="thread-bookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/star-open.png" %}">
+                    </button>
+                    {% else %}
+                    <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/star-open.png" %}">
+                    </button>
+                    {% endif %}
+                  {% endif %}
+
+                  {% if message.sender == user and message.sender_archived or message.recipient == user and message.recipient_archived %}
+                    {% if message.thread_id %}
+                    <button class="thread-unarchive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/unarchive.png" %}">
+                    </button>
+                    {% else %}
+                    <button class="message-unarchive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/unarchive.png" %}">
+                    </button>
+                    {% endif %}
+                  {% else %}
+                    {% if message.thread_id %}
+                    <button class="thread-archive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/archive.png" %}">
+                    </button>
+                    {% else %}
+                    <button class="message-archive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                      <img src="{% static "images/archive.png" %}">
+                    </button>
+                    {% endif %}
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td colspan="5"><a href="{% url 'postman:inbox' %}">See More</a></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
