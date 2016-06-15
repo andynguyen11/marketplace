@@ -42,7 +42,6 @@ urlpatterns = [
     url(r'^logout/$', accounts_views.logout, name='logout'),
     url(r'^skills/', autocomplete, {'tag_model': Skills}, name='skills_autocomplete'),
     url(r'^message/send/$', business_views.send_message, name='send-message'),
-    url(r'^bid/send/$', business_views.send_bid, name='send-bid'),
     url(r'^onboard/developer/$', accounts_views.developer_onboard,
         {'template': 'onboarding/developer.html'}, name='onboard-developer'),
     url(r'^onboard/manager/$', accounts_views.manager_onboard,

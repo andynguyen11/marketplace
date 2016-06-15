@@ -6,7 +6,6 @@ from django.http import HttpResponse
 from django.conf import settings
 
 from postman.api import pm_write
-from postman.models import Attachment
 from notifications.signals import notify
 
 from business.forms import ProjectForm
@@ -58,33 +57,9 @@ def send_message(request):
             recipient=recipient,
             subject='New Inquiry from {0}'.format(sender.first_name),
             body=request.POST['message'])
-        [Attachment(file=f, message=message).save() for f in request.FILES.getlist('attachment')]
         return HttpResponse(status=200)
     return HttpResponse(status=403)
 
-
-@login_required
-def send_bid(request):
-    "Send bid to project manager and upload attachments to assets/filename"
-    if request.POST:
-        project = Project.objects.get(id=request.POST['project_id'])
-        recipient = project.project_manager
-        sender = request.user
-        message = pm_write(
-            sender=sender,
-            recipient=recipient,
-            subject='New Bid from {0} for {1}'.format(sender.first_name, project.title),
-            body=request.POST['message'])
-        job = Job.objects.create(
-            project=project,
-            developer=sender,
-            equity=request.POST['equity'],
-            cash=request.POST['cash'],
-            hours=request.POST['hours'])
-        [Attachment(file=f, message=message).save() for f in request.FILES.getlist('attachment')]
-        notify.send(recipient, recipient=recipient, verb=u'received a new bid', action_object=job, )
-        return HttpResponse(status=200)
-    return HttpResponse(status=403)
 
 @login_required
 def attach_docs(request):
