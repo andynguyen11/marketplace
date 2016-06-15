@@ -1,4 +1,4 @@
-var dq_api = {
+const dq_api = {
 	message_send: '/message/send/',
 	message_unarchive: '/profile/messages/unarchive/',
 	message_archive: '/profile/messages/archive/',
@@ -7,3 +7,5 @@ var dq_api = {
 	bid_send: '/bid/send/',
 	billing: '/api/billing/'
 };
+
+module.exports = dq_api;
