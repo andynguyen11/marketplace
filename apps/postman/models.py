@@ -278,11 +278,6 @@ class MessageManager(models.Manager):
         ).update(read_at=now())
 
 
-class Attachment(models.Model):
-    file = models.FileField(_('Attachment'),  upload_to='uploads/', blank=True, null=True)
-    message = models.ForeignKey('Message', blank=True, null=True, related_name='message_attachment')
-
-
 @python_2_unicode_compatible
 class Message(models.Model):
     """
@@ -315,7 +310,6 @@ class Message(models.Model):
     moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
     job = models.ForeignKey(Job, blank=True, null=True)
     project = models.ForeignKey(Project, blank=True, null=True)
-    attachment = models.ForeignKey('Attachment', blank=True, null=True, related_name='file_attachment')
 
     objects = MessageManager()
 
