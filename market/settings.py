@@ -37,6 +37,7 @@ AUTH_USER_MODEL = 'accounts.Profile'
 # Application definition
 
 INSTALLED_APPS = (
+    'django_gulp',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -286,6 +287,8 @@ DOCUSIGN = {
     'username': os.environ.get('DOCUSIGN_USERNAME', ''),
     'password': os.environ.get('DOCUSIGN_PASSWORD', ''),
 }
+
+WEBHOOK_BASE_URL = ''
 
 try:
     from local_settings import *
