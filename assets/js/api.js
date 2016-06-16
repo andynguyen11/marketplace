@@ -5,7 +5,9 @@ const dq_api = {
 	message_bookmark: '/profile/messages/bookmark/',
 	message_unbookmark: '/profile/messages/unbookmark/',
 	bid_send: '/bid/send/',
-	billing: '/api/billing/'
+	billing: '/api/billing/',
+  profile: '/api/profile/',
+  review: '/api/review/'
 };
 
 module.exports = dq_api;
