@@ -108,6 +108,7 @@ class MessageAdmin(admin.ModelAdmin):
             ('moderation_status', 'moderation_date', 'moderation_by'),
             'moderation_reason',
             )}),
+        (_('Project'), {'fields': ('project', 'job')})
     )
     raw_id_fields = ('sender', 'recipient', 'moderation_by', )
     readonly_fields = (

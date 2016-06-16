@@ -25,6 +25,8 @@ except ImportError:
     from datetime import datetime
     now = datetime.now
 
+from rest_framework.serializers import ModelSerializer
+
 from postman.models import Message, STATUS_PENDING, STATUS_ACCEPTED
 
 
@@ -59,7 +61,7 @@ def pm_broadcast(sender, recipients, subject, body='', skip_notification=False):
 
 
 def pm_write(sender, recipient, subject, body='', skip_notification=False,
-        auto_archive=False, auto_delete=False, auto_moderators=None):
+        auto_archive=False, auto_delete=False, auto_moderators=None, job=None):
     """
     Write a message to a User.
     Contrary to pm_broadcast(), the message is archived and/or deleted on
@@ -74,6 +76,9 @@ def pm_write(sender, recipient, subject, body='', skip_notification=False,
         ``auto_moderators``: a list of auto-moderation functions
     """
     message = Message(subject=subject, body=body, sender=sender, recipient=recipient)
+    if job:
+        message.job = job
+        message.project = job.project
     initial_status = message.moderation_status
     if auto_moderators:
         message.auto_moderate(auto_moderators)
@@ -88,3 +93,10 @@ def pm_write(sender, recipient, subject, body='', skip_notification=False,
     if not skip_notification:
         message.notify_users(initial_status, _get_site())
     return message
+
+
+class MessageSerializer(ModelSerializer):
+
+    class Meta:
+        model = Message
+        fields = ('id', 'job', 'subject', 'body', 'sent_at', 'read_at', 'sender', 'recipient')

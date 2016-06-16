@@ -1,6 +1,17 @@
 from rest_framework import serializers
 
-from business.models import Company, Document
+from business.models import Company, Document, Job, Project
+from postman.api import MessageSerializer
+
+
+class JobSerializer(serializers.ModelSerializer):
+    job_messages = MessageSerializer(required=False, many=True, read_only=True)
+
+    class Meta:
+        model = Job
+        fields = ('id', 'project', 'developer', 'equity', 'cash',
+                  'hours', 'bid_message', 'files', 'job_messages')
+
 
 class CompanySerializer(serializers.ModelSerializer):
 
