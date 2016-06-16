@@ -3,7 +3,6 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from django.http import HttpResponse
-from django.conf import settings
 
 from postman.api import pm_write
 from notifications.signals import notify
