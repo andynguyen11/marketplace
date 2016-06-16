@@ -23,6 +23,7 @@ defusedxml==0.4.1
 django-crispy-forms==1.6.0
 django-extensions==1.6.7
 django-flatpages-x==0.1.2
+django-gulp==2.4.0
 django-ipware==1.1.1
 django-longerusernameandemail==0.5.7
 django-markitup==2.2.2
