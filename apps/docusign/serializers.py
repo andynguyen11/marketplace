@@ -2,9 +2,10 @@ from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from .models import (
         TemplateRoleTab, TemplateRole, Template,
-        DocumentSignerTab, DocumentSigner, Document,
-        DocumentAttachment )
-from .utils import to_browsable_fieldset, collapse_listview, ParentModelSerializer, RelationalModelSerializer
+        DocumentSignerTab, DocumentSigner, Document )
+
+from generics.utils import to_browsable_fieldset, collapse_listview
+from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 
 class TabSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,9 +38,9 @@ class SignerTabSerializer(RelationalModelSerializer):
         fields = ('label', 'value', 'template_role_tab')
 
     def resolve_relations(self, obj):
-        if not hasattr(obj, 'template_role_tab'):
+        if not obj.get('template_role_tab', None):
             obj['template_role_tab'] = TemplateRoleTab.objects.get(
-                    label=obj.get('label'),
+                    label=obj.get('label', None),
                     template_role=obj['document_signer'].role)
         return obj
 
@@ -56,19 +57,12 @@ class SignerSerializer(ParentModelSerializer):
         child_fields = ('tabs',)
 
     def resolve_relations(self, obj):
-        if not hasattr(obj, 'role'):
+        if not obj.get('role', None):
             obj['role'] = TemplateRole.objects.get(
-                    role_name=obj.get('role_name'),
+                    role_name=obj.get('role_name', None),
                     template=obj['document'].template)
 
         return obj
-
-
-class AttachmentSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(max_length=None, allow_empty_file=False, required=False)
-    class Meta:
-        model = DocumentSigner
-        fields = ('file',)
 
 
 class DocumentSerializer(ParentModelSerializer):

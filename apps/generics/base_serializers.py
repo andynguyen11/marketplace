@@ -1,47 +1,25 @@
 from rest_framework import serializers
-
-def to_nice_string(num):
-    return {
-        1: 'one',
-        2: 'two',
-        3: 'three',
-    }[num]
-
-def to_browsable_fieldset(singular, count=2):
-    return [singular + 's'] + [
-        singular + '_' + to_nice_string(i) for i in range(1, count+1)
-    ]
-
-def has_keys(d, keys):
-    for k in keys:
-        if d.get(k, None) == None: return False
-    return True
-
-def collapse_listview(validated_data, singular, count=2, validator=lambda x : x is not None, required_fields=[]):
-    items = validated_data.pop(singular + 's', None) or [
-        item for item in [
-            validated_data.pop(singular + '_' + to_nice_string(i), None)
-            for i in range(1, count + 1)
-        ] if validator(item) and has_keys(item, required_fields)
-    ]
-    validated_data[singular + 's'] = items
-    return validated_data
-
-
-def pop_subset(fields, data):
-    subset = {
-        field: data.pop(field, [])
-        for field in fields
-    }
-    return data, subset
-
-def update_instance(instance, data):
-    for k, v in data.items():
-        if getattr(instance, k): 
-            setattr(instance, k, v)
-    instance.save()
+from .utils import pop_subset, update_instance
 
 class RelationalModelSerializer(serializers.ModelSerializer):
+    """
+    Generic approach to handling optional representations in a request.
+    Define resolve_relations to handle internal resolution of the dict.
+
+    Example: 
+    class ItemSerializer(RelationModelSerializer):
+        relation = serializers.PrimaryKeyRelatedField(queryset=Relation.objects.all(), required=False)
+
+        class Meta:
+            model = Item
+            fields = ('relation', 'relation_name', 'name')
+
+        def resolve_relations(self, obj):
+            if not obj.get('relation', None):
+                obj['relation'] = Relation.objects.get(
+                        name=obj.get('relation_name', None),
+                        item_name=obj.get('name', None))
+    """
 
     def resolve_relations(self, obj):
         return obj
@@ -54,7 +32,22 @@ class RelationalModelSerializer(serializers.ModelSerializer):
         else:
             return persisted
 
+
 class ParentModelSerializer(RelationalModelSerializer):
+    """
+    Generic approach to handling nested writable relationships.
+    adding the parent_key and child_fields to the Meta object will cause the following:
+        1. child fields will be popped from the pre-serialization dict
+        2. the dict will be serialized
+        3. each child set will be saved, with the serialized parent set to the parent_key
+
+    example:
+
+    class ParentSerializer(ParentModelSerializer):
+        class Meta:
+            parent_key = 'parent'
+            child_fields = ('children','')
+    """
 
     def get_child_serializer(self, child):
         child_serializer = self.fields[child]

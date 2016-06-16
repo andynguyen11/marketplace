@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='documentattachment',
             name='file',
-            field=models.FileField(upload_to=docusign.models.upload_to),
+            field=models.FileField()#upload_to=docusign.models.upload_to),
         ),
     ]

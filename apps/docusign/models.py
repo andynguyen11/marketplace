@@ -3,6 +3,9 @@ from django.db import models
 from django.conf import settings
 from django.core.files import File
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericRelation
+from generics.models import Attachment
+
 from .docusign import create_envelope, Role
 import pydocusign
 
@@ -109,43 +112,17 @@ class DocumentSigner(models.Model):
         return '%s <%s>, %s' % (self.name, self.email, self.role_name)
 
 
-def fs_path(document, file):
-    return settings.MEDIA_ROOT + (
-        'doc-' + str(document.id) + '-file-' + file.name
-    )
-
-def upload_to(instance, filename):
-    return instance.path
-
-class DocumentAttachment(models.Model):
-    document = models.ForeignKey('docusign.Document')
-    file = models.FileField(upload_to=upload_to)
-
-    @property
-    def name(self):
-        return self.file.name.split('-file-')[1]
-
-    @property
-    def data(self):
-        return self.file.read()
-
-    @property
-    def path(self):
-        return fs_path(self.document, self.file)
-
 class Document(models.Model):
     template = models.ForeignKey('docusign.Template')
     status = models.CharField(max_length=100, default='Sent', choices=DOCUMENT_STATUS)
     envelope_id = models.CharField(max_length=100, null=True, unique=True)
 
+    attachments = GenericRelation(Attachment, related_query_name='docusign_document')
+
     @property
     def signers(self):
         "Returns the list of Signers who need to sign the document"
         return DocumentSigner.objects.filter(document=self).order_by('role')
-
-    @property
-    def attachments(self):
-        return DocumentAttachment.objects.filter(document=self)
 
     @property
     def roles(self):
@@ -157,7 +134,7 @@ class Document(models.Model):
                 self.roles,
                 self.template.email_subject,
                 self.template.email_blurb,
-                attachments=self.attachments,
+                attachments=self.attachments.all(),
                 signer_return_url=None,
                 status=self.status).envelopeId
         self.save()
