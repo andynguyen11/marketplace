@@ -1,13 +1,13 @@
 window.$ = window.jQuery = require('jquery');
 window.React = require('react');
 window.ReactDOM = require('react-dom');
+window.dq_api = require('./api');
 
 require('lodash');
 require('bootstrap');
 require('bootstrap-datepicker');
 require('bootstrap-select');
 require('moment');
-require('./api');
 require('./csrf');
 require('./messaging');
 
