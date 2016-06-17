@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'tagulous',
     'crispy_forms',
+    'raven.contrib.django.raven_compat',
     'accounts',
     'business',
     'api',
@@ -126,48 +127,75 @@ if 'RDS_DB_NAME' in os.environ:
         }
     }
 
-    if not DEBUG:
+    if DEBUG:
         LOGGING = {
             'version': 1,
+            'disable_existing_loggers': True,
+            'root': {
+                'level': 'WARNING',
+                'handlers': ['sentry'],
+            },
+            'formatters': {
+                'verbose': {
+                    'format': '%(levelname)s %(asctime)s %(module)s '
+                              '%(process)d %(thread)d %(message)s'
+                },
+            },
             'handlers': {
-                'stderr': {
+                'sentry': {
+                    'level': 'ERROR',
+                    'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+                    'tags': {'custom-tag': 'x'},
+                },
+                'console': {
                     'level': 'DEBUG',
                     'class': 'logging.StreamHandler',
-                    'stream': sys.stderr,
-                },
-                'mail_admins': {
+                    'formatter': 'verbose'
+                }
+            },
+            'loggers': {
+                'django.db.backends': {
                     'level': 'ERROR',
-                    'class': 'django.utils.log.AdminEmailHandler'
+                    'handlers': ['console'],
+                    'propagate': False,
+                },
+                'raven': {
+                    'level': 'DEBUG',
+                    'handlers': ['console'],
+                    'propagate': False,
+                },
+                'sentry.errors': {
+                    'level': 'DEBUG',
+                    'handlers': ['console'],
+                    'propagate': False,
+                },
+            },
+        }
+    else:
+        LOGGING = {
+            'version': 1,
+            'disable_existing_loggers': False,
+            'formatters': {
+                'verbose': {
+                    'format':  '%(levelname)s %(asctime)s %(module)s '
+                               '%(process)d %(thread)d %(message)s'
+                },
+            },
+            'handlers': {
+                'console': {
+                    'level': 'DEBUG',
+                    'class': 'logging.StreamHandler',
                 },
             },
             'loggers': {
                 'django': {
-                    'handlers': ['mail_admins', ],
+                    'handlers': ['stderr'],
                     'propagate': True,
-                    'level': 'ERROR',
-                },
-                'apps.providers.views': {
-                    'handlers': ['stderr'],
                     'level': 'DEBUG',
                 },
-                'apps.providers.emails': {
-                    'handlers': ['stderr'],
-                    'level': 'DEBUG',
-                },
-                'apps.landing_pages.views': {
-                    'handlers': ['stderr'],
-                    'level': 'DEBUG',
-                },
-                'accounts.emails': {
-                    'handlers': ['stderr'],
-                    'level': 'DEBUG',
-                },
-                'apps.providers.pricing': {
-                    'handlers': ['stderr'],
-                    'level': 'DEBUG',
-                }
             }
         }
+
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY', '')
@@ -290,6 +318,12 @@ DOCUSIGN = {
 }
 
 WEBHOOK_BASE_URL = ''
+
+
+RAVEN_CONFIG = {
+    'dsn': os.environ.get('RAVEN_DSN', ''),
+}
+
 
 try:
     from local_settings import *
