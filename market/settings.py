@@ -131,8 +131,32 @@ if 'RDS_DB_NAME' in os.environ:
         LOGGING = {
             'version': 1,
             'disable_existing_loggers': True,
+            'formatters': {
+                'verbose': {
+                    'format':  '%(levelname)s %(asctime)s %(module)s '
+                               '%(process)d %(thread)d %(message)s'
+                },
+            },
+            'handlers': {
+                'console': {
+                    'level': 'DEBUG',
+                    'class': 'logging.StreamHandler',
+                },
+            },
+            'loggers': {
+                'django': {
+                    'handlers': ['stderr'],
+                    'propagate': True,
+                    'level': 'DEBUG',
+                },
+            }
+        }
+    else:
+        LOGGING = {
+            'version': 1,
+            'disable_existing_loggers': True,
             'root': {
-                'level': 'WARNING',
+                'level': 'DEBUG',
                 'handlers': ['sentry'],
             },
             'formatters': {
@@ -171,30 +195,7 @@ if 'RDS_DB_NAME' in os.environ:
                 },
             },
         }
-    else:
-        LOGGING = {
-            'version': 1,
-            'disable_existing_loggers': False,
-            'formatters': {
-                'verbose': {
-                    'format':  '%(levelname)s %(asctime)s %(module)s '
-                               '%(process)d %(thread)d %(message)s'
-                },
-            },
-            'handlers': {
-                'console': {
-                    'level': 'DEBUG',
-                    'class': 'logging.StreamHandler',
-                },
-            },
-            'loggers': {
-                'django': {
-                    'handlers': ['stderr'],
-                    'propagate': True,
-                    'level': 'DEBUG',
-                },
-            }
-        }
+
 
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
