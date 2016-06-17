@@ -58,6 +58,7 @@ def business_attachments(instance, filename):
 class Job(models.Model):
     project = models.ForeignKey('business.Project')
     developer = models.ForeignKey('accounts.Profile')
+    # TODO: use generic attachment
     files = models.FileField(upload_to=business_attachments, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
