@@ -130,20 +130,29 @@ if 'RDS_DB_NAME' in os.environ:
     if DEBUG:
         LOGGING = {
             'version': 1,
-            'disable_existing_loggers': True,
+            'disable_existing_loggers': False,
             'formatters': {
                 'verbose': {
-                    'format':  '%(levelname)s %(asctime)s %(module)s '
-                               '%(process)d %(thread)d %(message)s'
-                },
+                    'format': '%(levelname)s %(asctime)s %(module)s '
+                              '%(process)d %(thread)d %(message)s'
+                }
+              },
+            'require_debug_true': {
+                '()': 'django.utils.log.RequireDebugTrue',
             },
             'handlers': {
                 'console': {
                     'level': 'DEBUG',
                     'class': 'logging.StreamHandler',
+                    'formatter': 'simple',
                 },
             },
             'loggers': {
+                'django.db.backends': {
+                    'level': 'ERROR',
+                    'handlers': ['console'],
+                    'propagate': False,
+                },
                 'django': {
                     'handlers': ['stderr'],
                     'propagate': True,
@@ -152,11 +161,14 @@ if 'RDS_DB_NAME' in os.environ:
             }
         }
     else:
+        RAVEN_CONFIG = {
+            'dsn': os.environ.get('RAVEN_DSN', ''),
+        }
         LOGGING = {
             'version': 1,
-            'disable_existing_loggers': True,
+            'disable_existing_loggers': False,
             'root': {
-                'level': 'DEBUG',
+                'level': 'WARNING',
                 'handlers': ['sentry'],
             },
             'formatters': {
@@ -319,11 +331,6 @@ DOCUSIGN = {
 }
 
 WEBHOOK_BASE_URL = ''
-
-
-RAVEN_CONFIG = {
-    'dsn': os.environ.get('RAVEN_DSN', ''),
-}
 
 
 try:
