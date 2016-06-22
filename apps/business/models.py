@@ -4,7 +4,8 @@ from datetime import datetime, timedelta
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from generics.models import Attachment
 
 
 class Company(models.Model):
@@ -66,6 +67,13 @@ class Job(models.Model):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
 
 
+class ConfidentialInfo(models.Model):
+    project = models.ForeignKey('business.Project')
+    title = models.CharField(max_length=100)
+    summary = models.CharField(max_length=500, null=True)
+    attachments = GenericRelation(Attachment, related_query_name='business_confidentialinfo')
+
+
 class Project(models.Model):
     company = models.ForeignKey(Company)
     project_manager = models.ForeignKey('accounts.Profile')
@@ -95,6 +103,10 @@ class Project(models.Model):
     def active_jobs(self):
         jobs = Job.objects.filter(status='active', project=self)
         return jobs
+
+    def info(self):
+        info = ConfidentialInfo.objects.filter(project=self)
+        return info
 
 
 DOCUMENT_TYPES = (
