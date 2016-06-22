@@ -19,8 +19,12 @@ class Attachment(models.Model):
         return os.path.basename(self.file.name)
 
     @property
+    def original_name(self):
+        return self.basename.split('-name-')[-1]
+
+    @property
     def name(self):
-        return '-'.join([self.content_type.model, str(self.content_object.id), 'name', self.basename])
+        return '-'.join([self.content_type.model, str(self.content_object.id), 'name', self.original_name])
 
     @property
     def path(self):

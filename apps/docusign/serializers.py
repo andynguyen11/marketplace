@@ -82,9 +82,19 @@ class DocumentSerializer(ParentModelSerializer):
         parent_key = 'document'
         child_fields = ('signers', 'attachments')
 
-    def create(self, data, action='create'):
+    def collapse_data(data):
         data = collapse_listview(data, 'signer')
         data = collapse_listview(data, 'attachment', required_fields=['file'])
+        return data
+
+    def create(self, data, action='create'):
+        data = self.collapse_data(data)
         document = ParentModelSerializer.create(self, data, action)
+        document.send()
+        return document
+
+    def create(self, instance, data):
+        data = self.collapse_data(data)
+        document = ParentModelSerializer.update(self, instance, data)
         document.send()
         return document
