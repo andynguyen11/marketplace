@@ -32,13 +32,17 @@
 		const ModalContent = React.createClass({
 			getInitialState() {
 				return {
+          profile: {
+            first_name: '',
+            last_name: ''
+          },
 					ratings: {
-						'Availability': 0,
-						'Timeliness': 0,
-						'Quality': 0,
-						'Skill': 0,
-						'Deadlines': 0,
-						'Communication': 0
+						'availability': 0,
+						'timeliness': 0,
+						'quality': 0,
+						'skills': 0,
+						'deadlines': 0,
+						'communication': 0
 					},
 					modalOpen: false,
 					error: false,
@@ -47,8 +51,16 @@
 			},
 
 			componentDidMount() {
-				// Ideally this wouldn't live here, but until we're using React in more places, this is probably the best approach
-				this.openModal();
+				// Will need to do this profile get on parent component
+        $.get(
+          dq_api.profile + $('#profile').data('id'),
+          function (result) {
+            this.setState({
+              profile: result
+            });
+            this.openModal();
+          }.bind(this)
+        )
 			},
 
 			openModal() {
@@ -76,6 +88,18 @@
 			},
 
 			submitReview() {
+        // TODO remove out of profile and into dashboard for job id context instead of hardcoding
+        var review = {
+          job: 1,
+          developer: this.state.profile.id
+        };
+        review = $.extend(review, this.state.ratings);
+        $.post(
+          dq_api.review,
+          review,
+          function() {
+            this.closeModal();
+        }.bind(this));
 				/*
 					- do an $.ajax call to the server
 					- in the success callback, call this.closeModal();
@@ -92,7 +116,7 @@
 				const { reviewee: { firstName, avatar }, project: { projectName } } = this.props;
 				const { ratings, modalOpen, error, submitting } = this.state;
 
-				const headerText = <span>Review of <a href="" className="bold">{firstName}'s</a> work on <a href="" className="bold">{projectName}</a></span>;
+				const headerText = <span>Review of <a href="" className="bold">{this.state.profile.first_name}'s</a> work on <a href="" className="bold">{projectName}</a></span>;
 				const userAvatar = (
 					<div className="submitReview-user-avatar" style={ { backgroundImage: 'url(' + avatar + ')' } }></div>
 				);
@@ -113,7 +137,7 @@
 
 					return (
 						<div className="submitReview-attribute" key={'attribute-' + i}>
-							<div className="submitReview-attribute-name">{attribute}</div>
+							<div className="submitReview-attribute-name text-capitalize">{attribute}</div>
 							<div className="submitReview-attribute-stars">
 								{stars}
 							</div>
@@ -141,7 +165,7 @@
 									<label htmlFor="wouldRecommend">
 										<label className="submitReview-recommend-true">
 											<input type="radio" name="wouldRecommend" value="true"/>
-											I would work with {firstName} again.
+											I would work with {this.state.profile.first_name} again.
 										</label>
 										<label className="submitReview-recommend-false">
 											<input type="radio" name="wouldRecommend" value="false"/>

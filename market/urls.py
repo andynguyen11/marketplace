@@ -62,6 +62,8 @@ urlpatterns = [
     url(r'^profile/settings/billing/$', accounts_views.profile,
         {'template': 'billing-settings.html'}, name='billing-settings'),
     url('^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
+    url(r'^company/create/$', business_views.lazy_load_template,
+        {'template': 'create_company.html'}, name='create-company'),
     url(r'^project/(?P<project_id>[0-9]+)/$', business_views.view_project, name='project'),
     url(r'^project/create/$', business_views.create_project, name='create-project'),
     url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import FileUploadParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 
 from api.serializers import CompanySerializer, JobSerializer
 from notifications.signals import notify
@@ -27,6 +27,17 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CompanySerializer
     renderer_classes = (JSONRenderer, )
     permission_classes = (IsAuthenticated, IsOwner)
+
+    def get_object(self, pk):
+        try:
+            return Company.objects.get(pk=pk)
+        except Company.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        company = self.get_object(pk)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data)
 
     def get_queryset(self):
         return Company.objects.filter(primary_contact=self.request.user)
