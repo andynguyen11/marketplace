@@ -1,8 +1,18 @@
 from rest_framework import serializers
 
-from business.models import Company, Project, ConfidentialInfo 
+from accounts.models import Profile
+from business.models import Company, Document, Project, ConfidentialInfo
+from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        exclude = ('is_superuser', 'last_login', 'password', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions', )
+
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,8 +26,15 @@ class PaymentSerializer(serializers.Serializer):
     exp_year = serializers.CharField(max_length=10)
 
 
+class DeveloperReviewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DeveloperReview
+
+
 def field_names(model):
     return tuple(field.name for field in model._meta.fields)
+
 
 class InfoSerializer(ParentModelSerializer):
     attachments = AttachmentSerializer(many=True, required=False)
@@ -37,6 +54,7 @@ class InfoSerializer(ParentModelSerializer):
     def update(self, instance, data):
         data = collapse_listview(data, 'attachment', required_fields=['file'])
         return ParentModelSerializer.update(self, instance, data)
+
 
 class ProjectSerializer(ParentModelSerializer):
     confidential_info = AttachmentSerializer(many=True, required=False)

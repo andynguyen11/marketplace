@@ -95,3 +95,7 @@ def projects_by_type(request, type):
     count = projects.count()
     context =  {'projects': projects, 'count': count, 'title': type+' projects', }
     return render_to_response('project_by_type.html', context, context_instance=RequestContext(request))
+
+
+def lazy_load_template(request, template):
+    return render_to_response(template, {}, context_instance=RequestContext(request))

@@ -7,8 +7,6 @@ from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.deconstruct import deconstructible
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
 
-from api.serializers import PaymentSerializer
-
 
 # TODO Hacky way to bypass makemigrations error
 # ValueError: Could not find manager CastTaggedUserManager in tagulous.models.tagged.
@@ -66,6 +64,6 @@ class Profile(AbstractUser):
             stripe_customer = stripe.Customer.retrieve(self.stripe)
             for card in stripe_customer['sources']['data']:
                 if card['id'] == stripe_customer['default_source']:
-                    serialized = PaymentSerializer(card)
-                    return serialized.data
+                    # TODO Manually serialize card, circular import error if using api serializer
+                    return card
         return None

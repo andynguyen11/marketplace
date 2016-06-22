@@ -26,6 +26,7 @@ var/
 node_modules/
 static/
 assets/less/*.css
+assets/less/components/*.css
 *.egg-info/
 .installed.cfg
 *.egg
