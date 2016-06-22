@@ -1,10 +1,20 @@
 from rest_framework import serializers
 
+from postman.api import MessageSerializer
 from accounts.models import Profile
-from business.models import Company, Document, Project, ConfidentialInfo
+from business.models import Company, Document, Project, ConfidentialInfo, Job
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview
+
+
+class JobSerializer(serializers.ModelSerializer):
+    job_messages = MessageSerializer(required=False, many=True, read_only=True)
+
+    class Meta:
+        model = Job
+        fields = ('id', 'project', 'developer', 'equity', 'cash',
+                  'hours', 'bid_message', 'files', 'job_messages')
 
 
 class ProfileSerializer(serializers.ModelSerializer):

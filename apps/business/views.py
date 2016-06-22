@@ -61,29 +61,6 @@ def send_message(request):
 
 
 @login_required
-def send_bid(request):
-    if request.POST:
-        recipient = Profile.objects.get(id=request.POST['recipient'])
-        sender = request.user
-        project = Project.objects.get(id=request.POST['project_id'])
-        message = pm_write(
-            sender=sender,
-            recipient=recipient,
-            subject='New Bid from {0} for {1}'.format(sender.first_name, project.title),
-            body=request.POST['message'])
-        job = Job.objects.create(
-            project=project,
-            developer=sender,
-            equity=request.POST['equity'],
-            cash=request.POST['cash'],
-            hours=request.POST['hours'])
-        notify.send(recipient, recipient=recipient, verb=u'received a new bid', action_object=job, )
-        return HttpResponse(status=200)
-
-    return HttpResponse(status=403)
-
-
-@login_required
 def attach_docs(request):
     return NotImplemented
 

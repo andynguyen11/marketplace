@@ -52,9 +52,15 @@ JOB_STATUS = (
 )
 
 
+def business_attachments(instance, filename):
+    return 'attachments/business/%s' % filename
+
+
 class Job(models.Model):
     project = models.ForeignKey('business.Project')
     developer = models.ForeignKey('accounts.Profile')
+    # TODO: use generic attachment
+    files = models.FileField(upload_to=business_attachments, blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
@@ -62,9 +68,15 @@ class Job(models.Model):
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
+    bid_message = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
+
+    @property
+    def job_messages(self):
+        from postman.models import Message
+        return Message.objects.filter(job=self, project=self.project)
 
 
 class ConfidentialInfo(models.Model):
