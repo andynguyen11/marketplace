@@ -11,8 +11,8 @@ require('bootstrap-select');
 require('moment');
 require('./csrf');
 require('./messaging');
-require('formValidation.popular.min.us');
-require('validation.bootstrap.min.js');
+require('./vendor/formValidation.popular.min');
+require('./vendor/validation.bootstrap.min');
 
 require('./routes/home');
 require('./routes/company');
