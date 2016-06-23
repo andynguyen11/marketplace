@@ -52,15 +52,10 @@ JOB_STATUS = (
 )
 
 
-def business_attachments(instance, filename):
-    return 'attachments/business/%s' % filename
-
-
 class Job(models.Model):
     project = models.ForeignKey('business.Project')
     developer = models.ForeignKey('accounts.Profile')
-    # TODO: use generic attachment
-    files = models.FileField(upload_to=business_attachments, blank=True, null=True)
+    attachments = GenericRelation(Attachment, related_query_name='job_attachments')
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)

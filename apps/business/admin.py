@@ -17,6 +17,7 @@ class ProjectAdmin(admin.ModelAdmin):
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
     list_display = ('project', 'developer', 'date_created', 'status', )
+    inlines = [AttachmentInline]
 
 
 @admin.register(ConfidentialInfo)

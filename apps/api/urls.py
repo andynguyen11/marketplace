@@ -13,6 +13,7 @@ from api.projects import InfoViewSet, ProjectViewSet
 router = routers.SimpleRouter()
 
 router.register('project', ProjectViewSet)
+router.register('job', JobViewSet, base_name='job')
 
 project_router = routers.NestedSimpleRouter(router, 'project', lookup='project')
 project_router.register('confidentialinfo', InfoViewSet, base_name='project-confidentialinfo')
@@ -20,7 +21,6 @@ project_router.register('confidentialinfo', InfoViewSet, base_name='project-conf
 urlpatterns = [
     url(r'billing/$', view=BillingView.as_view()),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
-    url(r'^job/$', JobViewSet.as_view({'get': 'list', 'post': 'create'}), name='job'),
     url(r'^company/category/$', tagulous.views.autocomplete, {'tag_model': Company}, name='company-category', ),
     url(r'^company/(?P<pk>[0-9]+)/$', view=CompanyDetail.as_view(), name='company-detail'),
     url(r'^profile/(?P<pk>[0-9]+)/$', view=ProfileDetail.as_view(), name='profile-detail'),

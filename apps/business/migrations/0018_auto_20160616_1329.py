@@ -18,9 +18,4 @@ class Migration(migrations.Migration):
             name='bid_message',
             field=models.TextField(blank=True, null=True),
         ),
-        migrations.AddField(
-            model_name='job',
-            name='files',
-            field=models.FileField(blank=True, null=True, upload_to=business.models.business_attachments),
-        ),
     ]

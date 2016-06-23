@@ -8,13 +8,16 @@ from generics.serializers import RelationalModelSerializer, ParentModelSerialize
 from generics.utils import to_browsable_fieldset, collapse_listview
 
 
-class JobSerializer(serializers.ModelSerializer):
+class JobSerializer(ParentModelSerializer):
     job_messages = MessageSerializer(required=False, many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, required=False)
 
     class Meta:
         model = Job
         fields = ('id', 'project', 'developer', 'equity', 'cash',
-                  'hours', 'bid_message', 'files', 'job_messages')
+                  'hours', 'bid_message', 'job_messages', 'attachments', 'job_messages')
+        parent_key = Job
+        child_fields = ('attachments', )
 
 
 class ProfileSerializer(serializers.ModelSerializer):

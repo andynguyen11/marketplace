@@ -1,7 +1,7 @@
 from rest_framework.renderers import JSONRenderer
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-from rest_framework.parsers import FileUploadParser, JSONParser, MultiPartParser
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden, Http404
@@ -47,7 +47,6 @@ class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
     renderer_classes = (JSONRenderer,)
-    parser_classes = (FileUploadParser, JSONParser, MultiPartParser)
     permission_classes = (IsAuthenticated,)
 
     def perform_create(self, serializer):
