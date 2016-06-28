@@ -1,9 +1,40 @@
 #login {
   margin: 100px 0 75px;
 
+  h2 {
+    margin: 0;
+    padding-left: 10px;
+  }
+  h5 {
+    font-weight: 100;
+    margin-top: 0;
+  }
+  p {
+    margin-top: 10px;
+  }
+
   .panel-login {
-    width: 475px;
-    margin: auto;
+    margin-top: 20px;
+
+    .panel-heading {
+      background-color: white;
+    }
+
+    .panel-body {
+      padding: 20px 10px;
+      #email-signup {
+        padding-right: 20px;
+        border-right: 1px solid #d5d0dd;
+      }
+      #social-signup {
+        padding-left: 20px;
+      }
+    }
+
+    .panel-footer {
+      color: white;
+      background-color: @black;
+    }
   }
 
   .login-hero {
