@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from tagulous.serializers.json import Serializer as TagSerializer
 
 from postman.api import MessageSerializer
 from accounts.models import Profile
@@ -28,8 +29,12 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    primary_contact = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    #category = TagSerializer()
+
     class Meta:
         model = Company
+        exclude = ('stripe', )
 
 
 class PaymentSerializer(serializers.Serializer):

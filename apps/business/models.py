@@ -8,6 +8,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from generics.models import Attachment
 
 
+class Category(tagulous.models.TagModel):
+
+    class TagMeta:
+        autocomplete_view = 'api:company_category'
+
+
 class Company(models.Model):
     primary_contact = models.ForeignKey('accounts.Profile')
     name = models.CharField(max_length=255)
@@ -23,7 +29,7 @@ class Company(models.Model):
     ein = models.CharField(max_length=255, verbose_name='EIN', blank=True, null=True)
     logo = models.ImageField(blank=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
-    category = tagulous.models.SingleTagField()
+    category = tagulous.models.TagField(to=Category)
 
     def __str__(self):
         return self.name
@@ -90,9 +96,9 @@ class Project(models.Model):
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
-    category = tagulous.models.SingleTagField()
-    secondary_category = tagulous.models.SingleTagField()
-    location = tagulous.models.SingleTagField()
+    category = tagulous.models.TagField(to=Category)
+    city = models.CharField(max_length=255)
+    state = models.CharField(max_length=255)
     estimated_equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     estimated_hours = models.IntegerField()

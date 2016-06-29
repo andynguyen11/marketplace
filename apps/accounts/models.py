@@ -27,7 +27,6 @@ class Skills(tagulous.models.TagModel):
         autocomplete_view = 'skills_autocomplete'
 
 
-
 class Profile(AbstractUser):
     phone_number = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
