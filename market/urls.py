@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^api/docusign', include('docusign.urls', namespace='docusign')),
     url(r'^login/$', accounts_views.user_login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
+    url(r'^signup/$', accounts_views.signup, name='signup'),
     url(r'^skills/', autocomplete, {'tag_model': Skills}, name='skills_autocomplete'),
     url(r'^message/send/$', business_views.send_message, name='send-message'),
     url(r'^onboard/developer/$', accounts_views.developer_onboard,

@@ -38,22 +38,17 @@ class LoginForm(forms.ModelForm):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)
         self.helper.form_show_labels = False
-        self.helper.attrs = {
-            'id': 'login-form',
-            'class': 'login-form',
-            'method': 'post'
-        }
+        self.helper.form_tag = False
         self.helper.layout = Layout(
-            Fieldset(
-                '',
-                Field('email', placeholder='Email'),
-                Field('password', placeholder='Password'),
-                Submit('submit', 'Sign Up', css_class='btn btn-block'),
-            )
+            Field('email', placeholder='Email', required=True),
+            Field('password', placeholder='Password', required=True)
         )
 
+
+class SignupForm(LoginForm):
+
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data['email']
         email_query = Profile.objects.filter(email=email)
         if email_query.exists():
             raise forms.ValidationError('This email has already been registered')

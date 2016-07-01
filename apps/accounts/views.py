@@ -6,7 +6,7 @@ from django.template.context import RequestContext
 from django.utils.datastructures import MultiValueDictKeyError
 
 from postman.models import Message
-from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm
+from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm, SignupForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
 
@@ -24,6 +24,18 @@ def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST or None)
         if form.is_valid():
+            account = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
+            if account.is_active:
+                login(request, account)
+                return redirect('dashboard')
+    return render(request, 'login.html', {'form': form})
+
+
+def signup(request):
+    form = SignupForm()
+    if request.method == 'POST':
+        form = SignupForm(request.POST or None)
+        if form.is_valid():
             user = form.save(commit=False)
             user.username = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
@@ -32,7 +44,7 @@ def user_login(request):
             account = authenticate(username=user.username, password=password)
             login(request, account)
             return redirect('confirm-profile')
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'signup.html', {'form': form})
 
 
 def home(request):
@@ -76,7 +88,7 @@ def developer_onboard(request, template):
             request.user.save()
             return redirect('dashboard')
         return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
-    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))\
+    return render_to_response(template, {'form': form , }, context_instance=RequestContext(request))
 
 
 @login_required
