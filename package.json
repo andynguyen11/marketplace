@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "source venv/bin/activate && python manage.py test",
+    "dev": "source venv/bin/activate && pip install -r requirements.txt && python manage.py runserver_plus",
+    "shell": "source venv/bin/activate && python manage.py shell_plus",
+    "generate_fixtures": "source venv/bin/activate && GENERATE_TEST_FIXTURES=True python manage.py test api -k && npm run merge_fixtures",
+    "merge_fixtures": "rm -f ./fixtures/all_fixtures.json && source venv/bin/activate && python manage.py merge_fixtures ./fixtures/* > fixtures/all_fixtures.json",
+    "testserver": "source venv/bin/activate && python manage.py testserver ./fixtures/all_fixtures.json"
   },
   "repository": {
     "type": "git",

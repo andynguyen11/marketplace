@@ -39,3 +39,5 @@ def update_instance(instance, data):
             setattr(instance, k, v)
     instance.save()
 
+def field_names(model):
+    return tuple(field.name for field in model._meta.fields)

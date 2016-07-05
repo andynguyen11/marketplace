@@ -75,3 +75,4 @@ docs/_build/
 # environment variables
 .env
 staticfiles/
+fixtures/

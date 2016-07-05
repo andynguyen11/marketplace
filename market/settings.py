@@ -27,6 +27,9 @@ ENVIRONMENT = os.environ.get('ENVIRONMENT', 'local')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if ENVIRONMENT != 'prod' else False
 
+GENERATE_TEST_FIXTURES = os.environ.get('GENERATE_TEST_FIXTURES', False)
+FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
+
 ALLOWED_HOSTS = ['*']
 
 ADMINS = (('Server Errors', 'admin@lawncall.com'), )
@@ -63,6 +66,7 @@ INSTALLED_APPS = (
     'docusign',
     'reviews',
     'postman',
+    'fixture_magic',
     'django_extensions'
 )
 

@@ -77,3 +77,9 @@ tini==3.0.1
 wcwidth==0.1.6
 websocket-client==0.35.0
 wsgiref==0.1.2
+Werkzeug==0.11.10
+wheel==0.24.0
+django-rest-assured==0.2.0
+factory-boy==2.7.0
+fake-factory==0.5.7
+django-fixture-magic==0.0.8
