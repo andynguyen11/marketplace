@@ -5,18 +5,18 @@ from rest_framework_nested import routers
 
 from api.account import ProfileDetail
 from api.payments import BillingView
-from api.company import CompanyListCreate, CompanyDetail, JobViewSet
+from api.company import CompanyListCreate, CompanyDetail
 from api.review import ReviewListCreate
-from business.models import Category
+from api.jobs import JobViewSet
+from business.models import Company, Category
 from api.projects import InfoViewSet, ProjectViewSet
 
 router = routers.SimpleRouter()
-
 router.register('project', ProjectViewSet)
-router.register('job', JobViewSet, base_name='job')
 
 project_router = routers.NestedSimpleRouter(router, 'project', lookup='project')
 project_router.register('confidentialinfo', InfoViewSet, base_name='project-confidentialinfo')
+project_router.register('jobs', JobViewSet, base_name='project-jobs')
 
 urlpatterns = [
     url(r'billing/$', view=BillingView.as_view()),

@@ -9,18 +9,6 @@ from generics.serializers import RelationalModelSerializer, ParentModelSerialize
 from generics.utils import to_browsable_fieldset, collapse_listview
 
 
-class JobSerializer(ParentModelSerializer):
-    job_messages = MessageSerializer(required=False, many=True, read_only=True)
-    attachments = AttachmentSerializer(many=True, required=False)
-
-    class Meta:
-        model = Job
-        fields = ('id', 'project', 'developer', 'equity', 'cash',
-                  'hours', 'bid_message', 'job_messages', 'attachments', 'job_messages')
-        parent_key = Job
-        child_fields = ('attachments', )
-
-
 class ProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -82,3 +70,24 @@ class ProjectSerializer(ParentModelSerializer):
         fields = field_names(Project) + ('confidential_info', )
         parent_key = 'project'
         child_fields = ('confidential_info',)
+
+
+class JobSerializer(ParentModelSerializer):
+    job_messages = MessageSerializer(required=False, many=True, read_only=True)
+    attachments = AttachmentSerializer(many=True, required=False)
+    attachment_one = AttachmentSerializer(required=False)
+    attachment_two = AttachmentSerializer(required=False)
+
+    class Meta:
+        model = Job
+        fields = field_names(Job) + tuple(['job_messages'] + to_browsable_fieldset('attachment'))
+        parent_key = 'job'
+        child_fields = ('attachments',)
+
+    def create(self, data, action='create'):
+        data = collapse_listview(data, 'attachment', required_fields=['file'])
+        return ParentModelSerializer.create(self, data, action)
+
+    def update(self, instance, data):
+        data = collapse_listview(data, 'attachment', required_fields=['file'])
+        return ParentModelSerializer.update(self, instance, data)
