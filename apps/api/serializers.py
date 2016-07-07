@@ -6,7 +6,7 @@ from accounts.models import Profile
 from business.models import Company, Document, Project, ConfidentialInfo, Job
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
-from generics.utils import to_browsable_fieldset, collapse_listview
+from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -19,10 +19,18 @@ class ProfileSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
     primary_contact = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
     #category = TagSerializer()
+    category = serializers.CharField()
 
     class Meta:
         model = Company
-        exclude = ('stripe', )
+        fields = field_names(Company, exclude=('stripe',)) + ('category',)
+
+    def create(self, data):
+        return Company.objects.create(**data)
+
+    def update(self, instance, data):
+        update_instance(instance, data)
+        return instance
 
 
 class PaymentSerializer(serializers.Serializer):
@@ -36,10 +44,6 @@ class DeveloperReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DeveloperReview
-
-
-def field_names(model):
-    return tuple(field.name for field in model._meta.fields)
 
 
 class InfoSerializer(ParentModelSerializer):
@@ -64,10 +68,11 @@ class InfoSerializer(ParentModelSerializer):
 
 class ProjectSerializer(ParentModelSerializer):
     confidential_info = AttachmentSerializer(many=True, required=False)
+    category = serializers.CharField() # TODO - custom tag serializer needed
 
     class Meta:
         model = Project
-        fields = field_names(Project) + ('confidential_info', )
+        fields = field_names(Project) + ('confidential_info', 'category')
         parent_key = 'project'
         child_fields = ('confidential_info',)
 

@@ -1,6 +1,6 @@
 import factory
 from faker.providers import BaseProvider
-from .utils import field_names
+from generics.utils import field_names
 import inspect
 
 def subclasses_provider(subclass):
@@ -38,28 +38,54 @@ def default_factory(field_name):
 def factory_model(factory_class):
     return factory_class._meta.model
 
-def factory_model_fields(factory_class):
+def factory_parameters(factory_class):
+    return factory_class._meta.parameters
+
+def model_fields(factory_class):
     return field_names(factory_model(factory_class))
 
-def buildGenericModelFactory(model, types={},
-        exclude=tuple(),
-        debug=False, **attrs):
-    """
-    types is a list of aliases for Faker factories, and attrs are custom factories
-    """
+def all_factory_fields(factory_class):
+    factory_fields = factory_class._meta.declarations.keys()
+    return set(model_fields(factory_class) + tuple(factory_fields))
+
+def add_generic_fields(model, attrs):
     unaccounted_for = []
     for field in field_names(model):
         if not(attrs.has_key(field)):
-            generator = default_factory(field) or types.get(field, None)
+            generator = default_factory(field)
             if generator:
                 attrs[field] = factory.Faker(generator)
             else: unaccounted_for.append(field)
-    if(debug):
+    if(False):
         print "%s factory doesn't generate %s" % (model, ', '.join(unaccounted_for))
+    return attrs
 
-    model_factory = factory.make_factory(model,
-        FACTORY_CLASS=factory.django.DjangoModelFactory,
-        **attrs
-    )
-    model_factory._meta.exclude = exclude
-    return model_factory
+class GenericModelFactory(factory.django.DjangoModelFactory):
+
+    class Params:
+        aliases = {}
+
+    @classmethod
+    def _apply_aliases(cls, kwargs):
+        aliases = dict(factory_parameters(cls).get('aliases', {}))
+        aliases.update(kwargs)
+        return aliases
+
+    @classmethod
+    def _apply_generics(cls, kwargs):
+        kwargs = cls._apply_aliases(kwargs)
+        kwargs = add_generic_fields(factory_model(cls), cls.declarations())
+        return kwargs
+
+    @classmethod
+    def build(cls, **kwargs):
+        kwargs = cls._apply_generics(kwargs)
+        attrs = cls.attributes(create=False, extra=kwargs)
+        return cls._generate(False, attrs)
+
+    @classmethod
+    def create(cls, **kwargs):
+        kwargs = cls._apply_generics(kwargs)
+        attrs = cls.attributes(create=True, extra=kwargs)
+        return cls._generate(True, attrs)
+

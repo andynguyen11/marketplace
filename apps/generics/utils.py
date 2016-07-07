@@ -35,9 +35,9 @@ def pop_subset(fields, data):
 
 def update_instance(instance, data):
     for k, v in data.items():
-        if getattr(instance, k): 
+        if hasattr(instance, k): 
             setattr(instance, k, v)
     instance.save()
 
-def field_names(model):
-    return tuple(field.name for field in model._meta.fields)
+def field_names(model, exclude=tuple()):
+    return tuple(field.name for field in model._meta.fields if field.name not in exclude)

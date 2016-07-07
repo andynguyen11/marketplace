@@ -11,7 +11,7 @@ from generics.models import Attachment
 class Category(tagulous.models.TagModel):
 
     class TagMeta:
-        autocomplete_view = 'api:company_category'
+        autocomplete_view = 'api:company-category'
 
 
 class Company(models.Model):
