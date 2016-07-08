@@ -314,11 +314,12 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
     'social.pipeline.user.get_username',
-    'accounts.pipeline.username',
+    'accounts.pipeline.load_existing_user',
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
     'social.pipeline.social_auth.load_extra_data',
     'social.pipeline.user.user_details',
+    'accounts.pipeline.save_profile',
 )
 
 POSTMAN_DISALLOW_ANONYMOUS = True

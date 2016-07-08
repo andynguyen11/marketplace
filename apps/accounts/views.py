@@ -77,6 +77,8 @@ def developer_onboard(request, template):
     if request.method == 'POST':
         form = DeveloperOnboardForm(request.POST, request.FILES)
         if form.is_valid():
+            request.user.first_name = form.cleaned_data['first_name']
+            request.user.last_name = form.cleaned_data['last_name']
             request.user.role = form.cleaned_data['role']
             request.user.biography = form.cleaned_data['biography']
             try:
