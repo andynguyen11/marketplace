@@ -99,6 +99,38 @@
 		position: relative;
 		z-index: 2;
 	}
+
+	.developers-home-search {
+		display: flex;
+		justify-content: stretch;
+		align-items: center;
+		padding: 40px 20px;
+
+		.developers-home-search-show-me {
+			flex-basis: 25%;
+			text-align: right;
+			padding-right: 10px;
+			font-size: 18px;
+		}
+		.developers-home-search-select {
+			flex-grow: 1;
+			text-align: center;
+			
+			select {
+				display: inline-block;
+				width: 80%;
+			}
+		}
+		.developers-home-search-button {
+			flex-basis: 25%;
+			text-align: left;
+			padding-left: 10px;
+
+			.btn {
+				min-width: 75px;
+			}
+		}
+	}
 }
 
 #how {
@@ -123,3 +155,4 @@
 		background-image: url('../images/earn.jpg');
 	}
 }
+
