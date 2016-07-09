@@ -35,34 +35,32 @@
   <div id="header" class="{% block header_class %}{% endblock %}">
     <div class="row">
       <div class="container">
-        <a class="pull-left logo" href="/"></a>
-        <div class="pull-right">
+        <div class="header-row">
+          <a class="logo" href="/"></a>
           {% block header_actions %}
-            <button class="btn btn-yellow">Discover a Project</button>
-            <button class="btn btn-yellow">List a Project</button>
+
             {% if request.user.is_authenticated %}
-            <a class="header-action" href="{% url 'postman:inbox' %}">
-              <img src="{% static 'images/icon-message.png' %}" />
-              {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
-            </a>
-            <a class="header-action" href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications.png' %}" /></a>
-            <a class="header-action" href="#"></a>
-            <div class="btn-group header-action">
-              {% if request.user.linkedin.extra_data.picture_url %}
+            <div class="header-nav">
+              <div class="header-icons">
+                <a href="{% url 'postman:inbox' %}" class="header-icon-messages">
+                  <img src="{% static 'images/icon-message.png' %}" />
+                  {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+                </a>
+                <a href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications.png' %}" /></a>
+                {% if request.user.linkedin.extra_data.picture_url %}
                 <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.linkedin.extra_data.picture_url }}" />
-              {% else %}
-                <img class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/icon-profile.png' %}" />
-              {% endif %}
-              <ul class="dropdown-menu dropdown-menu-right">
-                <li><a href="{% url 'profile' %}">Profile</a></li>
-                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'postman:inbox' %}">Messages {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</a></li>
-                <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
-                <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li>
-                <li><a href="{% url 'view-documents' %}">Your Documents</a></li>
-                <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
-                <li><a href="{% url 'logout' %}">Log Out</a></li>
-              </ul>
+                {% endif %}
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a href="{% url 'profile' %}">Profile</a></li>
+                  <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                  <li><a href="{% url 'postman:inbox' %}">Messages {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</a></li>
+                  <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
+                  <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li>
+                  <li><a href="{% url 'view-documents' %}">Your Documents</a></li>
+                  <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
+                  <li><a href="{% url 'logout' %}">Log Out</a></li>
+                </ul>
+              </div>
             </div>
             {% endif %}
           {% endblock %}
