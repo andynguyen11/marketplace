@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_haystack.serializers import HaystackSerializerMixin
 from tagulous.serializers.json import Serializer as TagSerializer
 
 from postman.api import MessageSerializer
@@ -7,7 +8,7 @@ from business.models import Company, Document, Project, ConfidentialInfo, Job
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
-
+from api.search_indexes import ProjectIndex
 
 class ProfileSerializer(serializers.ModelSerializer):
 
@@ -96,3 +97,10 @@ class JobSerializer(ParentModelSerializer):
     def update(self, instance, data):
         data = collapse_listview(data, 'attachment', required_fields=['file'])
         return ParentModelSerializer.update(self, instance, data)
+
+
+class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        index_classes = [ProjectIndex]
+        search_fields = ("text", )
+

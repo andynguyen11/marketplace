@@ -38,3 +38,14 @@
 
 ##### Having trouble?
 Try `python /path/to/manage.py migrate`
+
+##### to use `/api/search`, install and run elasticsearch:
+* `brew install elasticsearch`
+* to run with [brew services](https://github.com/Homebrew/homebrew-services): `brew services start elasticsearch`
+* `python ./manage.py rebuild_index` to recreate the index,  
+  `python ./manage.py update_index` to update
+
+##### testing:
+* `npm run test` to run API tests
+* `npm run generate_fixtures` runs tests and outputs fixtures to `./fixtures`
+* `npm run testserver` runs a testserver with the generated fixtures

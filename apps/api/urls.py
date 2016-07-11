@@ -9,10 +9,11 @@ from api.company import CompanyListCreate, CompanyDetail
 from api.review import ReviewListCreate
 from api.jobs import JobViewSet
 from business.models import Company, Category
-from api.projects import InfoViewSet, ProjectViewSet
+from api.projects import InfoViewSet, ProjectViewSet, ProjectSearchView
 
 router = routers.SimpleRouter()
 router.register('project', ProjectViewSet)
+router.register('search/project', ProjectSearchView, base_name='project-search')
 
 project_router = routers.NestedSimpleRouter(router, 'project', lookup='project')
 project_router.register('confidentialinfo', InfoViewSet, base_name='project-confidentialinfo')
