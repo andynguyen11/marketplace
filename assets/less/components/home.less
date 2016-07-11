@@ -5,7 +5,10 @@
 	margin-top: 10px;
 }
 
-#new-projects, #browse-category, #how, #developers {
+.home-section {
+	.container {
+		position: relative;
+	}
 	h2 {
 		margin-top: 50px;
 		margin-bottom: 20px;
@@ -13,7 +16,13 @@
 	.btn.btn-more {
 		position: absolute;
 		top: 55px;
-		right: 0;
+		right: 30px;
+	}
+}
+
+.home-section-carousel {
+	.btn.btn-more {
+		right: 65px;
 	}
 }
 
@@ -90,12 +99,41 @@
 		position: relative;
 		z-index: 2;
 	}
+
+	.developers-home-search {
+		display: flex;
+		justify-content: stretch;
+		align-items: center;
+		padding: 40px 20px;
+
+		.developers-home-search-show-me {
+			flex-basis: 25%;
+			text-align: right;
+			padding-right: 10px;
+			font-size: 18px;
+		}
+		.developers-home-search-select {
+			flex-grow: 1;
+			text-align: center;
+			
+			select {
+				display: inline-block;
+				width: 80%;
+			}
+		}
+		.developers-home-search-button {
+			flex-basis: 25%;
+			text-align: left;
+			padding-left: 10px;
+
+			.btn {
+				min-width: 75px;
+			}
+		}
+	}
 }
 
 #how {
-	.container {
-		position: relative;
-	}
 	.panel-how {
 		color: #fff;
 		position: relative;
@@ -104,9 +142,8 @@
 		background-position: center;
 		padding: 60px 0;
 	}
-	h2 {
+	.how-to-desc {
 		position: relative;
-		z-index: 2;
 	}
 	#discover {
 		background-image: url('../images/discover.jpg');
@@ -118,3 +155,4 @@
 		background-image: url('../images/earn.jpg');
 	}
 }
+

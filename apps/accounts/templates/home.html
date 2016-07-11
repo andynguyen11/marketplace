@@ -4,30 +4,20 @@
 {% block header_class %}home{% endblock %}
 
 {% block header_actions %}
-  <div class="header-btn-group" role="group">
-    <button class="btn btn-transparent">Discover a Project</button>
-    <button class="btn btn-transparent">List a Project</button>
+{% if request.user.is_authenticated %}
+
+<div class="header-nav">
+  <div class="header-links">
+    <a href="{% url 'home' %}">Help</a>
   </div>
-  <div class="search-bar input-group pull-left">
-    <span class="input-group-btn">
-      <button id="search-btn" class="btn btn-default" type="submit">
-        <i class="fa fa-search"></i>
-      </button>
-    </span>
-    <input type="text" class="form-control" placeholder="SEARCH PROJECTS">
-  </div>
-  {% if request.user.is_authenticated %}
-  <a class="header-action" href="{% url 'postman:inbox' %}">
-    <img src="{% static 'images/icon-message-white.png' %}" />
-    {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
-  </a>
-  <a class="header-action" href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications-white.png' %}" /></a>
-  <a class="header-action" href="#"></a>
-  <div class="btn-group header-action">
+  <div class="header-icons">
+    <a href="{% url 'postman:inbox' %}" class="header-icon-messages">
+      <img src="{% static 'images/icon-message-white.png' %}" />
+      {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications-white.png' %}" /></a>
     {% if request.user.linkedin.extra_data.picture_url %}
-      <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.linkedin.extra_data.picture_url }}" />
-    {% else %}
-      <img class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{% static 'images/icon-profile-white.png' %}" />
+    <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.linkedin.extra_data.picture_url }}" />
     {% endif %}
     <ul class="dropdown-menu dropdown-menu-right">
       <li><a href="{% url 'profile' %}">Profile</a></li>
@@ -40,33 +30,131 @@
       <li><a href="{% url 'logout' %}">Log Out</a></li>
     </ul>
   </div>
-  {% else %}
-    <div class="header-links">
-      <a href="{% url 'home' %}">Help</a>
-      <a href="{% url 'signup' %}">Sign-up</a>
-      <a href="{% url 'login' %}">Login</a>
-    </div>
-  {% endif %}
+</div>
+
+{% else %}
+
+<div class="header-links header-links-home">
+  <a href="{% url 'home' %}">How it Works</a>
+  <a href="{% url 'home' %}">Browse a Project</a>
+  <a href="{% url 'home' %}">Post a Project</a>
+</div>
+<div class="header-links">
+  <a href="{% url 'home' %}">Sign Up</a>
+  <a href="{% url 'login' %}">Sign In</a>
+</div>
+
+{% endif %}
 {% endblock %}
 
 {% block content %}
 <div id="hero">
-  <div class="row">
-    <div class="overlay"></div>
-    <div class="container text-center">
-      <h1 class="text-skinny">
-        Code for equity. <br/>
-        <span class="text-yellow">On projects you love.</span>
-      </h1>
-      <button class="btn btn-foggy btn-find-project">Find a Project</button>
+  <div id="hero-carousel" class="carousel home-hero-carousel slide">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#hero-carousel" data-slide-to="0" class="active"></li>
+      <li data-target="#hero-carousel" data-slide-to="1"></li>
+      <li data-target="#hero-carousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <div class="row">
+          <div class="overlay"></div>
+          <div class="container text-center">
+            <h1 class="text-skinny">
+              Code for equity. <br/>
+              <span class="text-yellow">On projects you love.</span>
+            </h1>
+            <button class="btn btn-foggy btn-lg btn-hero">Find a Project</button>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="row">
+          <div class="overlay"></div>
+          <div class="container text-center">
+            <h1 class="text-skinny">
+              Code for equity. <br/>
+              <span class="text-yellow">On projects you love.</span>
+            </h1>
+            <button class="btn btn-foggy btn-lg btn-hero">Find a Project</button>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="row">
+          <div class="overlay"></div>
+          <div class="container text-center">
+            <h1 class="text-skinny">
+              Code for equity. <br/>
+              <span class="text-yellow">On projects you love.</span>
+            </h1>
+            <button class="btn btn-foggy btn-lg btn-hero">Find a Project</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <a class="left carousel-control" href="#hero-carousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="right carousel-control" href="#hero-carousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
   </div>
 </div>
-<div id="featured-project">
+
+<div id="how" class="home-section">
+  <div class="row">
+    <div class="container">
+      <h2 class="text-center">how devquity works</h2>
+      <button class="btn btn-yb btn-more">see more</button>
+      <div class="col-md-4">
+        <div id="discover" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2 class="how-to-desc">discover<br/>
+          <span class="text-skinny text-yellow">
+            amazing <br/>
+            projects
+          </span>
+          </h2>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div id="invest" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2 class="how-to-desc">invest<br/>
+          <span class="text-skinny text-yellow">
+            your spare <br/>
+            dev time</span>
+          </h2>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div id="earn" class="panel-how text-center">
+          <div class="overlay"></div>
+          <h2 class="how-to-desc">earn<br/>
+          <span class="text-skinny text-yellow">
+            equity <br/>
+            or cash</span>
+          </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="featured-project" class="home-section home-section-carousel">
   <div class="row">
     <div class="container">
       <h2 class="text-center">featured project</h2>
-      <div id="featured-carousel" class="carousel slide" data-ride="carousel">
+      <button class="btn btn-yb btn-more">see more</button>
+      <div id="featured-carousel" class="carousel home-section slide">
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
@@ -243,12 +331,12 @@
   </div>
 </div>
 
-<div id="new-projects">
+<div id="new-projects" class="home-section home-section-carousel">
   <div class="row">
     <div class="container">
       <h2 class="text-center">newly added projects</h2>
       <button class="btn btn-yb btn-more">see more</button>
-      <div id="new-projects-carousel" class="carousel slide" data-ride="carousel">
+      <div id="new-projects-carousel" class="carousel home-section slide">
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
           <!-- we should put a loop here with all the projects we want to feature -->
@@ -427,23 +515,23 @@
   </div>
 </div>
 
-<div id="browse-category">
-  <div class="row">
-    <div class="container text-center">
-      <h2>browse by category</h2>
-        {% for category_verbose, category in categories %}
-          <div class="col-md-4">
-            <a id="{{ category_verbose }}" href="{% url 'project-gallery' category_verbose  %}">
-              <div class="overlay"></div>
-              <h3>{{ category }}</h3>
-            </a>
-          </div>
-        {% endfor %}
-    </div>
-  </div>
-</div>
+<!--<div id="browse-category">-->
+<!--<div class="row">-->
+<!--<div class="container text-center">-->
+<!--<h2>browse by category</h2>-->
+<!--{% for category_verbose, category in categories %}-->
+<!--<div class="col-md-4">-->
+<!--<a id="{{ category_verbose }}" href="{% url 'project-gallery' category_verbose  %}">-->
+<!--<div class="overlay"></div>-->
+<!--<h3>{{ category }}</h3>-->
+<!--</a>-->
+<!--</div>-->
+<!--{% endfor %}-->
+<!--</div>-->
+<!--</div>-->
+<!--</div>-->
 
-<div id="developers">
+<div id="developers" class="home-section">
   <div class="row">
     <div class="container">
       <h2 class="text-center">meet developers</h2>
@@ -463,45 +551,37 @@
       {% endfor %}
     </div>
   </div>
-</div>
-
-<div id="how">
   <div class="row">
     <div class="container">
-      <h2 class="text-center">how devquity works</h2>
-      <button class="btn btn-yb btn-more">see more</button>
-      <div class="col-md-4">
-        <div id="discover" class="panel-how text-center">
-          <div class="overlay"></div>
-          <h2>discover<br/>
-          <span class="text-skinny text-yellow">
-            amazing <br/>
-            projects
-          </span>
-          </h2>
+      <div class="developers-home-search">
+        <div class="developers-home-search-show-me">
+          Show me more
         </div>
-      </div>
-      <div class="col-md-4">
-        <div id="invest" class="panel-how text-center">
-          <div class="overlay"></div>
-          <h2>invest<br/>
-          <span class="text-skinny text-yellow">
-            your spare <br/>
-            dev time</span>
-          </h2>
+        <div class="developers-home-search-select">
+          <select class="form-control">
+            <option>Full-stack devs</option>
+            <option>Backend devs</option>
+            <option>Frontend devs</option>
+            <option>Designers</option>
+          </select>
         </div>
-      </div>
-      <div class="col-md-4">
-        <div id="earn" class="panel-how text-center">
-          <div class="overlay"></div>
-          <h2>earn<br/>
-          <span class="text-skinny text-yellow">
-            equity <br/>
-            or cash</span>
-          </h2>
+        <div class="developers-home-search-button">
+          <button type="button" class="btn btn-primary">Go</button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<div id="try-it-cta">
+  <div class="container text-center">
+    <h1 class="text-skinny">
+      We only get paid when<br/>
+      you hire a developer for<br/>
+      your project.
+    </h1>
+    <button class="btn btn-foggy btn-lg btn-cta">Find a Project</button>
+  </div>
+</div>
+
 {% endblock %}

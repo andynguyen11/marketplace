@@ -213,7 +213,11 @@
     }
   });
 
-  ReactDOM.render(<CompanyForm />, document.getElementById('form'));
+  const formElement = document.getElementById('form');
+
+  if(formElement) {
+    ReactDOM.render(<CompanyForm />, formElement);
+  }
 
 })();
 

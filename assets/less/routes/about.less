@@ -1,0 +1,28 @@
+#about-us {
+	.left-nav {
+		& > li {
+			padding: 5px;
+
+			& > a {
+				font-weight: 700;
+				text-transform: uppercase;
+
+				&:hover {
+					color: @yellow;
+					background: none;
+				}
+				&.active {
+					color: @gray-dark;
+				}
+			}
+		}
+	}
+
+	.about-content {
+		margin-top: 20px;
+
+		h2:first-child {
+			margin-top: 0;
+		}
+	}
+}

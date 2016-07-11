@@ -7,10 +7,11 @@
   padding: 15px 0;
 
   .logo {
-    width: 150px;
     height: 44px;
     background: url(../images/devquity-yb.png) no-repeat;
     background-size: cover;
+    flex-shrink: 0;
+    flex-basis: 150px;
   }
 
   &.home {
@@ -18,37 +19,23 @@
       background-image: url(../images/devquity-wy.png);
     }
   }
-  .btn {
-    margin: 0 5px;
-  }
-  .header-action {
-    a:hover {
-      text-decoration: none;
-    }
-    img {
-      width: 30px;
-      margin: 0 20px;
-    }
-    .badge {
-      margin-left: -30px;
-      background: #d9534f;
-    }
-  }
   .dropdown-menu {
     text-transform: uppercase;
     font-weight: 700;
     top: 120%;
-    li {
+    right: -10px;
+
+    & > li {
       padding: 5px;
-      a {
+      & > a {
         font-weight: 700;
         &:hover {
           color: @yellow;
           background: none;
         }
-         .badge {
-           margin-left: 0;
-         }
+        .badge {
+          margin-left: 0;
+        }
       }
     }
     &:before {
@@ -73,29 +60,6 @@
       content: '';
     }
   }
-  .header-btn-group {
-    padding-right: 40px;
-    position: relative;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .search-bar {
-    width: 300px;
-    margin-right: 60px;
-    color: white;
-    input {
-      border: none;
-      padding-right: 20px;
-      background-color: transparent;
-      color: white;
-      box-shadow: none;
-    }
-    #search-btn {
-      background-color: transparent;
-      border: none;
-      margin-right: 0;
-    }
-  }
 
   input[type="text"]::-webkit-input-placeholder {
     color: white !important;
@@ -110,10 +74,58 @@
     margin-left: 15px;
     padding: 5px;
     display: inline-block;
+
+    a {
+      margin: 0 10px;
+      color: white;
+      text-transform: uppercase;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    &.header-links-home {
+      flex-grow: 1;
+
+      @media (max-width: @screen-md) {
+        display: none;
+      }
+    }
   }
-  .header-links a {
-    margin: 0 5px;
-    color: white;
-    text-transform: uppercase;
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+  }
+  
+  .header-nav {
+    display: flex;
+  }
+  
+  .header-icons {
+    position: relative;
+
+    img {
+      width: 30px;
+      vertical-align: initial;
+    }
+    .header-icon-messages {
+      position: relative;
+      display: inline-block;
+    }
+    .badge {
+      position: absolute;
+      background: #d9534f;
+      bottom: 3px;
+      left: 0;
+    }
+
+    & > a, & > img {
+      display: inline-block;
+      margin: 0 10px;
+    }
   }
 }

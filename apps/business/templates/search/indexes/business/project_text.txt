@@ -1,0 +1,16 @@
+{{ object.title }}
+{{ object.date_created }}
+
+{{ object.type }}
+{{ object.short_blurb }}
+{{ object.description }}
+
+{{ object.skills }}
+{{ object.status }}
+{{ object.category }}
+
+{{ object.city }}
+{{ object.state }}
+
+{{ object.remote }}
+{{ object.featured }}
