@@ -46,5 +46,9 @@
     "select2": "^4.0.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
+    "history": "^2.1.2",
+    "react-router": "^2.5.2"
   }
 }

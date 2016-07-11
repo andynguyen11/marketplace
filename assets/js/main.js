@@ -16,6 +16,7 @@ require('./vendor/validation.bootstrap.min');
 
 require('./routes/home');
 require('./routes/company');
+require('./routes/about');
 
 // SETUP AJAX WITH CSRF
 function getCookie(name) {
