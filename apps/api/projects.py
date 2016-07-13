@@ -22,6 +22,7 @@ class ProjectSearchView(HaystackViewSet):
 
     * Every primary (non-foreign) field on the model is available for explicit query (`featured=true&type=technology`)  
     * Has an additional `text` field defined in a data template `apps/business/templates/search/indexes/business/project_text.txt`  
+    * various `__operators` can be used on a field, most pertinantly [`__fuzzy`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_fuzziness), i.e. `text__fuzzy=tytle+txt` matches `"title text"`. The fuzz operator can also be used on a per-word basis in the form `text=tytle\~+txt\~` in the url.
 
     url encoding in general
 
@@ -30,7 +31,7 @@ class ProjectSearchView(HaystackViewSet):
 
     example search: [?featured=true&type=technology,finance&text=titleword+descriptionword](http://localhost:8000/api/search/project?featured=true&type=technology,finance&text=titleword+descriptionword)
 
-    TODO: searches aren't fuzzy or smart, this is just a barebones implementation. [More haystack configuration needed](https://wellfire.co/learn/custom-haystack-elasticsearch-backend/).
+    
     """
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
