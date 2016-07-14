@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.deconstruct import deconstructible
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
+from social.apps.django_app.default.models import UserSocialAuth
 
 
 # TODO Hacky way to bypass makemigrations error
@@ -33,12 +34,13 @@ class Profile(AbstractUser):
     address2 = models.CharField(max_length=255, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.IntegerField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    photo = models.ImageField(blank=True, upload_to='profile')
-    skills = tagulous.models.TagField(to=Skills)
+    photo = models.ImageField(blank=True, null=True, upload_to='profile')
+    skills = tagulous.models.TagField(to=Skills, blank=True, null=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
     role = models.CharField(max_length=100, blank=True, null=True)
@@ -47,8 +49,22 @@ class Profile(AbstractUser):
     objects = CustomUserManager()
 
     @property
+    def get_photo(self):
+        if self.photo:
+            return '{0}{1}'.format(settings.MEDIA_URL, self.photo)
+        else:
+            try:
+                return self.social_auth.get(provider='linkedin-oauth2').extra_data['picture_urls']['values'][0]
+            except UserSocialAuth.DoesNotExist:
+                return '{0}{1}'.format(settings.MEDIA_URL, 'static/images/icon-profile.png')
+
+    @property
     def linkedin(self):
-        return self.social_auth.get(provider='linkedin-oauth2')
+        try:
+            return self.social_auth.get(provider='linkedin-oauth2')
+        except UserSocialAuth.DoesNotExist:
+            return None
+
 
     @property
     def linkedin_photo(self):

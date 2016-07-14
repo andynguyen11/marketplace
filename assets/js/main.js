@@ -1,7 +1,7 @@
 window.$ = window.jQuery = require('jquery');
 window.React = require('react');
 window.ReactDOM = require('react-dom');
-window.dq_api = require('./api');
+window.loom_api = require('./api');
 //window.GoogleMapsLoader = require('google-maps');
 
 require('lodash');
@@ -17,6 +17,7 @@ require('./vendor/validation.bootstrap.min');
 require('./routes/home');
 require('./routes/company');
 require('./routes/about');
+require('./routes/onboard');
 
 // SETUP AJAX WITH CSRF
 function getCookie(name) {

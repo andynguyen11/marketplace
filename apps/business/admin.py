@@ -6,7 +6,7 @@ from generics.admin import AttachmentInline
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     readonly_fields = ('stripe', )
-    list_display = ('name', 'primary_contact', 'city', 'state', )
+    list_display = ('name', 'city', 'state', )
 
 
 @admin.register(Project)

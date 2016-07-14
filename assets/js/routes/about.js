@@ -97,7 +97,7 @@ import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from
 						}
 					})
 				}
-			})
+			});
 
 			const containerComponent = currentRoute.childRoutes ? (
 				<div>

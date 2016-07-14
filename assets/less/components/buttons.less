@@ -76,6 +76,7 @@
     }
   }
 
+
   &.btn-hero {
     margin-top: 20px;
     padding: 10px 55px;
@@ -88,5 +89,50 @@
     padding: 10px 55px;
     font-weight: normal;
     background: rgba(0,0,0,0.8);
+  }
+
+  &.btn-skill {
+    border: 1px solid #ddd;
+    margin-right: 5px;
+    border-radius: 4px;
+    background: #fff;
+    color: @light-gray;
+    position: relative;
+    overflow: hidden;
+
+    &.active {
+      color: @dark-gray;
+      &:before {
+        .inactive-top;
+      }
+    }
+    &:hover {
+      color: @dark-gray;
+    }
+    &:before {
+      .active-top(@primary);
+    }
+
+  }
+
+  &.btn-step {
+    font-size: 18px;
+    border-radius: 0;
+    position: relative;
+    background: @primary;
+    color: #fff;
+    height: 51px;
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      right: -51px;
+      border-width: 50px / 2;
+      border-color: transparent transparent transparent @primary;
+    }
+
   }
 }
