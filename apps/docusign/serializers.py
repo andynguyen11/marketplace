@@ -93,7 +93,7 @@ class DocumentSerializer(ParentModelSerializer):
         document.send()
         return document
 
-    def create(self, instance, data):
+    def update(self, instance, data):
         data = self.collapse_data(data)
         document = ParentModelSerializer.update(self, instance, data)
         document.send()

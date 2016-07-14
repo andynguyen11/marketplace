@@ -1,22 +1,23 @@
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser, BaseParser
+from rest_framework.parsers import BaseParser
 from .serializers import TemplateSerializer, DocumentSerializer, SignerSerializer
 from .models import Template, Document, DocumentSigner
-
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .docusign import parse_webhook_update
+
 
 class TemplateAPI(generics.ListCreateAPIView):
     ""
     queryset = Template.objects.all()
     serializer_class = TemplateSerializer
 
+
 class DocumentAPI(generics.ListCreateAPIView):
     ""
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
 
 class SignerAPI(generics.RetrieveUpdateAPIView):
     ""
@@ -30,6 +31,7 @@ class RawXMLParser(BaseParser):
     media_type = 'text/xml'
     def parse(self, stream, media_type=None, parser_context=None):
         return stream.read()
+
 
 class Webhook(APIView):
 

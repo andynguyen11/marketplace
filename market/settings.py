@@ -65,6 +65,7 @@ INSTALLED_APPS = (
     'business',
     'api',
     'docusign',
+    'expertratings',
     'reviews',
     'postman',
     'fixture_magic',
@@ -336,14 +337,28 @@ POSTMAN_DISALLOW_MULTIRECIPIENTS = True
 POSTMAN_DISALLOW_COPIES_ON_REPLY = True
 POSTMAN_AUTO_MODERATE_AS = True
 
- 
+def prefixed_env_var_getter(prefix):
+    def get(subvar, default=''):
+        return os.environ.get(prefix + '_' + subvar, default)
+    return get
+
+docusign_ = prefixed_env_var_getter('DOCUSIGN') 
 DOCUSIGN = {
-    'root_url': os.environ.get('DOCUSIGN_ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
-    'integrator_key': os.environ.get('DOCUSIGN_API_KEY', ''),
-    'username': os.environ.get('DOCUSIGN_USERNAME', ''),
-    'password': os.environ.get('DOCUSIGN_PASSWORD', ''),
+    'root_url': docusign_('ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
+    'integrator_key': docusign_('API_KEY'),
+    'username': docusign_('USERNAME'),
+    'password': docusign_('PASSWORD')
 }
 
+expert_rating_ = prefixed_env_var_getter('EXPERT_RATING') 
+EXPERT_RATING = {
+    'root_url': expert_rating_('ROOT_URL', 'http://www.expertrating.com/devquity/webservices'),
+    'auth': {
+        'partnerid': expert_rating_('PARTNERID'),
+        'password': expert_rating_('PASSWORD'),
+        'partneruserid': expert_rating_('PARTNERUSERID'),
+    }
+}
 WEBHOOK_BASE_URL = ''
 
 

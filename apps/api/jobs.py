@@ -13,7 +13,6 @@ from postman.api import pm_write
 class JobViewSet(ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    # renderer_classes = (JSONRenderer,)
     permission_classes = (IsAuthenticated, BidPermission)
 
     def perform_create(self, serializer):

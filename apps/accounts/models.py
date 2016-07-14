@@ -82,3 +82,31 @@ class Profile(AbstractUser):
                     # TODO Manually serialize card, circular import error if using api serializer
                     return card
         return None
+
+class SkillTest(models.Model):
+
+    class Meta:
+        unique_together = ("profile", "expertratings_test")
+
+    profile = models.ForeignKey(Profile)
+    expertratings_test = models.ForeignKey('expertratings.SkillTest')
+    skills = tagulous.models.TagField(to=Skills)
+    ticket_url = models.CharField(max_length=255, blank=True, null=True)
+
+
+    @property
+    def developer(self):
+        return self.profile
+
+    def create_ticket(self):
+        self.ticket_url = self.expertratings_test.create_ticket(user_id = self.developer.id)
+        self.save()
+        return self.ticket_url
+
+    @property
+    def results(self):
+        return self.expertratings_test.results(user=self.developer)
+
+    @property
+    def test_details(self):
+        return self.expertratings_test

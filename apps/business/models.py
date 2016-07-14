@@ -110,6 +110,11 @@ class Project(models.Model):
         return info
 
 
+DOCUMENT_TYPES = (
+    (u'Non-Disclosure', u'Non-Disclosure Agreement'),
+    (u'Contract Service', u'Contract Service Agreement'),
+    (u'Non-Compete', u'Non-Compete Agreement'),
+)
 class Document(models.Model):
     docusign_document = models.OneToOneField('docusign.Document', unique=True)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
@@ -127,3 +132,5 @@ class Document(models.Model):
     @property
     def status(self):
         return self.docusign_document.status
+
+

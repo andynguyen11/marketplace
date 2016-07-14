@@ -6,7 +6,8 @@ from tagulous.serializers.json import Serializer as TagSerializer
 from social.apps.django_app.default.models import UserSocialAuth
 
 from postman.api import MessageSerializer
-from accounts.models import Profile, Skills
+from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
+from accounts.models import Profile, Skills, SkillTest
 from business.models import Company, Document, Project, ConfidentialInfo, Job
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
@@ -59,6 +60,27 @@ class ProfileSerializer(serializers.ModelSerializer):
         instance.set_password(validated_data['password'])
         instance.save()
         return super(ProfileSerializer, self).update(instance, validated_data)
+
+
+class SkillTestSerializer(serializers.ModelSerializer):
+
+    skills = serializers.CharField()
+    test_details = ERSkillTestSerializer(read_only=True)
+    results = SkillTestResultSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = SkillTest
+        fields = field_names(SkillTest) + ('skills', 'results', 'test_details')
+
+    def create(self, data):
+        test = super(SkillTestSerializer, self).create(data)
+        test.create_ticket()
+        return test
+
+    def update(self, instance, data):
+        update_instance(instance, data)
+        instance.create_ticket()
+        return instance
 
 
 class CompanySerializer(serializers.ModelSerializer):

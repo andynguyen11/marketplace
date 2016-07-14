@@ -1,12 +1,15 @@
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.exceptions import ValidationError
+from generics.viewsets import NestedModelViewSet
 from rest_framework.renderers import JSONRenderer
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden
 
-from api.serializers import ProfileSerializer, SkillsSerializer
-from accounts.models import Profile, Skills
+from api.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
+from accounts.models import Profile, Skills, SkillTest
+from accounts.models import Profile
 
 
 class SkillsList(generics.ListAPIView):
@@ -15,15 +18,29 @@ class SkillsList(generics.ListAPIView):
     renderer_classes = (JSONRenderer, )
 
 
-class ProfileListCreate(generics.ListCreateAPIView):
+class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    renderer_classes = (JSONRenderer, )
     permission_classes = (IsAuthenticated, )
 
 
-class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
-    renderer_classes = (JSONRenderer, )
+class SkillTestViewSet(NestedModelViewSet):
+    queryset = SkillTest.objects.all()
+    serializer_class = SkillTestSerializer
     permission_classes = (IsAuthenticated, )
+    parent_keys = ('profile',)
+
+    def new_ticket(self, request):
+        instance = SkillTest.objects.get(profile=request.data['profile'], expertratings_test=request.data['expertratings_test'])
+        serializer = SkillTestSerializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return serializer.data
+
+    def create(self,  request, *args, **kwargs):
+        try:
+            return super(SkillTestViewSet, self).create(request, *args, **kwargs)
+        except ValidationError, e:
+            return Response(self.new_ticket(request))
+            #return super(SkillTestViewSet, self).update(request, *args, **kwargs)
+

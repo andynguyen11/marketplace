@@ -1,6 +1,8 @@
 from rest_framework import viewsets
+from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+
 
 def cast_or_discard_key(d, key, dest_key):
     arg = d.pop(key, None)
@@ -11,9 +13,11 @@ def cast_or_discard_key(d, key, dest_key):
         pass
     return d
 
+
 def resolve_options(kwargs, *optional_refs):
     for opt in optional_refs:
         kwargs = cast_or_discard_key(kwargs, opt + '_pk', opt)
+        kwargs = cast_or_discard_key(kwargs, opt + '_id', opt)
     kwargs = cast_or_discard_key(kwargs, 'pk', 'pk')
     return kwargs
 
@@ -34,4 +38,9 @@ class NestedModelViewSet(viewsets.ModelViewSet):
         data = get_object_or_404(self.queryset, **self.resolve_options(kwargs))
         serializer = self.serializer_class(data)
         return Response(serializer.data)
+
+    def create(self, request, **kwargs):
+        for k, v in self.resolve_options(kwargs).items():
+            request.data[k] = v
+        return super(NestedModelViewSet, self).create(request, **kwargs)
 

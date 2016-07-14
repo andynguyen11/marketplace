@@ -1,14 +1,21 @@
 import pydocusign, base64, os
 from django.conf import settings
+from generics.external_apis import LazyClient
 
-try:
-    client = pydocusign.DocuSignClient( **settings.DOCUSIGN ) 
-    client.login_information()
-except pydocusign.exceptions.DocuSignException, e:
-    print """
-    DocuSign API unavailable due to incorrect/missing environment variables.
-    Attempts to call the api will throw exceptions."""
-    pass
+def get_logged_in_client():
+    client = None
+    try:
+        client = pydocusign.DocuSignClient( **settings.DOCUSIGN ) 
+        client.login_information()
+
+    except pydocusign.exceptions.DocuSignException, e:
+        print """
+        DocuSign API unavailable due to incorrect/missing environment variables.
+        Attempts to call the api will throw exceptions."""
+        pass
+    return client
+
+client = LazyClient(get_logged_in_client)
 
 def all_template_ids():
     if not client.account_url:
