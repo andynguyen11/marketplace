@@ -1,11 +1,13 @@
-import tagulous.models
-
 from datetime import datetime, timedelta
 
+import tagulous.models
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+
+from postman.models import Message
 from generics.models import Attachment
+from business.enums import *
 
 
 class Category(tagulous.models.TagModel):
@@ -15,7 +17,6 @@ class Category(tagulous.models.TagModel):
 
 
 class Company(models.Model):
-    primary_contact = models.ForeignKey('accounts.Profile')
     name = models.CharField(max_length=255)
     legal_entity_name = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=255)
@@ -30,6 +31,7 @@ class Company(models.Model):
     logo = models.ImageField(blank=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
     category = tagulous.models.TagField(to=Category)
+    type = models.CharField(max_length=100, choices=COMPANY_TYPES)
 
     def __str__(self):
         return self.name
@@ -38,24 +40,10 @@ class Company(models.Model):
         verbose_name_plural = 'companies'
 
 
-PROJECT_TYPES = (
-    (u'art', u'Art and Design'),
-    (u'technology', u'Technology'),
-    (u'gaming', u'Gaming'),
-    (u'nonprofit', u'Non-Profit'),
-    (u'social', u'Social'),
-    (u'news', u'News and Publishing'),
-    (u'music', u'Music and Media'),
-    (u'location', u'Location-Based'),
-    (u'health', u'Health and Fitness'),
-)
-
-
-JOB_STATUS = (
-    (u'pending', u'Pending'),
-    (u'active', u'Active'),
-    (u'completed', u'Completed'),
-)
+class Employee(models.Model):
+    company = models.ForeignKey(Company)
+    profile = models.ForeignKey('accounts.Profile')
+    primary = models.BooleanField(default=False)
 
 
 class Job(models.Model):
@@ -70,13 +58,13 @@ class Job(models.Model):
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
     bid_message = models.TextField(blank=True, null=True)
+    nda_signed = models.BooleanField(default=False)
 
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
 
     @property
     def job_messages(self):
-        from postman.models import Message
         return Message.objects.filter(job=self, project=self.project)
 
 
@@ -97,8 +85,8 @@ class Project(models.Model):
     description = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     category = tagulous.models.TagField(to=Category)
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(max_length=255, blank=True, null=True)
     estimated_equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     estimated_hours = models.IntegerField()
@@ -121,12 +109,6 @@ class Project(models.Model):
         info = ConfidentialInfo.objects.filter(project=self)
         return info
 
-
-DOCUMENT_TYPES = (
-    (u'Non-Disclosure', u'Non-Disclosure Agreement'),
-    (u'Contract Service', u'Contract Service Agreement'),
-    (u'Non-Compete', u'Non-Compete Agreement'),
-)
 
 class Document(models.Model):
     docusign_document = models.OneToOneField('docusign.Document', unique=True)

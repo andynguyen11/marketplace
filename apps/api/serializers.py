@@ -1,25 +1,68 @@
+import json
+
 from rest_framework import serializers
 from drf_haystack.serializers import HaystackSerializerMixin
 from tagulous.serializers.json import Serializer as TagSerializer
+from social.apps.django_app.default.models import UserSocialAuth
 
 from postman.api import MessageSerializer
-from accounts.models import Profile
+from accounts.models import Profile, Skills
 from business.models import Company, Document, Project, ConfidentialInfo, Job
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
 from api.search_indexes import ProjectIndex
 
+
+class SocialSerializer(serializers.ModelSerializer):
+    extra_data = serializers.JSONField()
+
+    class Meta:
+        model = UserSocialAuth
+
+
+class SkillsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Skills
+        exclude = ('protected', 'slug', )
+
+
 class ProfileSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+    linkedin = serializers.SerializerMethodField()
+    all_skills = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        exclude = ('is_superuser', 'last_login', 'password', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions', )
+        exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions', )
+        write_only_fields = ('password',)
+
+    def get_photo_url(self, obj):
+        return obj.get_photo
+
+    def get_linkedin(self, obj):
+        serializer = SocialSerializer(obj.linkedin)
+        return serializer.data
+
+    def get_all_skills(self, obj):
+        serializer = SkillsSerializer(Skills.objects.all(), many=True)
+        return serializer.data
+
+    def create(self, validated_data):
+        user = Profile.objects.create_user(**validated_data)
+        account = authenticate(username=user.username, password=password)
+        login(request, account)
+        return user
+
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['password'])
+        instance.save()
+        return super(ProfileSerializer, self).update(instance, validated_data)
 
 
 class CompanySerializer(serializers.ModelSerializer):
     primary_contact = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    #category = TagSerializer()
     category = serializers.CharField()
 
     class Meta:

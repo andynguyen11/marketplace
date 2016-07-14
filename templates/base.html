@@ -47,9 +47,7 @@
                   {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
                 </a>
                 <a href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications.png' %}" /></a>
-                {% if request.user.linkedin.extra_data.picture_url %}
-                <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.linkedin.extra_data.picture_url }}" />
-                {% endif %}
+                <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
                 <ul class="dropdown-menu dropdown-menu-right">
                   <li><a href="{% url 'profile' %}">Profile</a></li>
                   <li><a href="{% url 'dashboard' %}">Dashboard</a></li>

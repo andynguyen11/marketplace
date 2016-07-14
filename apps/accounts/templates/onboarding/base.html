@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div id="create-project-header" class="section">
+  <div class="row">
+    <div class="container">
+      <div id="onboard-form" data-id="{% if request.user.id %}{{ request.user.id }}{% endif %}"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -53,7 +53,7 @@
 			componentDidMount() {
 				// Will need to do this profile get on parent component
         $.get(
-          dq_api.profile + $('#profile').data('id'),
+          loom_api.profile + $('#profile').data('id'),
           function (result) {
             this.setState({
               profile: result

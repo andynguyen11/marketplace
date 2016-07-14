@@ -90,3 +90,26 @@
     @func();
   }
 }
+
+.inactive-top {
+  -webkit-transform: translateY(0);
+  transform: translateY(0);
+}
+
+.active-top(@border-color) {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  background: @border-color;
+  height: 4px;
+  -webkit-transform: translateY(-4px);
+  transform: translateY(-4px);
+  transition-property: -webkit-transform;
+  transition-property: transform;
+  transition-property: transform,-webkit-transform;
+  transition-duration: .3s;
+  transition-timing-function: ease-out;
+}

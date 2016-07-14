@@ -5,8 +5,21 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden
 
-from api.serializers import ProfileSerializer
-from accounts.models import Profile
+from api.serializers import ProfileSerializer, SkillsSerializer
+from accounts.models import Profile, Skills
+
+
+class SkillsList(generics.ListAPIView):
+    queryset = Skills.objects.all()
+    serializer_class = SkillsSerializer
+    renderer_classes = (JSONRenderer, )
+
+
+class ProfileListCreate(generics.ListCreateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    renderer_classes = (JSONRenderer, )
+    permission_classes = (IsAuthenticated, )
 
 
 class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
