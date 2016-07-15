@@ -77,7 +77,7 @@ tini==3.0.1
 wcwidth==0.1.6
 websocket-client==0.35.0
 wheel==0.24.0
-
+xmltodict==0.10.2
 # docusign
 pydocusign==0.13.1
 BeautifulSoup==3.2.1

@@ -63,4 +63,45 @@
     padding: 15px;
     margin-top: 35px;
   }
+
+  .signin-or {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 10px 0;
+  }
+  .signin-or > span {
+    position: relative;
+    display: inline-block;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .signin-or > span:before,
+  .signin-or > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 2px;
+    background: #777;
+  }
+  .signin-or > span:before {
+    right: 100%;
+    margin-right: 15px;
+  }
+  .signin-or > span:after {
+    left: 100%;
+    margin-left: 15px;
+  }
+  #signin-panel .panel-body {
+    padding-bottom: 5px;
+  }
+  #create-account {
+    margin: 25px 0 0;
+  }
+  #create-account > a {
+    text-decoration: underline;
+    color: blue;
+  }
 }

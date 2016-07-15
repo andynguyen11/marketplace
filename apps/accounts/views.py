@@ -25,9 +25,12 @@ def user_login(request):
         form = LoginForm(request.POST or None)
         if form.is_valid():
             account = authenticate(username=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            if account.is_active:
-                login(request, account)
-                return redirect('dashboard')
+            if account is not None:
+                if account.is_active:
+                    login(request, account)
+                    return redirect('dashboard')
+            else:
+                form.add_error(None, 'Your email or password is incorrect.')
     return render(request, 'login.html', {'form': form})
 
 
