@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "source venv/bin/activate && pip install -r requirements.txt && python manage.py runserver_plus",
     "shell": "source venv/bin/activate && python manage.py shell_plus",
-
     "test": "source venv/bin/activate && python -W ignore::DeprecationWarning manage.py test api -k",
     "generate_fixtures": "source venv/bin/activate && mkdir -p ./fixtures && GENERATE_TEST_FIXTURES=True python -W ignore::DeprecationWarning manage.py test api -k && npm run merge_fixtures",
     "merge_fixtures": "rm -f ./fixtures/all_fixtures.json && source venv/bin/activate && python -W ignore::DeprecationWarning manage.py merge_fixtures ./fixtures/* > fixtures/all_fixtures.json",
@@ -41,7 +40,6 @@
     "path": "^0.12.7",
     "react": "^15.1.0",
     "react-bootstrap": "^0.29.5",
-    "react-bootstrap-validation": "^0.1.11",
     "react-dom": "^15.1.0",
     "select2": "^4.0.3",
     "vinyl-buffer": "^1.0.0",

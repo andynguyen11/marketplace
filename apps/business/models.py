@@ -19,19 +19,20 @@ class Category(tagulous.models.TagModel):
 class Company(models.Model):
     name = models.CharField(max_length=255)
     legal_entity_name = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    stripe = models.CharField(max_length=255)
-    address = models.CharField(max_length=255)
+    phone = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
+    stripe = models.CharField(max_length=255, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
     address2 = models.CharField(max_length=255, blank=True, null=True)
-    city = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
-    zipcode = models.IntegerField()
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(max_length=255, blank=True, null=True)
+    zipcode = models.IntegerField(blank=True, null=True)
     ein = models.CharField(max_length=255, verbose_name='EIN', blank=True, null=True)
-    logo = models.ImageField(blank=True, upload_to='provider/logo')
+    logo = models.ImageField(blank=True, null=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
-    category = tagulous.models.TagField(to=Category)
+    category = tagulous.models.TagField(to=Category, blank=True, null=True)
     type = models.CharField(max_length=100, choices=COMPANY_TYPES)
+    filing_location = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
@@ -110,11 +111,6 @@ class Project(models.Model):
         return info
 
 
-DOCUMENT_TYPES = (
-    (u'Non-Disclosure', u'Non-Disclosure Agreement'),
-    (u'Contract Service', u'Contract Service Agreement'),
-    (u'Non-Compete', u'Non-Compete Agreement'),
-)
 class Document(models.Model):
     docusign_document = models.OneToOneField('docusign.Document', unique=True)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)

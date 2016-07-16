@@ -15,7 +15,6 @@ require('./vendor/formValidation.popular.min');
 require('./vendor/validation.bootstrap.min');
 
 require('./routes/home');
-require('./routes/company');
 require('./routes/about');
 require('./routes/onboard');
 

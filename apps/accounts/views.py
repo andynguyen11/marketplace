@@ -46,7 +46,7 @@ def signup(request):
             user.save()
             account = authenticate(username=user.username, password=password)
             login(request, account)
-            return redirect('onboard')
+            return redirect('signup-type')
     return render(request, 'signup.html', {'form': form})
 
 

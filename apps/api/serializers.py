@@ -8,7 +8,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from postman.api import MessageSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from accounts.models import Profile, Skills, SkillTest
-from business.models import Company, Document, Project, ConfidentialInfo, Job
+from business.models import Company, Document, Project, ConfidentialInfo, Job, Employee
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
@@ -37,7 +37,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions', )
-        write_only_fields = ('password',)
 
     def get_photo_url(self, obj):
         return obj.get_photo
@@ -49,17 +48,6 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_all_skills(self, obj):
         serializer = SkillsSerializer(Skills.objects.all(), many=True)
         return serializer.data
-
-    def create(self, validated_data):
-        user = Profile.objects.create_user(**validated_data)
-        account = authenticate(username=user.username, password=password)
-        login(request, account)
-        return user
-
-    def update(self, instance, validated_data):
-        instance.set_password(validated_data['password'])
-        instance.save()
-        return super(ProfileSerializer, self).update(instance, validated_data)
 
 
 class SkillTestSerializer(serializers.ModelSerializer):
@@ -89,10 +77,13 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = field_names(Company, exclude=('stripe',)) + ('category',)
+        fields = field_names(Company, exclude=('stripe',)) + ('type',)
 
     def create(self, data):
-        return Company.objects.create(**data)
+        user = self.context['request'].user
+        company = Company.objects.create(**data)
+        Employee.objects.create(profile=user, company=company, primary=True)
+        return company
 
     def update(self, instance, data):
         update_instance(instance, data)
