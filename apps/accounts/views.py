@@ -99,7 +99,7 @@ def view_bids(request):
 @login_required
 def view_projects(request):
     projects = Project.objects.filter(project_manager=request.user)
-    return render_to_response('projects.html', {'projects': projects, }, context_instance=RequestContext(request))
+    return render(request, 'projects.html', {'projects': projects})
 
 
 @login_required
