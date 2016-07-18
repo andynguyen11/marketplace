@@ -8,7 +8,11 @@
     "test": "source venv/bin/activate && python -W ignore::DeprecationWarning manage.py test api -k",
     "generate_fixtures": "source venv/bin/activate && mkdir -p ./fixtures && GENERATE_TEST_FIXTURES=True python -W ignore::DeprecationWarning manage.py test api -k && npm run merge_fixtures",
     "merge_fixtures": "rm -f ./fixtures/all_fixtures.json && source venv/bin/activate && python -W ignore::DeprecationWarning manage.py merge_fixtures ./fixtures/* > fixtures/all_fixtures.json",
-    "testserver": "source venv/bin/activate && python manage.py testserver ./fixtures/all_fixtures.json"
+    "testserver": "source venv/bin/activate && python manage.py testserver ./fixtures/all_fixtures.json",
+
+    "watch": "polypacker --preset DJANGO_REACT --entry ./assets/js/main.js --out ./static/js/main.js --watch",
+    "dist_dev": "polypacker --preset DJANGO_REACT --entry ./assets/js/main.js --out ./static/js/main.js",
+    "dist_prod": "polypacker --preset DJANGO_REACT --entry ./assets/js/main.js --out ./static/js/main.js --env PRODUCTION"
   },
   "repository": {
     "type": "git",
@@ -21,6 +25,7 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.3.0",
     "bootstrap": "^3.3.6",
     "bootstrap-datepicker": "^1.6.1",
@@ -43,7 +48,8 @@
     "react-dom": "^15.1.0",
     "select2": "^4.0.3",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "polypacker": "0.1.11-alpha0-django"
   },
   "dependencies": {
     "history": "^2.1.2",

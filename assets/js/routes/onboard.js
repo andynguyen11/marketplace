@@ -5,16 +5,18 @@ let DeveloperOnboard = require('../components/onboarding/developer');
 let EntrepreneurOnboard = require('../components/onboarding/entrepreneur');
 
 (function(){
-	const onboardDiv = document.getElementById('onboard-form');
+    $(document).ready(_ => {
+        const onboardDiv = document.getElementById('onboard-form');
 
   // LinkedIn redirect hack
   // TODO Figure out work around for LinkedIn redirect appending #! to url which breaks router
-  if (window.location.pathname === '/signup/developer/') {
-    ReactDOM.render(<DeveloperOnboard />, onboardDiv);
-  }
-  else if (window.location.pathname === '/signup/entrepreneur/') {
-    ReactDOM.render(<EntrepreneurOnboard />, onboardDiv);
-  }
+        if (window.location.pathname === '/signup/developer/') {
+            ReactDOM.render(<DeveloperOnboard />, onboardDiv);
+        }
+        else if (window.location.pathname === '/signup/entrepreneur/') {
+            ReactDOM.render(<EntrepreneurOnboard />, onboardDiv);
+        }
+    })
 
   /*
 	const OnboardForm = React.createClass({

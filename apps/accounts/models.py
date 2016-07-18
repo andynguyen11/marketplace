@@ -56,7 +56,7 @@ class Profile(AbstractUser):
             try:
                 return self.social_auth.get(provider='linkedin-oauth2').extra_data['picture_urls']['values'][0]
             except UserSocialAuth.DoesNotExist:
-                return '{0}{1}'.format(settings.MEDIA_URL, 'static/images/icon-profile.png')
+                return '{0}{1}'.format(settings.MEDIA_URL, '/static/images/icon-profile.png')
 
     @property
     def linkedin(self):

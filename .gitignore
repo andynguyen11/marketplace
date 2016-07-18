@@ -77,3 +77,4 @@ docs/_build/
 staticfiles/
 fixtures/
 .dependencies.txt
+webpack-stats.json

@@ -24,7 +24,6 @@ cryptography==1.3.1
 django-crispy-forms==1.6.0
 django-extensions==1.6.7
 django-flatpages-x==0.1.2
-django-gulp==2.4.0
 django-ipware==1.1.1
 django-longerusernameandemail==0.5.7
 django-markitup==2.2.2
@@ -92,5 +91,9 @@ django-fixture-magic==0.0.8
 django-haystack==2.5.dev2
 drf-haystack==1.5.6
 elasticsearch==2.3.0
+
+# frontend
+django-gulp==2.4.0
+django-webpack-loader==0.3.0
 
 wsgiref==0.1.2

@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     'storages',
     'rest_framework',
     'rest_framework.authtoken',
+    'webpack_loader',
     'tagulous',
     'crispy_forms',
     'raven.contrib.django.raven_compat',
@@ -71,6 +72,13 @@ INSTALLED_APPS = (
     'fixture_magic',
     'django_extensions'
 )
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'js/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
