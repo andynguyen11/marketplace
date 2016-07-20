@@ -7,6 +7,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from generics.models import Attachment
 
 from .docusign import create_envelope, Role
+from .tabs import TAB_TYPES, classify as classify_tab
 import pydocusign
 
 DOCUMENT_STATUS = tuple(
@@ -17,12 +18,19 @@ SIGNER_STATUS = tuple(
     (status.lower(), status)
     for status in pydocusign.Recipient.STATUS_LIST
 )
+TEMPLATE_STATUS = (
+    ('valid', 'still exists in docusign'),
+    ('deleted', 'was removed from docusign')
+)
 
 class TemplateRoleTab(models.Model):
+    type = models.CharField(max_length=30, choices=TAB_TYPES)
     template_role = models.ForeignKey('docusign.TemplateRole', on_delete=models.CASCADE)
-    label = models.CharField(max_length=30)
+    label = models.CharField(max_length=50)
+
 
 class TemplateRole(models.Model):
+    id = models.CharField(max_length=100, primary_key=True)
     template = models.ForeignKey('docusign.Template', on_delete=models.CASCADE)
     role_name = models.CharField(max_length=30)
     order = models.IntegerField()
@@ -43,6 +51,8 @@ class Template(models.Model):
     email_blurb = models.CharField(max_length=500, blank=True, null=True)
     note = models.CharField(max_length=1000, blank=True, null=True)
 
+    status = models.CharField(max_length=1000, choices=TEMPLATE_STATUS)
+
     @property
     def roles(self):
         return TemplateRole.objects.filter(template=self).order_by('order')
@@ -50,7 +60,6 @@ class Template(models.Model):
     def __str__(self):
         return '%s, %s ' % (self.template_id, self.name) + \
                 '<%s>' % ', '.join([r.role_name for r in self.roles])
-
 
 class DocumentSignerTab(models.Model):
     template_role_tab = models.ForeignKey('docusign.TemplateRoleTab')
@@ -61,8 +70,13 @@ class DocumentSignerTab(models.Model):
     def label(self):
         return self.template_role_tab.label
 
+    @property
+    def type(self):
+        return self.template_role_tab.type
+
     def to_dict(self):
         return {
+            'type': self.type,
             'tabLabel': '\\*' +  self.label,
             'value': self.value,
         }
@@ -88,7 +102,7 @@ class DocumentSigner(models.Model):
 
     @property
     def name(self):
-        return self.profile.get_full_name()
+        return self.profile.get_full_name() or self.profile.username
 
     @property
     def tabs(self):
@@ -102,9 +116,10 @@ class DocumentSigner(models.Model):
             'status': self.status
         }
         if len(self.tabs):
-            data['tabs'] = {
-                'textTabs': [tab.to_dict() for tab in self.tabs]
-            }
+            data['tabs'] = reduce(
+                    classify_tab,
+                    [tab.to_dict() for tab in self.tabs],
+                    {})
         return data
 
 

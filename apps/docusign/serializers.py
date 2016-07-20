@@ -10,13 +10,13 @@ from generics.serializers import RelationalModelSerializer, ParentModelSerialize
 class TabSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateRoleTab
-        fields = ('label',)
+        fields = ('label', 'type')
 
 class RoleSerializer(ParentModelSerializer):
     tabs = TabSerializer(many=True, required=False)
     class Meta:
         model = TemplateRole
-        fields = ('role_name', 'order', 'tabs')
+        fields = ('role_name', 'id', 'order', 'tabs')
         parent_key = 'template_role'
         child_fields = ('tabs',)
 
@@ -28,6 +28,7 @@ class TemplateSerializer(ParentModelSerializer):
         fields = ('template_id', 'description', 'name', 'roles')
         parent_key = 'template'
         child_fields = ('roles',)
+
 
 class SignerTabSerializer(RelationalModelSerializer):
     label = serializers.CharField(required=False)
@@ -82,7 +83,7 @@ class DocumentSerializer(ParentModelSerializer):
         parent_key = 'document'
         child_fields = ('signers', 'attachments')
 
-    def collapse_data(data):
+    def collapse_data(self, data):
         data = collapse_listview(data, 'signer')
         data = collapse_listview(data, 'attachment', required_fields=['file'])
         return data

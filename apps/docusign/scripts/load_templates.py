@@ -4,8 +4,10 @@ from rest_framework.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
 from docusign.docusign import client, all_template_ids
 from docusign.models import Template
+from docusign.tabs import normalize as normalize_tabs
 
 def upsert(template):
+    template['status'] = 'valid'
     try:
         existing = Template.objects.get(template_id=template['template_id'])
         serializer = TemplateSerializer(existing, data=template, partial=True)
@@ -25,6 +27,11 @@ def upsert(template):
 
 def save_docusign_template(template):
     template_definition = template['envelopeTemplateDefinition']
+
+    for t in Template.objects.all():
+        t.status = 'deleted'
+        t.save()
+
     upsert({
         'template_id': template_definition['templateId'],
         'name': template_definition['name'],
@@ -33,9 +40,10 @@ def save_docusign_template(template):
         'email_blurb': template['emailBlurb'],
         'roles': [
             {
+                'id': str(signer['recipientId']),
                 'order': signer['routingOrder'],
                 'role_name': signer['roleName'],
-                'tabs': [{'label': tab} for tab in signer['tabs'].keys()]
+                'tabs': normalize_tabs(signer['tabs'])
             } for signer in template['recipients']['signers']
         ]
     })
