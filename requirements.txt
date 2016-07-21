@@ -29,6 +29,7 @@ django-ipware==1.1.1
 django-longerusernameandemail==0.5.7
 django-markitup==2.2.2
 django-model-utils==2.5
+django-multiupload==0.5.1
 django-notifications-hq==1.1
 django-password-reset==0.8.1
 django-require==1.0.9
