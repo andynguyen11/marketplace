@@ -9,18 +9,19 @@ from api.company import CompanyListCreate, CompanyDetail
 from api.review import ReviewListCreate
 from api.jobs import JobViewSet
 from business.models import Company, Category
-from api.projects import InfoViewSet, ProjectViewSet, ProjectSearchView
+from api.projects import InfoViewSet, ProjectViewSet, ProjectSearchView, NDAViewSet
 from expertratings.views import ExpertRatingsXMLWebhook
 
 router = routers.SimpleRouter()
+router.register('jobs', JobViewSet)
+router.register('nda', NDAViewSet)
+router.register('profile', ProfileViewSet)
 router.register('project', ProjectViewSet)
 router.register('search/project', ProjectSearchView, base_name='project-search')
 
 project_router = routers.NestedSimpleRouter(router, 'project', lookup='project')
 project_router.register('confidentialinfo', InfoViewSet, base_name='project-confidentialinfo')
-project_router.register('jobs', JobViewSet, base_name='project-jobs')
 
-router.register('profile', ProfileViewSet)
 profile_router = routers.NestedSimpleRouter(router, 'profile', lookup='profile')
 profile_router.register('skilltest', SkillTestViewSet, base_name='profile-skilltest')
 

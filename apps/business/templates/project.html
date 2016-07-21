@@ -11,7 +11,7 @@
       </h2>
       <div class="sub-section">
         <div class="col-md-6">
-          <img class="project-image" src="{% static "" %}{{ project.image }}" />
+          <img class="project-image" src="{{ MEDIA_URL }}{{ project.image }}" />
           <ul class="project-meta">
             <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> Austin, TX</li>
             <li><img class="icon" src="{% static 'images/icon-category.png' %}" />Technology</li>
@@ -111,13 +111,10 @@
             <label>Time Estimate</label>
             <input id="id_hours" class="form-control" maxlength="100" name="hours" placeholder="00 hours" type="text">
           </div>
-          <div class="form-group">
-            <input id="attachment-input" name="attachment" type="file" multiple />
-          </div>
       </div>
       <div class="modal-body">
-          <input type="hidden" id="id_recepient" name="recipient" value="{{ user.id }}" />
-          <input type="hidden" id="id_project" name="project_id" value="{{ project.id }}" />
+          <input type="hidden" id="id_project" name="project" value="{{ project.id }}" />
+          <input type="hidden" id="developer" name="developer" value="{{ request.user.id }}" />
           <div class="form-group">
             <textarea cols="40" class="form-control" id="id_message" name="message" placeholder="Include a message with your bid..." rows="7"></textarea>
           </div>

@@ -366,11 +366,6 @@ class DisplayMixin(NamespaceMixin, object):
                 break
         else:
             archived = True
-        #try:
-        #    job = Job.objects.get(message=self.msgs[0].id)
-        #    context['job'] = job
-        #except Job.DoesNotExist:
-        #    pass
         # look for the most recent received message (and non-deleted to comply with the future perms() control), if any
         for m in reversed(self.msgs):
             if m.recipient == user and not m.recipient_deleted_at:
@@ -380,6 +375,7 @@ class DisplayMixin(NamespaceMixin, object):
             received = None
         context.update({
             'pm_messages': self.msgs,
+            'thread': self.msgs.reverse()[0],
             'archived': archived,
             'reply_to_pk': received.pk if received else None,
             'form': self.form_class(initial=received.quote(*self.formatters)) if received else None,

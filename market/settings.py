@@ -369,6 +369,8 @@ EXPERT_RATING = {
 }
 WEBHOOK_BASE_URL = ''
 
+MAX_FILE_SIZE = 5242880
+FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]
 
 try:
     from local_settings import *

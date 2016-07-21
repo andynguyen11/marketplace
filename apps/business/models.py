@@ -58,7 +58,7 @@ class Job(models.Model):
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
-    bid_message = models.TextField(blank=True, null=True)
+    bid_message = models.TextField(blank=True, null=True) #TODO This shouldn't belong on the job model, create a property that does a reverse lookup (LM-91)
     nda_signed = models.BooleanField(default=False)
 
     def __str__(self):
@@ -109,6 +109,13 @@ class Project(models.Model):
     def info(self):
         info = ConfidentialInfo.objects.filter(project=self)
         return info
+
+
+class NDA(models.Model):
+    sent = models.BooleanField(default=False)
+    signed = models.BooleanField(default=False)
+    user = models.ForeignKey('accounts.Profile')
+    project = models.ForeignKey(Project)
 
 
 class Document(models.Model):

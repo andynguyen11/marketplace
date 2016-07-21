@@ -17,6 +17,7 @@ class JobViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         job = serializer.save()
+        # TODO We should pass through the message instead of saving it on the job model (LM-91)
         message = pm_write(
             sender=job.developer,
             recipient=job.project.project_manager,

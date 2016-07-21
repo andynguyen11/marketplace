@@ -4,12 +4,15 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from generics.validators import file_validator
+
+
 def upload_to(instance, filename):
     return instance.path
 
-class Attachment(models.Model):
-    file = models.FileField(upload_to=upload_to)
 
+class Attachment(models.Model):
+    file = models.FileField(upload_to=upload_to, validators=[file_validator, ])
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

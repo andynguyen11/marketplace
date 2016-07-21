@@ -1,9 +1,10 @@
+//TODO This needs to go away and be replaced by React
 (function() {
   var $ = require ('jquery');
 
   $('.message-bookmark').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_bookmark,
+      url: loom_api.message_bookmark,
       method: 'POST',
       data: { pks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -19,7 +20,7 @@
 
   $('.thread-bookmark').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_bookmark,
+      url: loom_api.message_bookmark,
       method: 'POST',
       data: { tpks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -35,7 +36,7 @@
 
   $('.message-unbookmark').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_unbookmark,
+      url: loom_api.message_unbookmark,
       method: 'POST',
       data: { pks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -51,7 +52,7 @@
 
   $('.thread-unbookmark').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_unbookmark,
+      url: loom_api.message_unbookmark,
       method: 'POST',
       data: { tpks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -67,7 +68,7 @@
 
   $('.message-archive').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_archive,
+      url: loom_api.message_archive,
       method: 'POST',
       data: { pks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -83,7 +84,7 @@
 
   $('.thread-archive').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_archive,
+      url: loom_api.message_archive,
       method: 'POST',
       data: { tpks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -99,7 +100,7 @@
 
   $('.message-unarchive').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_unarchive,
+      url: loom_api.message_unarchive,
       method: 'POST',
       data: { pks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -115,7 +116,7 @@
 
   $('.thread-unarchive').on('click', function(e) {
     $.ajax({
-      url: dq_api.message_unarchive,
+      url: loom_api.message_unarchive,
       method: 'POST',
       data: { tpks: $(e.currentTarget).data('value') },
       complete: function() {
@@ -131,7 +132,7 @@
 
   $("#message-form").on("submit", function(e) {
       $.ajax({
-        url: dq_api.message_send,
+        url: loom_api.message_send,
         method: 'POST',
         data: $(e.currentTarget).serialize(),
         success: function() {
@@ -143,15 +144,15 @@
 
   $("#send-bid").on("click", function(e) {
       $.ajax({
-        url: dq_api.bid_send,
+        url: loom_api.job,
         method: 'POST',
         data: {
-          message: $('#id_message').val(),
+          bid_message: $('#id_message').val(),
           equity: $('#id_equity').val(),
           cash: $('#id_cash').val(),
           hours: $('#id_hours').val(),
-          recipient: $('#id_recepient').val(),
-          project_id: $('#id_project').val()
+          project: $('#id_project').val(),
+          developer: $('#developer').val()
         },
         success: function() {
           $('#bid-modal').modal('hide');

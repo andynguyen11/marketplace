@@ -22,6 +22,7 @@ except ImportError:
     from datetime import datetime
     now = datetime.now
 from django.utils.translation import ugettext, ugettext_lazy as _
+from django.contrib.contenttypes.fields import GenericRelation
 
 from . import OPTION_MESSAGES
 from postman.query import PostmanQuery
@@ -242,7 +243,7 @@ class MessageManager(models.Manager):
         return self.select_related('sender', 'recipient').filter(
             filter,
             (models.Q(recipient=user) & models.Q(moderation_status=STATUS_ACCEPTED)) | models.Q(sender=user),
-        ).order_by('sent_at')
+        ).order_by('-sent_at')
 
     def as_recipient(self, user, filter):
         """
@@ -309,6 +310,8 @@ class Message(models.Model):
     moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
     job = models.ForeignKey('business.Job', blank=True, null=True)
     project = models.ForeignKey('business.Project', blank=True, null=True)
+    attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
+    nda = models.ForeignKey('business.NDA', blank=True, null=True)
 
     objects = MessageManager()
 

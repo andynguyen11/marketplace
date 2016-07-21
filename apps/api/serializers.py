@@ -8,7 +8,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from postman.api import MessageSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from accounts.models import Profile, Skills, SkillTest
-from business.models import Company, Document, Project, ConfidentialInfo, Job, Employee
+from business.models import Company, Document, Project, ConfidentialInfo, Job, Employee, NDA
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
@@ -20,6 +20,12 @@ class SocialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserSocialAuth
+
+
+class NDASerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NDA
 
 
 class SkillsSerializer(serializers.ModelSerializer):
@@ -134,25 +140,11 @@ class ProjectSerializer(ParentModelSerializer):
         child_fields = ('confidential_info',)
 
 
-class JobSerializer(ParentModelSerializer):
+class JobSerializer(serializers.ModelSerializer):
     job_messages = MessageSerializer(required=False, many=True, read_only=True)
-    attachments = AttachmentSerializer(many=True, required=False)
-    attachment_one = AttachmentSerializer(required=False)
-    attachment_two = AttachmentSerializer(required=False)
 
     class Meta:
         model = Job
-        fields = field_names(Job) + tuple(['job_messages'] + to_browsable_fieldset('attachment'))
-        parent_key = 'job'
-        child_fields = ('attachments',)
-
-    def create(self, data, action='create'):
-        data = collapse_listview(data, 'attachment', required_fields=['file'])
-        return ParentModelSerializer.create(self, data, action)
-
-    def update(self, instance, data):
-        data = collapse_listview(data, 'attachment', required_fields=['file'])
-        return ParentModelSerializer.update(self, instance, data)
 
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):

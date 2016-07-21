@@ -1,8 +1,11 @@
-from generics.viewsets import NestedModelViewSet
 from drf_haystack.viewsets import HaystackViewSet
 from rest_framework import viewsets
-from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer
-from business.models import Project, ConfidentialInfo
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+
+from generics.viewsets import NestedModelViewSet
+from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, NDASerializer
+from business.models import Project, ConfidentialInfo, NDA
 
 
 class InfoViewSet(NestedModelViewSet):
@@ -11,10 +14,18 @@ class InfoViewSet(NestedModelViewSet):
     serializer_class = InfoSerializer
     parent_keys = ('project',)
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+
+class NDAViewSet(viewsets.ModelViewSet):
+    queryset = NDA.objects.all()
+    serializer_class = NDASerializer
+    permission_classes = (IsAuthenticated, )
+
 
 class ProjectSearchView(HaystackViewSet):
     """
@@ -35,3 +46,6 @@ class ProjectSearchView(HaystackViewSet):
     """
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
+
+
+

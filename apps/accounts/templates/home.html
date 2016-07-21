@@ -535,12 +535,12 @@
       <h2 class="text-center">meet developers</h2>
       {% for developer in developers %}
       <div class="col-md-4">
-        <div class="profile text-center" style="background-image: url('{{ developer.linkedin.extra_data.picture_url }}');">
+        <div class="profile text-center" style="background-image: url('{{ developer.get_photo }}');">
           <div class="overlay"></div>
           <div class="profile-content">
-            <img src="{{ developer.linkedin.extra_data.picture_url }}" />
+            <img src="{{ developer.get_photo }}" />
             <h5>{{ developer.first_name }}</h5>
-            <p class="text-yellow">Front-End</p>
+            <p class="text-yellow">{{ developer.role }}</p>
             <h3>15 hrs / week</h3>
             <a class="btn btn-foggy">Hire {{ developer.first_name }}</a>
           </div>

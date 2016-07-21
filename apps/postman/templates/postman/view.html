@@ -5,113 +5,221 @@
 {% load staticfiles %}
 
 {% block account_content %}
-<div id="postman">
-<div id="message-wrapper">
-<div class="row">
-<div class="container">
-<div class="ps-messages-view-header">
-  <a class="pull-left back button button-left" href="{{ next_url }}"><</a>
-  <h3 class="pull-left">
-    <span class="text-skinny">Conversation with</span>
-    <span class="text-yellow">{{ pm_messages.0.sender.first_name }}</span>
-  </h3>
-  <div class="pull-right message-tools">
-  {% if pm_messages.0.sender == user and pm_messages.0.sender_bookmarked or pm_messages.0.recipient == user and pm_messages.0.recipient_bookmarked %}
-    {% if pm_messages|length > 1 %}
-    <button class="thread-unbookmark button button-left" data-value="{{ pm_messages.0.thread_id }}" data-url="">
-      <img src="{% static "images/star-active.png" %}">
-    </button>
-    {% else %}
-    <button class="message-unbookmark button button-left" data-value="{{ pm_messages.0.pk }}" data-url="">
-      <img src="{% static "images/star-active.png" %}">
-    </button>
-    {% endif %}
-  {% else %}
-    {% if pm_messages|length > 1 %}
-    <button class="thread-bookmark button button-left" data-value="{{ pm_messages.0.thread_id }}" data-url="">
-      <img src="{% static "images/star-open.png" %}">
-    </button>
-    {% else %}
-    <button class="message-bookmark button button-left" data-value="{{ pm_messages.0.pk }}" data-url="">
-      <img src="{% static "images/star-open.png" %}">
-    </button>
-    {% endif %}
-  {% endif %}
-  {% if pm_messages.0.sender == user and pm_messages.0.sender_archived or pm_messages.0.recipient == user and pm_messages.0.recipient_archived %}
-    {% if pm_messages|length > 1 %}
-      <button class="thread-unarchive button button-right" data-url="" data-value="{{ pm_messages.0.thread_id }}">
-        <img src="{% static "images/unarchive.png" %}">
-      </button>
-    {% else %}
-      <button class="message-unarchive button button-right" data-url="" data-value="{{ pm_messages.0.pk }}">
-        <img src="{% static "images/unarchive.png" %}">
-      </button>
-    {% endif %}
-  {% else %}
-    {% if pm_messages|length > 1 %}
-      <button class="thread-archive button button-right" data-url="" data-value="{{ pm_messages.0.thread_id }}">
-        <img src="{% static "images/archive.png" %}">
-      </button>
-    {% else %}
-      <button class="message-archive button button-right" data-url="" data-value="{{ pm_messages.0.pk }}">
-        <img src="{% static "images/archive.png" %}">
-      </button>
-    {% endif %}
-  {% endif %}
+<div id="pm_messages">
+  <div id="message-wrapper">
+    <div class="row">
+      <div class="container">
+        <div class="col-md-12 ps-messages-view-header">
+          <a class="pull-left back button button-left" href="{{ next_url }}"><</a>
+          <h3 class="pull-left">
+            <span class="text-skinny">Conversation with</span>
+            <span class="text-yellow">{% if thread.sender == user %} {{ thread.recipient.first_name }} {% else %} {{ thread.sender.first_name }} {% endif %}</span>
+          </h3>
+          <div class="pull-right message-tools">
+            {% if thread.sender == user and thread.sender_bookmarked or thread.recipient == user and thread.recipient_bookmarked %}
+              {% if pm_messages|length > 1 %}
+              <button class="thread-unbookmark button button-left" data-value="{{ thread.thread_id }}" data-url="">
+                <img src="{% static "images/star-active.png" %}">
+              </button>
+              {% else %}
+              <button class="message-unbookmark button button-left" data-value="{{ thread.pk }}" data-url="">
+                <img src="{% static "images/star-active.png" %}">
+              </button>
+              {% endif %}
+            {% else %}
+              {% if pm_messages|length > 1 %}
+              <button class="thread-bookmark button button-left" data-value="{{ thread.thread_id }}" data-url="">
+                <img src="{% static "images/star-open.png" %}">
+              </button>
+              {% else %}
+              <button class="message-bookmark button button-left" data-value="{{ thread.pk }}" data-url="">
+                <img src="{% static "images/star-open.png" %}">
+              </button>
+              {% endif %}
+            {% endif %}
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="col-md-8">
+          <div class="panel panel-default">
+            <div id="reply-wrapper">
+              {% if thread.sender == user and thread.sender_archived or thread.recipient == user and thread.recipient_archived %}
+              {% else %}
+              {% if reply_to_pk %}
+              <form action="{% url 'postman:reply' reply_to_pk %}?next={{ next_url|urlencode }}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div id="pm_reply">{{ form.body }}</div>
+                {% if thread.project.project_manager == request.user %}
+                <div class="pull-left">
+                  <input type="file" name="attachments" multiple />
+                  <input type="checkbox" id="nda" name="nda" /> Attach an NDA <br />
+                  <input type="checkbox" name="" /> Attach Master Contract
+                </div>
+                {% endif %}
+                <button class="btn btn-yellow pull-right" type="submit">{% trans 'Send Message' %}</button>
+                <div class="clearfix"></div>
+              </form>{% endif %}
+              {% endif %}
+            </div>
+          </div>
+
+          <ul id="pm_messages">
+            {% for message in pm_messages %}
+            <li>
+              {% if message.sender == request.user %}
+                <img src="{{ message.sender.get_photo }}" class="profile-photo img-circle pull-right" />
+                <div class="sent-message pull-right">
+                  {{ message.body|linebreaksbr }}
+                  {% if message.attachments.all %}
+                    <div class="">
+                      <strong>Attached Files </strong>
+                        <ul>
+                        {% for file in message.attachments.all %}
+                          <li><a href="{{ file.path }}" download>{{ file.name }}</a></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                  {% endif %}
+                  {% if message.nda %}
+                    <div class="">
+                      <strong>NDA</strong>
+                      <p><a id="signNDA" data-nda="{{ message.nda.id }}">Click to sign Non-Disclosure Agreement</a></p>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="message-date text-muted pull-right">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
+                <div class="clearfix"></div>
+              {% else %}
+                <img src="{{ message.sender.get_photo }}" class="profile-photo img-circle pull-left" />
+                <div class="received-message pull-left">
+                  {{ message.body|linebreaksbr }}
+                  {% if message.attachments.all %}
+                    <div class="">
+                      <strong>Attached Files </strong>
+                        <ul>
+                        {% for file in message.attachments.all %}
+                          <li><a href="{{ file.path }}" download>{{ file.name }}</a></li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                  {% endif %}
+                  {% if message.nda %}
+                    <div class="">
+                      <strong>NDA</strong>
+                        <a href="#">Click to sign Non-Disclosure Agreement</a>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="message-date text-muted pull-left">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
+                <div class="clearfix"></div>
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Compensation
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label>Equity</label>
+                    <input class="form-control" type="text" disabled value="{{ thread.job.equity }}%" />
+                  </div>
+                  <div class="form-group">
+                    <label>Cash</label>
+                    <input class="form-control" type="text" disabled value="${{ thread.job.cash }}" />
+                  </div>
+                  <div class="form-group">
+                    <label>Compensation Schedule</label>
+                    <select class="form-control">
+                      <option>50% at halfway, 50% on completion</option>
+                      <option>50% up front, 50% on completion</option>
+                      <option>25% up front, 75% on completion</option>
+                      <option>25% at halfway, 75% on completion</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Project Duration
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                <div class="panel-body">
+                  <div class="form-group">
+                    <label>Hours</label>
+                    <input class="form-control" type="text" disabled value="{{ thread.job.hours }} hours" />
+                  </div>
+                  <div class="form-group">
+                    <label>Availability</label>
+                    <input class="form-control" type="text" disabled value="20 hours / week" />
+                  </div>
+                  <div class="form-group">
+                    <label>Start Date</label>
+                    <div class="input-group">
+                    <input class="form-control" type="text" disabled value="7/1/2016" />
+                      <div class="input-group-btn">
+                        <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>End Date</label>
+                    <div class="input-group">
+                    <input class="form-control" type="text" disabled value="10/1/2016" />
+                      <div class="input-group-btn">
+                        <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Statement of Work
+                  </a>
+                </h4>
+              </div>
+              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                <div class="panel-body">
+                  <ul>
+                    <li>Model data layer</li>
+                    <li>Build REST API</li>
+                    <li>Provide documentation</li>
+                    <li>Develop mobile application (iOS)</li>
+                    <li>Deployment scripts</li>
+                    <li>
+                      <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Add another..." />
+                        <div class="input-group-btn">
+                          <button type="button" class="btn btn-default">+</button>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="clearfix"></div>
-</div>
-
-{% if job %}
-<ul class="text-center bid-details">
-  <li class="project-hours">
-    <h5>{{ job.hours }}</h5>
-    est. hours
-  </li>
-  <li class="project-equity">
-    <h5>{{ job.equity }}%</h5>
-    equity offered
-  </li>
-  <li class="project-cash">
-    <h5>${{ job.cash }}</h5>
-    cash offered
-  </li>
-</ul>
-{% endif %}
-
-<ul id="pm_messages">
-  {% for message in pm_messages %}
-  <li>
-    {% if message.sender == request.user %}
-      <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle pull-right" />
-      <div class="sent-message pull-right">{{ message.body|linebreaksbr }}</div>
-      <div class="message-date text-muted pull-right">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
-      <div class="clearfix"></div>
-    {% else %}
-      <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle pull-left" />
-      <div class="received-message pull-left">{{ message.body|linebreaksbr }}</div>
-      <div class="message-date text-muted pull-left">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
-      <div class="clearfix"></div>
-    {% endif %}
-  </li>
-  {% endfor %}
-</ul>
-</div>
-</div>
-</div>
-
-<div id="reply-wrapper">
-<div class="row">
-<div class="container">
-{% if pm_messages.0.sender == user and pm_messages.0.sender_archived or pm_messages.0.recipient == user and pm_messages.0.recipient_archived %}
-{% else %}
-{% if reply_to_pk %}
-<form action="{% url 'postman:reply' reply_to_pk %}?next={{ next_url|urlencode }}" method="post">{% csrf_token %}
-<div id="pm_reply">{{ form.body }}</div>
-<button class="btn btn-yellow" type="submit">{% trans 'Send Message' %}</button>
-</form>{% endif %}
-{% endif %}
-</div>
-</div>
 </div>
 {% endblock %}

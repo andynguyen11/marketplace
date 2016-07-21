@@ -1,24 +1,27 @@
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from .models import (
-        TemplateRoleTab, TemplateRole, Template,
-        DocumentSignerTab, DocumentSigner, Document )
 
+from .models import TemplateRoleTab, TemplateRole, Template, DocumentSignerTab, DocumentSigner, Document
 from generics.utils import to_browsable_fieldset, collapse_listview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
+
 
 class TabSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateRoleTab
         fields = ('label', 'type')
 
+
+
 class RoleSerializer(ParentModelSerializer):
     tabs = TabSerializer(many=True, required=False)
+
     class Meta:
         model = TemplateRole
         fields = ('role_name', 'id', 'order', 'tabs')
         parent_key = 'template_role'
         child_fields = ('tabs',)
+
 
 class TemplateSerializer(ParentModelSerializer):
     roles = RoleSerializer(many=True)
@@ -44,6 +47,7 @@ class SignerTabSerializer(RelationalModelSerializer):
                     label=obj.get('label', None),
                     template_role=obj['document_signer'].role)
         return obj
+
 
 class SignerSerializer(ParentModelSerializer):
     tabs = SignerTabSerializer(many=True, required=False)

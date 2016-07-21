@@ -22,14 +22,22 @@ except ImportError:
     from postman.future_1_5 import get_user_model
 from django.db import transaction
 from django.utils.translation import ugettext, ugettext_lazy as _
+from multiupload.fields import MultiFileField
+from notifications.signals import notify
 
+from business.models import NDA
 from postman.fields import CommaSeparatedUserField
 from postman.models import Message, get_user_name
 from postman.utils import WRAP_WIDTH
+from generics.models import Attachment
+from generics.validators import file_validator
 
 
 class BaseWriteForm(forms.ModelForm):
     """The base class for other forms."""
+    attachments = MultiFileField(validators=[file_validator, ], required=False)
+    nda = forms.BooleanField(required=False)
+
     class Meta:
         model = Message
         fields = ('body',)
@@ -112,6 +120,9 @@ class BaseWriteForm(forms.ModelForm):
 
         """
         recipients = self.cleaned_data.get('recipients', [])
+        attachments = self.cleaned_data.get('attachments')
+        nda = self.cleaned_data.get('nda')
+
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
             parent.save()
@@ -140,6 +151,15 @@ class BaseWriteForm(forms.ModelForm):
             self.instance.clean_moderation(initial_status)
             self.instance.clean_for_visitor()
             m = super(BaseWriteForm, self).save()
+            if attachments:
+                for file in attachments:
+                    new_attachement = Attachment.objects.create(content_object=m, file=file)
+            if nda:
+                new_nda, created = NDA.objects.get_or_create(sent=True, user=self.instance.recipient, project=self.instance.thread.project)
+                notify.send(self.instance.recipient, recipient=self.instance.recipient,
+                            verb=u'received an NDA to sign', action_object=new_nda)
+                m.nda = new_nda
+                m.save()
             if self.instance.is_rejected():
                 is_successful = False
             self.instance.update_parent(initial_status)

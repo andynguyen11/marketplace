@@ -49,7 +49,7 @@ in the INSTALLED_APPS setting.
     {% for message in pm_messages %}
     <tr {% if message.is_new %}class="unread"{% endif %}>
       <td class="photo-container">
-        <img src="{{ message.sender.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+        <img src="{{ message.sender.get_photo }}" class="profile-photo img-circle" />
       </td>
       {% block pm_sender_cell %}
       <td>
@@ -93,28 +93,6 @@ in the INSTALLED_APPS setting.
           {% else %}
           <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
             <img src="{% static "images/star-open.png" %}">
-          </button>
-          {% endif %}
-        {% endif %}
-
-        {% if message.sender == user and message.sender_archived or message.recipient == user and message.recipient_archived %}
-          {% if message.thread_id %}
-          <button class="thread-unarchive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-            <img src="{% static "images/unarchive.png" %}">
-          </button>
-          {% else %}
-          <button class="message-unarchive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-            <img src="{% static "images/unarchive.png" %}">
-          </button>
-          {% endif %}
-        {% else %}
-          {% if message.thread_id %}
-          <button class="thread-archive" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-            <img src="{% static "images/archive.png" %}">
-          </button>
-          {% else %}
-          <button class="message-archive" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-            <img src="{% static "images/archive.png" %}">
           </button>
           {% endif %}
         {% endif %}

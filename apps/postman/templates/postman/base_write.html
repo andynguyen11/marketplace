@@ -28,7 +28,7 @@
 <div class="row">
 <div class="container">
 <h1>{% block pm_write_title %}{% endblock %}</h1>
-<form action="{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" method="post">{% csrf_token %}
+<form action="{% if next_url %}?next={{ next_url|urlencode }}{% endif %}" method="post" enctype="multipart/form-data">{% csrf_token %}
 <table>
 {% block pm_write_recipient %}{% endblock %}
 {{ form.as_table }}

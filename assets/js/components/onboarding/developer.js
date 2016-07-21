@@ -101,10 +101,12 @@ let DeveloperOnboard = React.createClass({
   _saveAccount(e) {
     e.preventDefault();
     this.setState({ is_loading: true });
+    let profile = this.state.profile;
+    delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
     $.ajax({
       url: loom_api.profile + this.state.profile.id + '/',
       method: 'PATCH',
-      data: JSON.stringify(this.state.profile),
+      data: JSON.stringify(profile),
       contentType: 'application/json; charset=utf-8',
       dataType: 'json',
       success: function(result) {
