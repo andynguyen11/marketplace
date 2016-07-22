@@ -70,8 +70,7 @@ def view_profile(request, user_id=None):
     else:
         user = request.user
     jobs = Job.objects.filter(developer=user)
-    social = user.social_auth.get(provider='linkedin-oauth2')
-    return render_to_response('profile.html', {'user': user, 'social': social, 'jobs': jobs, }, context_instance=RequestContext(request))
+    return render_to_response('profile.html', {'user': user, 'social': user.linkedin, 'jobs': jobs, }, context_instance=RequestContext(request))
 
 
 @login_required

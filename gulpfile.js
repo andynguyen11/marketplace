@@ -24,7 +24,9 @@ gulp.task('scripts', function () {
 				extensions: ['js', 'jsx'],
 				debug: true
 			})
-			.transform(babelify.configure({presets: ["es2015", "react"]}))
+            .transform(babelify.configure({
+                presets: ["es2015", "react", "stage-1"]
+            }))
 			.bundle()
 			.on('error', gutil.log)
 			.pipe(source('main.js'))

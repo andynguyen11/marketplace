@@ -1,4 +1,5 @@
-import ReactCSSTransitionGroup from '../../../node_modules/react/lib/ReactCSSTransitionGroup';
+import React from 'react'
+import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup'
 
 let ModalInner = React.createClass({
 	body: document.body,
@@ -68,4 +69,4 @@ let Modal = React.createClass({
 
 });
 
-module.exports = Modal;
+export default Modal

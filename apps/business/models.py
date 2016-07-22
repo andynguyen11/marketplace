@@ -16,6 +16,12 @@ class Category(tagulous.models.TagModel):
         autocomplete_view = 'api:company-category'
 
 
+class Employee(models.Model):
+    company = models.ForeignKey('business.Company')
+    profile = models.ForeignKey('accounts.Profile')
+    primary = models.BooleanField(default=False)
+
+
 class Company(models.Model):
     name = models.CharField(max_length=255)
     legal_entity_name = models.CharField(max_length=255, blank=True, null=True)
@@ -34,17 +40,18 @@ class Company(models.Model):
     type = models.CharField(max_length=100, choices=COMPANY_TYPES)
     filing_location = models.CharField(max_length=100)
 
+    @property
+    def primary_contact(self):
+        return Employee.objects.get(company=self, primary=True)
+
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name_plural = 'companies'
 
-
-class Employee(models.Model):
-    company = models.ForeignKey(Company)
-    profile = models.ForeignKey('accounts.Profile')
-    primary = models.BooleanField(default=False)
+def user_company(user):
+    return Employee.objects.get(profile=user, primary=True).company
 
 
 class Job(models.Model):
@@ -61,6 +68,9 @@ class Job(models.Model):
     bid_message = models.TextField(blank=True, null=True) #TODO This shouldn't belong on the job model, create a property that does a reverse lookup (LM-91)
     nda_signed = models.BooleanField(default=False)
 
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
+
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
 
@@ -69,32 +79,59 @@ class Job(models.Model):
         return Message.objects.filter(job=self, project=self.project)
 
 
-class ConfidentialInfo(models.Model):
+class ProjectInfo(models.Model):
+    type = models.CharField(max_length=100, choices=INFO_TYPES)
     project = models.ForeignKey('business.Project')
     title = models.CharField(max_length=100)
-    summary = models.CharField(max_length=500, null=True)
-    attachments = GenericRelation(Attachment, related_query_name='business_confidentialinfo')
+    description = models.CharField(max_length=500, null=True)
+    attachments = GenericRelation(Attachment, related_query_name='business_projectinfo')
+
+    def tagged(self, tag):
+        return Attachment.objects.get(business_projectinfo=self, tag=tag)
 
 
 class Project(models.Model):
     company = models.ForeignKey(Company)
     project_manager = models.ForeignKey('accounts.Profile')
+
     title = models.CharField(max_length=255)
-    type = models.CharField(max_length=100, choices=PROJECT_TYPES)
-    image = models.ImageField(blank=True, upload_to='project')
+    type = models.CharField(max_length=100, choices=PROJECT_TYPES) # type vs category?
+    category = tagulous.models.TagField(to=Category, null=True) # not really in the mockup
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
-    description = models.TextField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(blank=True, null=True)
+    skills = tagulous.models.TagField(to='accounts.Skills')
+
+    estimated_hours = models.IntegerField(blank=True, null=True)
+    estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
+    estimated_equity_percentage = models.DecimalField(blank=True, null=True, max_digits=3, decimal_places=2)
+    estimated_equity_shares = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+
     date_created = models.DateTimeField(auto_now_add=True)
-    category = tagulous.models.TagField(to=Category)
+
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
-    estimated_equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
-    estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
-    estimated_hours = models.IntegerField()
-    skills = tagulous.models.TagField(to='accounts.Skills')
+
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
+
+    @property
+    def image(self):
+        return self.details.tagged('image')
+
+    @property
+    def video(self):
+        return self.details.primary_video
+
+    @property
+    def description(self):
+        return self.details.description
+
+    @property
+    def details(self):
+        info, _ = ProjectInfo.objects.get_or_create(project=self, type='primary')
+        return info
 
     def __str__(self):
         return self.title
@@ -106,9 +143,9 @@ class Project(models.Model):
         jobs = Job.objects.filter(status='active', project=self)
         return jobs
 
-    def info(self):
-        info = ConfidentialInfo.objects.filter(project=self)
-        return info
+    def info(self, type=None):
+        rest = {'type': type} if type else {}
+        return ProjectInfo.objects.filter(project=self, **rest).exclude(pk=self.details.pk)
 
 
 class NDA(models.Model):

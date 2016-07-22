@@ -15,10 +15,14 @@ require('./vendor/formValidation.popular.min');
 require('./vendor/validation.bootstrap.min');
 
 require('./routes/home');
+require('./routes/project');
 require('./routes/messaging');
 require('./routes/about');
 require('./routes/onboard');
 
+require('./routes/about');
+require('./routes/onboard');
+require('./routes/project');
 
 // SETUP AJAX WITH CSRF
 function getCookie(name) {
@@ -65,3 +69,4 @@ $.ajaxSetup({
         }
     }
 });
+

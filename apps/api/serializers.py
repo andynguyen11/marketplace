@@ -8,11 +8,12 @@ from social.apps.django_app.default.models import UserSocialAuth
 from postman.api import MessageSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from accounts.models import Profile, Skills, SkillTest
-from business.models import Company, Document, Project, ConfidentialInfo, Job, Employee, NDA
+from business.models import Company, Document, Project, ProjectInfo, Job, Employee, NDA
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
 from api.search_indexes import ProjectIndex
+from html_json_forms.serializers import JSONFormSerializer
 
 
 class SocialSerializer(serializers.ModelSerializer):
@@ -78,8 +79,8 @@ class SkillTestSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    primary_contact = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    category = serializers.CharField()
+    #primary_contact = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
+    #category = serializers.CharField()
 
     class Meta:
         model = Company
@@ -111,33 +112,34 @@ class DeveloperReviewSerializer(serializers.ModelSerializer):
 
 class InfoSerializer(ParentModelSerializer):
     attachments = AttachmentSerializer(many=True, required=False)
-    attachment_one = AttachmentSerializer(required=False)
-    attachment_two = AttachmentSerializer(required=False)
+    title = serializers.CharField(required=False)
+    type = serializers.CharField(required=False)
+    project = serializers.PrimaryKeyRelatedField(required=False, queryset=Project.objects.all())
 
     class Meta:
-        model = ConfidentialInfo
-        fields = tuple(['title', 'summary', 'project'] + to_browsable_fieldset('attachment'))
-        parent_key = 'confidential_info'
+        model = ProjectInfo
+        fields = field_names(ProjectInfo) + ('attachments',)
+        parent_key = 'info'
         child_fields = ('attachments',)
 
-    def create(self, data, action='create'):
-        data = collapse_listview(data, 'attachment', required_fields=['file'])
-        return ParentModelSerializer.create(self, data, action)
 
-    def update(self, instance, data):
-        data = collapse_listview(data, 'attachment', required_fields=['file'])
-        return ParentModelSerializer.update(self, instance, data)
-
-
-class ProjectSerializer(ParentModelSerializer):
-    confidential_info = AttachmentSerializer(many=True, required=False)
-    category = serializers.CharField() # TODO - custom tag serializer needed
+class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
+    info = InfoSerializer(many=True, required=False)
+    details = InfoSerializer(required=False)
+    category = serializers.CharField(required=False) # TODO - custom tag serializer needed
 
     class Meta:
         model = Project
-        fields = field_names(Project) + ('confidential_info', 'category')
+        fields = field_names(Project) + ('info', 'details', 'category')
         parent_key = 'project'
-        child_fields = ('confidential_info',)
+        child_fields = ('info',)
+
+    def create(self, data, action='create'):
+        details = dict(type='primary', title='Project Overview', **data.pop('details', {}))
+        data['info'] = data.pop('info', [])
+        data['info'].append(details)
+        project = super(ProjectSerializer, self).create(data, action)
+        return project
 
 
 class JobSerializer(serializers.ModelSerializer):

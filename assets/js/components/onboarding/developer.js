@@ -1,7 +1,7 @@
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
-let SkillButton = require('../skill');
-let AccountForm = require('./account');
+import SkillButton from '../skill'
+import AccountForm from './account'
 
 
 let DeveloperOnboard = React.createClass({

@@ -13,6 +13,7 @@ def upload_to(instance, filename):
 
 class Attachment(models.Model):
     file = models.FileField(upload_to=upload_to, validators=[file_validator, ])
+    tag = models.CharField(max_length=100, null=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
@@ -25,13 +26,28 @@ class Attachment(models.Model):
     def original_name(self):
         return self.basename.split('-name-')[-1]
 
+    def join(self, *args):
+        return '-'.join(args)
+
+    @property
+    def tag_prefix(self):
+        return self.join('tag', self.tag) if self.tag else ''
+
+    @property
+    def parent_prefix(self):
+        return self.join(self.content_type.model, str(self.content_object.id))
+
     @property
     def name(self):
-        return '-'.join([self.content_type.model, str(self.content_object.id), 'name', self.original_name])
+        return self.join(self.parent_prefix, self.tag_prefix, 'name', self.original_name)
 
     @property
     def path(self):
         return settings.MEDIA_ROOT + self.name
+
+    @property
+    def url(self):
+        return settings.MEDIA_URL + self.original_name
 
     @property
     def data(self):

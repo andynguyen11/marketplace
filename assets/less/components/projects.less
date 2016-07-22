@@ -1,0 +1,27 @@
+
+.section(@name) {
+    &.@{name}.is.active {
+        .dq-progress-bar .info-pill.@{name} {
+            background: @yellow;
+            color: #fff;
+        }
+        .section:not(.@{name}) { 
+            display: none;
+        }
+        .section.@{name} { 
+            display: block;
+        }
+    }
+}
+
+#create-project {
+    .sections {
+        .section { 
+            display: none;
+        }
+        .section(basics);
+        .section(details);
+        .section(budget);
+        .section(preview);
+    }
+}

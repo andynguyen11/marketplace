@@ -1,132 +1,13 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{#% load staticfiles %#}
 
 {% block content %}
-<div id="create-project-header" class="section">
+<div id="create-project" class="section">
   <div class="row">
     <div class="container">
-      <ul class="dq-progress-bar">
-        <li class="active">Basics</li>
-        <li>Project Overview</li>
-        <li>Compensation</li>
-      </ul>
-      <ul class="progress-state pull-right">
-        <li>Preview</li>
-        <li>Submit for Review</li>
-      </ul>
-      <div class="clearfix"></div>
-      <form id="project-form" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div id="basics" class="text-center form-fancy bootstrap-material">
-          <p class="section-header form-group">
-            I want to create a
-            <select name="type" class="form-control select">
-              <option value="art">art &amp; design</option>
-              <option value="technology">technology</option>
-              <option value="gaming">gaming</option>
-              <option value="nonprofit">non-profit</option>
-              <option value="social">social</option>
-              <option value="news">news &amp; publishing</option>
-              <option value="music">music &amp; media</option>
-              <option value="location">location-based</option>
-              <option value="health">health &amp; fitness</option>
-            </select>
-            project <br />
-            <span class="text-yellow">with incredible developers.</span>
-          </p>
-          <p class="section-header form-group">
-            The project will be called:
-            <input name="title" class="form-control text-center" type="text" placeholder="Title project here" />
-          </p>
-        </div>
-        <div id="overview" class="form-big ">
-          <p class="section-header text-center text-muted">
-            a few more quick details...
-          </p>
-          <div class="form-group">
-            <div class="col-md-12">
-            <label>Project Image</label>
-            <input name="image" type="file" class="form-control" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-12">
-            <label>Short Blurb</label>
-            <input type="text" class="form-control" name="short_blurb" placeholder="This is the public introductory text that will be associated with your project. " />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-12">
-              <label>Project Location</label>
-              <input type="text" class="form-control" name="location" placeholder="Where is the project located? (City/State? Remote?)" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-
-            <div class="col-md-6">
-              <label>Categories</label>
-              <input type="text" class="form-control" name="category" placeholder="Main category" />
-            </div>
-            <div class="col-md-6">
-              <label>&nbsp;</label>
-              <input type="text" class="form-control" name="secondary_category" placeholder="Secondary category" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-12">
-            <label>Technologies</label>
-            <input class="form-control" autocomplete="off" data-tag-options="{&quot;required&quot;: true}" data-tag-url="/skills/" data-tagulous="true" id="id_skills" name="skills" type="text" />
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-4">
-              <label>Time Estimate &amp; Compensation</label>
-              <div class="input-group">
-                <input type="text" class="form-control" name="estimated_hours" placeholder="Estimated Hours">
-                <div class="input-group-addon">hours</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <label>&nbsp;</label>
-              <div class="input-group">
-                <div class="input-group-addon">$</div>
-                <input type="text" class="form-control" name="estimated_cash" placeholder="Cash Offered">
-                <div class="input-group-addon">.00</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <label>&nbsp;</label>
-              <div class="input-group">
-                <input type="text" class="form-control" name="estimated_equity" placeholder="Equity Offered">
-                <div class="input-group-addon">%</div>
-              </div>
-            </div>
-            <div class="clearfix"></div>
-          </div>
-
-          <div class="form-group">
-            <div class="col-md-12">
-            <label>Overview</label>
-            <textarea class="form-control" name="description" placeholder="This is the detailed overview of the project that can be viewed after an NDA is signed." ></textarea>
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <div class="text-center">
-            <input type="submit" class="btn btn-yellow overview" value="Submit Project" />
-          </div>
-        </div>
-
-      </form>
+        <div id="project-root" data-id="{% if request.user.id %}{{ request.user.id }}{% endif %}"
+                               data-company="{{ company.id }}"
+                               data-project_manager="{% if project_manager %}{{  project_manager }}{% else %}{{ request.user.id }}{% endif %}" ></div>
     </div>
   </div>
 </div>

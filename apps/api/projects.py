@@ -5,12 +5,12 @@ from rest_framework.permissions import IsAuthenticated
 
 from generics.viewsets import NestedModelViewSet
 from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, NDASerializer
-from business.models import Project, ConfidentialInfo, NDA
+from business.models import Project, ProjectInfo, NDA
 
 
 class InfoViewSet(NestedModelViewSet):
     ""
-    queryset = ConfidentialInfo.objects.all()
+    queryset = ProjectInfo.objects.all()
     serializer_class = InfoSerializer
     parent_keys = ('project',)
 

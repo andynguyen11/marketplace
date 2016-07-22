@@ -4,6 +4,12 @@ DOCUMENT_TYPES = (
     (u'Non-Compete', u'Non-Compete Agreement'),
 )
 
+INFO_TYPES = (
+    ('primary', 'Project Overview'),
+    ('public', 'Publicly Visible'),
+    ('private', 'Only visible to Project Participants'),
+)
+
 PROJECT_TYPES = (
     (u'art', u'Art and Design'),
     (u'technology', u'Technology'),

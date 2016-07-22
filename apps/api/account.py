@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
+from rest_framework.decorators import permission_classes
 from generics.viewsets import NestedModelViewSet
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
