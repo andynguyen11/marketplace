@@ -1,8 +1,5 @@
-import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-
 import SkillButton from '../skill'
 import AccountForm from './account'
-
 
 let DeveloperOnboard = React.createClass({
 
@@ -16,28 +13,36 @@ let DeveloperOnboard = React.createClass({
         username: '',
         photo: '',
         biography: '',
-        availability: '',
+        capacity: '',
         role: '',
         linkedin: {
           extra_data: ''
         },
         skills: [],
         all_skills: []
-      }
+      },
+      showValidationStates: false,
+      formInvalid: true
     };
   },
 
+  componentWillMount() {
+    this.setState({ validFields: this.formRequiredFieldsValid });
+  },
+
   componentDidMount() {
-      $.get(loom_api.profile + $('#onboard-form').data('id') + '/', function (result) {
-        let new_profile = result;
-        if (result.linkedin.extra_data) {
-          new_profile.biography = result.linkedin.extra_data.summary;
-        }
-        this.setState({
-          profile: new_profile,
-          photo_url: result.photo_url
-        });
-      }.bind(this));
+    $.get(loom_api.profile + $('#onboard-form').data('id') + '/', function (result) {
+      let new_profile = result;
+      if (result.linkedin.extra_data) {
+        new_profile.biography = result.linkedin.extra_data.summary;
+      }
+      this.setState({
+        profile: new_profile,
+        photo_url: result.photo_url
+      }, () => {
+        this.formValidator();
+      });
+    }.bind(this));
   },
 
   updateProfile(updated_profile) {
@@ -100,25 +105,71 @@ let DeveloperOnboard = React.createClass({
 
   _saveAccount(e) {
     e.preventDefault();
-    this.setState({ is_loading: true });
-    let profile = this.state.profile;
-    delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
-    $.ajax({
-      url: loom_api.profile + this.state.profile.id + '/',
-      method: 'PATCH',
-      data: JSON.stringify(profile),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      success: function(result) {
-        if (this.state.photo_file) {
-          this._uploadImage();
-        }
-        else {
-          this.setState({ is_loading: false });
-          window.location = '/profile/dashboard/';
-        }
-      }.bind(this)
+    this.formValidator();
+    this.setState({ showValidationStates: true });
+
+    if(!this.state.formInvalid) {
+      this.setState({is_loading: true, showValidationStates: false});
+      let profile = this.state.profile;
+      delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+      $.ajax({
+        url: loom_api.profile + this.state.profile.id + '/',
+        method: 'PATCH',
+        data: JSON.stringify(profile),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        success: function (result) {
+          if (this.state.photo_file) {
+            this._uploadImage();
+          }
+          else {
+            this.setState({is_loading: false});
+            window.location = '/profile/dashboard/';
+          }
+        }.bind(this)
+      });
+    }
+  },
+
+  profileFormInvalid(isInvalid) {
+    this.setState({ profileFormIsInvalid: isInvalid }, () => {
+      this.formValidator();
     });
+  },
+
+  formRequiredFieldsValid: {
+    'capacity': false
+  },
+
+  formValidator() {
+    const { profile, validFields } = this.state;
+    let isValid = true;
+
+    Object.keys(validFields).forEach(function(field, i) {
+      validFields[field] = !!(profile[field] && profile[field].toString().length);
+
+      if(!validFields[field]) {
+        isValid = false;
+      }
+    });
+
+    if(this.state.profileFormIsInvalid) {
+      isValid = false;
+    }
+
+    this.setState({ formInvalid: !isValid });
+  },
+
+  handleChange: function(event) {
+    const { profile, validFields } = this.state;
+    const { value } = event.target;
+    const fieldName = event.target.getAttribute('name');
+
+    profile[fieldName] = value;
+    validFields[fieldName] = !!value.length;
+
+    this.setState({ profile, validFields });
+    this.formValidator();
   },
 
   render() {
@@ -156,6 +207,8 @@ let DeveloperOnboard = React.createClass({
               photo_url={this.state.photo_url}
               update_profile={this.updateProfile}
               change_image={this.handleImageChange}
+              showValidationStates={this.state.showValidationStates}
+              profileFormInvalid={this.profileFormInvalid}
             />
 
             <div className="section-header text-muted col-md-8 col-md-offset-2">
@@ -169,21 +222,20 @@ let DeveloperOnboard = React.createClass({
               </div>
             </div>
 
-            <FormGroup
-              bsClass='form-group col-md-8 col-md-offset-2'
-            >
-              <ControlLabel>Weekly Availability</ControlLabel>
-              <FormControl
+            <div className="form-group col-md-8 col-md-offset-2">
+              <label className="control-label">Average Weekly Availability (hours)</label>
+              <input
+                className={"form-control" + (!this.state.validFields.capacity && this.state.showValidationStates ? ' invalid' : ' valid')}
                 type='text'
                 name='capacity'
                 placeholder='XX Hours/Week'
-                value={this.state.profile.capacity}
-                onChange={this.handleFormChange}
+                value={this.state.profile.capacity || ''}
+                onChange={this.handleChange}
               />
-            </FormGroup>
+            </div>
 
           <div className='text-center form-group col-md-12'>
-            <Button type='submit' bsClass='btn btn-step' onClick={this._saveAccount}>Save Profile</Button>
+            <button type='submit' className='btn btn-step' onClick={this._saveAccount} disabled={this.state.formInvalid}>Save Profile</button>
           </div>
 
         </div>

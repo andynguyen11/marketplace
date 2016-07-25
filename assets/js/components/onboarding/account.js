@@ -1,21 +1,60 @@
-import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
-
 let AccountForm = React.createClass({
-
-  _handleFormChange(e) {
-    let profile = this.props.profile;
-    profile[$(e.currentTarget).attr('name')] = $(e.currentTarget).val();
-    this.props.update_profile(profile);
+  propTypes: {
+    profile: React.PropTypes.object.isRequired,
+    photo_url: React.PropTypes.string,
+    update_profile: React.PropTypes.func.isRequired,
+    change_image: React.PropTypes.func.isRequired,
+    showValidationStates: React.PropTypes.bool.isRequired,
+    profileFormInvalid: React.PropTypes.func.isRequired
   },
 
-  _updateEmail(e) {
-    let profile = this.props.profile;
-    profile.email = $(e.currentTarget).val();
-    profile.username = $(e.currentTarget).val();
-    this.props.update_profile(profile);
+  componentWillMount() {
+    const { profile, showValidationStates } = this.props;
+
+    this.setState({ profile, validFields: this.profileRequiredFieldsValid, showValidationStates });
+  },
+
+  componentDidMount() {
+    this.profileValidator();
+  },
+
+  profileRequiredFieldsValid: {
+    'first_name': false,
+    'last_name': false,
+    'city': false,
+    'state': false
+  },
+
+  profileValidator() {
+    const { profile, validFields } = this.state;
+    let isValid = true;
+
+    Object.keys(validFields).forEach(function(field, i) {
+      validFields[field] = !!(profile[field] && profile[field].toString().length);
+
+      if(!validFields[field]) {
+        isValid = false;
+      }
+    });
+
+    this.props.profileFormInvalid(!isValid);
+  },
+
+  handleProfileChange: function(event) {
+    const { profile, validFields } = this.state;
+    const { value } = event.target;
+    const fieldName = event.target.getAttribute('name');
+
+    profile[fieldName] = value;
+    validFields[fieldName] = !!value.length;
+
+    this.setState({ profile, validFields });
+    this.profileValidator();
   },
 
   render() {
+    const { profile, showValidationStates } = this.state;
+
       return (
         <div>
           <div className={ this.props.profile.linkedin.extra_data ? 'hidden' : 'text-center section-header col-md-8 col-md-offset-2' }>
@@ -33,81 +72,80 @@ let AccountForm = React.createClass({
             Your LinkedIn account is now <strong>SYNCED UP</strong>! You can review and edit the fields below.
           </div>
 
-          <FormGroup
-            bsClass='form-group col-md-6 col-md-offset-2'
-          >
-            <ControlLabel>Name</ControlLabel>
-            <FormControl
+          <div className='form-group col-md-6 col-md-offset-2'>
+            <label className="control-label">First Name</label>
+            <input
+              className={"form-control" + (!this.state.validFields.first_name && showValidationStates ? ' invalid' : ' valid')}
               type='text'
               name='first_name'
-              placeholder='First Name'
-              value={this.props.profile.first_name}
-              onChange={this._handleFormChange}
+              value={profile.first_name || ''}
+              onChange={this.handleProfileChange}
             />
-            <ControlLabel>&nbsp;</ControlLabel>
-            <FormControl
+
+            <label className="control-label">Last Name</label>
+            <input
+              className={"form-control" + (!this.state.validFields.last_name && showValidationStates ? ' invalid' : ' valid')}
               type='text'
               name='last_name'
-              placeholder='Last Name'
-              value={this.props.profile.last_name}
-              onChange={this._handleFormChange}
+              value={profile.last_name || ''}
+              onChange={this.handleProfileChange}
             />
-          </FormGroup>
+          </div>
 
-          <FormGroup
-              bsClass='form-group col-md-2'
-            >
-              <ControlLabel>Profile Photo</ControlLabel>
+          <div className='form-group col-md-2'>
+              <label className="control-label">Profile Photo</label>
               <div className='text-center'>
                 <img className='profile-image img-circle' src={this.props.photo_url} />
               </div>
-              <FormControl
+              <input
+                className="form-control"
                 ref='file'
                 name='file'
                 type='file'
                 label='Profile Photo'
                 onChange={this.props.change_image}
               />
-          </FormGroup>
+          </div>
 
-          <FormGroup
-            bsClass='form-group col-md-4 col-md-offset-2'
-          >
-            <ControlLabel>Your Location</ControlLabel>
-            <FormControl
-              type='text'
-              name='city'
-              placeholder='City'
-              value={this.props.profile.city}
-              onChange={this._handleFormChange}
-            />
-          </FormGroup>
-          <FormGroup
-            bsClass='form-group col-md-4'
-          >
-            <ControlLabel>&nbsp;</ControlLabel>
-            <FormControl
-              type='text'
-              name='state'
-              placeholder='State/Province'
-              value={this.props.profile.state}
-              onChange={this._handleFormChange}
-            />
-          </FormGroup>
+          <div>
 
-          <FormGroup
-              bsClass='form-group col-md-8 col-md-offset-2'
-            >
-              <ControlLabel>Quick Bio</ControlLabel>
-              <FormControl
+            <div className='form-group col-md-4 col-md-offset-2'>
+              <label className="control-label">City</label>
+              <input
+                className={"form-control" + (!this.state.validFields.city && showValidationStates ? ' invalid' : ' valid')}
+                type='text'
+                name='city'
+                data-required="true"
+                placeholder='City'
+                value={profile.city || ''}
+                onChange={this.handleProfileChange}
+              />
+            </div>
+
+            <div className='form-group col-md-4'>
+              <label className="control-label">State/Province</label>
+              <input
+                className={"form-control" + (!this.state.validFields.state && showValidationStates ? ' invalid' : ' valid')}
+                type='text'
+                name='state'
+                value={profile.state || ''}
+                onChange={this.handleProfileChange}
+              />
+            </div>
+          </div>
+
+          <div className='form-group col-md-8 col-md-offset-2'>
+              <label className="control-label">Quick Bio (optional)</label>
+              <textarea
+                rows="4"
+                className="form-control"
                 label='Biography'
                 name='biography'
-                componentClass='textarea'
                 placeholder='Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself.'
                 value={this.props.profile.biography}
-                onChange={this._handleFormChange}
-              />
-          </FormGroup>
+                onChange={this.handleProfileChange}>
+              </textarea>
+          </div>
         </div>
       );
   }
