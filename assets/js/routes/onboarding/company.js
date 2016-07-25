@@ -1,3 +1,4 @@
+import React from 'react';
 import { Radio, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 let CompanyForm = React.createClass({
@@ -117,5 +118,5 @@ let CompanyForm = React.createClass({
 
 });
 
-module.exports = CompanyForm;
+export default CompanyForm;
 

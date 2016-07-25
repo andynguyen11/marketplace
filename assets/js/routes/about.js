@@ -1,5 +1,6 @@
+import React from 'react';
 import { createHashHistory } from 'history';
-import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from 'react-router'
+import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from 'react-router';
 
 (function(){
 	const aboutDiv = document.getElementById('company');

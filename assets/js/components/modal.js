@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup'
 
-let ModalInner = React.createClass({
+const ModalInner = React.createClass({
 	body: document.body,
 
 	propTypes: {

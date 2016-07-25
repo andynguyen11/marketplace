@@ -1,3 +1,4 @@
+import React from 'react';
 import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 let AccountForm = require('./account');
@@ -140,5 +141,5 @@ let EntrepreneurOnboard = React.createClass({
 
 });
 
-module.exports = EntrepreneurOnboard;
+export default EntrepreneurOnboard;
 

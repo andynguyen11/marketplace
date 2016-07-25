@@ -1,8 +1,8 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { createHashHistory } from 'history'
-import { Router, Route, IndexRoute, useRouterHistory } from 'react-router'
-import { CreateProject } from '../components/project'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createHashHistory } from 'history';
+import { Router, Route, IndexRoute, useRouterHistory } from 'react-router';
+import { CreateProject } from '../components/project/CreateProject';
 
 function renderRoute({route, id}){
 	const rootElement = document.getElementById(id)

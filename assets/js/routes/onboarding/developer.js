@@ -1,7 +1,8 @@
-import SkillButton from '../skill'
-import AccountForm from './account'
+import React from 'react';
+import SkillButton from '../../components/skill';
+import AccountForm from './account';
 
-let DeveloperOnboard = React.createClass({
+const DeveloperOnboard = React.createClass({
 
   getInitialState() {
     return {
@@ -244,5 +245,5 @@ let DeveloperOnboard = React.createClass({
 
 });
 
-module.exports = DeveloperOnboard;
+export default DeveloperOnboard;
 

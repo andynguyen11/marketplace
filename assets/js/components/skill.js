@@ -22,7 +22,6 @@ let SkillButton = React.createClass({
 });
 
 export class SkillWidget extends React.Component {
-    state = {}
     update_skills = skill_id => {
         let update = !this.state[skill_id]
         let state = {...this.state, [skill_id]: update}

@@ -1,72 +1,38 @@
-window.$ = window.jQuery = require('jquery');
-window.React = require('react');
-window.ReactDOM = require('react-dom');
-window.loom_api = require('./api');
-//window.GoogleMapsLoader = require('google-maps');
+(function(){
+    // import vendor npm packages
+    const $ = require('jquery');
+    const React = require('react');
+    const ReactDOM = require('react-dom');
+    const _ = require('lodash');
+    const moment = require('moment');
 
-require('lodash');
-require('bootstrap');
-require('bootstrap-datepicker');
-require('bootstrap-select');
-require('moment');
-require('./csrf');
-require('./messaging');
-require('./vendor/formValidation.popular.min');
-require('./vendor/validation.bootstrap.min');
+    // make jQuery global for third-party libs
+    window.jQuery = window.$ = $;
 
-require('./routes/home');
-require('./routes/project');
-require('./routes/messaging');
-require('./routes/about');
-require('./routes/onboard');
+    require('bootstrap');
+    require('bootstrap-datepicker');
+    require('bootstrap-select');
 
-require('./routes/about');
-require('./routes/onboard');
-require('./routes/project');
+    // import non-npm vendor files
+    require('./vendor/select2-adaptor');
+    require('./vendor/formValidation.popular.min');
+    require('./vendor/validation.bootstrap.min');
 
-// SETUP AJAX WITH CSRF
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    // import app files
+    window.loom_api = require('./api');
+    const cookieUtils = require('./utils/csrf');
+
+    // SETUP AJAX WITH CSRF
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            const csrftoken = cookieUtils.getCookie('csrftoken');
+
+            if (!cookieUtils.csrfSafeMethod(settings.type) && cookieUtils.sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
-    }
-    return cookieValue;
-}
-var csrftoken = getCookie('csrftoken');
-
-function csrfSafeMethod(method) {
-    // these HTTP methods do not require CSRF protection
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-}
-function sameOrigin(url) {
-    // test that a given url is a same-origin URL
-    // url could be relative or scheme relative or absolute
-    var host = document.location.host; // host + port
-    var protocol = document.location.protocol;
-    var sr_origin = '//' + host;
-    var origin = protocol + sr_origin;
-    // Allow absolute or scheme relative URLs to same origin
-    return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-        // or any other URL that isn't scheme relative or absolute i.e relative.
-        !(/^(\/\/|http:|https:).*/.test(url));
-}
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
-            // Send the token to same-origin, relative URLs only.
-            // Send the token only if the method warrants CSRF protection
-            // Using the CSRFToken value acquired earlier
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
+    });
+})();

@@ -1,3 +1,5 @@
+import React from 'react';
+
 (function() {
 	let Modal = require('../components/modal');
 	let modalDiv;

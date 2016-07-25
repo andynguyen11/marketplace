@@ -24,13 +24,12 @@
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
+    "babel-preset-stage-0": "^6.5.0",
     "babel-preset-stage-1": "^6.5.0",
     "babelify": "^7.3.0",
-    "bootstrap": "^3.3.6",
-    "bootstrap-datepicker": "^1.6.1",
-    "bootstrap-select": "^1.10.0",
     "browserify": "^13.0.1",
     "del": "^2.2.0",
+    "glob": "^7.0.5",
     "gulp": "^3.9.1",
     "gulp-copy": "0.0.2",
     "gulp-less-sourcemap": "^1.4.3",
@@ -38,21 +37,25 @@
     "gulp-uglify": "^1.5.3",
     "gulp-uglifycss": "^1.0.6",
     "gulp-util": "^3.0.7",
-    "jquery": "^2.2.4",
-    "lodash": "^4.13.1",
-    "moment": "^2.13.0",
     "path": "^0.12.7",
+    "polypacker": "0.1.11-alpha0-django",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
+  },
+  "dependencies": {
     "react": "^15.1.0",
     "react-bootstrap": "^0.29.5",
     "react-dom": "^15.1.0",
-    "select2": "^4.0.3",
-    "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0",
-    "polypacker": "0.1.11-alpha0-django"
-  },
-  "dependencies": {
     "history": "^2.1.2",
     "react-router": "^2.5.2",
-    "react-select2-wrapper": "^1.0.0"
+    "react-select2-wrapper": "^1.0.0",
+    "combodate": "git+ssh://git@github.com:vitalets/combodate.git",
+    "select2": "^4.0.3",
+    "jquery": "^2.2.4",
+    "lodash": "^4.13.1",
+    "moment": "^2.13.0",
+    "bootstrap": "^3.3.6",
+    "bootstrap-datepicker": "^1.6.1",
+    "bootstrap-select": "^1.10.0"
   }
 }

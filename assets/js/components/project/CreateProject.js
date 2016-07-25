@@ -23,7 +23,7 @@ var typeOptions = [
 
 class TypeSelect extends React.Component {
     render(){
-        let {data, ...props} = this.props
+        let { data, ...props } = this.props;
         return (
             <select defaultValue={this.props.data[0].id} {...props}>
                 {data.map(({id, text}) => (<option key={id} value={id}>{text}</option>))}

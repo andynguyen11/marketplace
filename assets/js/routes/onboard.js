@@ -1,8 +1,10 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import { createHashHistory } from 'history';
-import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from 'react-router'
+import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from 'react-router';
 
-let DeveloperOnboard = require('../components/onboarding/developer');
-let EntrepreneurOnboard = require('../components/onboarding/entrepreneur');
+import DeveloperOnboard from './onboarding/developer';
+import EntrepreneurOnboard from './onboarding/entrepreneur';
 
 (function(){
     $(document).ready(_ => {
