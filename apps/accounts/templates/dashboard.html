@@ -15,16 +15,12 @@
       </div>
       <div class="col-md-3">
         <div class="section profile-snapshot text-center">
-          {% if user.get_photo %}
             <img src="{{ user.get_photo }}" class="profile-photo" />
-          {% else %}
-            <img src="{% static 'images/icon-profile-white.png' %}" class="profile-photo"/>
-          {% endif %}
           <div class="section-body">
             <h3 class="text-skinny">{{ user.first_name }}</h3>
             <p>
-              <a href="">View Profile</a><br />
-              <a href="">Edit Profile</a>
+              <a href="{% url 'profile' %}">View Profile</a><br />
+              <a href="{% url 'profile-settings' %}">Edit Profile</a>
             </p>
           </div>
         </div>

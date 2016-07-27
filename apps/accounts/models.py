@@ -1,10 +1,13 @@
 import tagulous.models
 import stripe
+import StringIO
+from PIL import Image
 
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.utils.deconstruct import deconstructible
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
 from social.apps.django_app.default.models import UserSocialAuth
 
@@ -39,7 +42,7 @@ class Profile(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='profile')
+    photo = models.ImageField(blank=True, null=True, upload_to='profile-photos')
     skills = tagulous.models.TagField(to=Skills, blank=True, null=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
@@ -82,6 +85,36 @@ class Profile(AbstractUser):
                     # TODO Manually serialize card, circular import error if using api serializer
                     return card
         return None
+
+    def save(self, *args, **kwargs):
+        if self.photo:
+            try:
+                current = Profile.objects.get(id=self.id)
+                if current.photo == self.photo:
+                    self.photo = current.photo
+                else:
+                    current.photo.delete(save=False)
+            except:
+                pass
+            img = Image.open(self.photo)
+            width, height = img.size
+            if height > width:
+                top = int((height - width) / 2)
+                img = img.crop((0, top, width, width + top))
+            elif width > height:
+                left = int((width - height) / 2)
+                img = img.crop((left, 0, height + left, height))
+            elif img.mode == "RGBA":
+                # Check if the image has a transparent background.
+                background = Image.new("RGB", img.size, (255, 255, 255))
+                background.paste(img, mask=img.split()[3])
+                img = background
+            output = StringIO.StringIO()
+            img.save(output, format='JPEG')
+            output.seek(0)
+            self.photo = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.photo.name.split('.')[0], 'image/jpeg', output.len, None)
+        super(Profile, self).save(*args, **kwargs)
+
 
 class SkillTest(models.Model):
 
