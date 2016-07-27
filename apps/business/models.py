@@ -65,9 +65,7 @@ class Job(models.Model):
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
-    bid_message = models.TextField(blank=True, null=True) #TODO This shouldn't belong on the job model, create a property that does a reverse lookup (LM-91)
     nda_signed = models.BooleanField(default=False)
-
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(blank=True, null=True)
 
@@ -75,9 +73,8 @@ class Job(models.Model):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
 
     @property
-    def job_messages(self):
+    def conversation(self):
         return Message.objects.filter(job=self, project=self.project)
-
 
 class ProjectInfo(models.Model):
     type = models.CharField(max_length=100, choices=INFO_TYPES)

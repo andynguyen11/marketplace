@@ -1,11 +1,12 @@
 import json
+from notifications.signals import notify
 
 from rest_framework import serializers
 from drf_haystack.serializers import HaystackSerializerMixin
 from tagulous.serializers.json import Serializer as TagSerializer
 from social.apps.django_app.default.models import UserSocialAuth
 
-from postman.api import MessageSerializer
+from postman.api import pm_write
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from accounts.models import Profile, Skills, SkillTest
 from business.models import Company, Document, Project, ProjectInfo, Job, Employee, NDA
@@ -143,10 +144,24 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 
 class JobSerializer(serializers.ModelSerializer):
-    job_messages = MessageSerializer(required=False, many=True, read_only=True)
+    message = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = Job
+        fields = field_names(Job) + ('message',)
+
+    def create(self, data):
+        msg = data.pop('message')
+        job = Job.objects.create(**data)
+        message = pm_write(
+            sender=job.developer,
+            recipient=job.project.project_manager,
+            subject='New Bid from {0} for {1}'.format(job.developer.first_name or job.developer.email, job.project.title),
+            body=msg,
+            job=job
+        )
+        notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)
+        return job
 
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
