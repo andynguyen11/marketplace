@@ -12,7 +12,6 @@ class TabSerializer(serializers.ModelSerializer):
         fields = ('label', 'type')
 
 
-
 class RoleSerializer(ParentModelSerializer):
     tabs = TabSerializer(many=True, required=False)
 
@@ -81,9 +80,9 @@ class DocumentSerializer(ParentModelSerializer):
 
     class Meta:
         model = Document
-        fields = tuple(['template', 'status'] + 
-                to_browsable_fieldset('signer') +
-                to_browsable_fieldset('attachment'))
+        fields = tuple(['template', 'status'] +
+                       to_browsable_fieldset('signer') +
+                       to_browsable_fieldset('attachment'))
         parent_key = 'document'
         child_fields = ('signers', 'attachments')
 
@@ -95,11 +94,11 @@ class DocumentSerializer(ParentModelSerializer):
     def create(self, data, action='create'):
         data = self.collapse_data(data)
         document = ParentModelSerializer.create(self, data, action)
-        document.send()
+        document.create()
         return document
 
     def update(self, instance, data):
         data = self.collapse_data(data)
         document = ParentModelSerializer.update(self, instance, data)
-        document.send()
+        document.create()
         return document

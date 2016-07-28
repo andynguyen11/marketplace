@@ -53,7 +53,7 @@
                 <div class="pull-left">
                   <input type="file" name="attachments" multiple />
                   <input type="checkbox" id="nda" name="nda" /> Attach an NDA <br />
-                  <input type="checkbox" name="" /> Attach Master Contract
+                  <input type="checkbox" name="document" /> Attach Master Contract
                 </div>
                 {% endif %}
                 <button class="btn btn-yellow pull-right" type="submit">{% trans 'Send Message' %}</button>
@@ -84,6 +84,12 @@
                     <div class="">
                       <strong>NDA</strong>
                       <p><a id="signNDA" data-nda="{{ message.nda.id }}">Click to sign Non-Disclosure Agreement</a></p>
+                    </div>
+                  {% endif %}
+                  {% if message.document %}
+                    <div class="">
+                      <strong>Document</strong>
+                      <p><a href="{% url 'view-documents' %}">View Documents</a></p>
                     </div>
                   {% endif %}
                 </div>

@@ -11,6 +11,8 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
 from social.apps.django_app.default.models import UserSocialAuth
 
+from business.models import Employee
+
 
 # TODO Hacky way to bypass makemigrations error
 # ValueError: Could not find manager CastTaggedUserManager in tagulous.models.tagged.
@@ -68,10 +70,12 @@ class Profile(AbstractUser):
         except UserSocialAuth.DoesNotExist:
             return None
 
-
     @property
-    def linkedin_photo(self):
-        return self.social_auth.get(provider='linkedin-oauth2').extra_data['picture_urls']['values'][0]
+    def company(self):
+        try:
+            return Employee.objects.get(profile=self).company
+        except Employee.DoesNotExist:
+            return None
 
     def get_skills(self):
         return self.skills.tag_model.objects.all()

@@ -9,7 +9,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from postman.api import pm_write
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from accounts.models import Profile, Skills, SkillTest
-from business.models import Company, Document, Project, ProjectInfo, Job, Employee, NDA
+from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document
 from reviews.models import DeveloperReview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 from generics.utils import to_browsable_fieldset, collapse_listview, update_instance, field_names
@@ -24,10 +24,10 @@ class SocialSerializer(serializers.ModelSerializer):
         model = UserSocialAuth
 
 
-class NDASerializer(serializers.ModelSerializer):
+class DocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = NDA
+        model = Document
 
 
 class SkillsSerializer(serializers.ModelSerializer):

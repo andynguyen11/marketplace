@@ -92,7 +92,7 @@ class Project(models.Model):
     project_manager = models.ForeignKey('accounts.Profile')
 
     title = models.CharField(max_length=255)
-    type = models.CharField(max_length=100, choices=PROJECT_TYPES) # type vs category?
+    type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
     category = tagulous.models.TagField(to=Category, null=True) # not really in the mockup
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateTimeField()
@@ -144,30 +144,21 @@ class Project(models.Model):
         rest = {'type': type} if type else {}
         return ProjectInfo.objects.filter(project=self, **rest).exclude(pk=self.details.pk)
 
-
-class NDA(models.Model):
-    sent = models.BooleanField(default=False)
-    signed = models.BooleanField(default=False)
-    user = models.ForeignKey('accounts.Profile')
-    project = models.ForeignKey(Project)
+    def documents(self):
+        documents = Document.objects.filter(project=self)
+        return documents
 
 
 class Document(models.Model):
-    docusign_document = models.OneToOneField('docusign.Document', unique=True)
+    docusign_document = models.OneToOneField('docusign.Document', blank=True)
+    status = models.CharField(default='Sent')
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
-    project = models.ForeignKey(Project)
     job = models.ForeignKey(Job)
-
-    @property
-    def project_manager(self):
-        return self.project.project_manager
-
-    @property
-    def developer(self):
-        return self.project.developer
+    project = models.ForeignKey(Project)
 
     @property
     def status(self):
-        return self.docusign_document.status
-
+        if self.docusign_document:
+            return self.docusign_document.status
+        return self.status
 

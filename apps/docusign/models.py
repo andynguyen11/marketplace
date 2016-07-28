@@ -1,4 +1,6 @@
 import os
+import pydocusign
+
 from django.db import models
 from django.conf import settings
 from django.core.files import File
@@ -6,9 +8,11 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 from generics.models import Attachment
 
-from .docusign import create_envelope, Role
+from .docusign import create_envelope, Role, get_logged_in_client
 from .tabs import TAB_TYPES, classify as classify_tab
-import pydocusign
+from business.models import Document as UserDocument
+from generics.external_apis import LazyClient
+
 
 DOCUMENT_STATUS = tuple(
     (status.lower(), status)
@@ -22,6 +26,7 @@ TEMPLATE_STATUS = (
     ('valid', 'still exists in docusign'),
     ('deleted', 'was removed from docusign')
 )
+
 
 class TemplateRoleTab(models.Model):
     type = models.CharField(max_length=30, choices=TAB_TYPES)
@@ -42,6 +47,7 @@ class TemplateRole(models.Model):
 
     def __str__(self):
         return '%s - %d, %s' % (self.template.template_id, self.order, self.role_name)
+
 
 class Template(models.Model):
     template_id = models.CharField(max_length=100, primary_key=True)
@@ -113,7 +119,8 @@ class DocumentSigner(models.Model):
             'role_name': self.role_name,
             'email': self.email,
             'name': self.name,
-            'status': self.status
+            'status': self.status,
+            'client_id': self.profile.id
         }
         if len(self.tabs):
             data['tabs'] = reduce(
@@ -122,6 +129,15 @@ class DocumentSigner(models.Model):
                     {})
         return data
 
+    def get_signing_url(self, *args, **kwargs):
+        client = LazyClient(get_logged_in_client)
+        envelope = pydocusign.Envelope(envelopeId=self.document.envelope_id)
+        signing_url = envelope.post_recipient_view(
+            recipient=Role(**self.to_dict()),
+            returnUrl='/profile/documents/',
+            client=client
+        )
+        print(signing_url)
 
     def __str__(self):
         return '%s <%s>, %s' % (self.name, self.email, self.role_name)
@@ -131,7 +147,6 @@ class Document(models.Model):
     template = models.ForeignKey('docusign.Template')
     status = models.CharField(max_length=100, default='Sent', choices=DOCUMENT_STATUS)
     envelope_id = models.CharField(max_length=100, null=True, unique=True)
-
     attachments = GenericRelation(Attachment, related_query_name='docusign_document')
 
     @property
@@ -143,7 +158,7 @@ class Document(models.Model):
     def roles(self):
         return [Role(**signer.to_dict()) for signer in self.signers]
 
-    def send(self):
+    def create(self):
         self.envelope_id = create_envelope(
                 self.template_id,
                 self.roles,

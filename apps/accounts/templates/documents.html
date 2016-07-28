@@ -15,7 +15,7 @@
             <h4>{{ project.title }} <span class="text-skinny">(5 New)</span></h4>
           </div>
           <table class="dashboard-table">
-            {% if project.document_set.all %}
+            {% if project.documents %}
               <thead>
                 <tr>
                   <th></th>
@@ -27,10 +27,10 @@
                   <th></th>
                 </tr>
               </thead>
-              {% for doc in project.document_set.all %}
+              {% for doc in project.documents %}
               <tr>
                 <td>
-                  <img src="{{ doc.job.developer.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+                  <img src="{{ doc.job.developer.get_photo }}" class="profile-photo img-circle" />
                 </td>
                 <td>
                   <strong>{{ doc.job.developer.first_name }}</strong> <br/>

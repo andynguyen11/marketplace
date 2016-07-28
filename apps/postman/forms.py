@@ -13,6 +13,7 @@ Examples of customization:
 
 """
 from __future__ import unicode_literals
+import json
 
 from django import forms
 from django.conf import settings
@@ -24,8 +25,10 @@ from django.db import transaction
 from django.utils.translation import ugettext, ugettext_lazy as _
 from multiupload.fields import MultiFileField
 from notifications.signals import notify
+from rest_framework.parsers import JSONParser
 
-from business.models import NDA
+from business.models import Document
+from docusign.serializers import DocumentSerializer
 from postman.fields import CommaSeparatedUserField
 from postman.models import Message, get_user_name
 from postman.utils import WRAP_WIDTH
@@ -33,10 +36,71 @@ from generics.models import Attachment
 from generics.validators import file_validator
 
 
+def build_payload(sender, recipient, bid):
+    """
+    TODO This is a dirty dirty way to build the payload.  Will need to map template roles to profile fields,
+    and dynamically build based on template
+    """
+    return {
+        'template': '5872d09b-56d6-4cc8-bc55-bed3d8b8a696',
+        'signers': [
+            {
+                'role_name': 'Vendor',
+                'profile': sender.id,
+                'tabs': [
+                    {
+                        'label': 'Address',
+                        'value': sender.company.address
+                    },
+                    {
+                        'label': 'LegalName',
+                        'value': sender.company.legal_entity_name
+                    },
+                    {
+                        'label': 'Title',
+                        'value': sender.title
+                    },
+                    {
+                        'label': 'FullName',
+                        'value': '{0} {1}'.format(sender.first_name, sender.last_name)
+                    },
+                    {
+                        'label': 'Compensation',
+                        'value': '${0}'.format(bid.cash)
+                    }
+                ]
+            },
+            {
+                'role_name': 'Client',
+                'profile': recipient.id,
+                'tabs': [
+                    {
+                        'label': 'Address',
+                        'value': recipient.address
+                    },
+                    {
+                        'label': 'LegalName',
+                        'value': '{0} {1}'.format(recipient.first_name, recipient.last_name)
+                    },
+                    {
+                        'label': 'Title',
+                        'value': recipient.title
+                    },
+                    {
+                        'label': 'FullName',
+                        'value': '{0} {1}'.format(recipient.first_name, recipient.last_name)
+                    }
+                ]
+            }
+        ]
+    }
+
+
 class BaseWriteForm(forms.ModelForm):
     """The base class for other forms."""
     attachments = MultiFileField(validators=[file_validator, ], required=False)
     nda = forms.BooleanField(required=False)
+    document = forms.BooleanField(required=False)
 
     class Meta:
         model = Message
@@ -122,6 +186,7 @@ class BaseWriteForm(forms.ModelForm):
         recipients = self.cleaned_data.get('recipients', [])
         attachments = self.cleaned_data.get('attachments')
         nda = self.cleaned_data.get('nda')
+        document = self.cleaned_data.get('document')
 
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
@@ -155,10 +220,26 @@ class BaseWriteForm(forms.ModelForm):
                 for file in attachments:
                     new_attachement = Attachment.objects.create(content_object=m, file=file)
             if nda:
-                new_nda, created = NDA.objects.get_or_create(sent=True, user=self.instance.recipient, project=self.instance.thread.project)
-                notify.send(self.instance.recipient, recipient=self.instance.recipient,
-                            verb=u'received an NDA to sign', action_object=new_nda)
+                new_nda, created = Document.objects.get_or_create(
+                    type='Non-Disclosure',
+                    job=self.instance.thread.job,
+                    project=self.instance.thread.project
+                )
+                notify.create(
+                    self.instance.recipient,
+                    recipient=self.instance.recipient,
+                    verb=u'received an NDA to sign',
+                    action_object=new_nda
+                )
                 m.nda = new_nda
+                m.save()
+            if document:
+                #TODO Refactor for new document workflow
+                payload = build_payload(self.instance.sender, self.instance.recipient, self.instance.thread.job)
+                serializer = DocumentSerializer(data=payload)
+                serializer.is_valid(raise_exception=True)
+                new_document = serializer.create(serializer.validated_data)
+                m.document = new_document
                 m.save()
             if self.instance.is_rejected():
                 is_successful = False

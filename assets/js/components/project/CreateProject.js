@@ -217,7 +217,7 @@ export default class CreateProject extends React.Component {
             contentType: false,
             processData: false,
             success: result => {
-                window.result = result
+                window.result = result;
                 window.location = `/project/${result.id}/`;
             }
         });
@@ -230,13 +230,13 @@ export default class CreateProject extends React.Component {
         data: {}
     }
 
-    currentSectionIsValid = _ => true
+    currentSectionIsValid = _ => true;
 
     sectionAction = event => {
         event.preventDefault();
         if(this.currentSectionIsValid()){
-            let { currentSection, sections } = this.state
-            let index = sections.indexOf(currentSection)
+            let { currentSection, sections } = this.state;
+            let index = sections.indexOf(currentSection);
             if(index >= sections.length - 1){
                 this.save()
             } else {

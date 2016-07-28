@@ -79,7 +79,6 @@ tini==3.0.1
 wcwidth==0.1.6
 websocket-client==0.35.0
 wheel==0.24.0
-html-json-forms==0.1.1
 xmltodict==0.10.2
 
 # docusign

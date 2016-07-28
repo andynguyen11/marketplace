@@ -4,8 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
 from generics.viewsets import NestedModelViewSet
-from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, NDASerializer
-from business.models import Project, ProjectInfo, NDA
+from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, DocumentSerializer
+from business.models import Project, ProjectInfo, Document
 
 
 class InfoViewSet(NestedModelViewSet):
@@ -21,9 +21,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
 
 
-class NDAViewSet(viewsets.ModelViewSet):
-    queryset = NDA.objects.all()
-    serializer_class = NDASerializer
+class DocumentViewSet(viewsets.ModelViewSet):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
     permission_classes = (IsAuthenticated, )
 
 

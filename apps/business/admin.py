@@ -28,4 +28,4 @@ class InfoAdmin(admin.ModelAdmin):
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('project', 'type', 'status', )
+    list_display = ('job', 'type', 'status', )

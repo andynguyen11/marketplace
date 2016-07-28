@@ -310,8 +310,9 @@ class Message(models.Model):
     moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
     job = models.ForeignKey('business.Job', blank=True, null=True)
     project = models.ForeignKey('business.Project', blank=True, null=True)
+    document = models.ForeignKey('docusign.Document', blank=True, null=True)
     attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
-    nda = models.ForeignKey('business.NDA', blank=True, null=True)
+    nda = models.ForeignKey('docusign.Document', blank=True, null=True, related_name='nda')
 
     objects = MessageManager()
 

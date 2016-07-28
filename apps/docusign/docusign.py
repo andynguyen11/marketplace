@@ -1,6 +1,9 @@
 import pydocusign, base64, os
+
 from django.conf import settings
+
 from generics.external_apis import LazyClient
+
 
 def get_logged_in_client():
     client = None
@@ -17,6 +20,7 @@ def get_logged_in_client():
 
 client = LazyClient(get_logged_in_client)
 
+
 def all_template_ids():
     if not client.account_url:
         client.login_information()
@@ -26,6 +30,7 @@ def all_template_ids():
             '/accounts/%s/templates' % client.account_id
             )['envelopeTemplates']
     ]
+
 
 class Parser(pydocusign.DocuSignCallbackParser):
     @property
@@ -62,6 +67,7 @@ class Parser(pydocusign.DocuSignCallbackParser):
         recipients.sort(lambda a, b: cmp(a['RoutingOrder'], b['RoutingOrder']))
         return recipients
 
+
 def parse_webhook_update(xml):
     parser = Parser(xml)
     signer_updates = [ {
@@ -76,11 +82,12 @@ def parse_webhook_update(xml):
 
 
 class Role(pydocusign.Role):
-    def __init__(self, email, name, role_name, tabs=[], **kwargs):
+    def __init__(self, email, name, role_name, client_id, tabs=[], **kwargs):
         super(Role, self).__init__(
             email=email,
             name=name,
             roleName=role_name,
+            clientUserId=client_id
         )
         self.tabs = tabs
 
@@ -91,6 +98,7 @@ class Role(pydocusign.Role):
             d['tabs'] = self.tabs
         return d
 
+
 def document(attachment, index):
     return {
         "documentId": 10 + index, 
@@ -99,10 +107,12 @@ def document(attachment, index):
         "documentBase64": base64.b64encode(attachment.data)
     }
 
+
 def put_envelope_attachments(envelope, attachments):
     return client._request('/accounts/%s/envelopes/%s/documents' % (
         client.account_id, envelope.envelopeId
     ), data={'documents': attachments}, method='PUT')
+
 
 def update_envelope(envelope, **kwargs):
     return client._request('/accounts/%s/envelopes/%s' % (
@@ -116,6 +126,7 @@ def initial_status(status, attachments):
 event_notification = pydocusign.EventNotification(
     url = settings.WEBHOOK_BASE_URL + '/api/docusign/webhook'
 )
+
 
 def create_envelope( template_id, roles, email_subject, email_blurb, attachments=[],signer_return_url=None, status='Sent'):
     """

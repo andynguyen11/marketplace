@@ -9,12 +9,11 @@ from api.company import CompanyListCreate, CompanyDetail
 from api.review import ReviewListCreate
 from api.jobs import JobViewSet
 from business.models import Company, Category
-from api.projects import InfoViewSet, ProjectViewSet, ProjectSearchView, NDAViewSet
+from api.projects import InfoViewSet, ProjectViewSet, ProjectSearchView
 from expertratings.views import ExpertRatingsXMLWebhook
 
 router = routers.SimpleRouter()
 router.register('jobs', JobViewSet)
-router.register('nda', NDAViewSet)
 router.register('profile', ProfileViewSet)
 router.register('project', ProjectViewSet)
 router.register('search/project', ProjectSearchView, base_name='project-search')

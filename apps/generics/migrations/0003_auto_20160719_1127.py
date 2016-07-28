@@ -10,7 +10,7 @@ import generics.validators
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('generics', '0002_auto_20160719_0938'),
+        ('generics', '0002_attachment_tag'),
     ]
 
     operations = [
