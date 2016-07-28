@@ -1,12 +1,12 @@
 import React from 'react';
 import SkillButton from '../../components/skill';
 import AccountForm from './account';
+import FormHelpers from '../../utils/formHelpers';
 
 const DeveloperOnboard = React.createClass({
 
   getInitialState() {
     return {
-      is_loading: false,
       profile: {
         first_name: '',
         last_name: '',
@@ -22,13 +22,13 @@ const DeveloperOnboard = React.createClass({
         skills: [],
         all_skills: []
       },
-      showValidationStates: false,
-      formInvalid: true
+      isLoading: false,
+      formError: false
     };
   },
 
   componentWillMount() {
-    this.setState({ validFields: this.formRequiredFieldsValid });
+    this.setState({ formElements: this.formElements() });
   },
 
   componentDidMount() {
@@ -40,33 +40,123 @@ const DeveloperOnboard = React.createClass({
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url
-      }, () => {
-        this.formValidator();
       });
     }.bind(this));
   },
 
-  updateProfile(updated_profile) {
-    this.setState({
-      profile: updated_profile
-    });
+  formElements() {
+    const { profile } = this.state;
+
+    return {
+      role: {
+        name: 'role',
+        label: 'I am a',
+        value: profile.role || '',
+        options: [
+          {
+            label: 'full-stack',
+            value: 'full-stack'
+          },
+          {
+            label: 'mobile',
+            value: 'mobile'
+          },
+          {
+            label: 'front-end',
+            value: 'front-end'
+          },
+          {
+            label: 'back-end',
+            value: 'back-end'
+          }
+        ],
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          profile.role = value;
+          this.setState({ profile });
+        }
+      },
+      capacity: {
+        name: 'capacity',
+        label: 'Average Weekly Availability (hours)',
+        placeholder: 'XX Hours/Week',
+        value: profile.capacity || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          profile.capacity = value;
+          this.setState({ profile });
+        }
+      },
+      profileFirstName: {
+        name: 'profileFirstName',
+        label: 'First Name',
+        value: profile.first_name || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          const { profile } = this.state;
+          profile.first_name = value;
+          this.setState({ profile });
+        }
+      },
+      profileLastName: {
+        name: 'profileLastName',
+        label: 'Last Name',
+        value: profile.last_name || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          const { profile } = this.state;
+          profile.last_name = value;
+          this.setState({ profile });
+        }
+      },
+      profileCity: {
+        name: 'profileCity',
+        label: 'City',
+        value: profile.city || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          const { profile } = this.state;
+          profile.city = value;
+          this.setState({ profile });
+        }
+      },
+      profileStateProvince: {
+        name: 'profileStateProvince',
+        label: 'State/Province',
+        value: profile.state || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          const { profile } = this.state;
+          profile.state = value;
+          this.setState({ profile });
+        }
+      },
+      profileBio: {
+        name: 'profileBio',
+        label: 'Quick Bio (optional)',
+        placeholder:'Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself.',
+        value: profile.biography || '',
+        update: (value) => {
+          const { profile } = this.state;
+          profile.biography = value;
+          this.setState({ profile });
+        }
+      }
+    }
   },
 
+  // would like to rework this into the formElements flow at some point
   updateSkills(skill) {
-    let updated_profile = this.state.profile;
-    if (_.indexOf(updated_profile.skills, skill) !== -1) {
-      _.pull(updated_profile.skills, skill);
+    const { profile } = this.state;
+
+    if (_.indexOf(profile.skills, skill) !== -1) {
+      _.pull(profile.skills, skill);
     }
     else {
-      updated_profile.skills.push(skill);
+      profile.skills.push(skill);
     }
-    this.updateProfile(updated_profile);
-  },
 
-  handleFormChange(e) {
-    let updated_profile = this.state.profile;
-    updated_profile[$(e.currentTarget).attr('name')] = $(e.currentTarget).val();
-    this.updateProfile(updated_profile);
+    this.setState({ profile, formError: false });
   },
 
   handleImageChange(e) {
@@ -86,7 +176,7 @@ const DeveloperOnboard = React.createClass({
   },
 
   _uploadImage() {
-    this.setState({ is_loading: true });
+    this.setState({ isLoading: true });
     let data = new FormData();
       data.append('photo', this.state.photo_file);
       $.ajax({
@@ -98,149 +188,129 @@ const DeveloperOnboard = React.createClass({
         processData: false,
         contentType: false,
         success: function(data, textStatus, jqXHR) {
-          this.setState({ is_loading: false });
+          this.setState({ isLoading: false });
           window.location = '/profile/dashboard/';
         }
       });
   },
 
-  _saveAccount(e) {
-    e.preventDefault();
-    this.formValidator();
-    this.setState({ showValidationStates: true });
+  _saveAccount() {
+    const { formElements } = this.state;
 
-    if(!this.state.formInvalid) {
-      this.setState({is_loading: true, showValidationStates: false});
-      let profile = this.state.profile;
-      delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
-      $.ajax({
-        url: loom_api.profile + this.state.profile.id + '/',
-        method: 'PATCH',
-        data: JSON.stringify(profile),
-        contentType: 'application/json; charset=utf-8',
-        dataType: 'json',
-        success: function (result) {
-          if (this.state.photo_file) {
-            this._uploadImage();
-          }
-          else {
-            this.setState({is_loading: false});
-            window.location = '/profile/dashboard/';
-          }
-        }.bind(this)
-      });
-    }
-  },
+    FormHelpers.validateForm(formElements, (valid, formElements) => {
+      this.setState({formElements});
 
-  profileFormInvalid(isInvalid) {
-    this.setState({ profileFormIsInvalid: isInvalid }, () => {
-      this.formValidator();
-    });
-  },
-
-  formRequiredFieldsValid: {
-    'capacity': false
-  },
-
-  formValidator() {
-    const { profile, validFields } = this.state;
-    let isValid = true;
-
-    Object.keys(validFields).forEach(function(field, i) {
-      validFields[field] = !!(profile[field] && profile[field].toString().length);
-
-      if(!validFields[field]) {
-        isValid = false;
+      if (valid) {
+        this.setState({ formError: false, isLoading: true });
+        let profile = this.state.profile;
+        delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+        $.ajax({
+          url: loom_api.profile + this.state.profile.id + '/',
+          method: 'PATCH',
+          data: JSON.stringify(profile),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function (result) {
+            if (this.state.photo_file) {
+              this._uploadImage();
+            }
+            else {
+              this.setState({ isLoading: false });
+              window.location = '/profile/dashboard/';
+            }
+          }.bind(this)
+        });
+      } else {
+        this.setState({ formError: 'Please fill out all fields.' });
       }
     });
-
-    if(this.state.profileFormIsInvalid) {
-      isValid = false;
-    }
-
-    this.setState({ formInvalid: !isValid });
   },
 
-  handleChange: function(event) {
-    const { profile, validFields } = this.state;
+  handleChange(event) {
+    const { formElements } = this.state;
     const { value } = event.target;
     const fieldName = event.target.getAttribute('name');
 
-    profile[fieldName] = value;
-    validFields[fieldName] = !!value.length;
+    formElements[fieldName].update(value);
+    formElements[fieldName].value = value;
 
-    this.setState({ profile, validFields });
-    this.formValidator();
+    this.setState({ formElements, formError: false });
   },
 
   render() {
-      let skills = this.state.profile.all_skills.map( function(skill, i) {
-        return (
-          <div key={i} className="pull-left">
-            <SkillButton
-              skill={skill}
-              update_skills={this.updateSkills}
-            />
-          </div>
-        );
-      }.bind(this));
+    const { formElements, formError, profile } = this.state;
+    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
+    const roleOptions = formElements.role.options.map((option, i) => {
+      return <option value={option.value} key={i}>{option.label}</option>;
+    });
+
+    let skills = this.state.profile.all_skills.map( function(skill, i) {
       return (
-        <div>
-            <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
-              <p className="text-muted">
-                Let's get your profile set up, so you can be discovered!
-              </p>
-              <div className="form-group">
-                I am a
-                <select value={this.state.profile.role} onChange={this.handleFormChange} name="role" className="form-control select">
-                  <option value="full-stack">full-stack</option>
-                  <option value="mobile">mobile</option>
-                  <option value="front-end">front-end</option>
-                  <option value="back-end">back-end</option>
-                </select>
-                developer <span className="text-yellow">looking for incredible projects.</span>
-              </div>
-            </div>
-
-            <AccountForm
-              profile={this.state.profile}
-              photo_url={this.state.photo_url}
-              update_profile={this.updateProfile}
-              change_image={this.handleImageChange}
-              showValidationStates={this.state.showValidationStates}
-              profileFormInvalid={this.profileFormInvalid}
-            />
-
-            <div className="section-header text-muted col-md-8 col-md-offset-2">
-              Almost done! Tell us about your experience and availability.  We'll use this info to set up your profile and find great projects for you.
-            </div>
-
-            <div className='col-md-8 col-md-offset-2'>
-              <div className='panel panel-default panel-skills'>
-                {skills}
-                <div className='clearfix'></div>
-              </div>
-            </div>
-
-            <div className="form-group col-md-8 col-md-offset-2">
-              <label className="control-label">Average Weekly Availability (hours)</label>
-              <input
-                className={"form-control" + (!this.state.validFields.capacity && this.state.showValidationStates ? ' invalid' : ' valid')}
-                type='text'
-                name='capacity'
-                placeholder='XX Hours/Week'
-                value={this.state.profile.capacity || ''}
-                onChange={this.handleChange}
-              />
-            </div>
-
-          <div className='text-center form-group col-md-12'>
-            <button type='submit' className='btn btn-step' onClick={this._saveAccount} disabled={this.state.formInvalid}>Save Profile</button>
-          </div>
-
+        <div key={i} className="pull-left">
+          <SkillButton
+            skill={skill}
+            update_skills={this.updateSkills}
+          />
         </div>
       );
+    }.bind(this));
+
+    return (
+      <div>
+        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
+          <p className="text-muted">
+            Let's get your profile set up, so you can be discovered!
+          </p>
+          <div className="form-group">
+            I am a
+            <select value={profile.role} onChange={this.handleChange} name="role" className="form-control select">
+              {roleOptions}
+            </select>
+            developer <span className="text-yellow">looking for incredible projects.</span>
+          </div>
+        </div>
+
+        <AccountForm
+            photo_url={this.state.photo_url}
+            profile={profile}
+
+            formElements={formElements}
+            handleChange={this.handleChange}
+        />
+
+        <div className="section-header text-muted col-md-8 col-md-offset-2">
+          Almost done! Tell us about your experience and availability.  We'll use this info to set up your profile and find great projects for you.
+        </div>
+
+        <div className='col-md-8 col-md-offset-2'>
+          <div className='panel panel-default panel-skills'>
+            {skills}
+            <div className='clearfix'></div>
+          </div>
+        </div>
+
+        <div className="form-group col-md-8 col-md-offset-2">
+          <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
+          <input
+            className="form-control"
+            type='text'
+            name={formElements.capacity.name}
+            id={formElements.capacity.name}
+            placeholder={formElements.capacity.placeholder}
+            value={formElements.capacity.value}
+            onChange={this.handleChange}
+          />
+        </div>
+
+        <div className='text-center form-group col-md-12'>
+          {error}
+
+          <button type='submit' className='btn btn-step' onClick={this._saveAccount}>Save Profile</button>
+        </div>
+
+      </div>
+    );
   }
 
 });
