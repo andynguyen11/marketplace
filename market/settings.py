@@ -346,6 +346,7 @@ POSTMAN_DISALLOW_ANONYMOUS = True
 POSTMAN_DISALLOW_MULTIRECIPIENTS = True
 POSTMAN_DISALLOW_COPIES_ON_REPLY = True
 POSTMAN_AUTO_MODERATE_AS = True
+POSTMAN_SHOW_USER_AS = 'first_name'
 
 def prefixed_env_var_getter(prefix):
     def get(subvar, default=''):

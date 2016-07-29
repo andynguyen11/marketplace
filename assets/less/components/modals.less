@@ -85,6 +85,19 @@ body.has-modal {
       opacity: 0;
     }
   }
+
+  .modal {
+    background: #FFF;
+    border-radius: 4px;
+    box-shadow: 0 0 7px @primary;
+    overflow: hidden;
+    max-width: 95%;
+    width: 600px;
+    max-height: 80%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
 }
 
 .modal-overlay {
@@ -110,19 +123,6 @@ body.has-modal {
   &:hover {
     opacity: 0.8;
   }
-}
-
-.modal {
-  background: #FFF;
-  border-radius: 4px;
-  box-shadow: 0 0 7px @yellow;
-  overflow: hidden;
-  max-width: 95%;
-  width: 600px;
-  max-height: 80%;
-  display: flex;
-  flex-direction: column;
-  position: relative;
 }
 
 .modal-message {
