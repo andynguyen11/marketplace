@@ -39,8 +39,10 @@
     "gulp-util": "^3.0.7",
     "path": "^0.12.7",
     "polypacker": "0.1.11-alpha0-django",
+    "react-dropzone": "^3.5.3",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "quill": "1.0.0-beta.8"
   },
   "dependencies": {
     "react": "^15.1.0",

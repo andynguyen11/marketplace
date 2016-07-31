@@ -22,16 +22,32 @@ let SkillButton = React.createClass({
 });
 
 export class SkillWidget extends React.Component {
-    update_skills = skill_id => {
-        let update = !this.state[skill_id]
-        let state = {...this.state, [skill_id]: update}
-        this.setState({[skill_id]: update})
-        this.props.onChange(Object.keys(state).filter(id => state[id]).map(id => parseInt(id)))
+
+    state = { selectedSkills: {}, allSkills: [] }
+
+    componentDidMount =_=> {
+        if(this.props.skills){
+            this.setState({allSkills: this.props.skills})
+        } else {
+            $.get(loom_api.skills, allSkills => {
+                this.setState({allSkills})
+            })
+        }
     }
+
+    update_skills = skill_id => {
+        let selectedSkills = Object.assign({},
+            this.state.selectedSkills,
+            {[skill_id]: !this.state.selectedSkills[skill_id]}
+        )
+        this.setState({selectedSkills})
+        this.props.onChange(Object.keys(selectedSkills).filter(id => selectedSkills[id]).map(id => parseInt(id)))
+    }
+
     render(){
         return (
             <div className='panel panel-default panel-skills'>
-                { this.props.skills.map( (skill, i) => (
+                { this.state.allSkills.map( (skill, i) => (
                     <div key={i} className="pull-left">
                         <SkillButton
                             skill={skill}

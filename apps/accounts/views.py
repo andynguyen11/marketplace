@@ -51,8 +51,11 @@ def signup(request):
 
 
 def home(request):
-    featured = Project.objects.filter(featured=1)[:1].get()
     new = Project.objects.all().order_by('-date_created')[:3]
+    try:
+        featured = Project.objects.filter(featured=1)[:1].get()
+    except Project.DoesNotExist, e:
+        featured = new[0]
     developers = Profile.objects.all().order_by('-date_joined')[:3]
     return render_to_response('home.html',
         {'featured': featured, 'new': new, 'developers': developers, 'categories': PROJECT_TYPES, },

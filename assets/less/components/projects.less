@@ -1,3 +1,4 @@
+@import 'quill.snow.css';
 
 .section(@name) {
     &.@{name}.is.active {
@@ -5,18 +6,108 @@
             background: @yellow;
             color: #fff;
         }
-        .section:not(.@{name}) { 
+        > #project-form > .section:not(.@{name}) { 
             display: none;
         }
-        .section.@{name} { 
+        > #project-form > .section.@{name} { 
             display: block;
         }
     }
 }
 
 #create-project {
+    .top-bar {
+        > * {
+            height: 100%;
+        }
+        height: 4em;
+        margin-bottom: 1em;
+        ul {
+            list-style: none;
+            height: 100%;
+            li {
+                height: 100%;
+                margin-bottom: 0.5em;
+            }
+        }
+        .pill-group {
+            height: 100%;
+            display: inline-block;
+        }
+        .info-pill, .info-pill:hover {
+            height: 100%;
+
+            border: 2px solid @yellow;
+            border-radius: 3px;
+
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            text-transform: uppercase;
+            background: transparent;
+
+            &.active, &:active {
+                background: @yellow;
+                color: #fff;
+            }
+        }
+        .dq-progress-bar {
+            text-align: center;
+            li {
+                display: inline-block;
+                float: none;
+                min-width: 8em;
+                color: @yellow;
+                > a {
+                    padding-top: 1.5em;
+                    display: inline-block;
+                    width: 100%;
+                    height: 100%;
+                    color: inherit;
+                    background: inherit;
+                    transition: border-bottom-width 0.1s ease-in-out;
+                    border-radius: 0px;
+                    &:hover {
+                        border-bottom: 4px solid @yellow;
+                    }
+                }
+                &.disabled {
+                    color: @gray-light;
+                    cursor: not-allowed;
+                    &.active, &:active {
+                        background: @gray-light;
+                        color: #fff;
+                    }
+                    &:hover a {
+                        border-bottom: 4px solid @gray-light;
+                    }
+                }
+            }
+            li:not(.final) {
+                margin-left: 0;
+                margin-right: 0;
+                &:not(.first-step):not(.last-step) {
+                    border-right: 0px;
+                    border-left: 0px;
+                    border-radius: 0px;
+                }
+                &.first-step {
+                    border-top-right-radius: 0px;
+                    border-bottom-right-radius: 0px;
+                }
+                &.last-step {
+                    border-top-left-radius: 0px;
+                    border-bottom-left-radius: 0px;
+                }
+            }
+            li.final {
+                margin-left: 1em;
+            }
+        }
+    }
+
     .sections {
-        .section { 
+        > #project-form > .section { 
             display: none;
         }
         .section(basics);
@@ -24,4 +115,183 @@
         .section(budget);
         .section(preview);
     }
+
+    .attachment-field {
+        border-radius: 3px;
+        width: 20em;
+        .upload-button {
+            .btn; .btn-default;
+            width: 100%;
+            display: block;
+            text-align: center;
+        }
+        &.preview {
+            &.multi { width: 100%; }
+            &.multi {
+                .well;
+                padding: 7.5px;
+                .row {
+                    margin-left: -7.5px;
+                    margin-right: -7.5px;
+                    .col-sm-3 {
+                        padding-left: 7.5px;
+                        padding-right: 7.5px;
+                    }
+                    .preview {
+                        vertical-align: top;
+                    }
+                }
+                .upload-button {
+                    .make-sm-column(12);
+                    margin-bottom: -7.5px;
+                    border-color: #e3e3e3;
+                    border-width: 0px;
+                    border-top-width: 1px;
+                    border-top-left-radius: 0px;
+                    border-top-right-radius: 0px;
+                }
+            }
+            &:hover {
+                background-color: @border-gray;
+                cursor: pointer;
+                .upload-button {
+                    border-color: @border-gray;
+                    background-color: @yellow;
+                }
+            }
+        }
+        &.video.button,  &.image.button {
+            .upload-button {
+                height: 4em;
+                padding-top: 1.25em;
+            }
+        }
+        &.preview.video {
+            width: 100%;
+            height: auto;
+            .preview {
+                width: 100%;
+                height: auto;
+            }
+        }
+        &.preview.image {
+            height: auto;
+            .preview {
+                width: 100%;
+                height: auto;
+            }
+        }
+        .preview {
+            .thumbnail;
+            height: 8em;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            text-align: center;
+            > * {
+                max-width: 100%;
+                max-height: 100%;
+            }
+            > img {
+                width: auto;
+                height: auto;
+                max-width: 100%;
+                max-height: 85%;
+                padding-bottom: 3%;
+            }
+            .file-name {
+                display: inline-block;
+                font-size: 0.75em;
+                max-width: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+            .icon-preview {
+                font-size: 4em;
+                display: block;
+                margin: 0.25em;
+                vertical-align: middle;
+                color: @gray-lighter;
+                background: transparent;
+            }
+            margin-bottom: 0.5em;
+        }
+    }
+    .project-info {
+        position: relative;
+        padding-top: 7.5px;
+        margin-bottom: 1.25em;
+        border: 3px dashed transparent;
+        border-radius: 3px;
+        transition: 0.1s border-color ease-in-out;
+        &.private { border-color: @light-gray }
+        
+        .description {
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+        .attachment-field {
+            .well;
+            padding: 7.5px;
+            margin-bottom: 15px;
+            &.button {
+                padding-top: 0px;
+            }
+            width: 100%;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
+            .row {
+                margin-left: -7.5px;
+                margin-right: -7.5px;
+            }
+            .upload-button {
+                .make-sm-column(12);
+                margin-bottom: -7.5px;
+                border-color: #e3e3e3;
+                border-width: 0px;
+                border-top-width: 0px;
+                border-top-left-radius: 0px;
+                border-top-right-radius: 0px;
+            }
+        }
+        .type-switch {
+            z-index: 2;
+            position: absolute;
+            right: 15px;
+            top: 0;
+            margin-top: 7.5px;
+        }
+        &.primary {
+            .type-switch, .info-title {
+                display: none;
+            }
+        }
+        .description {
+            height: 350px;
+            background: @white;
+            border-radius: 3px;
+            .toolbar {
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+            }
+            .ql-container {
+                border-bottom: none;
+                height: 308px;
+            }
+        }
+
+    }
+    .add-info {
+        cursor: pointer;
+        color: @gray-light;
+        i {
+            font-size: 3em;
+            vertical-align: middle;
+            margin-right: 0.1em;
+        }
+        &:hover i {
+            color: @yellow;
+        }
+    }
 }
+
+

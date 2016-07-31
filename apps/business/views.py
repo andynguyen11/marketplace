@@ -19,8 +19,8 @@ def view_project(request, project_id=None):
 
 @login_required
 def create_project(request):
-    company =user_company(request.user)
-    return render_to_response('create_project.html', {'company':company}, context_instance=RequestContext(request))
+    company = user_company(request.user)
+    return render_to_response('create_project.html', {'company':company, 'project_manager': request.user}, context_instance=RequestContext(request))
 
 
 @login_required

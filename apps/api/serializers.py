@@ -136,7 +136,9 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         child_fields = ('info',)
 
     def create(self, data, action='create'):
-        details = dict(type='primary', title='Project Overview', **data.pop('details', {}))
+        details = dict(**data.pop('details', {}))
+        details['type'] = 'primary'
+        details['title'] = 'Project Overview'
         data['info'] = data.pop('info', [])
         data['info'].append(details)
         project = super(ProjectSerializer, self).create(data, action)

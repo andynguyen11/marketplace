@@ -18,9 +18,9 @@ export function objectToFormData(obj, form, namespace) {
         objectToFormData(obj[property], fd, formKey);
         
       } else {
-          console.log(formKey)
-        // if it's a string or a File object
-        fd.append(formKey, obj[property]);
+        // if it'startsWith('_')s a string or a File object
+        if(!formKey.startsWith('_'))
+            fd.append(formKey, obj[property]);
       }
       
     }

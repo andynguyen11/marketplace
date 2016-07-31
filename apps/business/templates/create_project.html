@@ -1,19 +1,22 @@
 {% extends "base.html" %}
-{#% load staticfiles %#}
+{% load staticfiles %}
 
 {% block content %}
 <div id="create-project" class="section">
   <div class="row">
     <div class="container">
         <div id="project-root" data-id="{% if request.user.id %}{{ request.user.id }}{% endif %}"
-                               data-company="{{ company.id }}"
-                               data-project_manager="{% if project_manager %}{{  project_manager }}{% else %}{{ request.user.id }}{% endif %}" ></div>
+                               data-company={{ company.id }}
+                               data-_company_name="{{ company.name }}"
+                               data-project_manager={{ project_manager.id }}
+                               data-_project_manager_name="{{ project_manager.first_name }} {{ project_manager.last_name }}" ></div>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="{% static 'js/routes/project.js' %}"></script>
 <script>
 $(document).ready(function() {
     $('#project-form').formValidation({

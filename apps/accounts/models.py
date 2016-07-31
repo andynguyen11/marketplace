@@ -54,6 +54,10 @@ class Profile(AbstractUser):
     objects = CustomUserManager()
 
     @property
+    def name(self):
+        return '%s %s' & (self.first_name, self.last_name)
+
+    @property
     def get_photo(self):
         if self.photo:
             return '{0}{1}'.format(settings.MEDIA_URL, self.photo)

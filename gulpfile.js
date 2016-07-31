@@ -92,11 +92,14 @@ gulp.task('less', function () {
 			.pipe(gulp.dest('./static/css/'));
 
 		gulp.src('./assets/less/base.less')
-			.on('error', gutil.log)
 			.pipe(less())
+			.on('error', gutil.log)
 			.pipe(uglifyCss())
 			.pipe(gulp.dest('./static/css/'));
 	})
+});
+gulp.task('watch:less', function () {
+	gulp.watch('./assets/less/**/*.less', ['less']);
 });
 
 gulp.task('fonts', function(){
@@ -115,6 +118,7 @@ gulp.task('images', function(){
 	})
 });
 
+gulp.task('dist', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
 gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
 
 	gulp.watch('./assets/js/main.js', ['scripts:app']);

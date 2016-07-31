@@ -1,8 +1,12 @@
 import React from 'react'
-import { Button, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
+import { Button, FormGroup, FormControl, ControlLabel, Nav, NavItem } from 'react-bootstrap';
+import { BigFormGroup } from './FormUtils';
 import Select2 from 'react-select2-wrapper'
 import { SkillWidget } from '../skill'
 import { objectToFormData } from './utils'
+import AttachmentField, { MultipleAttachmentsField, mergeAttachments } from './AttachmentField'
+import ProjectInfoField from './ProjectInfoField'
+import ProjectPreview from './ProjectPreview'
 
 function convertToDate(event){
     event.preventDefault();
@@ -21,7 +25,7 @@ var typeOptions = [
     { id: 'health', text: 'health & fitness' },
 ]
 
-class TypeSelect extends React.Component {
+const TypeSelect = React.createClass({
     render(){
         let { data, ...props } = this.props;
         return (
@@ -31,16 +35,7 @@ class TypeSelect extends React.Component {
         )
 
     }
-}
-
-function BigFormGroup({label, children, className='col-md-8 col-md-offset-2'}){
-    return (
-        <FormGroup bsClass={`form-group ${className}`} >
-            <ControlLabel>{label}</ControlLabel>
-            {children}
-        </FormGroup>
-    )
-}
+})
 
 function UpdateInput({name, update, className, onChange, ...props}){
     onChange = onChange || (event => update[name]({event}))
@@ -49,19 +44,26 @@ function UpdateInput({name, update, className, onChange, ...props}){
     )
 }
 
-function ProgressBar(){
+function ProgressBar({flow, active, valid=true, onSelect}){
+    let activeIndex = flow.indexOf(active)
+    let hasValidIndex = key => ((activeIndex >= flow.indexOf(key)) || (activeIndex == flow.indexOf(key) - 1 && valid))
+    let props = (eventKey, className='') => ({
+        eventKey,
+        className: `${eventKey} info-pill ${className}`,
+        disabled: !hasValidIndex(eventKey)
+    })
     return (
         <div className="top-bar row">
-            <div className="col-sm-push-1 col-sm-10">
-                <ul className="dq-progress-bar col-sm-7">
-                    <li className="basics info-pill col-sm-3">Basics</li>
-                    <li className="details info-pill col-sm-6">Project Details</li>
-                    <li className="budget info-pill col-sm-3">Budget</li>
-                </ul>
-                <ul className="progress-state col-sm-5">
-                    <li className="col-sm-6"><button className="preview info-pill">Preview</button></li>
-                    <li className="col-sm-6"><button className="post info-pill">Post</button></li>
-                </ul>
+            <div className="col-sm-push-1 col-sm-10 ">
+                <Nav bsStyle="pills" className="dq-progress-bar" activeKey={1} onSelect={onSelect}>
+                    <NavItem {...props('basics', 'first-step')}>Basics</NavItem>
+                    <NavItem {...props('details')}>Project Details</NavItem>
+                    <NavItem {...props('budget', 'last-step')}>Budget</NavItem>
+                    <span className="pill-group">
+                        <NavItem {...props('preview', 'final')}>Preview</NavItem>
+                        <NavItem {...props('post', 'final')}>Post</NavItem>
+                    </span>
+                </Nav>
             </div>
         </div>
     )
@@ -101,66 +103,85 @@ function Basics({update, ...props}){
                 This helps developers determine if they're the right person for the job.
                 <br />
                 If you don't have a preference, no sweat. You can leave this section blank.
-                <SkillWidget skills={[{id: 1, name: 'dancing'}, {id: 2, name: 'ballet'}]} onChange={value => update.skills({value})}/>
+                <SkillWidget onChange={value => update.skills({value})}/>
             </BigFormGroup>
 
         </div>
     )
 }
 
-class Details extends React.Component {
-    state = { data: {} }
+const Details = React.createClass({
 
-    fieldUpdater = (field, getValue = event=>event.target.value) => {
+    defaultInfo: {
+        title: 'Info',
+        description: undefined,
+        attachments: [],
+        type: 'public'
+    },
+
+    fieldUpdater(field, getValue = event=>event.target.value){
         return ({value, event}) => {
             value = value || event.target.value
-            let data = Object.assign(this.state.data, {[field]: value })
-            this.setState({ data })
+            let data = Object.assign(this.props.data.details || {}, {[field]: value })
             this.props.update.details({ value: data })
             if(event)
                 event.preventDefault();
         }
-    }
+    },
 
-    attachmentUpdater = (tag) => {
+    attachmentUpdater(newAttachments){
         let updater = this.fieldUpdater('attachments')
-        return (event) => {
-            let { attachments = [] } = this.state.data
-            let file = event.target.files[0]
-            updater({value: [{file, tag}, ...attachments.filter(a => a.tag != tag)]})
+        let { details: { attachments = [] } = {} } = this.props.data
+        updater({value: mergeAttachments(attachments, newAttachments)})
+    },
+
+    infoUpdater(index){
+        let updater = this.fieldUpdater('info')
+        return ({value: newInfo}) => {
+            let { info } = this.props.data
+            info[index] = newInfo
+            updater({value: info})
         }
-    }
+    },
 
     render(){
-        let {update, ...props} = this.props
+        let {update, data: {details, info}, ...props} = this.props
         return (
             <div {...props}>
-                <p className="section-header form-group">
+                <p className="section-header form-group col-md-8 col-md-offset-2">
                     What are you creating?
                 </p>
-                <p>
+                <p className="form-group col-md-8 col-md-offset-2">
                     This is where you should outline all the project specifics.
                     The more details you provide, the more quality bids you will recieve.
                 </p>
-                {/* video */}
-                <BigFormGroup label="Project Image">
-                    <input className="form-control" type="file" name="image" 
-                        onChange={this.attachmentUpdater("image")} />
+                <BigFormGroup label="Project Video">
+                    <AttachmentField accept="video/*" tag="video" onChange={this.attachmentUpdater} />
                 </BigFormGroup>
-                <div className="form-group">
-                    <div className="col-md-12">
-                        <label>Details</label>
-                        <textarea className="form-control" name="description" 
-                            onChange={event => this.fieldUpdater("description")({event})}
-                            placeholder="This is the public longform description associated with your project." />
-                    </div>
-                    <div className="clearfix"/>
-                </div>
-                {/* info */}
+                <BigFormGroup label="Project Image">
+                    <AttachmentField accept="image/*" tag="image" onChange={this.attachmentUpdater} />
+                </BigFormGroup>
+                <ProjectInfoField id='details' data={details} update={update.details} />
+                { info.map((data, key) => (
+                    <ProjectInfoField {...{data, key, id: key}} update={this.infoUpdater(key)} className={key == 0 ? 'primary' : ''}/>
+                ))}
+                <BigFormGroup label={(
+                    <a onClick={e => this.infoUpdater(info.length)({value: this.defaultInfo})} className="add-info">
+                        <i className="fa fa-plus-circle" aria-hidden="true"/> Add Another Tab
+                    </a>
+                    )}>
+                    <p style={{textAlign: 'center'}}>
+                        This is optional, but some people like to add tabs that house addtional project details, <br/>
+                        onboarding documents, design guidlines, UX documentation, etc.
+                    </p>
+                    <p style={{textAlign: 'center'}}>
+                        Make as many as you'd like. You can set them to public or private.
+                    </p>
+                </BigFormGroup>
             </div>
         )
     }
-}
+})
 
 function Budget({update, ...props}){
     return (
@@ -194,20 +215,19 @@ function Budget({update, ...props}){
     )
 }
 
-function Preview(){ return <div/> }
-
-export default class CreateProject extends React.Component {
+const CreateProject = React.createClass({
 
     componentDidMount() {
         this.setState({
-            data: ['company', 'project_manager'].reduce((data, key) => ({
+            data: ['company', 'project_manager', ].reduce((data, key) => ({
                 [key]: $('#project-root').data(key),
+                [`_${key}_name`]: $('#project-root').data(`_${key}_name`),
                 ...data
-            }), {})
+            }), this.state.data || {})
         })
-    }
+    },
 
-    save = (e) => {
+    save(e){
         if(e) e.preventDefault();
         this.setState({ is_loading: true });
         $.ajax({
@@ -217,71 +237,95 @@ export default class CreateProject extends React.Component {
             contentType: false,
             processData: false,
             success: result => {
-                window.result = result;
                 window.location = `/project/${result.id}/`;
             }
         });
-    }
+    },
 
-    state = {
-        is_loading: false, 
-        currentSection: 'basics',
-        sections: ['basics', 'details', 'budget', 'preview', 'post'],
-        data: {}
-    }
-
-    currentSectionIsValid = _ => true;
-
-    sectionAction = event => {
-        event.preventDefault();
-        if(this.currentSectionIsValid()){
-            let { currentSection, sections } = this.state;
-            let index = sections.indexOf(currentSection);
-            if(index >= sections.length - 1){
-                this.save()
-            } else {
-                this.setState({currentSection: sections[index + 1]})
+    getInitialState(){
+        return {
+            is_loading: false, 
+            currentSection: 'basics',
+            sections: ['basics', 'details', 'budget', 'preview', 'post'],
+            data: {
+                details: {
+                    title: 'Project Overview',
+                    description: undefined,
+                    attachments: [],
+                    type: 'primary' // private primary
+                },
+                info: [{
+                    title: 'Private Information',
+                    description: undefined,
+                    attachments: [],
+                    type: 'private'
+                }]
             }
         }
-    }
+    },
+
+    currentSectionIsValid(){ return true },
+
+    sectionAction(event){
+        $('html body').animate({ scrollTop: 0 }, 'fast');
+        event.preventDefault();
+        if(this.currentSectionIsValid()){
+            let { currentSection, sections } = this.state
+            let index = sections.indexOf(currentSection)
+            if(index >= sections.length - 2){
+                this.save()
+            } else {
+                this.selectSection(sections[index + 1])
+            }
+        }
+    },
+
+    selectSection( currentSection ){
+        return this.setState({currentSection})
+    },
     
-    fieldUpdater = (field) => {
+    fieldUpdater(field){
         return ({value, event}) => {
             value = value || event.target.value
             this.setState({ data: Object.assign(this.state.data, {[field]: value }) })
             if(event)
                 event.preventDefault();
         }
-    }
+    },
 
-    fieldUpdateMap = (...fields) => {
+    fieldUpdateMap(...fields){
         return fields.reduce((actions, field) => {
             actions[field] = this.fieldUpdater(field)
             return actions
         }, {})
-    }
+    },
 
     render(){
+        let { data: {details, info}, sections, currentSection } = this.state
         return (
-            <div className={`sections ${this.state.currentSection} is active`}>
-                <ProgressBar/>
+            <div className={`sections ${currentSection} is active`}>
+                <ProgressBar flow={sections} active={currentSection} onSelect={this.selectSection}/>
                 <form id="project-form" method="post" enctype="multipart/form-data">
                     { this.props.csrf_token }
                     <Basics className='basics section' update={this.fieldUpdateMap(
                         'title', 'type', 'overview', 'start_date', 'end_date', 'skills')}/>
 
-                    <Details className='details section' update={this.fieldUpdateMap('details', 'info')}/>
+                    <Details className='details section' update={this.fieldUpdateMap('details', 'info')} data={{details, info}} />
 
                     <Budget className='budget section' update={this.fieldUpdateMap(
                         'estimated_hours', 'estimated_cash', 'estimated_equity', 'confidential_info')}/>
 
-                    <Preview className='preview section' />
+                    <ProjectPreview className='preview section' data={this.state.data} active={this.state.currentSection == 'preview'}/>
 
                     <div className='text-center form-group col-md-12'>
-                        <Button type='submit' bsClass='btn btn-step' onClick={this.sectionAction}>Save Project and Continue</Button>
+                        <Button type='submit' bsClass='btn btn-step' onClick={this.sectionAction}>
+                            { (sections.indexOf(currentSection) < sections.length - 2) ? 'Save Project and Continue' : 'Post Project'}
+                        </Button>
                     </div>
                 </form>
             </div>
         )
     }
-}
+})
+
+export default CreateProject
