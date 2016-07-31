@@ -1,24 +1,64 @@
+@header-height--desktop: 96px;
+
 // HEADER
 #header {
-  position: absolute;
-  top: 0;
   z-index: 2;
   width: 100%;
-  padding: 15px 0;
+  height: @header-height--desktop;
+  background: #FFF;
+
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: @content-max-width;
+    min-width: @content-width;
+    width: 100%;
+    margin: auto;
+    height: @header-height--desktop;
+  }
 
   .logo {
-    height: 44px;
+    height: 48px;
     background: url(../images/Loom_Logo.svg) no-repeat;
     background-size: contain;
     flex-shrink: 0;
-    flex-basis: 150px;
+    flex-basis: 130px;
+    text-indent: -999em;
   }
 
-  &.home {
-    .logo {
-      background-image: url(../images/Loom_Logo.svg);
+  ul.header-links {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+
+    li {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    a {
+      margin: 0 10px;
+      color: @brand-neutral--2;
+    }
+
+    a:hover {
+      text-decoration: none;
+    }
+
+    .header-link--auth {
+      a {
+        color: @brand--accent;
+      }
+
+      &.header-link--sign-up {
+        margin-left: 50px;
+      }
     }
   }
+
   .dropdown-menu {
     text-transform: uppercase;
     font-weight: 700;
@@ -30,7 +70,7 @@
       & > a {
         font-weight: 700;
         &:hover {
-          color: @yellow;
+          color: @brand--accent;
           background: none;
         }
         .badge {
@@ -61,48 +101,8 @@
     }
   }
 
-  input[type="text"]::-webkit-input-placeholder {
-    color: white !important;
-  }
-  input[type="text"]:-ms-input-placeholder {
-    color: white !important;
-  }
   .fa {
     color: white;
-  }
-  .header-links {
-    margin-left: 15px;
-    padding: 5px;
-    display: inline-block;
-
-    a {
-      margin: 0 10px;
-      color: white;
-      text-transform: uppercase;
-    }
-
-    a:hover {
-      text-decoration: none;
-    }
-
-    &.header-links-home {
-      flex-grow: 1;
-
-      @media (max-width: @screen-md) {
-        display: none;
-      }
-    }
-  }
-
-  .header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
-  }
-  
-  .header-nav {
-    display: flex;
   }
   
   .header-icons {

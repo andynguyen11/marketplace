@@ -3,7 +3,7 @@
 .section(@name) {
     &.@{name}.is.active {
         .dq-progress-bar .info-pill.@{name} {
-            background: @yellow;
+            background: @devquity-yellow;
             color: #fff;
         }
         > #project-form > .section:not(.@{name}) { 
@@ -37,7 +37,7 @@
         .info-pill, .info-pill:hover {
             height: 100%;
 
-            border: 2px solid @yellow;
+            border: 2px solid @devquity-yellow;
             border-radius: 3px;
 
             font-size: 12px;
@@ -47,7 +47,7 @@
             background: transparent;
 
             &.active, &:active {
-                background: @yellow;
+                background: @devquity-yellow;
                 color: #fff;
             }
         }
@@ -57,7 +57,7 @@
                 display: inline-block;
                 float: none;
                 min-width: 8em;
-                color: @yellow;
+                color: @devquity-yellow;
                 > a {
                     padding-top: 1.5em;
                     display: inline-block;
@@ -68,7 +68,7 @@
                     transition: border-bottom-width 0.1s ease-in-out;
                     border-radius: 0px;
                     &:hover {
-                        border-bottom: 4px solid @yellow;
+                        border-bottom: 4px solid @devquity-yellow;
                     }
                 }
                 &.disabled {
@@ -156,7 +156,7 @@
                 cursor: pointer;
                 .upload-button {
                     border-color: @border-gray;
-                    background-color: @yellow;
+                    background-color: @devquity-yellow;
                 }
             }
         }
@@ -289,7 +289,7 @@
             margin-right: 0.1em;
         }
         &:hover i {
-            color: @yellow;
+            color: @devquity-yellow;
         }
     }
 }

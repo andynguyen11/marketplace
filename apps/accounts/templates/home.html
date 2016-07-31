@@ -1,50 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block header_class %}home{% endblock %}
-
-{% block header_actions %}
-{% if request.user.is_authenticated %}
-
-<div class="header-nav">
-  <div class="header-links">
-    <a href="{% url 'home' %}">Help</a>
-  </div>
-  <div class="header-icons">
-    <a href="{% url 'postman:inbox' %}" class="header-icon-messages">
-      <img src="{% static 'images/icon-message-white.png' %}" />
-      {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
-    </a>
-    <a href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications-white.png' %}" /></a>
-    <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
-    <ul class="dropdown-menu dropdown-menu-right">
-      <li><a href="{% url 'profile' %}">Profile</a></li>
-      <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-      <li><a href="{% url 'postman:inbox' %}">Messages {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}</a></li>
-      <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
-      <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li>
-      <li><a href="{% url 'view-documents' %}">Your Documents</a></li>
-      <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
-      <li><a href="{% url 'logout' %}">Log Out</a></li>
-    </ul>
-  </div>
-</div>
-
-{% else %}
-
-<div class="header-links header-links-home">
-  <a href="{% url 'home' %}">How it Works</a>
-  <a href="{% url 'home' %}">Browse a Project</a>
-  <a href="{% url 'create-project' %}">Post a Project</a>
-</div>
-<div class="header-links">
-  <a href="{% url 'signup-type' %}">Sign Up</a>
-  <a href="{% url 'login' %}">Sign In</a>
-</div>
-
-{% endif %}
-{% endblock %}
-
 {% block content %}
 <div id="hero">
   <div id="hero-carousel" class="carousel home-hero-carousel slide">
