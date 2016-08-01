@@ -1,41 +1,97 @@
 // FOOTER
-#footer {
-  margin-top: 45px;
-  .row {
-    color: #fff;
-    background: @dark-gray;
-    padding: 75px 0;
-    font-size: 16px;
-    font-weight: 100;
+.footer {
+  width: 100%;
+  background: @brand-neutral--1;
+  color: #FFF;
+  margin-top: @gutter * 2;
+
+  .footer-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: (@gutter * 2) @gutter--medium;
   }
 
-  .logo {
-    width: 150px;
-    display: block;
-    margin-top: 40px;
-    margin-bottom: 10px;
+  .footer-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .footer-nav {
+    display: flex;
   }
 
-  .fa {
-    border: 1px solid #fff;
-    border-radius: 20px;
-    padding: 8px;
-    margin-right: 7px;
-    width: 35px;
-    text-align: center;
+  .footer-nav-section {
+    padding-right: @gutter * 4;
+
+    a {
+      color: #FFF;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
-  a, a:hover, a:visited {
-    color: #fff;
+  .footer-nav-header {
+    font-size: 18px;
+    color: #FFF;
+    font-weight: bold;
   }
 
-  h5 {
-    color: @devquity-yellow;
-    font-size: 16px;
+  .footer-newsletter {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      margin: @gutter 0;
+      padding: 7px 14px;
+      color: #FFF;
+      background: transparent;
+      border: 2px solid #FFF;
+      border-radius: @border-radius;
+      font-size: 18px;
+      outline: none;
+    }
   }
 
-  .copyright {
-    color: #666;
-    font-size: 12px;
+  .footer-newsletter-header {
+    font-size: 24px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-newsletter-button {
+    align-self: flex-start;
+    font-weight: normal;
+    border-radius: @border-radius;
+  }
+
+  .footer-base {
+    border-top: 1px solid #FFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: @gutter * 2;
+    margin-top: @gutter * 2;
+  }
+
+  .footer-logo {
+    height: 48px;
+    background: url(../images/Loom_Logo.svg) no-repeat;
+    background-size: contain;
+    flex-shrink: 0;
+    flex-basis: 130px;
+    text-indent: -999em;
+  }
+
+  .footer-social {
+    a {
+      font-size: 28px;
+      color: #FFF;
+      margin-left: @gutter--medium;
+    }
   }
 }

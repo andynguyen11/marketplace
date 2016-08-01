@@ -1,0 +1,131 @@
+.plates {
+
+  .plates-headcap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: @gutter * 4;
+    padding-bottom: @gutter * 2;
+  }
+
+  .plates-header {
+    font-size: 36px;
+    font-weight: normal;
+    color: @brand-neutral--1;
+    padding: 0;
+    margin: 0;
+  }
+
+  .plates-inner {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .plate {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-basis: 32%;
+    border: 1px solid @brand-neutral--5;
+    border-radius: @border-radius;
+    overflow: hidden;
+  }
+
+  .plate-image {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('http://www.costumebox.com.au/blog/wp-content/uploads/2014/09/crazy-clown.jpg');
+    flex-basis: 220px;
+    flex-shrink: 0;
+  }
+
+  .plate-info {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 250px;
+    flex-shrink: 0;
+    padding: 0 @gutter @gutter;
+  }
+
+  .plate-info-profile {
+    display: flex;
+    align-items: center;
+  }
+
+  .plate-info-profile-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('http://bottlebrusharts.com/wp-content/uploads/2012/10/clown1.jpg');
+    border: 4px solid #FFF;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    margin: -@gutter 0 0;
+  }
+
+  .plate-info-profile-name {
+    padding-left: @gutter;
+  }
+
+  .plate-info-profile-name--primary {
+    font-weight: bold;
+  }
+
+  .plate-info-profile-name--secondary {}
+
+  .plate-info-project {
+    flex-grow: 1;
+    overflow-y: hidden;
+  }
+
+  .plate-stats {
+    display: flex;
+    align-content: space-around;
+    flex-basis: 80px;
+    flex-shrink: 0;
+    border-top: 1px solid @brand-neutral--5;
+  }
+
+  .plate-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    flex-basis: 50%;
+    position: relative;
+    padding: 0 @gutter;
+
+    & + .plate-stat {
+      border-left: 1px solid @brand-neutral--5;
+
+      &:before {
+        content: 'or';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        transform: translateX(-50%);
+        width: 35px;
+        height: 35px;
+        line-height: 32px;
+        background: #FFF;
+        text-align: center;
+        border: 1px solid @brand-neutral--5;
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .plate-stat-amount {
+    font-size: 16px;
+    color: #FF7B5C;
+  }
+
+  .plate-stat-type {
+    font-size: 16px;
+  }
+}

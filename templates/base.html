@@ -19,7 +19,6 @@
   <meta name="author" content="{% block meta_author %}{% endblock %}" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
   <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
   <link type="text/css" rel="stylesheet" href="{% static 'css/select2.css' %}" />
@@ -34,10 +33,9 @@
     <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
     <![endif]-->
 
-  <div id="header" class="{% block header_class %}{% endblock %}">
-    <div class="header-row">
+  <div class="header" class="{% block header_class %}{% endblock %}">
+    <div class="header-inner page-content">
       <a class="logo" href="/">Loom</a>
-      {% block header_actions %}
 
       {% if request.user.is_authenticated %}
       <div class="header-nav">
@@ -73,57 +71,68 @@
       </ul>
 
       {% endif %}
-      {% endblock %}
     </div>
   </div>
 
   {% block content %}{% endblock content %}
 
-  <div id="footer">
-    <div class="row">
-      <div class="container">
-        <div class="col-md-3">
-          <h5>Connect With Us</h5>
-          <i class="fa fa-facebook"></i>
-          <i class="fa fa-twitter"></i>
-          <i class="fa fa-instagram"></i>
-          <i class="fa fa-linkedin"></i>
-          <img class="logo" src="{% static 'images/Loom_Logo.svg' %}" />
-          <p class="copyright">&copy; 2016, all rights reserved</p>
-
-
+  <div class="footer">
+    <div class="footer-inner page-content">
+      <div class="footer-actions">
+        <div class="footer-nav">
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header">Company</h6>
+            <ul>
+              <li><a href="/company/#/about">About</a></li>
+              <li><a href="/company/#/about/careers">Careers</a></li>
+              <li><a href="/press/">Press</a></li>
+              <li><a href="/blog/">Blog</a></li>
+              <li><a href="/help/">Help</a></li>
+              <li><a href="/terms/">Terms &amp; Service</a></li>
+              <li><a href="/contact/">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header">Coding Projects</h6>
+            <ul>
+              <li><a href="/tech/">Technical Integrations</a></li>
+              <li><a href="/legal/">Legal Docs</a></li>
+              <li><a href="/equity/">Handling Equity</a></li>
+              <li><a href="/cash/">Cash Compensation</a></li>
+              <li><a href="/coding/">Coding FAQs</a></li>
+            </ul>
+          </div>
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header">Listing Projects</h6>
+            <ul>
+              <li><a href="/quality/">Quality Assurance</a></li>
+              <li><a href="/process/">Process</a></li>
+              <li><a href="/messaging/">Messaging</a></li>
+              <li><a href="/price/">Pricing</a></li>
+              <li><a href="/listing/">Listing FAQs</a></li>
+            </ul>
+          </div>
         </div>
-        <div class="col-md-3">
-          <h5>Company</h5>
-          <a href="/company/#/about">About</a><br />
-          <a href="/company/#/about/careers">Careers</a><br />
-          <a href="/press/">Press</a><br />
-          <a href="/blog/">Blog</a><br />
-          <a href="/help/">Help</a><br />
-          <a href="/terms/">Terms &amp; Service</a><br />
-          <a href="/contact/">Contact</a>
+        <div class="footer-newsletter">
+          <h5 class="footer-newsletter-header">Sign up for our newsletter</h5>
+          <input type="text" placeholder="name@company.com" />
+          <a href="" class="btn btn-brand btn-lg footer-newsletter-button">Sign up</a>
         </div>
-        <div class="col-md-3">
-          <h5>Coding Projects</h5>
-          <a href="/tech/">Technical Integrations</a><br />
-          <a href="/legal/">Legal Docs</a><br />
-          <a href="/equity/">Handling Equity</a><br />
-          <a href="/cash/">Cash Compensation</a><br />
-          <a href="/coding/">Coding FAQs</a><br />
-        </div>
-        <div class="col-md-3">
-          <h5>Listing Projects</h5>
-          <a href="/quality/">Quality Assurance</a><br />
-          <a href="/process/">Process</a><br />
-          <a href="/messaging/">Messaging</a><br />
-          <a href="/price/">Pricing</a><br />
-          <a href="/listing/">Listing FAQs</a><br />
+      </div>
+      <div class="footer-base">
+        <div class="footer-logo"></div>
+        <div class="footer-social">
+          <a href="" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+          <a href="" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+          <a href="" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 
+<script src="https://use.fontawesome.com/3cdb773842.js"></script>
 <script type="text/javascript" src="https://js.stripe.com/v2/?sensor=false"></script>
 <script type="text/javascript" src="{% static 'js/vendor.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/main.js' %}"></script>

@@ -5,22 +5,36 @@
   &.btn-brand {
     color: #FFF;
     border: 1px solid @brand--accent;
-    background: @brand--accent;
+    background-color: @brand--accent;
   }
 
   &.btn-brand--hero {
     padding: 20px 40px;
     font-size: 18px;
     font-weight: normal;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+
+  &.btn--clear {
+    color: @brand-neutral--1;
+    border: 2px solid @brand-neutral--1;
+    background: transparent;
+
+    &:hover {
+      background-color: transparent;
+    }
   }
 
   &.btn-brand--clear {
     color: @brand--accent;
-    border: 1px solid @brand--accent;
+    border: 2px solid @brand--accent;
     background: transparent;
 
     &:hover {
-      background: transparent;
+      background-color: transparent;
     }
   }
 
@@ -158,5 +172,9 @@
       border-color: transparent transparent transparent @devquity-primary;
     }
 
+  }
+  
+  &:hover {
+    text-decoration: none;
   }
 }

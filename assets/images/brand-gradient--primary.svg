@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="1440px" height="580px" viewBox="0 0 1440 580" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="28.01684%" y1="190.251289%" x2="59.0232042%" y2="-6.36678479%" id="linearGradient-1">
+            <stop stop-color="#FFAE39" offset="0%"></stop>
+            <stop stop-color="#FF9852" offset="42.2986961%"></stop>
+            <stop stop-color="#FF9254" offset="54.3255189%"></stop>
+            <stop stop-color="#FF7B5C" offset="90.5608284%"></stop>
+            <stop stop-color="#FF7B5C" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.778159981">
+        <g id="Artboard" fill="url(#linearGradient-1)">
+            <g id="Mask" transform="translate(0.000000, -96.000000)">
+                <g id="Page-1">
+                    <g id="Homepage-V3" transform="translate(0.000000, 96.000000)">
+                        <g id="Hero">
+                            <g id="Group">
+                                <g id="Mask">
+                                    <rect id="path-2" x="0" y="0" width="1440" height="580"></rect>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

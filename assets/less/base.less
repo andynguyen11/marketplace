@@ -24,6 +24,7 @@
 @import "components/onboard.less";
 @import "components/reviews.less";
 @import "components/carousel.less";
+@import "components/plates.less";
 
 @import "routes/about.less";
 
@@ -31,7 +32,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
   font-size: @font-size-base;
-  background: #f5f5f5;
+  background: #FFF;
 }
 
 a, a:hover, a:visited {
@@ -63,6 +64,20 @@ ul {
 
 h5 {
   font-size: 18px;
+}
+
+.page-content {
+  max-width: @content-max-width;
+  min-width: @content-width;
+  width: 100%;
+  margin: auto;
+}
+
+.page-content--medium {
+  max-width: @content-width;
+  min-width: @content-width;
+  width: 100%;
+  margin: auto;
 }
 
 .wrapper {
