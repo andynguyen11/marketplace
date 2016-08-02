@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden
 
-from api.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
+from api.serializers.account import ProfileSerializer, SkillsSerializer, SkillTestSerializer
 from accounts.models import Profile, Skills, SkillTest
 from accounts.models import Profile
 
@@ -23,6 +23,9 @@ class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = (IsAuthenticated, )
+
+    def get_object(self):
+        return self.request.user
 
 
 class SkillTestViewSet(NestedModelViewSet):

@@ -3,9 +3,9 @@ from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 
-from generics.viewsets import NestedModelViewSet
-from .serializers import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, DocumentSerializer
+from api.serializers.projects import ProjectSerializer, ProjectSearchSerializer, InfoSerializer, DocumentSerializer
 from business.models import Project, ProjectInfo, Document
+from generics.viewsets import NestedModelViewSet
 
 
 class InfoViewSet(NestedModelViewSet):

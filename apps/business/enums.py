@@ -1,7 +1,7 @@
 DOCUMENT_TYPES = (
-    (u'Non-Disclosure', u'Non-Disclosure Agreement'),
-    (u'Contract Service', u'Contract Service Agreement'),
-    (u'Non-Compete', u'Non-Compete Agreement'),
+    (u'NDA', u'Non-Disclosure Agreement'),
+    (u'MSA', u'Contract Service Agreement'),
+    (u'NC', u'Non-Compete Agreement'),
 )
 
 INFO_TYPES = (
@@ -36,4 +36,9 @@ COMPANY_TYPES = (
     (u'lp', u'Limited Partnership'),
     (u'llp', u'Limited Liability Partnership'),
     (u'nonprofit', u'Non-Profit'),
+)
+
+COMPENSATION_SCHEDULE = (
+    (u'50% upfront and 50% upon completion', u'50% upfront and 50% upon completion'),
+    (u'50% at a halfway milestone and 50% upon completion', u'50% at a halfway milestone and 50% upon completion'),
 )

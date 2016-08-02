@@ -7,12 +7,15 @@ const loom_api = {
     billing: '/api/billing/',
     company: '/api/company/',
     job: '/api/jobs/',
+    messages: '/api/messages/',
     nda: '/api/nda/',
     onboard: '/api/onboard/',
     profile: '/api/profile/',
     review: '/api/review/',
     skills: '/api/skills/',
-    project: '/api/project/',
+    terms: '/api/terms/',
+    project: '/api/project/'
+
 };
 
 module.exports = loom_api;

@@ -5,9 +5,9 @@ import { Router, Route, IndexRoute, useRouterHistory } from 'react-router';
 import CreateProject from '../components/project/CreateProject';
 
 function renderRoute({route, id}){
-	const rootElement = document.getElementById(id)
+	const rootElement = document.getElementById(id);
 	if(rootElement) {
-		const browserHistory = useRouterHistory(createHashHistory)({ queryKey: false })
+		const browserHistory = useRouterHistory(createHashHistory)({ queryKey: false });
 		ReactDOM.render((
 			<Router history={browserHistory}>
                 { route }

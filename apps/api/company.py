@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden, Http404
 
-from api.serializers import CompanySerializer
+from api.serializers.company import CompanySerializer
 
 from api.permissions import IsOwner
 from business.models import Company

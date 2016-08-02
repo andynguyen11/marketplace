@@ -11,10 +11,6 @@
       <div class="container">
         <div class="col-md-12 ps-messages-view-header">
           <a class="pull-left back button button-left" href="{{ next_url }}"><</a>
-          <h3 class="pull-left">
-            <span class="text-skinny">Conversation with</span>
-            <span class="text-yellow">{% if thread.sender == user %} {{ thread.recipient.first_name }} {% else %} {{ thread.sender.first_name }} {% endif %}</span>
-          </h3>
           <div class="pull-right message-tools">
             {% if thread.sender == user and thread.sender_bookmarked or thread.recipient == user and thread.recipient_bookmarked %}
               {% if pm_messages|length > 1 %}
@@ -40,8 +36,13 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <div id="contract_container" data-thread="{{ thread.id }}" data-bid="{{ thread.job.id }}" data-nda="{{ thread.nda }}" data-msa="{{ thread.msa }}"></div>
         <div class="col-md-8">
           <div class="panel panel-default">
+          <div class="panel-heading">
+            <span class="text-skinny">Conversation with</span>
+            <span class="text-yellow">{% if thread.sender == user %} {{ thread.recipient.first_name }} {% else %} {{ thread.sender.first_name }} {% endif %}</span>
+          </div>
             <div id="reply-wrapper">
               {% if thread.sender == user and thread.sender_archived or thread.recipient == user and thread.recipient_archived %}
               {% else %}
@@ -61,7 +62,7 @@
               </form>{% endif %}
               {% endif %}
             </div>
-          </div>
+
 
           <ul id="pm_messages">
             {% for message in pm_messages %}
@@ -78,18 +79,6 @@
                           <li><a href="{{ file.path }}" download>{{ file.name }}</a></li>
                         {% endfor %}
                         </ul>
-                    </div>
-                  {% endif %}
-                  {% if message.nda %}
-                    <div class="">
-                      <strong>NDA</strong>
-                      <p><a id="signNDA" data-nda="{{ message.nda.id }}">Click to sign Non-Disclosure Agreement</a></p>
-                    </div>
-                  {% endif %}
-                  {% if message.document %}
-                    <div class="">
-                      <strong>Document</strong>
-                      <p><a href="{% url 'view-documents' %}">View Documents</a></p>
                     </div>
                   {% endif %}
                 </div>
@@ -109,12 +98,6 @@
                         </ul>
                     </div>
                   {% endif %}
-                  {% if message.nda %}
-                    <div class="">
-                      <strong>NDA</strong>
-                        <a href="#">Click to sign Non-Disclosure Agreement</a>
-                    </div>
-                  {% endif %}
                 </div>
                 <div class="message-date text-muted pull-left">{{ message.sent_at|date:"DATETIME_FORMAT"}}</div>
                 <div class="clearfix"></div>
@@ -122,106 +105,6 @@
             </li>
             {% endfor %}
           </ul>
-        </div>
-        <div class="col-md-4">
-          <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-default">
-              <div class="panel-heading" role="tab" id="headingOne">
-                <h4 class="panel-title">
-                  <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Compensation
-                  </a>
-                </h4>
-              </div>
-              <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                <div class="panel-body">
-                  <div class="form-group">
-                    <label>Equity</label>
-                    <input class="form-control" type="text" disabled value="{{ thread.job.equity }}%" />
-                  </div>
-                  <div class="form-group">
-                    <label>Cash</label>
-                    <input class="form-control" type="text" disabled value="${{ thread.job.cash }}" />
-                  </div>
-                  <div class="form-group">
-                    <label>Compensation Schedule</label>
-                    <select class="form-control">
-                      <option>50% at halfway, 50% on completion</option>
-                      <option>50% up front, 50% on completion</option>
-                      <option>25% up front, 75% on completion</option>
-                      <option>25% at halfway, 75% on completion</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading" role="tab" id="headingTwo">
-                <h4 class="panel-title">
-                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Project Duration
-                  </a>
-                </h4>
-              </div>
-              <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
-                <div class="panel-body">
-                  <div class="form-group">
-                    <label>Hours</label>
-                    <input class="form-control" type="text" disabled value="{{ thread.job.hours }} hours" />
-                  </div>
-                  <div class="form-group">
-                    <label>Availability</label>
-                    <input class="form-control" type="text" disabled value="20 hours / week" />
-                  </div>
-                  <div class="form-group">
-                    <label>Start Date</label>
-                    <div class="input-group">
-                    <input class="form-control" type="text" disabled value="7/1/2016" />
-                      <div class="input-group-btn">
-                        <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <label>End Date</label>
-                    <div class="input-group">
-                    <input class="form-control" type="text" disabled value="10/1/2016" />
-                      <div class="input-group-btn">
-                        <button type="button" class="btn btn-default"><i class="fa fa-calendar"></i></button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="panel panel-default">
-              <div class="panel-heading" role="tab" id="headingThree">
-                <h4 class="panel-title">
-                  <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Statement of Work
-                  </a>
-                </h4>
-              </div>
-              <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                <div class="panel-body">
-                  <ul>
-                    <li>Model data layer</li>
-                    <li>Build REST API</li>
-                    <li>Provide documentation</li>
-                    <li>Develop mobile application (iOS)</li>
-                    <li>Deployment scripts</li>
-                    <li>
-                      <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Add another..." />
-                        <div class="input-group-btn">
-                          <button type="button" class="btn btn-default">+</button>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

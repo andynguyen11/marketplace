@@ -36,7 +36,7 @@ class Company(models.Model):
     ein = models.CharField(max_length=255, verbose_name='EIN', blank=True, null=True)
     logo = models.ImageField(blank=True, null=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
-    category = tagulous.models.TagField(to=Category, blank=True, null=True)
+    category = tagulous.models.TagField(to=Category, blank=True)
     type = models.CharField(max_length=100, choices=COMPANY_TYPES)
     filing_location = models.CharField(max_length=100)
 
@@ -66,8 +66,8 @@ class Job(models.Model):
     status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
     nda_signed = models.BooleanField(default=False)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
@@ -80,7 +80,7 @@ class ProjectInfo(models.Model):
     type = models.CharField(max_length=100, choices=INFO_TYPES)
     project = models.ForeignKey('business.Project')
     title = models.CharField(max_length=100)
-    description = models.CharField(max_length=500, null=True)
+    description = models.TextField(blank=True, null=True)
     attachments = GenericRelation(Attachment, related_query_name='business_projectinfo')
 
     def tagged(self, tag):
@@ -93,10 +93,10 @@ class Project(models.Model):
 
     title = models.CharField(max_length=255)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
-    category = tagulous.models.TagField(to=Category, null=True) # not really in the mockup
+    category = tagulous.models.TagField(to=Category) # not really in the mockup
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
-    start_date = models.DateTimeField()
-    end_date = models.DateTimeField(blank=True, null=True)
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills')
 
     estimated_hours = models.IntegerField(blank=True, null=True)
@@ -149,16 +149,35 @@ class Project(models.Model):
         return documents
 
 
+class Terms(models.Model):
+    job = models.ForeignKey(Job)
+    contractor = models.CharField(max_length=100)
+    contractee = models.CharField(max_length=100)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    scope = models.TextField(blank=True, null=True)
+    deliverables = models.TextField(blank=True, null=True)
+    milestones = models.TextField(blank=True, null=True)
+    cash = models.DecimalField(max_digits=10, decimal_places=2)
+    equity = models.DecimalField(max_digits=5, decimal_places=2)
+    schedule = models.CharField(max_length=255, blank=True, null=True, choices=COMPENSATION_SCHEDULE)
+    halfway = models.CharField(max_length=255, blank=True, null=True)
+    status = models.CharField(max_length=100, default='new')
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.contractee = self.job.project.company.name
+            self.contractor = '{0} {1}'.format(self.job.developer.first_name, self.job.developer.last_name)
+            self.cash = self.job.cash
+            self.equity = self.job.equity
+            self.start_date = self.job.project.start_date
+            self.end_date = self.job.project.end_date
+        super(Terms, self).save(*args, **kwargs)
+
+
 class Document(models.Model):
-    docusign_document = models.OneToOneField('docusign.Document', blank=True)
-    status = models.CharField(default='Sent')
+    docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
+    status = models.CharField(max_length=100, default='new')
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     job = models.ForeignKey(Job)
-    project = models.ForeignKey(Project)
-
-    @property
-    def status(self):
-        if self.docusign_document:
-            return self.docusign_document.status
-        return self.status
 

@@ -45,7 +45,7 @@ class Profile(AbstractUser):
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     photo = models.ImageField(blank=True, null=True, upload_to='profile-photos')
-    skills = tagulous.models.TagField(to=Skills, blank=True, null=True)
+    skills = tagulous.models.TagField(to=Skills, blank=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
     role = models.CharField(max_length=100, blank=True, null=True)

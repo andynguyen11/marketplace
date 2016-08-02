@@ -1,91 +1,261 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import ContractBuilder from '../components/messaging/contractBuilder';
+import ContractorTracker from '../components/messaging/contractorTracker';
+import _ from 'lodash';
 
-(function() {
-	let Modal = require('../components/modal');
-	let modalDiv;
+(function(){
 
-	const addModalContainer = () => {
-		let body = document.body;
+  $('.message-bookmark').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_bookmark,
+      method: 'POST',
+      data: { pks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-		modalDiv = document.createElement('div');
-		modalDiv.id = 'loom-nda-modal';
+  $('.thread-bookmark').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_bookmark,
+      method: 'POST',
+      data: { tpks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-		body.appendChild(modalDiv);
+  $('.message-unbookmark').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_unbookmark,
+      method: 'POST',
+      data: { pks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-		// to remove the React component from the page (and memory) entirely, call:
-		// React.unmountComponentAtNode(modalDiv)
-	};
+  $('.thread-unbookmark').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_unbookmark,
+      method: 'POST',
+      data: { tpks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-	addModalContainer();
+  $('.message-archive').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_archive,
+      method: 'POST',
+      data: { pks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-	$('#signNDA').on('click', (e) => {
-    e.preventDefault();
+  $('.thread-archive').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_archive,
+      method: 'POST',
+      data: { tpks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-		const NDAModalContent = React.createClass({
-			getInitialState() {
-				return {
-					modalOpen: true,
-					submitting: false
-				}
-			},
+  $('.message-unarchive').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_unarchive,
+      method: 'POST',
+      data: { pks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
-      componentDidMount() {
-				// Will need to do this profile get on parent component
-        this.openModal();
-			},
+  $('.thread-unarchive').on('click', function(e) {
+    $.ajax({
+      url: loom_api.message_unarchive,
+      method: 'POST',
+      data: { tpks: $(e.currentTarget).data('value') },
+      complete: function() {
+        if ($(e.currentTarget).data('url')) {
+          window.location.href = $(e.currentTarget).data('url');
+        } else {
+          window.location.reload();
+        }
+      }
+    });
+    return false;
+  });
 
+  $("#message-form").on("submit", function(e) {
+      $.ajax({
+        url: loom_api.message_send,
+        method: 'POST',
+        data: $(e.currentTarget).serialize(),
+        success: function() {
+          $('#message-modal').modal('hide');
+        }
+      });
+    return false;
+  });
 
-			openModal() {
-				this.setState({
-					modalOpen: true
-				})
-			},
+  $("#send-bid").on("click", function(e) {
+      $.ajax({
+        url: loom_api.job,
+        method: 'POST',
+        data: {
+          message: $('#id_message').val(),
+          equity: $('#id_equity').val(),
+          cash: $('#id_cash').val(),
+          hours: $('#id_hours').val(),
+          project: $('#id_project').val(),
+          developer: $('#developer').val()
+        },
+        success: function() {
+          $('#bid-modal').modal('hide');
+          $("input[type='text']").val('');
+          $('textarea').val('');
+        }
+      });
+    return false;
+  });
 
-			closeModal() {
-				this.setState({
-					modalOpen: false
-				})
-			},
+  const contractDiv = document.getElementById('contract_container');
 
-			signNDA() {
-        let nda_id = $('#signNDA').data('nda');
-        $.ajax({
-          url: loom_api.nda + nda_id + '/',
-          type: 'PATCH',
-          data: JSON.stringify({
-            id: nda_id,
-            signed: true
-          }),
-          success: function(data, textStatus, jqXHR) {
-            this.closeModal();
-          }.bind(this)
-        });
-			},
+  let Messaging = React.createClass({
 
-			render(){
-				const { modalOpen, submitting } = this.state;
+    getInitialState() {
+      return {
+        isLoading: true,
+        showTerms: false,
+        showNDA: false,
+        conversation: {
+          terms: {},
+          nda: {}
+        }
+      };
+    },
 
-				return (
-					<Modal open={modalOpen} onClose={this.closeModal}>
-						<div className="nda-modal">
-							<div className="nda-header">
-								Sign NDA
-							</div>
-							<div className="nda-text">
-								Lorem ipsum nda stuff
-                <input type="checkbox" className="form-control" /> I agree to the Non-Disclosure Agreement
-							</div>
-							<div className="nda-footer">
-								<div className="nda-submit">
-									<button className="btn btn-yellow btn-lg nda-button" disabled={submitting} onClick={this.signNDA}>Sign NDA</button>
-								</div>
-							</div>
-						</div>
-					</Modal>
-				)
-			}
-		});
+    componentWillMount() {
+      $.ajax({
+        url: loom_api.messages + $('#contract_container').data('thread'),
+        success: function (result) {
+          this.setState({
+            conversation: result,
+            isLoading: false
+          });
+        }.bind(this)
+      });
+    },
 
-		ReactDOM.render(<NDAModalContent />, modalDiv);
-	});
+    componentDidMount() {
+
+    },
+
+    toggleTermsPanel() {
+      this.setState({
+        showTerms: !this.state.showTerms,
+        showNDA: this.state.showNDA && this.state.showTerms
+      });
+    },
+
+    toggleNDAPanel() {
+      this.setState({
+        showNDA: !this.state.showNDA,
+        showTerms: this.state.showTerms && this.state.showNDA
+      });
+    },
+
+    render() {
+      const agreementTracker = function () {
+        return (
+          <ContractorTracker />
+        )
+      };
+
+      return (
+        <div>
+          <div className="col-md-8">
+            <div className={ this.state.showTerms ? "panel panel-default" : "hidden"}>
+              <div className="panel-heading text-skinny">
+                <h4>Master Services Agreement</h4>
+                {
+                  this.state.isLoading ||
+                  <ContractBuilder terms={this.state.conversation.terms} />
+                }
+
+              </div>
+            </div>
+            <div className={ this.state.showNDA ? "panel panel-default" : "hidden"}>
+              <div className="panel-heading text-skinny">
+                <h4>Non-Disclosure Agreement</h4>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4">
+            {
+              this.state.isLoading ||
+              <ContractorTracker
+                terms={this.state.conversation.terms}
+                nda={this.state.conversation.nda}
+                toggle_nda={this.toggleNDAPanel}
+                toggle_terms={this.toggleTermsPanel}
+              />
+            }
+          </div>
+        </div>
+      );
+    }
+
+  });
+
+  ReactDOM.render(<Messaging />, contractDiv);
+
 })();

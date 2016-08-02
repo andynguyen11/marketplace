@@ -10,7 +10,7 @@ import ProjectPreview from './ProjectPreview'
 
 function convertToDate(event){
     event.preventDefault();
-    return {value:  new Date(event.target.value).toJSON()}
+    return {value:  new Date(event.target.value).toJSON().slice(0,10)}
 }
 
 var typeOptions = [
