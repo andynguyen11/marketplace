@@ -5,31 +5,12 @@
 @import "../../node_modules/bootstrap-select/less/bootstrap-select.less";
 @import "bootstrap-datepicker3.min.css";
 @import "bootstrap-select.min.css";
-
-@import "components/buttons.less";
-@import "components/helpers.less";
-@import "components/forms.less";
-@import "components/modals.less";
 @import "formValidation.min.css";
 @import "star-rating.min.css";
-
-@import "components/home.less";
-@import "components/account.less";
-@import "components/dashboard.less";
-@import "components/featured.less";
-@import "components/footer.less";
-@import "components/header.less";
-@import "components/login.less";
-@import "components/messaging.less";
-@import "components/onboard.less";
-@import "components/reviews.less";
-@import "components/carousel.less";
-@import "components/plates.less";
-
-@import "routes/about.less";
+@import "fonts.less";
 
 body {
-  font-family: 'Open Sans', sans-serif;
+  font-family: @brand-font;
   font-weight: 400;
   font-size: @font-size-base;
   background: #FFF;
@@ -78,6 +59,14 @@ h5 {
   min-width: @content-width;
   width: 100%;
   margin: auto;
+}
+
+.page-content--alternate {
+  background: #fff6f3;
+}
+
+.highlight {
+  color: @brand--accent;
 }
 
 .wrapper {
@@ -341,3 +330,12 @@ a.project-link {
 @import "components/dashboard.less";
 @import "components/onboard.less";
 @import "components/projects.less";
+@import "components/ratingStars.less";
+@import "components/bigSelect.less";
+@import "components/cta.less";
+
+@import "components/home.less";
+@import "components/carousel.less";
+@import "components/plates.less";
+
+@import "routes/about.less";

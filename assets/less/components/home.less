@@ -117,7 +117,7 @@
 		padding-top: @gutter * 3;
 		padding-right: @gutter * 6;
 		padding-bottom: @gutter;
-		padding-left: @gutter * 8;
+		padding-left: (@gutter * 8) + @gutter--medium;
 	}
 
 	.how-content-list {
@@ -157,7 +157,7 @@
 	}
 
 	.how-content-learn-more {
-		padding: @gutter (@gutter * 8);
+		padding: @gutter ((@gutter * 8) + @gutter--medium);
 
 		a {
 			display: inline-flex;
@@ -199,139 +199,11 @@
 	}
 }
 
-
-.btn.btn-find-project {
-	background: rgba(255,255,255,0.3);
-	width: 160px;
-	font-size: 12px;
-	margin-top: 10px;
+.plates .plates-headcap.home-headcap--bigSelect {
+	padding-top: @gutter--medium;
 }
 
-.home-section {
-	.container {
-		position: relative;
-	}
-	h2 {
-		margin-top: 50px;
-		margin-bottom: 20px;
-	}
-	.btn.btn-more {
-		position: absolute;
-		top: 55px;
-		right: 30px;
-	}
-}
-
-.home-section-carousel {
-	.btn.btn-more {
-		right: 65px;
-	}
-}
-
-#browse-category {
-	a, a:visited, a:hover {
-		color: #fff;
-		text-decoration: none;
-		background-repeat: no-repeat;
-		background-size: cover;
-		position: relative;
-		display: block;
-		h3 {
-			text-transform: uppercase;
-			position: relative;
-			z-index: 2;
-			padding: 125px 0;
-		}
-	}
-	#art {
-		background-image: url('../images/art.jpg');
-	}
-	#technology {
-		background-image: url('../images/technology.jpg');
-	}
-	#gaming {
-		background-image: url('../images/game.jpg');
-	}
-	#health {
-		background-image: url('../images/health.jpg');
-	}
-	#nonprofit {
-		background-image: url('../images/nonprofit.jpg');
-	}
-	#social {
-		background-image: url('../images/social.jpg');
-	}
-	#location {
-		background-image: url('../images/location.jpg');
-	}
-	#music {
-		background-image: url('../images/music.jpg');
-	}
-	#news {
-		background-image: url('../images/news.jpg');
-	}
-}
-
-#developers {
-	.profile {
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-position: bottom;
-		position: relative;
-		color: #fff;
-		text-transform: uppercase;
-		padding: 50px 0;
-	}
-	.profile img {
-		border: 2px solid #ccc;
-		border-radius: 40px;
-		height: 40px;
-	}
-	.overlay {
-		filter: blur(2px);
-		-webkit-filter: blur(2px);
-		overflow: hidden;
-		top: 0px;
-		bottom: -1px;
-		left: 0px;
-		right: 0px;
-	}
-
-	.profile-content{
-		position: relative;
-		z-index: 2;
-	}
-
-	.developers-home-search {
-		display: flex;
-		justify-content: stretch;
-		align-items: center;
-		padding: 40px 20px;
-
-		.developers-home-search-show-me {
-			flex-basis: 25%;
-			text-align: right;
-			padding-right: 10px;
-			font-size: 18px;
-		}
-		.developers-home-search-select {
-			flex-grow: 1;
-			text-align: center;
-			
-			select {
-				display: inline-block;
-				width: 80%;
-			}
-		}
-		.developers-home-search-button {
-			flex-basis: 25%;
-			text-align: left;
-			padding-left: 10px;
-
-			.btn {
-				min-width: 75px;
-			}
-		}
-	}
+.plates .home-dev-bigSelect {
+	padding-top: @gutter * 2;
 }
 

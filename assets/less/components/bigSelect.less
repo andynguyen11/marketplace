@@ -1,0 +1,29 @@
+.bigSelect {
+  color: @brand-neutral--1;
+  font-size: 48px;
+  padding: @gutter 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+
+  .bigSelect-options {
+    background: #FFF;
+    border-bottom: 2px solid @brand--accent;
+    color: @brand--accent;
+    position: relative;
+    padding: 0 @gutter--small;
+    margin: 0 @gutter--medium;
+    cursor: pointer;
+
+    select {
+      position: absolute;
+      opacity: 0;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0);
+      font-size: 20px;
+    }
+  }
+};

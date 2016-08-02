@@ -1,4 +1,5 @@
 .plates {
+  padding-bottom: @gutter * 3;
 
   .plates-headcap {
     display: flex;
@@ -6,6 +7,10 @@
     justify-content: space-between;
     padding-top: @gutter * 4;
     padding-bottom: @gutter * 2;
+  }
+
+  .plates-headcap--noHeader {
+    justify-content: flex-end;
   }
 
   .plates-header {
@@ -29,13 +34,20 @@
     border: 1px solid @brand-neutral--5;
     border-radius: @border-radius;
     overflow: hidden;
+    color: @font-color--light;
+    background: #FFF;
+
+    &:hover, &:active, &:visited {
+      text-decoration: none;
+    }
   }
 
   .plate-image {
+    background-color: #ff7b5c;
+    background: linear-gradient(135deg, #ff7b5c 0%,#ffae39 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('http://www.costumebox.com.au/blog/wp-content/uploads/2014/09/crazy-clown.jpg');
     flex-basis: 220px;
     flex-shrink: 0;
   }
@@ -57,7 +69,6 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('http://bottlebrusharts.com/wp-content/uploads/2012/10/clown1.jpg');
     border: 4px solid #FFF;
     width: 88px;
     height: 88px;
@@ -70,7 +81,7 @@
   }
 
   .plate-info-profile-name--primary {
-    font-weight: bold;
+    color: @font-color--base;
   }
 
   .plate-info-profile-name--secondary {}
@@ -78,6 +89,19 @@
   .plate-info-project {
     flex-grow: 1;
     overflow-y: hidden;
+  }
+
+  .plate-info-project-name {
+    color: @font-color--base;
+    font-size: 18px;
+  }
+
+  .plate-info-project-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
+    text-overflow: -o-ellipsis-lastline;
   }
 
   .plate-stats {
@@ -121,11 +145,90 @@
   }
 
   .plate-stat-amount {
-    font-size: 16px;
+    font-size: 18px;
     color: #FF7B5C;
   }
 
   .plate-stat-type {
-    font-size: 16px;
+    font-size: 18px;
   }
+
+  .plate--dev {
+    flex-basis: 24%;
+    border: none;
+    color: #FFF;
+    height: 270px;
+    position: relative;
+    display: flex;
+  }
+
+  .plate--dev-profile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 1;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: url('/static/images/brand-gradient--primary.svg');
+    }
+  }
+
+  .plate--dev-type {
+    position: absolute;
+    top: @gutter--medium;
+    right: @gutter--medium;
+    background: rgba(255, 255, 255, 0.3);
+    text-transform: capitalize;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: @border-radius--small;
+    z-index: 2;
+  }
+
+  .plate--dev-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: @gutter--medium;
+  }
+
+  .plate--dev-info-profile-photo {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 4px solid #FFF;
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+  }
+
+  .plate--dev-info-rating {}
+
+  .plate--dev-info-availability {
+    font-size: 22px;
+    font-weight: bold;
+  }
+
+  .plate--dev-info-hire-button {}
 }

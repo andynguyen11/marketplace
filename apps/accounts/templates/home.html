@@ -19,7 +19,7 @@
         <div class="hero-slide">
           <h2>Raise ideas, not funds.</h2>
           <h5>Loom is the first ever work for equity platform that connects<br/>visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-brand btn-brand--hero">Post Your Project</a>
+          <a href="" class="btn btn-brand btn-brand--attn">Post Your Project</a>
         </div>
       </div>
       <div class="item hero-item--home hero-item--home-post-project">
@@ -27,7 +27,7 @@
         <div class="hero-slide">
           <h2>Raise ideas, not funds.</h2>
           <h5>Loom is the first ever work for equity platform that connects<br/>visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-brand btn-brand--hero">Post Your Project</a>
+          <a href="" class="btn btn-brand btn-brand--attn">Post Your Project</a>
         </div>
       </div>
       <div class="item hero-item--home hero-item--home-post-project">
@@ -35,7 +35,7 @@
         <div class="hero-slide">
           <h2>Raise ideas, not funds.</h2>
           <h5>Loom is the first ever work for equity platform that connects<br/>visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-brand btn-brand--hero">Post Your Project</a>
+          <a href="" class="btn btn-brand btn-brand--attn">Post Your Project</a>
         </div>
       </div>
 
@@ -93,512 +93,164 @@
     <a href="" class="btn btn--clear btn-lg">View all</a>
   </div>
   <div class="plates-inner">
-    <div class="plate">
-      <div class="plate-image"></div>
+    <a class="plate" href="{% url 'project' featured.id %}">
+      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo"></div>
+          {% if featured.project_manager.linkedin.extra_data.picture_url %}
+          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
+          {% endif %}
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">Disney</div>
-            <div class="plate-info-profile-name--secondary">Patch Adams</div>
+            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
+            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
           </div>
         </div>
         <div class="plate-info-project">
-          <h4 class="plate-info-project-name">Tinder for Clowns</h4>
-          <p class="plate-info-project-description">Are you a clown looking for love? Swipe right honk honk!</p>
+          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
+          <p class="plate-info-project-description">{{ featured.description }}</p>
         </div>
       </div>
       <div class="plate-stats">
+        {% if featured.estimated_equity %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">3.2%</div>
+          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
           <div class="plate-stat-type">Equity</div>
         </div>
+        {% endif %}
+        {% if featured.estimated_cash %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">$1,000</div>
+          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
           <div class="plate-stat-type">Cash</div>
         </div>
+        {% endif %}
       </div>
-    </div>
-    <div class="plate">
-      <div class="plate-image"></div>
+    </a>
+    <a class="plate" href="{% url 'project' featured.id %}">
+      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo"></div>
+          {% if featured.project_manager.linkedin.extra_data.picture_url %}
+          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
+          {% endif %}
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">Disney</div>
-            <div class="plate-info-profile-name--secondary">Patch Adams</div>
+            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
+            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
           </div>
         </div>
         <div class="plate-info-project">
-          <h4 class="plate-info-project-name">Tinder for Clowns</h4>
-          <p class="plate-info-project-description">Are you a clown looking for love? Swipe right honk honk!</p>
+          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
+          <p class="plate-info-project-description">{{ featured.description }}</p>
         </div>
       </div>
       <div class="plate-stats">
+        {% if featured.estimated_equity %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">3.2%</div>
+          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
           <div class="plate-stat-type">Equity</div>
         </div>
+        {% endif %}
+        {% if featured.estimated_cash %}
+        <div class="plate-stat">
+          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
+          <div class="plate-stat-type">Cash</div>
+        </div>
+        {% endif %}
       </div>
-    </div>
-    <div class="plate">
-      <div class="plate-image"></div>
+    </a>
+    <a class="plate" href="{% url 'project' featured.id %}">
+      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo"></div>
+          {% if featured.project_manager.linkedin.extra_data.picture_url %}
+          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
+          {% endif %}
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">Disney</div>
-            <div class="plate-info-profile-name--secondary">Patch Adams</div>
+            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
+            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
           </div>
         </div>
         <div class="plate-info-project">
-          <h4 class="plate-info-project-name">Tinder for Clowns</h4>
-          <p class="plate-info-project-description">Are you a clown looking for love? Swipe right honk honk!</p>
+          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
+          <p class="plate-info-project-description">{{ featured.description }}</p>
         </div>
       </div>
       <div class="plate-stats">
+        {% if featured.estimated_equity %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">$1,000</div>
+          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
+          <div class="plate-stat-type">Equity</div>
+        </div>
+        {% endif %}
+        {% if featured.estimated_cash %}
+        <div class="plate-stat">
+          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
           <div class="plate-stat-type">Cash</div>
         </div>
+        {% endif %}
       </div>
-    </div>
+    </a>
   </div>
 </div>
 
-<div id="featured-project" class="home-section home-section-carousel">
-  <div class="row">
-    <div class="container">
-      <h2 class="text-center">featured project</h2>
-      <button class="btn btn-yb btn-more">see more</button>
-      <div id="featured-carousel" class="carousel home-section slide">
-
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner" role="listbox">
-          <!-- we should put a loop here with all the projects we want to feature -->
-          <div class="item item-featured active">
-            <div class="panel panel-project">
-              <a class="project-link" href="{% url 'project' featured.id %}">
-                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
-                  <div class="overlay"></div>
-                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
-                </div>
-                <div class="project-content col-md-5 drop-padding">
-                  <div class="project-copy">
-                    <h4 class="project-title">{{ featured.title }}</h4>
-                    <div>
-                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
-                      <div class="project-byline pull-left">
-                        <p>
-                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
-                          <span class="project-company">{{ featured.company.name }}</span>
-                        </p>
-                      </div>
-                      <div class="clearfix"></div>
-                    </div>
-                    <div class="project-description">
-                      {{ featured.description }}
-                    </div>
-                    <div class="project-skills"></div>
-                  </div>
-                  <div class="project-specs text-center">
-                    <ul>
-                      <li class="project-hours">
-                        <h5>{{ featured.estimated_hours }}</h5>
-                        hours
-                      </li>
-                      <li class="project-equity">
-                        <h5>{{ featured.estimated_equity }}%</h5>
-                        equity
-                      </li>
-                      <li class="project-cash">
-                        <h5>${{ featured.estimated_cash }}</h5>
-                        cash
-                      </li>
-                    </ul>
-                    <div class="project-for">
-                      for
-                    </div>
-                    <div class="project-or">
-                      or
-                    </div>
-                  </div>
-                </div>
-                <div class="clearfix"></div>
-              </a>
-            </div>
-          </div>
-          <div class="item item-featured">
-            <div class="panel panel-project">
-              <a class="project-link" href="{% url 'project' featured.id %}">
-                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
-                  <div class="overlay"></div>
-                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
-                </div>
-                <div class="project-content col-md-5 drop-padding">
-                  <div class="project-copy">
-                    <h4 class="project-title">{{ featured.title }}</h4>
-                    <div>
-                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
-                      <div class="project-byline pull-left">
-                        <p>
-                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
-                          <span class="project-company">{{ featured.company.name }}</span>
-                        </p>
-                      </div>
-                      <div class="clearfix"></div>
-                    </div>
-                    <div class="project-description">
-                      {{ featured.description }}
-                    </div>
-                    <div class="project-skills"></div>
-                  </div>
-                  <div class="project-specs text-center">
-                    <ul>
-                      <li class="project-hours">
-                        <h5>{{ featured.estimated_hours }}</h5>
-                        hours
-                      </li>
-                      <li class="project-equity">
-                        <h5>{{ featured.estimated_equity }}%</h5>
-                        equity
-                      </li>
-                      <li class="project-cash">
-                        <h5>${{ featured.estimated_cash }}</h5>
-                        cash
-                      </li>
-                    </ul>
-                    <div class="project-for">
-                      for
-                    </div>
-                    <div class="project-or">
-                      or
-                    </div>
-                  </div>
-                </div>
-                <div class="clearfix"></div>
-              </a>
-            </div>
-          </div>
-          <div class="item item-featured">
-            <div class="panel panel-project">
-              <a class="project-link" href="{% url 'project' featured.id %}">
-                <div class="project-image col-md-7" style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');">
-                  <div class="overlay"></div>
-                  <h3 class="text-skinny text-center">{{ featured.featured_tagline }}</h3>
-                </div>
-                <div class="project-content col-md-5 drop-padding">
-                  <div class="project-copy">
-                    <h4 class="project-title">{{ featured.title }}</h4>
-                    <div>
-                      <img class="project-manager-photo pull-left" src="{{ featured.project_manager.linkedin.extra_data.picture_url }}" />
-                      <div class="project-byline pull-left">
-                        <p>
-                          <span class="project-manager">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</span> <br />
-                          <span class="project-company">{{ featured.company.name }}</span>
-                        </p>
-                      </div>
-                      <div class="clearfix"></div>
-                    </div>
-                    <div class="project-description">
-                      {{ featured.description }}
-                    </div>
-                    <div class="project-skills"></div>
-                  </div>
-                  <div class="project-specs text-center">
-                    <ul>
-                      <li class="project-hours">
-                        <h5>{{ featured.estimated_hours }}</h5>
-                        hours
-                      </li>
-                      <li class="project-equity">
-                        <h5>{{ featured.estimated_equity }}%</h5>
-                        equity
-                      </li>
-                      <li class="project-cash">
-                        <h5>${{ featured.estimated_cash }}</h5>
-                        cash
-                      </li>
-                    </ul>
-                    <div class="project-for">
-                      for
-                    </div>
-                    <div class="project-or">
-                      or
-                    </div>
-                  </div>
-                </div>
-                <div class="clearfix"></div>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Controls -->
-        <a class="left carousel-control" href="#featured-carousel" role="button" data-slide="prev">
-          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#featured-carousel" role="button" data-slide="next">
-          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
+<div class="page-content page-content--alternate">
+  <div class="plates page-content--medium">
+    <div class="plates-headcap">
+      <h3 class="plates-header">Popular Projects</h3>
+      <a href="" class="btn btn--clear btn-lg">View all</a>
     </div>
-  </div>
-</div>
+    <div class="plates-inner">
 
-<div id="new-projects" class="home-section home-section-carousel">
-  <div class="row">
-    <div class="container">
-      <h2 class="text-center">newly added projects</h2>
-      <button class="btn btn-yb btn-more">see more</button>
-      <div id="new-projects-carousel" class="carousel home-section slide">
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner" role="listbox">
-          <!-- we should put a loop here with all the projects we want to feature -->
-          <div class="item item-project active">
-            {% for project in new %}
-            <div class="col-md-4">
-              <a class="project-link" href="{% url 'project' project.id %}">
-                <div class="panel panel-project">
-                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
-                  <div class="project-content">
-                    <div class="project-copy">
-                      <h4 class="project-title">{{ project.title }}</h4>
-                      <div>
-                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
-                        <div class="project-byline pull-left">
-                          <p>
-                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                            <span class="project-company">{{ project.company.name }}</span>
-                          </p>
-                        </div>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="project-description">
-                        {{ project.description }}
-                      </div>
-                      <div class="project-skills"></div>
-                    </div>
-                    <div class="project-specs text-center">
-                      <ul>
-                        <li class="project-hours">
-                          <h5>{{ project.estimated_hours }}</h5>
-                          hours
-                        </li>
-                        <li class="project-equity">
-                          <h5>{{ project.estimated_equity }}%</h5>
-                          equity
-                        </li>
-                        <li class="project-cash">
-                          <h5>${{ project.estimated_cash }}</h5>
-                          cash
-                        </li>
-                      </ul>
-                      <div class="project-for">
-                        for
-                      </div>
-                      <div class="project-or">
-                        or
-                      </div>
-                    </div>
-                  </div>
-                  <div class="clearfix"></div>
-                </div>
-              </a>
+      {% for project in new %}
+      <a class="plate" href="{% url 'project' project.id %}">
+        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"{% endif %}></div>
+        <div class="plate-info">
+          <div class="plate-info-profile">
+            {% if project.project_manager.linkedin.extra_data.picture_url %}
+            <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.linkedin.extra_data.picture_url }}');"></div>
+            {% endif %}
+            <div class="plate-info-profile-name">
+              <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</div>
+              <div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>
             </div>
-            {% endfor %}
           </div>
-          <div class="item item-project">
-            {% for project in new %}
-            <div class="col-md-4">
-              <a class="project-link" href="{% url 'project' project.id %}">
-                <div class="panel panel-project">
-                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
-                  <div class="project-content">
-                    <div class="project-copy">
-                      <h4 class="project-title">{{ project.title }}</h4>
-                      <div>
-                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
-                        <div class="project-byline pull-left">
-                          <p>
-                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                            <span class="project-company">{{ project.company.name }}</span>
-                          </p>
-                        </div>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="project-description">
-                        {{ project.description }}
-                      </div>
-                      <div class="project-skills"></div>
-                    </div>
-                    <div class="project-specs text-center">
-                      <ul>
-                        <li class="project-hours">
-                          <h5>{{ project.estimated_hours }}</h5>
-                          hours
-                        </li>
-                        <li class="project-equity">
-                          <h5>{{ project.estimated_equity }}%</h5>
-                          equity
-                        </li>
-                        <li class="project-cash">
-                          <h5>${{ project.estimated_cash }}</h5>
-                          cash
-                        </li>
-                      </ul>
-                      <div class="project-for">
-                        for
-                      </div>
-                      <div class="project-or">
-                        or
-                      </div>
-                    </div>
-                  </div>
-                  <div class="clearfix"></div>
-                </div>
-              </a>
-            </div>
-            {% endfor %}
-          </div>
-          <div class="item item-project">
-            {% for project in new %}
-            <div class="col-md-4">
-              <a class="project-link" href="{% url 'project' project.id %}">
-                <div class="panel panel-project">
-                  <div class="project-image" style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"></div>
-                  <div class="project-content">
-                    <div class="project-copy">
-                      <h4 class="project-title">{{ project.title }}</h4>
-                      <div>
-                        <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
-                        <div class="project-byline pull-left">
-                          <p>
-                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                            <span class="project-company">{{ project.company.name }}</span>
-                          </p>
-                        </div>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="project-description">
-                        {{ project.description }}
-                      </div>
-                      <div class="project-skills"></div>
-                    </div>
-                    <div class="project-specs text-center">
-                      <ul>
-                        <li class="project-hours">
-                          <h5>{{ project.estimated_hours }}</h5>
-                          hours
-                        </li>
-                        <li class="project-equity">
-                          <h5>{{ project.estimated_equity }}%</h5>
-                          equity
-                        </li>
-                        <li class="project-cash">
-                          <h5>${{ project.estimated_cash }}</h5>
-                          cash
-                        </li>
-                      </ul>
-                      <div class="project-for">
-                        for
-                      </div>
-                      <div class="project-or">
-                        or
-                      </div>
-                    </div>
-                  </div>
-                  <div class="clearfix"></div>
-                </div>
-              </a>
-            </div>
-            {% endfor %}
+          <div class="plate-info-project">
+            <h4 class="plate-info-project-name">{{ project.title }}</h4>
+            <p class="plate-info-project-description">{{ project.description }}</p>
           </div>
         </div>
-
-        <!-- Controls -->
-        <a class="left carousel-control" href="#new-projects-carousel" role="button" data-slide="prev">
-          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#new-projects-carousel" role="button" data-slide="next">
-          <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!--<div id="browse-category">-->
-<!--<div class="row">-->
-<!--<div class="container text-center">-->
-<!--<h2>browse by category</h2>-->
-<!--{% for category_verbose, category in categories %}-->
-<!--<div class="col-md-4">-->
-<!--<a id="{{ category_verbose }}" href="{% url 'project-gallery' category_verbose  %}">-->
-<!--<div class="overlay"></div>-->
-<!--<h3>{{ category }}</h3>-->
-<!--</a>-->
-<!--</div>-->
-<!--{% endfor %}-->
-<!--</div>-->
-<!--</div>-->
-<!--</div>-->
-
-<div id="developers" class="home-section">
-  <div class="row">
-    <div class="container">
-      <h2 class="text-center">meet developers</h2>
-      {% for developer in developers %}
-      <div class="col-md-4">
-        <div class="profile text-center" style="background-image: url('{{ developer.get_photo }}');">
-          <div class="overlay"></div>
-          <div class="profile-content">
-            <img src="{{ developer.get_photo }}" />
-            <h5>{{ developer.first_name }}</h5>
-            <p class="text-yellow">{{ developer.role }}</p>
-            <h3>15 hrs / week</h3>
-            <a class="btn btn-foggy">Hire {{ developer.first_name }}</a>
+        <div class="plate-stats">
+          {% if project.estimated_equity %}
+          <div class="plate-stat">
+            <div class="plate-stat-amount">{{ project.estimated_equity }}</div>
+            <div class="plate-stat-type">Equity</div>
           </div>
+          {% endif %}
+          {% if project.estimated_cash %}
+          <div class="plate-stat">
+            <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
+            <div class="plate-stat-type">Cash</div>
+          </div>
+          {% endif %}
         </div>
-      </div>
+      </a>
       {% endfor %}
-    </div>
-  </div>
-  <div class="row">
-    <div class="container">
-      <div class="developers-home-search">
-        <div class="developers-home-search-show-me">
-          Show me more
-        </div>
-        <div class="developers-home-search-select">
-          <select class="form-control">
-            <option>Full-stack devs</option>
-            <option>Backend devs</option>
-            <option>Frontend devs</option>
-            <option>Designers</option>
-          </select>
-        </div>
-        <div class="developers-home-search-button">
-          <button type="button" class="btn btn-primary">Go</button>
-        </div>
-      </div>
+
     </div>
   </div>
 </div>
 
-<div id="try-it-cta">
-  <div class="container text-center">
-    <h1 class="text-skinny">
-      We only get paid when<br/>
-      you hire a developer for<br/>
-      your project.
-    </h1>
-    <button class="btn btn-foggy btn-lg btn-cta">Find a Project</button>
-  </div>
+<div id="devs-home" class="devs page-content--medium"></div>
+
+<div class="cta cta--primary page-content--medium page-content--alternate">
+    <div class="cta-content">
+        Let's bring your ideas to life<br/>
+        Posting projects is <span class="highlight">free</span>.
+    </div>
+    <a href=#"" class="btn btn-brand btn-brand--attn">Post your project</a>
 </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/routes/home.js' %}"></script>
 {% endblock %}
