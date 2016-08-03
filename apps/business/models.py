@@ -56,7 +56,7 @@ def user_company(user):
 
 class Job(models.Model):
     project = models.ForeignKey('business.Project')
-    developer = models.ForeignKey('accounts.Profile')
+    contractor = models.ForeignKey('accounts.Profile')
     attachments = GenericRelation(Attachment, related_query_name='job_attachments')
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
@@ -70,7 +70,7 @@ class Job(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return '{0} - {1} {2}'.format(self.project, self.developer.first_name, self.developer.last_name)
+        return '{0} - {1} {2}'.format(self.project, self.contractor.first_name, self.contractor.last_name)
 
     @property
     def conversation(self):
@@ -148,6 +148,10 @@ class Project(models.Model):
         documents = Document.objects.filter(project=self)
         return documents
 
+    def nda_list(self):
+        documents = Document.objects.filter(project=self, type='NDA', status='signed')
+        return [document.job.contractor.id for document in documents]
+
 
 class Terms(models.Model):
     job = models.ForeignKey(Job)
@@ -167,7 +171,7 @@ class Terms(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.contractee = self.job.project.company.name
-            self.contractor = '{0} {1}'.format(self.job.developer.first_name, self.job.developer.last_name)
+            self.contractor = '{0} {1}'.format(self.job.contractor.first_name, self.job.contractor.last_name)
             self.cash = self.job.cash
             self.equity = self.job.equity
             self.start_date = self.job.project.start_date
@@ -180,4 +184,4 @@ class Document(models.Model):
     status = models.CharField(max_length=100, default='new')
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     job = models.ForeignKey(Job)
-
+    project = models.ForeignKey(Project)

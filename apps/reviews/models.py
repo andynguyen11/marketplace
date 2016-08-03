@@ -17,7 +17,7 @@ class Review(models.Model):
 
 
 class DeveloperReview(Review):
-    developer = models.ForeignKey('accounts.Profile')
+    contractor = models.ForeignKey('accounts.Profile')
 
 
 class CompanyReview(Review):

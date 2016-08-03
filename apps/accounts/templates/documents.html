@@ -30,19 +30,19 @@
               {% for doc in project.documents %}
               <tr>
                 <td>
-                  <img src="{{ doc.job.developer.get_photo }}" class="profile-photo img-circle" />
+                  <img src="{{ doc.job.contractor.get_photo }}" class="profile-photo img-circle" />
                 </td>
                 <td>
-                  <strong>{{ doc.job.developer.first_name }}</strong> <br/>
+                  <strong>{{ doc.job.contractor.first_name }}</strong> <br/>
                   {{ bid.date_created }}
                 </td>
                 <td>
-                  <strong>{{ doc.job.developer.role }}</strong><br/>
+                  <strong>{{ doc.job.contractor.role }}</strong><br/>
                   Developer
                 </td>
                 <td>
-                  <strong>{{ doc.job.developer.city }}</strong><br/>
-                  {{ doc.job.developer.state }}
+                  <strong>{{ doc.job.contractor.city }}</strong><br/>
+                  {{ doc.job.contractor.state }}
                 </td>
                 <td>
                   <strong>{{ doc.type }}</strong>

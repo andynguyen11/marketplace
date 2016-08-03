@@ -31,22 +31,22 @@
               {% for bid in project.active_jobs %}
               <tr>
                 <td>
-                  <img src="{{ bid.developer.linkedin.extra_data.picture_url }}" class="profile-photo img-circle" />
+                  <img src="{{ bid.contractor.get_photo }}" class="profile-photo img-circle" />
                 </td>
                 <td>
-                  <strong>{{ bid.developer.first_name }}</strong> <br/>
+                  <strong>{{ bid.contractor.first_name }}</strong> <br/>
                   {{ bid.date_created }}
                 </td>
                 <td>
-                  <strong>{{ bid.developer.role }}</strong><br/>
+                  <strong>{{ bid.contractor.role }}</strong><br/>
                   Developer
                 </td>
                 <td>
-                  <strong>{{ bid.developer.city }}</strong><br/>
-                  {{ bid.developer.state }}
+                  <strong>{{ bid.contractor.city }}</strong><br/>
+                  {{ bid.contractor.state }}
                 </td>
                 <td>
-                  <strong>{{ bid.developer.capacity }} hours/wk</strong>
+                  <strong>{{ bid.contractor.capacity }} hours/wk</strong>
                 </td>
                 <td>
                   <div class="progress">

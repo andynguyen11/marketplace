@@ -27,5 +27,5 @@ class BidPermission(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        return request.user.id == obj.developer.id or \
+        return request.user.id == obj.contractor.id or \
                request.user.id == obj.project.project_manager.id

@@ -62,28 +62,58 @@
       </div>
       <div class="section">
         <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#">Overview</a></li>
-          <li role="presentation"><a href="#">Business Plan <i class="fa fa-lock"></i></a></li>
-          <li role="presentation"><a href="#">Training Docs <i class="fa fa-lock"></i></a></li>
-          <li role="presentation"><a href="#">Technology Stack <i class="fa fa-lock"></i></a></li>
-          <li role="presentation"><a href="#">Financials <i class="fa fa-lock"></i></a></li>
+          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+          {% for tab in project.info %}
+          <li role="presentation"><a href="#{{ tab.title|slugify }}" aria-controls="{{ tab.title|slugify }}" role="tab" data-toggle="tab">{{ tab.title }}
+            {% if tab.type == 'private' %}
+            <i class="fa fa-lock"></i></a></li>
+            {% endif %}
+          {% endfor %}
         </ul>
-        <div class="sub-section">
-          <div class="col-md-8">
-            <h2 class="section-header">Project Overview</h2>
-            <p>{{ project.description | safe }}</p>
+        <div class="tab-content">
+          <div class="tab-pane active" role="tab-panel" id="overview">
+            <div class="col-md-8">
+              <h2 class="section-header">Project Overview</h2>
+              <p>{{ project.description | safe }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Posted by</h5>
+              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+                <div class="project-byline pull-left">
+                  <p>
+                    <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                    <span class="project-company">{{ project.company.name }}</span>
+                  </p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
           </div>
-          <div class="col-md-4">
-            <h5>Posted by</h5>
-            <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
-              <div class="project-byline pull-left">
-                <p>
-                  <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                  <span class="project-company">{{ project.company.name }}</span>
-                </p>
+          {% for tab in project.info %}
+          <div class="tab-pane" role="tab-panel" id="{{ tab.title|slugify }}">
+            {% if tab.type == 'private' and request.user.id not in project.nda_list %}
+              <div class="text-center">
+                <h2><i class="fa fa-lock"></i></h2>
+                <h3>Please sign a Non-Disclosure Agreement with the project owner to view this content.</h3>
               </div>
-              <div class="clearfix"></div>
+            {% else %}
+            <div class="col-md-8">
+              <h2 class="section-header">{{ tab.title }}</h2>
+              <p>{{ tab.description | safe }}</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Posted by</h5>
+              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+                <div class="project-byline pull-left">
+                  <p>
+                    <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                    <span class="project-company">{{ project.company.name }}</span>
+                  </p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            {% endif %}
           </div>
+          {% endfor %}
         </div>
       </div>
     </div>

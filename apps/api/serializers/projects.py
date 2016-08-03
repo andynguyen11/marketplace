@@ -57,9 +57,9 @@ class JobSerializer(serializers.ModelSerializer):
         terms = Terms.objects.create(job=job)
         nda = Document.objects.create(job=job, type='NDA')
         message = pm_write(
-            sender=job.developer,
+            sender=job.contractor,
             recipient=job.project.project_manager,
-            subject='New Bid from {0} for {1}'.format(job.developer.first_name or job.developer.email, job.project.title),
+            subject='New Bid from {0} for {1}'.format(job.contractor.first_name or job.contractor.email, job.project.title),
             body=msg
         )
         # TODO Rethink saving these on the message

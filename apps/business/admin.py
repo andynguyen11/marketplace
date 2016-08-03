@@ -16,7 +16,7 @@ class ProjectAdmin(admin.ModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):
-    list_display = ('project', 'developer', 'date_created', 'status', )
+    list_display = ('project', 'contractor', 'date_created', 'status', )
     inlines = [AttachmentInline]
 
 
