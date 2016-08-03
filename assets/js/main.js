@@ -17,6 +17,7 @@
     require('./vendor/select2-adaptor');
     require('./vendor/formValidation.popular.min');
     require('./vendor/validation.bootstrap.min');
+    require('./vendor/zendesk');
 
     // import app files
     window.loom_api = require('./api');

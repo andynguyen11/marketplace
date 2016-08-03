@@ -25,6 +25,7 @@
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
   {% block fb_pixel %}{% endblock %}
+  <script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(e){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","joinloom.zendesk.com");/*]]>*/</script>
 </head>
 
 <body class="{% block bodyclass %}customer-portal{% endblock %}" id="{% block bodyid %}{% endblock %}">
@@ -44,7 +45,7 @@
             <img src="{% static 'images/icon-message.png' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
-          <a href="{% url 'dashboard' %}"><img src="{% static 'images/icon-notifications.png' %}" /></a>
+          <a id="help" href="#"><img src="{% static 'images/icon-notifications.png' %}" /></a>
           <img class="dropdown-toggle profile-image img-circle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
 
           <ul class="dropdown-menu dropdown-menu-right">
@@ -87,7 +88,7 @@
               <li><a href="/company/#/about/careers">Careers</a></li>
               <li><a href="/press/">Press</a></li>
               <li><a href="/blog/">Blog</a></li>
-              <li><a href="/help/">Help</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us">Help</a></li>
               <li><a href="/terms/">Terms &amp; Service</a></li>
               <li><a href="/contact/">Contact</a></li>
             </ul>
