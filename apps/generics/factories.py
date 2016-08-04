@@ -102,7 +102,6 @@ class ProfileFactory(GenericModelFactory):
     first_name = factory.Faker('first_name')
     last_name = factory.Faker('last_name')
     username = factory.Sequence(lambda n: 'test_user_%d' % n)
-    password = factory.Faker('word')
     email = factory.Sequence(lambda n: 'tester{0}@gmail.com'.format(n))
     photo = factory.django.ImageField(from_path='static/images/logo.jpg', file_name='the_file.png')
 
