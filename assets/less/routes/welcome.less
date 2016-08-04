@@ -1,0 +1,113 @@
+@welcome-break-large: 1000px;
+@welcome-break-medium: 750px;
+@welcome-break-mobile: 540px;
+
+.welcome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .logo {
+    height: 48px;
+    background: url('/static/images/Loom_Logo.svg') no-repeat;
+    background-size: contain;
+    width: 130px;
+    text-indent: -999em;
+    position: absolute;
+    top: @gutter;
+    left: @gutter;
+
+    @media screen and (max-width: @welcome-break-mobile) {
+      position: relative;
+      top: auto;
+      left: auto;
+      padding-bottom: @gutter * 4;
+    }
+  }
+
+  @media screen and (max-width: @welcome-break-mobile) {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: @gutter;
+  }
+}
+
+.welcome-content {
+  flex-shrink: 1;
+  flex-basis: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  @media screen and (max-width: @welcome-break-medium) {
+    flex-basis: 80%;
+    flex-grow: 1;
+  }
+
+  @media screen and (max-width: @welcome-break-mobile) {
+    padding-bottom: @gutter;
+    align-items: stretch;
+  }
+}
+
+.welcome-content-inner {
+  width: 500px + (@gutter * 3);
+  height: 400px;
+  padding-right: @gutter * 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-direction: column;
+
+  @media screen and (max-width: @welcome-break-large) {
+    width: 100%;
+    padding: 0 @gutter;
+  }
+
+  @media screen and (max-width: @welcome-break-mobile) {
+    height: auto;
+    width: auto;
+    align-items: center;
+  }
+}
+
+.welcome-header {
+  font-size: 48px;
+
+  @media screen and (max-width: @welcome-break-medium) {
+    font-size: 38px;
+  }
+}
+
+.welcome-paragraph {
+  font-size: 24px;
+
+  @media screen and (max-width: @welcome-break-medium) {
+    font-size: 20px;
+  }
+}
+
+.welcome-splash {
+  position: relative;
+  flex-shrink: 1;
+  flex-basis: 40%;
+  background: url('/static/images/bg-welcome.jpg') no-repeat left center;
+  background-size: cover;
+
+  @media screen and (max-width: @welcome-break-mobile) {
+    display: none;
+  }
+}
+
+.welcome-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: url('/static/images/overlay-welcome.svg') no-repeat left center;
+  background-size: cover;
+}

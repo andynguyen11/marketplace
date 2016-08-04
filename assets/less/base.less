@@ -10,7 +10,7 @@
 @import "fonts.less";
 
 body {
-  font-family: @brand-font;
+  font-family: @page-font;
   font-weight: 400;
   font-size: @font-size-base;
   background: #FFF;
@@ -26,6 +26,7 @@ hr {
 }
 
 h1, h2, h3, h4, h5 {
+  font-family: @brand-font;
   font-weight: 700;
 }
 
@@ -333,9 +334,11 @@ a.project-link {
 @import "components/ratingStars.less";
 @import "components/bigSelect.less";
 @import "components/cta.less";
+@import "components/loader.less";
 
 @import "components/home.less";
 @import "components/carousel.less";
 @import "components/plates.less";
 
 @import "routes/about.less";
+@import "routes/welcome.less";

@@ -38,6 +38,7 @@ urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
     url(r'^company/$', TemplateView.as_view(template_name='company.html'), name='company'),
+    url(r'^welcome/$', TemplateView.as_view(template_name='welcome.html'), name='welcome'),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign', include('docusign.urls', namespace='docusign')),
     url(r'^login/$', accounts_views.user_login, name='login'),
