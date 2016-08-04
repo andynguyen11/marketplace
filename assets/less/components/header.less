@@ -17,11 +17,15 @@
 
   .logo {
     height: 48px;
-    background: url(../images/Loom_Logo.svg) no-repeat;
+    background: url(../images/Loom_Logo_Beta.svg) no-repeat;
     background-size: contain;
     flex-shrink: 0;
-    flex-basis: 130px;
+    flex-basis: 160px;
     text-indent: -999em;
+  }
+
+  .header-nav {
+    display: flex;
   }
 
   ul.header-links {
@@ -104,6 +108,7 @@
   
   .header-icons {
     position: relative;
+    padding-left: @gutter * 2;
 
     img {
       width: 30px;

@@ -16,7 +16,6 @@ const FormHelpers = {
 
 			if(validator && !validator(value)) {
 				formIsValid = false;
-				console.log('invalid', elementName, value)
 			}
 		});
 

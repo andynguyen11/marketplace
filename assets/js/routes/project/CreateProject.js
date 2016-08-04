@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, FormGroup, FormControl, ControlLabel, Nav, NavItem } from 'react-bootstrap';
 import { BigFormGroup } from './FormUtils';
 import Select2 from 'react-select2-wrapper'
-import { SkillWidget } from '../skill'
+import { SkillWidget } from '../../components/skill'
 import { objectToFormData } from './utils'
 import AttachmentField, { MultipleAttachmentsField, mergeAttachments } from './AttachmentField'
 import ProjectInfoField from './ProjectInfoField'
@@ -59,10 +59,8 @@ function ProgressBar({flow, active, valid=true, onSelect}){
                     <NavItem {...props('basics', 'first-step')}>Basics</NavItem>
                     <NavItem {...props('details')}>Project Details</NavItem>
                     <NavItem {...props('budget', 'last-step')}>Budget</NavItem>
-                    <span className="pill-group">
-                        <NavItem {...props('preview', 'final')}>Preview</NavItem>
-                        <NavItem {...props('post', 'final')}>Post</NavItem>
-                    </span>
+                    <NavItem {...props('preview', 'final')}>Preview</NavItem>
+                    <NavItem {...props('post', 'final')}>Post</NavItem>
                 </Nav>
             </div>
         </div>
@@ -318,9 +316,9 @@ const CreateProject = React.createClass({
                     <ProjectPreview className='preview section' data={this.state.data} active={this.state.currentSection == 'preview'}/>
 
                     <div className='text-center form-group col-md-12'>
-                        <Button type='submit' bsClass='btn btn-step' onClick={this.sectionAction}>
+                        <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this.sectionAction}>
                             { (sections.indexOf(currentSection) < sections.length - 2) ? 'Save Project and Continue' : 'Post Project'}
-                        </Button>
+                        </a>
                     </div>
                 </form>
             </div>

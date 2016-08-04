@@ -2,7 +2,7 @@ import React from 'react'
 import { MultipleAttachmentsField, mergeAttachments } from './AttachmentField'
 import { BigFormGroup, toTitle } from './FormUtils'
 import { Checkbox } from 'react-bootstrap'
-import Quill from '../editor/Quill'
+import Quill from '../../components/editor/Quill'
 
 function quillConf({id, type}){
    return {

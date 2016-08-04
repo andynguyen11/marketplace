@@ -64,7 +64,11 @@ const EntrepreneurOnboard = React.createClass({
         label: 'Title at Your Company',
         value: profile.title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany } = this.state;
+
+          return isCompany ? FormHelpers.checks.isRequired(value) : true;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.title = value;
@@ -294,9 +298,40 @@ const EntrepreneurOnboard = React.createClass({
     this.setState({ formElements, formError: false });
   },
 
+  handleImageChange(e) {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
+    if(re.exec(file.name)) {
+      reader.onloadend = () => {
+        debugger
+        this.setState({
+          photo_url: reader.result,
+          photo_file: file
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+
   render() {
-    const { formElements, formError, profile } = this.state;
+    const { formElements, formError, profile, isCompany } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const yourTitle = isCompany && (
+      <div className='form-group col-md-8 col-md-offset-2'>
+        <label className="control-label" htmlFor={formElements.title.name}>{formElements.title.label}</label>
+        <input
+            className="form-control"
+            type='text'
+            name={formElements.title.name}
+            id={formElements.title.name}
+            placeholder={formElements.title.placeholder}
+            value={formElements.title.value}
+            onChange={this.handleChange}
+        />
+      </div>
+    );
 
     return (
       <div>
@@ -314,34 +349,21 @@ const EntrepreneurOnboard = React.createClass({
 
         <div className='section-header text-center col-md-8 col-md-offset-2'>Your Personal Info</div>
 
-        <div className='form-group col-md-8 col-md-offset-2'>
-          <label className="control-label" htmlFor={formElements.title.name}>{formElements.title.label}</label>
-          <input
-            className="form-control"
-            type='text'
-            name={formElements.title.name}
-            id={formElements.title.name}
-            placeholder={formElements.title.placeholder}
-            value={formElements.title.value}
-            onChange={this.handleChange}
-          />
-        </div>
+        {yourTitle}
 
         <AccountForm
           photo_url={this.state.photo_url}
           profile={profile}
-
+          handleImageChange={this.handleImageChange}
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
         />
 
-        <div className='text-center form-group col-md-12'>
+        <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <div>
-            <button type='submit' className='btn btn-step' onClick={this._createCompany}>Save</button>
-          </div>
+          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._createCompany}>Save</a>
         </div>
 
       </div>

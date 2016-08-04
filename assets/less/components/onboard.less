@@ -1,3 +1,45 @@
+#onboard-form {
+  margin-top: 30px;
+
+  .profile-photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-image {
+    height: 75px;
+    width: 75px;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: @brand-neutral--4;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 0 @gutter--medium 0;
+  }
+
+  .btn-upload-image {
+    position: relative;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      text-indent: -999em;
+      cursor: pointer;
+    }
+  }
+
+  textarea {
+    height: 125px;
+  }
+}
+
 .panel-onboard {
   border: 1px solid @devquity-yellow;
   padding: 20px 40px 40px;
@@ -10,4 +52,3 @@
       padding: 15px;
     }
 }
-

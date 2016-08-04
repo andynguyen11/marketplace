@@ -4,11 +4,15 @@ const AccountForm = React.createClass({
   propTypes: {
     formElements: React.PropTypes.object.isRequired,
     handleChange: React.PropTypes.func.isRequired,
-    isCompany: React.PropTypes.bool
+    isCompany: React.PropTypes.bool,
+    photo_url: React.PropTypes.string,
+    handleImageChange: React.PropTypes.func.isRequired
   },
 
   render() {
-    const { formElements, handleChange, profile } = this.props;
+    const { formElements, handleChange, profile, photo_url, handleImageChange } = this.props;
+
+    const profilePhoto = photo_url && { backgroundImage: 'url(' + photo_url + ')' } || {};
 
     return (
       <div>
@@ -27,39 +31,45 @@ const AccountForm = React.createClass({
           Your LinkedIn account is now <strong>SYNCED UP</strong>! You can review and edit the fields below.
         </div>
 
-        <div className='form-group col-md-6 col-md-offset-2'>
-          <label className="control-label" htmlFor={formElements.profileFirstName.name}>{formElements.profileFirstName.label}</label>
-          <input
-            className="form-control"
-            type='text'
-            name={formElements.profileFirstName.name}
-            value={formElements.profileFirstName.value}
-            onChange={handleChange}
-          />
-
-          <label className="control-label" htmlFor={formElements.profileLastName.name}>{formElements.profileLastName.label}</label>
-          <input
-              className="form-control"
-              type='text'
-              name={formElements.profileLastName.name}
-              value={formElements.profileLastName.value}
-              onChange={handleChange}
-          />
+        <div className='col-md-6 col-md-offset-2'>
+            <div className="form-group">
+                <label className="control-label" htmlFor={formElements.profileFirstName.name}>{formElements.profileFirstName.label}</label>
+                <input
+                    className="form-control"
+                    type='text'
+                    name={formElements.profileFirstName.name}
+                    value={formElements.profileFirstName.value}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className="form-group">
+                <label className="control-label" htmlFor={formElements.profileLastName.name}>{formElements.profileLastName.label}</label>
+                <input
+                    className="form-control"
+                    type='text'
+                    name={formElements.profileLastName.name}
+                    value={formElements.profileLastName.value}
+                    onChange={handleChange}
+                />
+            </div>
         </div>
 
-        <div className='form-group col-md-2'>
+        <div className='form-group col-md-2 profile-photo-upload'>
             <label className="control-label">Profile Photo</label>
-            <div className='text-center'>
-              <img className='profile-image img-circle' src={this.props.photo_url} />
+
+            <div className='text-center profile-image' style={profilePhoto}></div>
+
+            <div href="" className="btn btn-sm btn-brand btn-upload-image">
+                Upload Photo
+                <input
+                    className="form-control"
+                    ref='file'
+                    name='file'
+                    type='file'
+                    label='Profile Photo'
+                    onChange={handleImageChange}
+                />
             </div>
-            <input
-              className="form-control"
-              ref='file'
-              name='file'
-              type='file'
-              label='Profile Photo'
-              onChange={this.props.change_image}
-            />
         </div>
 
         <div>

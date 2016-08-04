@@ -2,6 +2,7 @@ import React from 'react';
 import SkillButton from '../../components/skill';
 import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
+import BigSelect from '../../components/bigSelect';
 
 const DeveloperOnboard = React.createClass({
 
@@ -15,7 +16,7 @@ const DeveloperOnboard = React.createClass({
         photo: '',
         biography: '',
         capacity: '',
-        role: '',
+        role: 'full-stack',
         linkedin: {
           extra_data: ''
         },
@@ -166,6 +167,7 @@ const DeveloperOnboard = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
+        debugger
         this.setState({
           photo_url: reader.result,
           photo_file: file
@@ -256,29 +258,8 @@ const DeveloperOnboard = React.createClass({
       );
     }.bind(this));
 
-    return (
+    const skillsComponent = !!skills.length && (
       <div>
-        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
-          <p className="text-muted">
-            Let's get your profile set up, so you can be discovered!
-          </p>
-          <div className="form-group">
-            I am a
-            <select value={profile.role} onChange={this.handleChange} name="role" className="form-control select">
-              {roleOptions}
-            </select>
-            developer <span className="text-yellow">looking for incredible projects.</span>
-          </div>
-        </div>
-
-        <AccountForm
-            photo_url={this.state.photo_url}
-            profile={profile}
-
-            formElements={formElements}
-            handleChange={this.handleChange}
-        />
-
         <div className="section-header text-muted col-md-8 col-md-offset-2">
           Almost done! Tell us about your experience and availability.  We'll use this info to set up your profile and find great projects for you.
         </div>
@@ -289,6 +270,41 @@ const DeveloperOnboard = React.createClass({
             <div className='clearfix'></div>
           </div>
         </div>
+      </div>
+    );
+
+    return (
+      <div>
+        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
+          <p className="text-muted">
+            Let's get your profile set up, so you can be discovered!
+          </p>
+          <div className="form-group">
+            {/*TODO: replace this with the BigSelect component*/}
+            {/*<BigSelect onSelect={this.handleChange} options={formElements.role.options} selectedOptionIndex={0} name="role" id="role" prefix="I am a" suffix={<span>developer <span className="text-yellow">looking for incredible projects.</span></span>}/>*/}
+            <div className="bigSelect">
+              <div className="bigSelect-prefix">I am a</div>
+              <div className="bigSelect-options">
+                <div className="bigSelect-selector">{profile.role}</div>
+                <select name="role" id="role" value={profile.role} onChange={this.handleChange}>
+                  {roleOptions}
+                </select>
+              </div>
+              <div className="bigSelect-suffix">developer</div>
+              {/*<div className="bigSelect-suffix">developer <span className="text-yellow">looking for incredible projects.</span></div>*/}
+            </div>
+          </div>
+        </div>
+
+        <AccountForm
+            photo_url={this.state.photo_url}
+            profile={profile}
+            handleImageChange={this.handleImageChange}
+            formElements={formElements}
+            handleChange={this.handleChange}
+        />
+
+        {skillsComponent}
 
         <div className="form-group col-md-8 col-md-offset-2">
           <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
@@ -303,10 +319,10 @@ const DeveloperOnboard = React.createClass({
           />
         </div>
 
-        <div className='text-center form-group col-md-12'>
+        <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <button type='submit' className='btn btn-step' onClick={this._saveAccount}>Save Profile</button>
+          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>Save Profile</a>
         </div>
 
       </div>

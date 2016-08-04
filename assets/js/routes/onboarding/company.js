@@ -13,25 +13,42 @@ const CompanyForm = React.createClass({
 
     const isCompanySelector = formElements.isCompany.options.map((option, i) => {
       return (
-        <label className="control-label" htmlFor={option.value} key={i}>
-          <input type="radio" name={formElements.isCompany.name} id={option.value} onChange={handleChange} value={option.value}/>
-          {option.label}
-        </label>
+        <div className="radio" key={i}>
+            <label>
+              <input type="radio" name={formElements.isCompany.name} id={option.value} onChange={handleChange} value={option.value}/>
+              {option.label}
+            </label>
+        </div>
       );
     });
 
     const companyTypeSelector = formElements.companyType.options.map((option, i) => {
       return (
-        <label className="control-label" htmlFor={option.value} key={i}>
-          <input type="radio" name={formElements.companyType.name} id={option.value} onChange={handleChange} value={option.value}/>
-          {option.label}
-        </label>
+        <div className="radio" key={i}>
+            <label>
+                <input type="radio" name={formElements.companyType.name} id={option.value} onChange={handleChange} value={option.value}/>
+                {option.label}
+            </label>
+        </div>
       );
     });
 
     const companyForm = isCompany && (
       <div>
         <div className='section-header text-center col-md-8 col-md-offset-2'>Company Info</div>
+
+        <div className='form-group col-md-8 col-md-offset-2'>
+          <label className="control-label" htmlFor={formElements.companyName.name}>{formElements.companyName.label}</label>
+          <input
+              className="form-control"
+              type='text'
+              name={formElements.companyName.name}
+              id={formElements.companyName.name}
+              placeholder={formElements.companyName.placeholder}
+              value={formElements.companyName.value}
+              onChange={handleChange}
+          />
+        </div>
 
         <div className='form-group col-md-8 col-md-offset-2'>
           <label className="control-label" htmlFor={formElements.companyDescription.name}>{formElements.companyDescription.label}</label>
@@ -45,6 +62,7 @@ const CompanyForm = React.createClass({
           >
           </textarea>
         </div>
+
         <div className='form-group col-md-8 col-md-offset-2'>
           <label className="control-label">Company Type</label>
           {companyTypeSelector}
