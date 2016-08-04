@@ -267,7 +267,7 @@ PUBLIC_STRIPE_KEY = 'pk_test_CANPk8WGjQh2GpvfIDNhxsyy' if ENVIRONMENT != 'prod' 
 MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "exv8qBKcFIaKPVZa-Hhm8A"
 
 #EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-DEFAULT_FROM_EMAIL = "Sarah from DevQuity <service@devquity.com>"
+DEFAULT_FROM_EMAIL = "Sarah from Loom <service@loom.com>"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mandrillapp.com'
 EMAIL_PORT = 587

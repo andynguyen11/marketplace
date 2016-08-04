@@ -22,7 +22,6 @@ from django.conf.urls.static import static
 from django.contrib.flatpages import views
 from django.conf.urls import handler404, handler500
 from django.views.generic.base import TemplateView
-from password_reset.views import Recover
 import rest_framework.urls
 
 from accounts.views import error404, error500
@@ -43,6 +42,7 @@ urlpatterns = [
     url(r'^api/docusign', include('docusign.urls', namespace='docusign')),
     url(r'^login/$', accounts_views.user_login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
+    url(r'', include('password_reset.urls')),
     url(r'^skills/', autocomplete, {'tag_model': Skills}, name='skills_autocomplete'),
     url(r'^message/send/$', business_views.send_message, name='send-message'),
     url(r'^signup/$', accounts_views.signup, name='signup'),
