@@ -1,7 +1,7 @@
 from rest_assured.testcases import BaseRESTAPITestCase
 
 from generics.factories import CompanyFactory, GenericModelFactory, ProfileFactory, ProjectFactory
-from generics.testcases import CreateManyMixin, CRUDMixin
+from generics.testcases import CreateManyMixin, CRUDMixin, UpdateMixin
 
 
 class CompanyListAPITestCase(CreateManyMixin, BaseRESTAPITestCase):
@@ -22,5 +22,10 @@ class ProjectAPITestCase(CreateManyMixin, CRUDMixin, BaseRESTAPITestCase):
     base_name = 'api:project'
     factory_class = ProjectFactory
     user_factory = ProfileFactory
-
     exclude_from_update = ('category',)
+
+
+class ProfileAPITestCase(CreateManyMixin, BaseRESTAPITestCase):
+    base_name = 'api:profile'
+    factory_class = ProfileFactory
+    user_factory = ProfileFactory
