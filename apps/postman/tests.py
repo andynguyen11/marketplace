@@ -63,7 +63,7 @@ except ImportError:
 from django.utils.translation import activate, deactivate
 
 from . import OPTION_MESSAGES
-from postman.api import pm_broadcast, pm_write
+from postman.helpers import pm_broadcast, pm_write
 # because of reload()'s, do "from postman.fields import CommaSeparatedUserField" just before needs
 # because of reload()'s, do "from postman.forms import xxForm" just before needs
 from postman.models import ORDER_BY_KEY, ORDER_BY_MAPPER, Message, PendingMessage,\

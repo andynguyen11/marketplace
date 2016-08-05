@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
+from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer
 from postman.models import Message
-from api.serializers.projects import DocumentSerializer, TermsSerializer
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -14,6 +14,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     nda = DocumentSerializer()
     terms = TermsSerializer()
+    job = JobSerializer()
 
     class Meta:
         model = Message

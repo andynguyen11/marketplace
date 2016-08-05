@@ -10,38 +10,16 @@
     <div class="row">
       <div class="container">
         <div class="col-md-12 ps-messages-view-header">
-          <a class="pull-left back button button-left" href="{{ next_url }}"><</a>
-          <div class="pull-right message-tools">
-            {% if thread.sender == user and thread.sender_bookmarked or thread.recipient == user and thread.recipient_bookmarked %}
-              {% if pm_messages|length > 1 %}
-              <button class="thread-unbookmark button button-left" data-value="{{ thread.thread_id }}" data-url="">
-                <img src="{% static "images/star-active.png" %}">
-              </button>
-              {% else %}
-              <button class="message-unbookmark button button-left" data-value="{{ thread.pk }}" data-url="">
-                <img src="{% static "images/star-active.png" %}">
-              </button>
-              {% endif %}
-            {% else %}
-              {% if pm_messages|length > 1 %}
-              <button class="thread-bookmark button button-left" data-value="{{ thread.thread_id }}" data-url="">
-                <img src="{% static "images/star-open.png" %}">
-              </button>
-              {% else %}
-              <button class="message-bookmark button button-left" data-value="{{ thread.pk }}" data-url="">
-                <img src="{% static "images/star-open.png" %}">
-              </button>
-              {% endif %}
-            {% endif %}
-            </div>
-            <div class="clearfix"></div>
+          <a href="{{ next_url }}"><i class="fa fa-arrow-left"></i> Back to All Messages</a>
         </div>
         <div id="contract_container" data-thread="{{ thread.id }}" data-bid="{{ thread.job.id }}" data-nda="{{ thread.nda }}" data-msa="{{ thread.msa }}"></div>
         <div class="col-md-8">
           <div class="panel panel-default">
           <div class="panel-heading">
+          <h4>
             <span class="text-skinny">Conversation with</span>
-            <span class="text-yellow">{% if thread.sender == user %} {{ thread.recipient.first_name }} {% else %} {{ thread.sender.first_name }} {% endif %}</span>
+            <span class="text-brand">{% if thread.sender == user %} {{ thread.recipient.first_name }} {% else %} {{ thread.sender.first_name }} {% endif %}</span>
+          </h4>
           </div>
             <div id="reply-wrapper">
               {% if thread.sender == user and thread.sender_archived or thread.recipient == user and thread.recipient_archived %}
@@ -53,8 +31,6 @@
                 {% if thread.project.project_manager == request.user %}
                 <div class="pull-left">
                   <input type="file" name="attachments" multiple />
-                  <input type="checkbox" id="nda" name="nda" /> Attach an NDA <br />
-                  <input type="checkbox" name="document" /> Attach Master Contract
                 </div>
                 {% endif %}
                 <button class="btn btn-yellow pull-right" type="submit">{% trans 'Send Message' %}</button>

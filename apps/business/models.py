@@ -76,6 +76,11 @@ class Job(models.Model):
     def conversation(self):
         return Message.objects.filter(job=self, project=self.project)
 
+    @property
+    def owner(self):
+        return self.project.project_manager
+
+
 class ProjectInfo(models.Model):
     type = models.CharField(max_length=100, choices=INFO_TYPES)
     project = models.ForeignKey('business.Project')
@@ -154,6 +159,8 @@ class Project(models.Model):
 
 
 class Terms(models.Model):
+    create_date = models.DateTimeField(auto_now=True)
+    update_date = models.DateTimeField(blank=True, null=True)
     job = models.ForeignKey(Job)
     contractor = models.CharField(max_length=100)
     contractee = models.CharField(max_length=100)
@@ -176,6 +183,10 @@ class Terms(models.Model):
             self.equity = self.job.equity
             self.start_date = self.job.project.start_date
             self.end_date = self.job.project.end_date
+        else:
+            self.update_date = datetime.now()
+            if self.status == 'contracted':
+                order, created = Order.objects.get_or_create(job=self.job, )
         super(Terms, self).save(*args, **kwargs)
 
 

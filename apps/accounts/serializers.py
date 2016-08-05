@@ -4,7 +4,6 @@ from social.apps.django_app.default.models import UserSocialAuth
 from accounts.models import Profile, Skills, SkillTest
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from generics.utils import update_instance, field_names
-from reviews.models import DeveloperReview
 
 
 class PaymentSerializer(serializers.Serializer):
@@ -69,9 +68,3 @@ class SkillTestSerializer(serializers.ModelSerializer):
         update_instance(instance, data)
         instance.create_ticket()
         return instance
-
-
-class DeveloperReviewSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = DeveloperReview

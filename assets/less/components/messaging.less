@@ -1,6 +1,10 @@
 #pm_messages {
 
-  width: 100%;
+
+
+  #message-wrapper {
+    min-height: 600px;
+  }
 
   .container {
     position: relative;
@@ -9,17 +13,36 @@
   #contract_container {
     position: absolute;
     z-index: 1;
-    top: 83px;
-      .tabs {
-        .tabs-menu:after {
-          clear: both;
+    width: 100%;
+    .tabs {
+      .tabs-menu:after {
+        clear: both;
 
-          .tabs-menu-item {
-            float: right;
+        .tabs-menu-item {
+          float: right;
 
-          }
         }
       }
+    }
+    #agreement-tracker {
+      .step {
+        padding: 10px 20px 20px;
+        border-bottom: 1px solid @brand-neutral--6;
+        color: @font-color--light;
+        h4.title {
+          color: @font-color--base;
+        }
+        .btn {
+          width: 100%;
+        }
+      }
+      .inactive {
+        color: @font-color--lighter;
+        h4.title {
+          color: @font-color--lighter;
+        }
+      }
+    }
   }
 
   tr td {

@@ -67,8 +67,9 @@ INSTALLED_APPS = (
     'api',
     'docusign',
     'expertratings',
-    'reviews',
+    'payment',
     'postman',
+    'reviews',
     'fixture_magic',
     'django_extensions'
 )
@@ -262,8 +263,8 @@ STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATIC_URL = 'https://devquity.s3.amazonaws.com/'
 
 #TODO Make these environment variables
-STRIPE_KEY = "sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u" if ENVIRONMENT != 'prod' else 'sk_live_BeJIGPEO3OPDg8YwG5gIqyvg'
-PUBLIC_STRIPE_KEY = 'pk_test_CANPk8WGjQh2GpvfIDNhxsyy' if ENVIRONMENT != 'prod' else 'pk_live_n4vOSxsAJdUWl8hLmtqPQmyC'
+STRIPE_KEY = "sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u" if ENVIRONMENT != 'prod' else 'sk_live_oKCCswUyyFqL1eTx8Cj0xAYJ'
+PUBLIC_STRIPE_KEY = 'pk_test_PhUrky9HrJfcAQvmstWpEna6' if ENVIRONMENT != 'prod' else 'pk_live_K6fVA1aNP7MSLpAZjf0EfuhX'
 MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "exv8qBKcFIaKPVZa-Hhm8A"
 
 #EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
@@ -374,6 +375,8 @@ WEBHOOK_BASE_URL = ''
 
 MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]
+
+LOOM_FEE = 3
 
 try:
     from local_settings import *

@@ -5,9 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
 from django.http import HttpResponseForbidden
 
-from api.serializers.account import DeveloperReviewSerializer
-from api.permissions import IsOwner
+from apps.api.permissions import IsOwner
 from reviews.models import DeveloperReview
+from reviews.serializers import DeveloperReviewSerializer
 
 
 class ReviewListCreate(generics.ListCreateAPIView):

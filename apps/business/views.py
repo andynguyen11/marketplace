@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
 from django.http import HttpResponse
 
-from postman.api import pm_write
+from postman.helpers import pm_write
 from notifications.signals import notify
 
 from business.forms import ProjectForm

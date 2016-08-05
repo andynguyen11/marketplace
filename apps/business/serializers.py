@@ -4,11 +4,28 @@ from rest_framework import serializers
 from drf_haystack.serializers import HaystackSerializerMixin
 from html_json_forms.serializers import JSONFormSerializer
 
-from api.search_indexes import ProjectIndex
+from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
 from generics.serializers import ParentModelSerializer, AttachmentSerializer
-from generics.utils import field_names
-from postman.api import pm_write
+from generics.utils import update_instance, field_names
+from postman.helpers import pm_write
+
+
+class CompanySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Company
+        fields = field_names(Company, exclude=('stripe',)) + ('type',)
+
+    def create(self, data):
+        user = self.context['request'].user
+        company = Company.objects.create(**data)
+        Employee.objects.create(profile=user, company=company, primary=True)
+        return company
+
+    def update(self, instance, data):
+        update_instance(instance, data)
+        return instance
 
 
 class InfoSerializer(ParentModelSerializer):
@@ -45,6 +62,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
+    project = ProjectSerializer()
 
     class Meta:
         model = Job
