@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='docusign_document',
-            field=models.OneToOneField(default=0, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document'),
+            field=models.OneToOneField(default=None, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document', null=True),
             preserve_default=False,
         ),
         migrations.DeleteModel(

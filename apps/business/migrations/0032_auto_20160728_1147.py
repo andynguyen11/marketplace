@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='docusign_document',
-            field=models.OneToOneField(blank=True, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document'),
+            field=models.OneToOneField(blank=True, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document', null=True),
         ),
         migrations.AlterField(
             model_name='project',

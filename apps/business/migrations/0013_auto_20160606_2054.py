@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='template',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='business.DocumentTemplate'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='business.DocumentTemplate', null=True),
             preserve_default=False,
         ),
     ]
