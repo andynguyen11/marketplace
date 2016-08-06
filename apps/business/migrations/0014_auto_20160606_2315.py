@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='document',
             name='template',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='docusign.DocumentTemplate'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='docusign.DocumentTemplate', null=True),
         ),
         migrations.DeleteModel(
             name='DocumentTemplate',

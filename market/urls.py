@@ -68,8 +68,10 @@ urlpatterns = [
     url(r'^project/create/$', business_views.create_project, name='create-project'),
     url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS) \
-  + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
+
+if settings.DEBUG and settings.MEDIA_URL :
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = error404
 handler500 = error500
