@@ -1,7 +1,12 @@
+import datetime
 import factory
 from faker.providers import BaseProvider
 from generics.utils import field_names
 import inspect
+
+from accounts.models import Profile
+from business.models import Company, Project, Category, Employee, ProjectInfo
+
 
 def subclasses_provider(subclass):
     return (inspect.isclass(subclass)
@@ -89,3 +94,47 @@ class GenericModelFactory(factory.django.DjangoModelFactory):
         attrs = cls.attributes(create=True, extra=kwargs)
         return cls._generate(True, attrs)
 
+class ProfileFactory(GenericModelFactory):
+    class Meta:
+        model = Profile
+        exclude = ('password',)
+    is_active = True
+    first_name = factory.Faker('first_name')
+    last_name = factory.Faker('last_name')
+    username = factory.Sequence(lambda n: 'test_user_%d' % n)
+    email = factory.Sequence(lambda n: 'tester{0}@gmail.com'.format(n))
+    photo = factory.django.ImageField(from_path='static/images/logo.jpg', file_name='the_file.png')
+
+class CompanyFactory(GenericModelFactory):
+    class Meta:
+        model = Company
+    stripe = factory.Sequence(lambda n: 'stripe-{0}23456'.format(n))
+    logo = factory.django.ImageField(from_path='static/images/logo.jpg', filename='the_file.png')
+    category = factory.Sequence(lambda n: 'cat-{0}'.format(n))
+    type = 'llc'
+    filing_location = 'Austin'
+
+class EmployeeFactory(GenericModelFactory):
+    class Meta:
+        model = Employee
+    company = factory.SubFactory(CompanyFactory)
+    profile = factory.SubFactory(ProfileFactory)
+    primary = True
+
+class ProjectFactory(GenericModelFactory):
+    class Meta:
+        model = Project
+    class Params:
+        aliases={'featured': 'boolean'}
+    image = factory.django.ImageField(from_path='assets/images/logo.jpg', filename='the_file.png')
+    type = 'technology'
+    estimated_hours = 10
+    project_manager = factory.SubFactory(ProfileFactory)
+    company = factory.SubFactory(CompanyFactory)
+    category = factory.Sequence(lambda n: 'cat-{0}'.format(n))
+    start_date = datetime.datetime.today()
+
+class ProjectInfoFactory(GenericModelFactory):
+    class Meta:
+        model = ProjectInfo
+    project = factory.SubFactory(ProjectFactory)
