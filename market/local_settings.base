@@ -17,7 +17,7 @@ else:
         'NAME': 'ebdb',
         'USER': 'unicron',
         'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': 'aa1mirdnw6ycoiy.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
+        'HOST': 'aa1n7mjjsbuw2gn.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
     }
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
     MEDIA_URL = 'https://devquity.s3.amazonaws.com/'
