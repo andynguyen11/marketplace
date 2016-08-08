@@ -106,8 +106,8 @@ class Project(models.Model):
 
     estimated_hours = models.IntegerField(blank=True, null=True)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
-    estimated_equity_percentage = models.DecimalField(blank=True, null=True, max_digits=3, decimal_places=2)
-    estimated_equity_shares = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+    estimated_equity_percentage = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2)
+    estimated_equity_shares = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
 
     date_created = models.DateTimeField(auto_now_add=True)
 

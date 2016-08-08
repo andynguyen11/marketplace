@@ -3,20 +3,9 @@ import FormHelpers from '../../utils/formHelpers';
 
 
 const CreditCardForm = React.createClass({
-  getInitialState: function () {
-    return {
-      is_loading: false,
-      creditCard: {
-        number: '',
-        month: '',
-        year: '',
-        cvc: ''
-      }
-    }
-  },
 
   render() {
-    const { formElements, formError, useNewCard } = this.props;
+    const { formElements, formError, useNewCard, handleChange } = this.props;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
     return(
@@ -29,7 +18,7 @@ const CreditCardForm = React.createClass({
               name={formElements.number.name}
               id={formElements.number.name}
               value={formElements.number.value}
-              onChange={this.handleChange}
+              onChange={handleChange}
             />
           </div>
 
@@ -41,7 +30,7 @@ const CreditCardForm = React.createClass({
               name={formElements.month.name}
               id={formElements.month.name}
               value={formElements.month.value}
-              onChange={this.handleChange}
+              onChange={handleChange}
             />
           </div>
 
@@ -53,7 +42,7 @@ const CreditCardForm = React.createClass({
               name={formElements.year.name}
               id={formElements.year.name}
               value={formElements.year.value}
-              onChange={this.handleChange}
+              onChange={handleChange}
             />
           </div>
 
@@ -65,7 +54,7 @@ const CreditCardForm = React.createClass({
               name={formElements.cvc.name}
               id={formElements.cvc.name}
               value={formElements.cvc.value}
-              onChange={this.handleChange}
+              onChange={handleChange}
             />
           </div>
 
@@ -73,7 +62,7 @@ const CreditCardForm = React.createClass({
 
           <div className="form-group">
             {error}
-            <input type="checkbox" className="form-control" /> Save this information for future purchases on Loom.
+            <input name="save_card" type="checkbox" className="form-control" /> Save this information for future purchases on Loom.
           </div>
       </div>
     )

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="project" class="section-first">
+<div id="project">
   <div class="row">
     <div class="container">
       <h2 class="section-header text-center sub-section">
@@ -11,14 +11,18 @@
       </h2>
       <div class="sub-section">
         <div class="col-md-6">
-          <img class="project-image" src="{{ project.image.url }}" />
+          <img class="project-image" src="{% static '' %}{{ project.image.file }}" />
           <ul class="project-meta">
-            <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> Austin, TX</li>
-            <li><img class="icon" src="{% static 'images/icon-category.png' %}" />Technology</li>
-            <li><img class="icon" src="{% static 'images/icon-skill.png' %}" /> Python, Javascript, HTML, CSS</li>
+            <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ project.company.city }}, {{ project.company.state }}</li>
+            <li><img class="icon" src="{% static 'images/icon-category.png' %}" />{{ project.type }}</li>
+            <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
+              {% for skill in project.skills %}
+                {{ skill }}
+              {% endfor %}
+            </li>
           </ul>
         </div>
-        <div class="specs col-md-3">
+        <div class="specs col-md-6">
           <h5>THE COMPANY</h5>
           <ul>
             <li class="project-hours">
@@ -26,7 +30,7 @@
               est. hours needed
             </li>
             <li class="project-equity">
-              <h5>{{ project.estimated_equity }}%</h5>
+              <h5>{{ project.estimated_equity_percentage }}%</h5>
               equity offered
             </li>
             <li>
@@ -39,6 +43,7 @@
           </ul>
           <button class="btn btn-dark" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
         </div>
+      <!--
         <div class="specs col-md-3">
           <h5>THE COMMUNITY</h5>
           <ul>
@@ -60,6 +65,7 @@
         </div>
         <div class="clearfix"></div>
       </div>
+      -->
       <div class="section">
         <ul class="nav nav-tabs">
           <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
@@ -78,7 +84,7 @@
             </div>
             <div class="col-md-4">
               <h5>Posted by</h5>
-              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+              <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                 <div class="project-byline pull-left">
                   <p>
                     <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
@@ -102,7 +108,7 @@
             </div>
             <div class="col-md-4">
               <h5>Posted by</h5>
-              <img class="project-manager-photo pull-left" src="{{ project.project_manager.linkedin.extra_data.picture_url }}" />
+              <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                 <div class="project-byline pull-left">
                   <p>
                     <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />

@@ -76,6 +76,7 @@ const ProjectInfoField = React.createClass({
                          />
                     <MultipleAttachmentsField onChange={this.attachmentUpdater} />
                 </BigFormGroup>
+              <div className={type == 'private' ? 'clearfix' : ''}></div>
             </div>
         )
     }

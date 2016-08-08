@@ -26,6 +26,8 @@ const EntrepreneurOnboard = React.createClass({
         description: '',
         type: '',
         filing_location: '',
+        city: '',
+        state: '',
         user_id: $('#onboard-form').data('id')
       },
       photo_file: '',
@@ -77,15 +79,16 @@ const EntrepreneurOnboard = React.createClass({
       },
       isCompany: {
         name: 'isCompany',
-        label: 'Do you need to set up a company profile?',
+        label: 'What type of account do you want to set up?',
         value: isCompany,
         options: [
           {
-            label: 'Yes, I need to set up a new company profile.',
+            label: 'A company can get work made for cash, equity, or a mix of both.',
             value: 'true'
           },
           {
-            label: 'No, I\'m an individual looking to hire developers.',
+            label: 'Individual Entrepreneurs can get work made for cash only. Only goverment-filed companies' +
+            'can trade equity.',
             value: 'false'
           }
         ],
@@ -109,6 +112,36 @@ const EntrepreneurOnboard = React.createClass({
           this.setState({ company });
         }
       },
+      companyState: {
+        name: 'companyState',
+        label: 'Company State',
+        value: company.name || '',
+        validator: (value) => {
+          const { isCompany } = this.state;
+
+          return isCompany ? FormHelpers.checks.isRequired(value) : true;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.state = value;
+          this.setState({ company });
+        }
+      },
+      companyCity: {
+        name: 'companyCity',
+        label: 'Company City',
+        value: company.name || '',
+        validator: (value) => {
+          const { isCompany } = this.state;
+
+          return isCompany ? FormHelpers.checks.isRequired(value) : true;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.city = value;
+          this.setState({ company });
+        }
+      },
       companyDescription: {
         name: 'companyDescription',
         label: 'Company Bio (This is what developers will see)',
@@ -127,9 +160,8 @@ const EntrepreneurOnboard = React.createClass({
       },
       companyType: {
         name: 'companyType',
-        label: 'State Filing Location',
-        value: company.company_type || '',
-        placeholder: 'State/Province',
+        label: 'Company Type',
+        value: company.type || '',
         options: [
           {
             label: 'Limited Liability Company (LLC)',
@@ -163,7 +195,7 @@ const EntrepreneurOnboard = React.createClass({
         },
         update: (value) => {
           const { company } = this.state;
-          company.company_type = value;
+          company.type = value;
           this.setState({ company });
         }
       },
@@ -264,6 +296,7 @@ const EntrepreneurOnboard = React.createClass({
 
   _createCompany() {
     const { formElements } = this.state;
+    this.setState({ isLoading: true });
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
       this.setState({ formElements });
@@ -278,14 +311,68 @@ const EntrepreneurOnboard = React.createClass({
           contentType: 'application/json; charset=utf-8',
           dataType: 'json',
           success: function (result) {
-            window.location = '/profile/dashboard/';
+            // TODO We should make this one post
+            this._saveAccount()
           }.bind(this)
         });
       } else {
-        this.setState({ formError: 'Please fill out all fields.' });
+        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
       }
     });
   },
+
+  _uploadImage() {
+    this.setState({ isLoading: true });
+    let data = new FormData();
+      data.append('photo', this.state.photo_file);
+      $.ajax({
+        url: loom_api.profile + this.state.profile.id + '/',
+        type: 'PATCH',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false,
+        contentType: false,
+        success: function(data, textStatus, jqXHR) {
+          this.setState({ isLoading: false });
+          window.location = '/profile/dashboard/';
+        }.bind(this)
+      });
+  },
+
+  _saveAccount() {
+    const { formElements } = this.state;
+    this.setState({ isLoading: true });
+
+    FormHelpers.validateForm(formElements, (valid, formElements) => {
+      this.setState({formElements});
+
+      if (valid) {
+        this.setState({ formError: false, isLoading: true });
+        let profile = this.state.profile;
+        delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+        $.ajax({
+          url: loom_api.profile + profile.id + '/',
+          method: 'PATCH',
+          data: JSON.stringify(profile),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function (result) {
+            if (this.state.photo_file) {
+              this._uploadImage();
+            }
+            else {
+              this.setState({ isLoading: false });
+              window.location = '/profile/dashboard/';
+            }
+          }.bind(this)
+        });
+      } else {
+        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
+      }
+    });
+  },
+
 
   handleChange(event) {
     const { formElements } = this.state;
@@ -363,7 +450,10 @@ const EntrepreneurOnboard = React.createClass({
         <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._createCompany}>Save</a>
+          <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createCompany}>
+            <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+            Save
+          </a>
         </div>
 
       </div>

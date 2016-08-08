@@ -36,5 +36,5 @@ urlpatterns = [
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),
     url(r'^skilltest/webhook$', view=ExpertRatingsXMLWebhook.as_view(), name='skilltest-webhook'),
     url(r'^terms/$', view=TermsListCreate.as_view(), name='term'),
-    url(r'^terms/(?P<pk>[0-9]+)/$$', view=TermsRetrieveUpdate.as_view(), name='term-detail'),
+    url(r'^terms/(?P<pk>[0-9]+)/$', view=TermsRetrieveUpdate.as_view(), name='term-detail'),
 ] + router.urls + project_router.urls + profile_router.urls

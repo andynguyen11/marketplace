@@ -34,14 +34,11 @@
                 <i class="fa fa-linkedin"></i>
                  LinkedIn
               </a><br />
+              {% if user.linkedin %}
               <span class="text-success">CONFIRMED</span>
-            </p>
-            <p>
-              <a class="btn btn-angellist social" href="">
-                <i class="fa fa-envelope"></i>
-                 Email Address
-              </a><br />
-              <span class="text-success">CONFIRMED</span>
+              {% else %}
+              <span class="text-danger">UNCONFIRMED</span>
+              {% endif %}
             </p>
           </div>
         </div>

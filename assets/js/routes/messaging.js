@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Bid from '../components/bid';
 import ContractBuilder from '../components/messaging/contractBuilder';
 import ContracteeTracker from '../components/messaging/contractee';
 import ContractorTracker from '../components/messaging/contractor';
@@ -19,6 +20,7 @@ import _ from 'lodash';
         showTerms: false,
         showNDA: false,
         showCheckout: false,
+        showBid: false,
         order: null
       };
     },
@@ -32,8 +34,9 @@ import _ from 'lodash';
             terms: result.terms,
             nda: result.nda,
             job: result.job,
+            signing_url: result.signing_url,
             isLoading: false,
-            formElements: this.formElements(result.terms)
+            formElements: result.terms ? this.formElements(result.terms) : null
           });
         }.bind(this)
       });
@@ -207,13 +210,13 @@ import _ from 'lodash';
     },
 
     sendNDA() {
-      let nda = this.state.conversation.nda;
+      let nda = this.state.nda;
       nda.status = 'sent';
       this.updateNDA(nda);
     },
 
     signNDA() {
-      let nda = this.state.conversation.nda;
+      let nda = this.state.nda;
       nda.status = 'signed';
       this.updateNDA(nda);
     },
@@ -226,21 +229,27 @@ import _ from 'lodash';
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function (result) {
-          let conversation = this.state.conversation;
-          conversation.nda = result;
           this.setState({
-            conversation: conversation,
+            nda: result,
             isLoading: false
           });
         }.bind(this)
       });
     },
 
+    updateJob(job) {
+      this.setState({
+        job
+      })
+    },
+
+    // TODO Refactor toggle panel to tabs
     toggleTermsPanel() {
       this.setState({
         showTerms: !this.state.showTerms,
         showNDA: this.state.showNDA && this.state.showTerms,
-        showCheckout: this.state.showCheckout && this.state.showTerms
+        showCheckout: this.state.showCheckout && this.state.showTerms,
+        showBid: this.state.showBid && this.state.showTerms
       });
     },
 
@@ -248,11 +257,21 @@ import _ from 'lodash';
       this.setState({
         showNDA: !this.state.showNDA,
         showTerms: this.state.showTerms && this.state.showNDA,
-        showCheckout: this.state.showCheckout && this.state.showNDA
+        showBid: this.state.showBid && this.state.showNDA
+      });
+    },
+
+    toggleBidPanel() {
+      this.setState({
+        showBid: !this.state.showBid,
+        showTerms: this.state.showTerms && this.state.showBid,
+        showNDA: this.state.showNDA && this.state.showBid,
       });
     },
 
     toggleCheckoutPanel() {
+      // TODO There is probably a better way to lazy create this order
+      // we just don't want it created until they hit the last step
       if (!this.state.order) {
         this.setState({ isLoading: true });
         $.ajax({
@@ -281,50 +300,73 @@ import _ from 'lodash';
     },
 
     render() {
-      const { nda, terms, formElements, formError, isLoading, showNDA, showTerms, showCheckout, order, isOwner } = this.state;
+      // TODO ummm this is a big ass list
+      const { nda, terms, signing_url, formElements, formError, isLoading, showNDA, showTerms, showBid, showCheckout, order, job, isOwner } = this.state;
+
+      const serviceAgreement = isOwner && (isLoading ||
+        <div className={ showTerms ? "panel panel-default" : "hidden"}>
+          <div className="panel-heading text-skinny">
+            <h4 >Master Services Agreement <button onClick={this.toggleTermsPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+          </div>
+          <ContractBuilder
+            terms={terms}
+            formElements={formElements}
+            formError={formError}
+            handleChange={this.handleChange}
+            saveTerms={this.saveTerms}
+          />
+
+        </div>
+      );
+
+      const NDA = isOwner || (isLoading ||
+        <div className={ showNDA ? "panel panel-default" : "hidden"}>
+            <div className="panel-heading text-skinny">
+              <h4>Non-Disclosure Agreement</h4>
+              <input type="checkbox" />
+              By checking this box, I agree to the terms of the
+              non-disclosure agreement for {job.project.title}
+              <button onClick={this.signNDA} className="btn btn-brand">Submit</button>
+            </div>
+          </div>
+      );
+
+      const signAndSend = isOwner && (isLoading ||
+        <div className={ showCheckout ? "panel panel-default" : "hidden"}>
+          <div className="panel-heading text-skinny">
+            <h4>Sign and Send Contract <button onClick={this.toggleCheckoutPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+          </div>
+              <Checkout
+                order={order}
+                isLoading={isLoading}
+              />
+
+        </div>
+      );
+
+      const editBid = isOwner || (isLoading ||
+          <div className={ showBid ? "panel panel-default" : "hidden"}>
+            <div className="panel-heading text-skinny">
+              <h4>Bid</h4>
+            </div>
+            <Bid
+              job={job}
+              updateJob={this.updateJob}
+            />
+          </div>
+      );
 
       return (
         <div>
           <div className="col-md-8">
-            <div className={ showTerms ? "panel panel-default" : "hidden"}>
-              <div className="panel-heading text-skinny">
-                <h4 >Master Services Agreement <button onClick={this.toggleTermsPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+            {editBid}
+            {NDA}
+            {serviceAgreement}
+            {signAndSend}
 
-              </div>
-                {
-                  isLoading ||
-                  <ContractBuilder
-                    terms={terms}
-                    formElements={formElements}
-                    formError={formError}
-                    handleChange={this.handleChange}
-                    saveTerms={this.saveTerms}
-                  />
-                }
 
-            </div>
-            <div className={ showNDA ? "panel panel-default" : "hidden"}>
-              <div className="panel-heading text-skinny">
-                <h4>Non-Disclosure Agreement</h4>
-              </div>
-            </div>
-            <div className={ showCheckout ? "panel panel-default" : "hidden"}>
-              <div className="panel-heading text-skinny">
-                <h4 >Sign and Send Contract <button onClick={this.toggleCheckoutPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
-
-              </div>
-                {
-                  isLoading ||
-                  <Checkout
-                    order={order}
-                    isLoading={isLoading}
-                  />
-                }
-
-            </div>
           </div>
-            {
-              isOwner ?
+            { isOwner ?
               <ContracteeTracker
                 isLoading={isLoading}
                 terms={terms}
@@ -338,9 +380,11 @@ import _ from 'lodash';
               isLoading={isLoading}
               terms={terms}
               nda={nda}
-              sendNDA={this.sendNDA}
+              job={job}
+              signing_url={signing_url}
+              toggleBidPanel={this.toggleBidPanel}
               toggleTermsPanel={this.toggleTermsPanel}
-              toggleCheckoutPanel={this.toggleCheckoutPanel}
+              toggleNDAPanel={this.toggleNDAPanel}
               showTerms={showTerms}
             />
 

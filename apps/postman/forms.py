@@ -36,25 +36,21 @@ from generics.models import Attachment
 from generics.validators import file_validator
 
 
-def build_payload(sender, recipient, bid):
+def build_payload(sender, recipient, terms):
     """
     TODO This is a dirty dirty way to build the payload.  Will need to map template roles to profile fields,
     and dynamically build based on template
     """
     return {
-        'template': '5872d09b-56d6-4cc8-bc55-bed3d8b8a696',
+        'template': '054c2981-9e38-42ac-8451-f8b43230ccea',
         'signers': [
             {
-                'role_name': 'Vendor',
+                'role_name': 'Contractee',
                 'profile': sender.id,
                 'tabs': [
                     {
-                        'label': 'Address',
-                        'value': sender.company.address
-                    },
-                    {
-                        'label': 'LegalName',
-                        'value': sender.company.legal_entity_name
+                        'label': 'Company',
+                        'value': terms.contractee
                     },
                     {
                         'label': 'Title',
@@ -66,31 +62,42 @@ def build_payload(sender, recipient, bid):
                     },
                     {
                         'label': 'Compensation',
-                        'value': '${0}'.format(bid.cash)
+                        'value': '${0}'.format(terms.job.cash)
+                    },
+                    {
+                        'label': 'CompensationSchedule',
+                        'value': terms.schedule
+                    },
+                    {
+                        'label': 'Scope',
+                        'value': terms.scope
+                    },
+                    {
+                        'label': 'Deliverables',
+                        'value': terms.deliverables
+                    },
+                    {
+                        'label': 'Milestones',
+                        'value': terms.milestones
+                    },
+                    {
+                        'label': 'ContractorAddress',
+                        'value': terms.contractor
+                    },
+                    {
+                        'label': 'Contractor',
+                        'value': '{0} {1}'.format(recipient.first_name, recipient.last_name)
+                    },
+                    {
+                        'label': 'ContractorTitle',
+                        'value': recipient.title
                     }
+
                 ]
             },
             {
-                'role_name': 'Client',
-                'profile': recipient.id,
-                'tabs': [
-                    {
-                        'label': 'Address',
-                        'value': recipient.address
-                    },
-                    {
-                        'label': 'LegalName',
-                        'value': '{0} {1}'.format(recipient.first_name, recipient.last_name)
-                    },
-                    {
-                        'label': 'Title',
-                        'value': recipient.title
-                    },
-                    {
-                        'label': 'FullName',
-                        'value': '{0} {1}'.format(recipient.first_name, recipient.last_name)
-                    }
-                ]
+                'role_name': 'Contractor',
+                'profile': recipient.id
             }
         ]
     }

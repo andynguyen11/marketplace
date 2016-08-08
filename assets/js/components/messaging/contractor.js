@@ -7,14 +7,14 @@ const ContractorTracker = React.createClass({
     return {
       statusMap: {
         NDA: {
-          new:' Send Non-Disclosure Agreement',
-          sent: 'Awaiting Signature',
+          new:'Not Sent',
+          sent: 'Sign Non-disclosure Agreement',
           signed: 'Signed!'
         },
         terms: {
-          new: 'Enter Contract Terms',
-          sent: 'Edit Contract Terms',
-          contract: 'Purchase and Send Contract',
+          new: 'Not Sent',
+          sent: 'Preview Contract',
+          contract: 'Sign Contract',
           signed: 'Signed!'
         }
       },
@@ -22,25 +22,33 @@ const ContractorTracker = React.createClass({
     }
   },
 
-  componentWillReceiveProps(nextProps) {
+  componentWillMount() {
+    this.updateStep();
+  },
+
+  componentWillReceiveProps() {
+    this.updateStep();
+  },
+
+  updateStep() {
     let step = this.state.step;
     if (!this.props.isLoading) {
-      if (this.props.terms.status == 'signed') {
+      if (this.props.terms.status == 'sent') {
         step = 4;
       }
-      else if (this.props.terms.status == 'sent') {
+      else if (this.props.nda.status == 'signed') {
         step = 3;
       }
-      else if (this.props.nda.status == 'signed') {
+      else if (this.props.job) {
         step = 2;
       }
+      console.log(step)
     }
     this.setState({step: step});
-
   },
 
   render() {
-    const { nda, terms, showTerms, toggleTermsPanel, toggleCheckoutPanel, sendNDA, isLoading } = this.props;
+    const { nda, terms, showTerms, signing_url, toggleTermsPanel, toggleBidPanel, toggleNDAPanel, showNDA, isLoading } = this.props;
 
     return (
       <div id="agreement-tracker" className="col-md-4">
@@ -57,55 +65,64 @@ const ContractorTracker = React.createClass({
             <div>
               <div className="step">
                 <h5>Step 1</h5>
-                <h4 className="title">Non-Disclosure Agreement</h4>
-                <div className={this.state.step > 1 ? 'hidden' : ''}>
+                <h4 className="title">Project Bid</h4>
+                <div>
                   <p>
-                    This is a legally-binding agreement between you and the developer
-                    that they will not disclose any sensitive or proprietary information.
+                    Your bid should include accurate work hours and your required compensation -
+                    in cash, equity or a mix of both.
                   </p>
+                  <div className={this.state.step > 1 ? '' : 'hidden'}>
+                    <h4 className="highlight">Bid Sent&nbsp;
+                      <i className="fa fa-check-circle"></i>
+                    </h4>
+                  </div>
                   <button
-                    onClick={sendNDA}
-                    className={nda.status == 'new' ? 'btn btn-brand' : 'btn btn-secondary'}
-                    disabled={nda.status == 'new' ? '' : 'true'}
-                  >{this.state.statusMap.NDA[nda.status]}</button>
+                    onClick={toggleBidPanel}
+                    className="btn btn-brand"
+                  >Edit Bid</button>
                 </div>
-                <div className={this.state.step != 1 ? '' : 'hidden'}>
-                  <h4 className="highlight">Signed
-                    <i className="fa fa-check-circle"></i>
-                  </h4>
-                </div>
+
               </div>
 
               <div className={this.state.step < 2 ? 'inactive step' : 'step'}>
                 <h5>Step 2</h5>
-                <h4 className="title">Build Contract</h4>
+                <h4 className="title">Non-disclosure Agreement</h4>
                 <div className={this.state.step != 2 ? 'hidden' : ''} >
                   <p>
-                    This is the legally-binding work contract agreement between you and the developer.
+                    An agreement that you will not share details of the project with outside parties.
+                    Signing will unlock the private tab of the project, and is required to move forward into
+                    the contract phase.
                   </p>
-                  <button onClick={toggleTermsPanel} className={showTerms ? 'hidden' : 'btn btn-brand'}>{this.state.statusMap.terms[terms.status]}</button>
-                  <button disabled className={showTerms ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
+                  <button onClick={toggleNDAPanel} className={showNDA ? 'hidden' : 'btn btn-brand'}>View and Sign NDA</button>
+                  <button disabled className={showNDA ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
                 </div>
-                <div className={this.state.step == 3 ? '' : 'hidden'} >
-                  <h4 className="highlight">Created on {terms.create_date}
+                <div className={this.state.step > 2 ? '' : 'hidden'}>
+                  <h4 className="highlight">Signed&nbsp;
                     <i className="fa fa-check-circle"></i>
                   </h4>
-                  <a onClick={toggleTermsPanel}>
-                    <i className="fa fa-edit"></i>
-                  &nbsp;
-                   {this.state.statusMap.terms[terms.status]}
-                  </a>
                 </div>
               </div>
 
               <div className={this.state.step < 3 ? 'inactive step' : 'step'}>
                 <h5>Step 3</h5>
-                <h4 className="title">Sign and Send Contract</h4>
+                <h4 className="title">Contract Preview</h4>
                 <p>
-                  Loom collects a service fee only when you sign and send your contract to the developer.
+                  You can preview the terms of any contract built by the project manager prior to signing.
                 </p>
-                <div className={this.state.step == 3 ? '' : 'hidden'} >
-                  <button onClick={toggleCheckoutPanel} className="btn btn-brand">Finish Up</button>
+                <div className={this.state.step >= 3 ? '' : 'hidden'} >
+                  <button onClick={toggleTermsPanel} disabled={terms.status == 'new' ? 'true' : ''} className={terms.status == 'new' ? 'btn btn-secondary' : 'btn btn-brand'}>{this.state.statusMap.terms[terms.status]}</button>
+                </div>
+              </div>
+
+              <div className={this.state.step < 4 ? 'inactive step' : 'step'}>
+                <h5>Step 4</h5>
+                <h4 className="title">Sign Contract</h4>
+                <p>
+                  When you and the project manager are aligned on hours and payment,
+                  you can start work with a simple digital signature.
+                </p>
+                <div className={this.state.step == 4 ? '' : 'hidden'} >
+                  <a href={ signing_url } className="btn btn-brand">Sign Contract</a>
                 </div>
               </div>
             </div>

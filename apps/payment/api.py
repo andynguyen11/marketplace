@@ -2,6 +2,7 @@ import datetime
 import stripe
 from requests.exceptions import ConnectionError
 
+from django.shortcuts import redirect
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
@@ -12,9 +13,12 @@ from rest_framework import authentication, permissions, viewsets
 from django.conf import settings
 
 from accounts.models import Profile
-from business.models import Job
+from business.models import Job, Document, Terms
+from docusign.models import DocumentSigner
+from docusign.serializers import DocumentSerializer
 from payment.models import Order
 from payment.serializers import OrderSerializer
+from postman.forms import build_payload
 
 
 class CreditCardView(APIView):
@@ -63,21 +67,38 @@ class CreditCardView(APIView):
 
     def send_payment(self, request, customer, card):
         order = Order.objects.get(job=request.data['job'])
-        status = "There was a problem with you payment."
-        if order.status == 'paid':
-            status = "Already paid."
-            return status
+        status = "There was a problem with your payment."
+        if order.stats == 'paid':
+            return 'Already paid'
+
         if request.user == order.job.project.project_manager:
-            stripe.Charge.create(
-                amount=int(order.price*100),
-                currency='usd',
-                source=card,
-                customer=customer
-            )
+            #TODO don't hard code promos
+            if request.data['promo'] != 'raiseideas':
+                stripe.Charge.create(
+                    amount=int(order.price*100),
+                    currency='usd',
+                    source=card,
+                    customer=customer
+                )
             order.date_charged = datetime.datetime.now()
             order.status = 'paid'
             order.save()
             status = "Success"
+            terms = Terms.objects.get(job=order.job)
+            payload = build_payload(request.user, order.job.contractor, terms)
+            serializer = DocumentSerializer(data=payload)
+            serializer.is_valid(raise_exception=True)
+            new_document = serializer.create(serializer.validated_data)
+            Document.objects.create(
+                docusign_document=self,
+                status=self.status,
+                type='MSA',
+                job=obj.job,
+                project=obj.job.project
+            )
+            signer = DocumentSigner.objects.get(profile=request.user, document=new_document)
+            signing_url = signer.get_signing_url()
+            return signing_url
         return status
 
     def get(self, request):

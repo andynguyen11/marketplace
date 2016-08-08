@@ -126,6 +126,7 @@
             text-align: center;
         }
         &.preview {
+          border: 3px dashed @brand-neutral--4;
             &.multi { width: 100%; }
             &.multi {
                 .well;
@@ -217,6 +218,10 @@
         }
     }
     .project-info {
+        clear: both;
+        &:after {
+          clear: both;
+        }
         position: relative;
         padding-top: 7.5px;
         margin-bottom: 1.25em;

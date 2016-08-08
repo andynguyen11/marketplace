@@ -53,7 +53,7 @@ def signup(request):
 def home(request):
     new = Project.objects.all().order_by('-date_created')[:3]
     try:
-        featured = Project.objects.filter(featured=1)[:1].get()
+        featured = Project.objects.filter(featured=1)[:3]
     except Project.DoesNotExist, e:
         featured = new[0]
     developers = Profile.objects.all().order_by('-date_joined')[:3]

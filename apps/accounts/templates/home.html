@@ -88,105 +88,41 @@
 <div class="plates page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header">Featured Projects</h3>
-    <a href="" class="btn btn--clear btn-lg">View all</a>
+    <!-- <a href="" class="btn btn--clear btn-lg">View all</a> -->
   </div>
   <div class="plates-inner">
-    <a class="plate" href="{% url 'project' featured.id %}">
-      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
+    {% for project in featured %}
+    <a class="plate" href="{% url 'project' project.id %}">
+      <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
       <div class="plate-info">
         <div class="plate-info-profile">
-          {% if featured.project_manager.linkedin.extra_data.picture_url %}
-          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
-          {% endif %}
+          <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
-            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
+            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</div>
+            <div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>
           </div>
         </div>
         <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
-          <p class="plate-info-project-description">{{ featured.description }}</p>
+          <h4 class="plate-info-project-name">{{ project.title }}</h4>
+          <p class="plate-info-project-description">{{ project.short_blurb }}</p>
         </div>
       </div>
       <div class="plate-stats">
-        {% if featured.estimated_equity %}
+        {% if project.estimated_equity_percentage %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
+          <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
           <div class="plate-stat-type">Equity</div>
         </div>
         {% endif %}
-        {% if featured.estimated_cash %}
+        {% if project.estimated_cash %}
         <div class="plate-stat">
-          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
+          <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
           <div class="plate-stat-type">Cash</div>
         </div>
         {% endif %}
       </div>
     </a>
-    <a class="plate" href="{% url 'project' featured.id %}">
-      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% if featured.project_manager.linkedin.extra_data.picture_url %}
-          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
-          {% endif %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
-            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
-          <p class="plate-info-project-description">{{ featured.description }}</p>
-        </div>
-      </div>
-      <div class="plate-stats">
-        {% if featured.estimated_equity %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if featured.estimated_cash %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
-    <a class="plate" href="{% url 'project' featured.id %}">
-      <div class="plate-image"{% if MEDIA_URL and featured.image %} style="background-image: url('{{ MEDIA_URL }}{{ featured.image }}');"{% endif %}></div>
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% if featured.project_manager.linkedin.extra_data.picture_url %}
-          <div class="plate-info-profile-photo" style="background-image: url('{{ featured.project_manager.linkedin.extra_data.picture_url }}');"></div>
-          {% endif %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ featured.project_manager.first_name }} {{ featured.project_manager.last_name }}</div>
-            <div class="plate-info-profile-name--secondary">{{ featured.company.name }}</div>
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ featured.title }}</h4>
-          <p class="plate-info-project-description">{{ featured.description }}</p>
-        </div>
-      </div>
-      <div class="plate-stats">
-        {% if featured.estimated_equity %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ featured.estimated_equity }}</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if featured.estimated_cash %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">${{ featured.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
+    {% endfor %}
   </div>
 </div>
 
@@ -200,12 +136,10 @@
 
       {% for project in new %}
       <a class="plate" href="{% url 'project' project.id %}">
-        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');"{% endif %}></div>
+        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
         <div class="plate-info">
           <div class="plate-info-profile">
-            {% if project.project_manager.linkedin.extra_data.picture_url %}
-            <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.linkedin.extra_data.picture_url }}');"></div>
-            {% endif %}
+            <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
             <div class="plate-info-profile-name">
               <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</div>
               <div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>
@@ -213,13 +147,13 @@
           </div>
           <div class="plate-info-project">
             <h4 class="plate-info-project-name">{{ project.title }}</h4>
-            <p class="plate-info-project-description">{{ project.description }}</p>
+            <p class="plate-info-project-description">{{ project.short_blurb }}</p>
           </div>
         </div>
         <div class="plate-stats">
-          {% if project.estimated_equity %}
+          {% if project.estimated_equity_percentage %}
           <div class="plate-stat">
-            <div class="plate-stat-amount">{{ project.estimated_equity }}</div>
+            <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
             <div class="plate-stat-type">Equity</div>
           </div>
           {% endif %}
@@ -243,7 +177,7 @@
     <div class="cta-content">
         Let's bring your ideas to life.<br class="hide-mobile"/> Posting projects is <span class="highlight">free</span>.
     </div>
-    <a href=#"" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+    <a href="{% url 'create-project' %}" class="btn btn-brand btn-brand--attn">Post your project</a>
 </div>
 
 {% endblock %}

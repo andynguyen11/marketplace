@@ -11,6 +11,7 @@ let Checkout = React.createClass({
     return {
       isLoading: false,
       showCreditCardForm: false,
+      currentCard: null,
       creditCard: {
         number: '',
         month: '',
@@ -132,7 +133,6 @@ let Checkout = React.createClass({
 
   submitPayment() {
     const { formElements, currentCard } = this.state;
-    console.log(currentCard)
     if (currentCard) {
       this.setState({ formError: false, isLoading: true });
       $.ajax({
@@ -146,7 +146,7 @@ let Checkout = React.createClass({
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function (result) {
-
+          window.location = result.message;
         }.bind(this)
       });
     }
@@ -161,8 +161,8 @@ let Checkout = React.createClass({
             data: JSON.stringify(this.state.creditCard),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
-            success: function () {
-
+            success: function (result) {
+              window.location = result.message;
             }.bind(this)
           });
         } else {

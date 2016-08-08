@@ -14,6 +14,7 @@ function convertToDate(event){
 }
 
 var typeOptions = [
+    { id: '', text: 'Please choose one'},
     { id: 'art', text: 'art & design' },
     { id: 'technology', text: 'technology' },
     { id: 'gaming', text: 'gaming' },
@@ -60,7 +61,6 @@ function ProgressBar({flow, active, valid=true, onSelect}){
                     <NavItem {...props('details')}>Project Details</NavItem>
                     <NavItem {...props('budget', 'last-step')}>Budget</NavItem>
                     <NavItem {...props('preview', 'final')}>Preview</NavItem>
-                    <NavItem {...props('post', 'final')}>Post</NavItem>
                 </Nav>
             </div>
         </div>
@@ -83,17 +83,19 @@ function Basics({update, ...props}){
 
                 <BigFormGroup label="Short Project Overview">
                     <textarea type="text" rows="3" className="form-control" name="short_blurb"
-                        onChange={event => update.overview({event})}
+                        onChange={event => update.short_blurb({event})}
                         placeholder="Think of this as your elevator pitch to developers. Get them excited in 250 characters or less." />
                 </BigFormGroup>
 
-                <BigFormGroup label="Preferred Project Start Date">
+                <div className="form-group col-md-4 col-md-offset-2">
+                    <label className="control-label">Preferred Project Start Date</label>
                     <UpdateInput type="date" name="start_date" onChange={e => update.start_date(convertToDate(e))}/>
-                </BigFormGroup>
+                </div>
 
-                <BigFormGroup label="Preferred Project End Date">
+                <div className="form-group col-md-4">
+                    <label className="control-label">Preferred Project End Date</label>
                     <UpdateInput type="date" name="end_date" onChange={e => update.end_date(convertToDate(e))}/>
-                </BigFormGroup>
+                </div>
             </div>
 
             <BigFormGroup label="Preferred Technology Stack (Optional)">
@@ -153,9 +155,6 @@ const Details = React.createClass({
                     This is where you should outline all the project specifics.
                     The more details you provide, the more quality bids you will recieve.
                 </p>
-                <BigFormGroup label="Project Video">
-                    <AttachmentField accept="video/*" tag="video" onChange={this.attachmentUpdater} />
-                </BigFormGroup>
                 <BigFormGroup label="Project Image">
                     <AttachmentField accept="image/*" tag="image" onChange={this.attachmentUpdater} />
                 </BigFormGroup>
@@ -163,19 +162,23 @@ const Details = React.createClass({
                 { info.map((data, key) => (
                     <ProjectInfoField {...{data, key, id: key}} update={this.infoUpdater(key)} className={key == 0 ? 'primary' : ''}/>
                 ))}
-                <BigFormGroup label={(
-                    <a onClick={e => this.infoUpdater(info.length)({value: this.defaultInfo})} className="add-info">
-                        <i className="fa fa-plus-circle" aria-hidden="true"/> Add Another Tab
-                    </a>
-                    )}>
-                    <p style={{textAlign: 'center'}}>
-                        This is optional, but some people like to add tabs that house addtional project details, <br/>
-                        onboarding documents, design guidlines, UX documentation, etc.
-                    </p>
-                    <p style={{textAlign: 'center'}}>
-                        Make as many as you'd like. You can set them to public or private.
-                    </p>
-                </BigFormGroup>
+            {/*
+              <BigFormGroup label={(
+                <a onClick={e => this.infoUpdater(info.length)({value: this.defaultInfo})} className="add-info">
+                  <i className="fa fa-plus-circle" aria-hidden="true"/>
+                  Add Another Tab
+                </a>
+              )}>
+                <p style={{textAlign: 'center'}}>
+                  This is optional, but some people like to add tabs that house addtional project details,
+                  <br/>
+                  onboarding documents, design guidlines, UX documentation, etc.
+                </p>
+                <p style={{textAlign: 'center'}}>
+                  Make as many as you'd like. You can set them to public or private.
+                </p>
+              </BigFormGroup>
+            */}
             </div>
         )
     }
@@ -203,7 +206,7 @@ function Budget({update, ...props}){
                 <div className="col-md-4">
                     <label>&nbsp;</label>
                     <div className="input-group">
-                        <UpdateInput type="number" name="estimated_equity" placeholder="Estimated Equity" placeholder="Equity Offered" update={update}/>
+                        <UpdateInput name="estimated_equity_percentage" placeholder="Estimated Equity" placeholder="Equity Offered" update={update}/>
                         <div className="input-group-addon">%</div>
                     </div>
                 </div>
@@ -235,7 +238,7 @@ const CreateProject = React.createClass({
             contentType: false,
             processData: false,
             success: result => {
-                window.location = `/project/${result.id}/`;
+                //window.location = `/project/${result.id}/`;
             }
         });
     },
@@ -306,20 +309,22 @@ const CreateProject = React.createClass({
                 <form id="project-form" method="post" enctype="multipart/form-data">
                     { this.props.csrf_token }
                     <Basics className='basics section' update={this.fieldUpdateMap(
-                        'title', 'type', 'overview', 'start_date', 'end_date', 'skills')}/>
+                        'title', 'type', 'short_blurb', 'start_date', 'end_date', 'skills')}/>
 
                     <Details className='details section' update={this.fieldUpdateMap('details', 'info')} data={{details, info}} />
 
                     <Budget className='budget section' update={this.fieldUpdateMap(
-                        'estimated_hours', 'estimated_cash', 'estimated_equity', 'confidential_info')}/>
+                        'estimated_hours', 'estimated_cash', 'estimated_equity_percentage', 'confidential_info')}/>
 
-                    <ProjectPreview className='preview section' data={this.state.data} active={this.state.currentSection == 'preview'}/>
-
-                    <div className='text-center form-group col-md-12'>
+                    <div className='text-center form-group'>
                         <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this.sectionAction}>
                             { (sections.indexOf(currentSection) < sections.length - 2) ? 'Save Project and Continue' : 'Post Project'}
                         </a>
                     </div>
+
+                    <h4 className={this.state.currentSection == 'preview' ? "text-skinny" : 'hidden'}>Project Preview</h4>
+                    <ProjectPreview className='preview section' data={this.state.data} active={this.state.currentSection == 'preview'}/>
+
                 </form>
             </div>
         )

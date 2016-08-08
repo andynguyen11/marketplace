@@ -48,7 +48,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     class Meta:
         model = Project
-        fields = field_names(Project) + ('info', 'details', 'category')
+        fields = field_names(Project) + ('info', 'details', 'category', 'skills')
         parent_key = 'project'
         child_fields = ('info',)
 
@@ -62,7 +62,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
-    project = ProjectSerializer()
+    project = ProjectSerializer(read_only=True)
 
     class Meta:
         model = Job

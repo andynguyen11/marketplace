@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import SkillButton from '../../components/skill';
 import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
@@ -38,6 +39,7 @@ const DeveloperOnboard = React.createClass({
       if (result.linkedin.extra_data) {
         new_profile.biography = result.linkedin.extra_data.summary;
       }
+      new_profile.role = 'full-stack';
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url
@@ -73,6 +75,7 @@ const DeveloperOnboard = React.createClass({
         ],
         validator: FormHelpers.checks.isRequired,
         update: (value) => {
+          const { profile } = this.state;
           profile.role = value;
           this.setState({ profile });
         }
@@ -84,6 +87,7 @@ const DeveloperOnboard = React.createClass({
         value: profile.capacity || '',
         validator: FormHelpers.checks.isRequired,
         update: (value) => {
+          const { profile } = this.state;
           profile.capacity = value;
           this.setState({ profile });
         }
@@ -207,7 +211,7 @@ const DeveloperOnboard = React.createClass({
         let profile = this.state.profile;
         delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
         $.ajax({
-          url: loom_api.profile + this.state.profile.id + '/',
+          url: loom_api.profile + profile.id + '/',
           method: 'PATCH',
           data: JSON.stringify(profile),
           contentType: 'application/json; charset=utf-8',
@@ -322,7 +326,10 @@ const DeveloperOnboard = React.createClass({
         <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>Save Profile</a>
+          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>
+            <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+            Save Profile
+          </a>
         </div>
 
       </div>

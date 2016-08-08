@@ -137,7 +137,7 @@ class DocumentSigner(models.Model):
             returnUrl='/profile/documents/',
             client=client
         )
-        print(signing_url)
+        return signing_url
 
     def __str__(self):
         return '%s <%s>, %s' % (self.name, self.email, self.role_name)
