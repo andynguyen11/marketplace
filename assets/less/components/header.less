@@ -52,10 +52,19 @@
     .header-link--auth {
       a {
         color: @brand--accent;
+
+        @media (max-width: @screen-sm) {
+          margin: 0;
+        }
       }
 
       &.header-link--sign-up {
         margin-left: 50px;
+
+        @media (max-width: @screen-sm) {
+          margin-left: 0;
+          margin-right: @gutter--medium;
+        }
       }
     }
   }

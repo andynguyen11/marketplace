@@ -1,0 +1,126 @@
+.hide-mobile {
+  @media (max-width: @screen-sm) {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @media (min-width: @screen-sm) {
+    display: none !important;
+  }
+}
+
+.page-content {
+  @media (max-width: @screen-sm) {
+    min-width: 320px !important;
+  }
+}
+
+.page-content--medium {
+  @media (max-width: @screen-sm) {
+    min-width: 320px !important;
+  }
+}
+
+.footer {
+  @media (max-width: @screen-sm) {
+    .footer-inner {
+      padding-right: @gutter !important;
+      padding-left: @gutter !important;
+    }
+
+    .footer-actions {
+      flex-direction: column;
+    }
+
+    .footer-newsletter {
+      order: 1;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .footer-nav {
+      order: 2;
+      flex-direction: column;
+      align-self: flex-start;
+      padding-top: @gutter;
+    }
+  }
+}
+
+.hero-overlay--logo-mark {
+  @media (max-width: @screen-sm) {
+    &:before {
+      display: none;
+    }
+
+    &:after {
+      display: none;
+    }
+  }
+}
+
+.carousel-control {
+  @media (max-width: @screen-sm) {
+    display: none;
+  }
+}
+
+#hero {
+  @media (max-width: @screen-sm) {
+    h2, h5 {
+      padding: 0 @gutter !important;
+    }
+    h2 {
+      font-size: 48px !important;
+    }
+
+    h5 {
+      font-size: 23px !important;
+    }
+
+    #hero-carousel--home .hero-item--home-post-project {
+      background-size: cover;
+    }
+  }
+}
+
+.header {
+  @media (max-width: @screen-sm) {
+    height: 76px !important;
+
+    .header-icons {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-hamburger {
+      background: url(../images/icon-hamburger.svg) no-repeat center;
+      background-size: contain;
+      height: 30px;
+      width: 30px;
+      margin-left: @gutter--medium;
+    }
+
+    .header-inner {
+      height: 76px !important;
+    }
+
+    .logo {
+      height: 40px !important;
+      flex-shrink: 1;
+      flex-basis: 132px;
+    }
+  }
+}
+
+.btn {
+  @media (max-width: @screen-sm) {
+    &.btn {
+      font-size: 16px !important;
+    }
+    &.btn-lg {
+      font-size: 22px !important;
+    }
+  }
+}

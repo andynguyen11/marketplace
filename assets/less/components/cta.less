@@ -4,15 +4,31 @@
   justify-content: space-around;
   align-items: center;
   border-radius: @border-radius;
+
+  @media (max-width: @screen-sm) {
+    border-radius: 0;
+  }
 }
 
 .cta--primary {
   margin-top: @gutter * 2;
   margin-bottom: @gutter * 4;
   padding: @gutter * 4;
+
+  @media (max-width: @screen-sm) {
+    width: 100%;
+    padding: 20px;
+    flex-direction: column;
+    text-align: center;
+  }
 }
 
 .cta-content {
   font-size: 30px;
   color: @brand-neutral--1;
+
+  @media (max-width: @screen-sm) {
+    padding-bottom: @gutter;
+    text-align: center;
+  }
 }

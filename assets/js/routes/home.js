@@ -81,7 +81,7 @@ import BigSelect from '../components/bigSelect';
                     <div className='plates-headcap plates-headcap--noHeader home-headcap--bigSelect'>
                         <a href='#' className='btn btn--clear btn-lg'>See more</a>
                     </div>
-                    <div className='plates-inner'>
+                    <div className='plates-inner plates-inner--dev'>
                         {developerPlates}
                     </div>
                 </div>

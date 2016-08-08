@@ -12,6 +12,8 @@ const glob = require('glob');
 
 var less = require('gulp-less-sourcemap');
 var uglifyCss = require('gulp-uglifycss');
+var LessAutoprefix = require('less-plugin-autoprefix');
+var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
 var gutil = require('gulp-util');
 
 const vendorFiles = require('./assets/js/vendor.js');
@@ -92,14 +94,13 @@ gulp.task('less', function () {
 			.pipe(gulp.dest('./static/css/'));
 
 		gulp.src('./assets/less/base.less')
-			.pipe(less())
+			.pipe(less({
+				plugins: [autoprefix]
+			}))
 			.on('error', gutil.log)
 			.pipe(uglifyCss())
 			.pipe(gulp.dest('./static/css/'));
 	})
-});
-gulp.task('watch:less', function () {
-	gulp.watch('./assets/less/**/*.less', ['less']);
 });
 
 gulp.task('fonts', function(){
