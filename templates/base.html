@@ -43,20 +43,20 @@
 
         <ul class="header-links hide-mobile">
           <li><a href="{% url 'home' %}">How it Works</a></li>
-          <li><a href="{% url 'home' %}">Browse a Project</a></li>
+          <!-- <li><a href="{% url 'home' %}">Browse a Project</a></li> -->
           <li><a href="{% url 'create-project' %}">Post a Project</a></li>
         </ul>
 
         <div class="header-icons">
+          <!--
           <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
             <img src="{% static 'images/icon-message.png' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
+          -->
           <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
-          <a class="btn btn-brand" href="{% url 'signup-type' %}">Sign Up</a>
-          <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <img class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
-
+          <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
             <li><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
               Messages
@@ -65,11 +65,11 @@
             <li><a id="help" href="#" class="hide-desktop">Help</a></li>
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <li><a href="{% url 'postman:inbox' %}">Messages</a></li>
+            <!-- <li><a href="{% url 'postman:inbox' %}">Messages</a></li> -->
             <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
-            <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li>
-            <li><a href="{% url 'view-documents' %}">Your Documents</a></li>
-            <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
+            <!-- <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> -->
+            <!-- <li><a href="{% url 'view-documents' %}">Your Documents</a></li> -->
+            <!-- <li><a href="{% url 'view-skills' %}">Your Skills</a></li> -->
             <li><a href="{% url 'logout' %}">Log Out</a></li>
           </ul>
 
@@ -104,7 +104,7 @@
 
       <ul class="header-links">
         <li class="hide-mobile"><a href="{% url 'home' %}">How it Works</a></li>
-        <li class="hide-mobile"><a href="{% url 'home' %}">Browse a Project</a></li>
+        <!-- <li class="hide-mobile"><a href="{% url 'home' %}">Browse a Project</a></li> -->
         <li class="hide-mobile"><a href="{% url 'create-project' %}">Post a Project</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'signup' %}">Sign Up</a></li>
         <li class="header-link--auth"><a href="{% url 'login' %}" class="btn btn-brand--clear">Sign In</a></li>

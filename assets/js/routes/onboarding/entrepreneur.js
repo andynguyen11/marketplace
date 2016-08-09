@@ -47,6 +47,7 @@ const EntrepreneurOnboard = React.createClass({
       const new_profile = result;
       if (result.linkedin.extra_data) {
         new_profile.biography = result.linkedin.extra_data.summary;
+        new_profile.username = result.email;
       }
 
       this.setState({

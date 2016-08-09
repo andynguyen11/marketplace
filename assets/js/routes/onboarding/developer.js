@@ -39,11 +39,14 @@ const DeveloperOnboard = React.createClass({
       let new_profile = result;
       if (result.linkedin.extra_data) {
         new_profile.biography = result.linkedin.extra_data.summary;
+        new_profile.username = result.email;
       }
       new_profile.role = 'full-stack';
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url
+      }, () => {
+        this.setState({ formElements: this.formElements() });
       });
     }.bind(this));
   },

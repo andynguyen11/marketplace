@@ -4,7 +4,7 @@ import RatingStars from '../components/ratingStars';
 import BigSelect from '../components/bigSelect';
 
 (function(){
-    const developersDiv = document.getElementById('devs-home');
+    // const developersDiv = document.getElementById('devs-home');
 
     const HomeDevelopers = React.createClass({
         componentWillMount() {

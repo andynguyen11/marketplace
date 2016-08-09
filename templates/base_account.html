@@ -16,6 +16,7 @@
         <li>
           <a class="{% add_active request 'dashboard' %}" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
+        <!--
         <li>
         {{ postman_unread }}
           <a class="{% add_active request 'postman:inbox' %}" href="{% url 'postman:inbox' %}">
@@ -23,9 +24,11 @@
             <span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
         </li>
+        -->
         <li>
           <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Open Projects</a>
         </li>
+        <!--
         <li>
           <a class="{% add_active request 'view-projects' %}" href="{% url 'view-projects' %}" >Engaged Projects</a>
         </li>
@@ -35,6 +38,7 @@
         <li>
           <a class="{% add_active request 'view-skills' %}" href="{% url 'view-skills' %}">Your Skills</a>
         </li>
+        -->
         <li>
           <a class="{% add_active request 'account-settings' %}" href="{% url 'account-settings' %}">Settings</a>
         </li>
