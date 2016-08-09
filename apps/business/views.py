@@ -9,8 +9,7 @@ from notifications.signals import notify
 
 from business.forms import ProjectForm, InfoForm
 from accounts.models import Profile
-
-from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user_company
+from business.models import Company, Job, Project, PROJECT_TYPES, user_company, Employee
 
 
 def view_project(request, project_id=None):
