@@ -98,10 +98,6 @@ const Bid = React.createClass({
         name: 'message',
         placeholder: 'Include a message with your job to increase your chances of winning the job.',
         value: job.message || '',
-        validator: (value) => {
-          const { job } = this.props;
-          return job ? FormHelpers.checks.isRequired(value) : true;
-        },
         update: (value) => {
           const { job, updateJob } = this.props;
           job.message = value;
@@ -154,6 +150,7 @@ const Bid = React.createClass({
       if (valid) {
         this.setState({ formError: false, isLoading: true });
         let new_job = _.reduce(formElements, function(result, value, key) {
+          result[key] = value['value'];
           return result;
         }, {});
         $.ajax({
@@ -173,7 +170,7 @@ const Bid = React.createClass({
   },
 
   render() {
-    const { job } = this.props;
+    const { job, project, bid_sent, current_user } = this.props;
     const { formElements, wantsCash, wantsEquity, formError } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
@@ -220,7 +217,7 @@ const Bid = React.createClass({
     );
 
 
-    const messageInput = (
+    const messageInput = bid_sent || (
       <div>
         <textarea
           className="form-control"
@@ -237,7 +234,7 @@ const Bid = React.createClass({
     return(
       <div className="text-center">
         <h4 className="text-skinny">Place your bid to work on:</h4>
-        <h4 className="text-brand">{job.project.title}</h4>
+        <h4 className="text-brand">{project.title}</h4>
 
         <h4 className="text-skinny">What type of bid do you want to submit?</h4>
         <div className='form-group'>
@@ -246,7 +243,6 @@ const Bid = React.createClass({
         {cashInput}
         { wantsCash && wantsEquity && <h4>+</h4> }
         {equityInput}
-        {messageInput}
 
         <div>
         <label className="control-label" htmlFor={formElements.hours.name}>{formElements.hours.label}</label>
@@ -261,8 +257,13 @@ const Bid = React.createClass({
           />
       </div>
 
+        <input type="hidden" name="contractor" value={current_user.id} />
+          <input type="hidden" name="project" value={project.id} />
+
+        {messageInput}
+
         {error}
-        <button onClick={this.saveBid} className="btn btn-brand">Save Bid</button>
+        <button onClick={bid_sent ? this.saveBid : this.createBid} className="btn btn-brand">Save Bid</button>
 
       </div>
     )

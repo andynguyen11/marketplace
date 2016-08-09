@@ -15,7 +15,7 @@ let SkillButton = React.createClass({
   render() {
       return (
         <div className={this.state.active ? 'btn btn-skill text-center active' : 'btn btn-skill text-center'} onClick={this.changeState} data-skill={this.props.skill.id} >
-          <i className="fa fa-css3"></i> {this.props.skill.name}
+          {this.props.skill.name}
         </div>
       );
   }

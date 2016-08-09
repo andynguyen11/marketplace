@@ -72,8 +72,9 @@ def view_profile(request, user_id=None):
         user = Profile.objects.get(id=user_id)
     else:
         user = request.user
+    projects = Project.objects.filter(project_manager=request.user)
     jobs = Job.objects.filter(contractor=user)
-    return render_to_response('profile.html', {'user': user, 'social': user.linkedin, 'jobs': jobs, }, context_instance=RequestContext(request))
+    return render_to_response('profile.html', {'user': user, 'social': user.linkedin, 'jobs': jobs, 'projects': projects }, context_instance=RequestContext(request))
 
 
 @login_required

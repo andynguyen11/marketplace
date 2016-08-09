@@ -2,6 +2,19 @@
   padding: 6px 12px;
   font-weight: 600;
 
+  &.btn-hours {
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px 25px;
+    &.active {
+      border: 1px solid @brand--accent;
+      color: @brand--accent;
+    }
+    h3 {
+      line-height: 1.5;
+    }
+  }
+
   &.btn-brand {
     color: #FFF;
     border: 1px solid @brand--accent;
@@ -101,9 +114,15 @@
     }
   }
 
+  &.btn-fat {
+    padding: 15px;
+  }
+
   &.btn-linkedin {
+    font-family: @brand-font;
     text-transform: none;
     color: #fff;
+    padding: 15px;
     background: #0077B5;
     .fa {
       font-size: 18px;

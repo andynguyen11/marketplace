@@ -93,7 +93,7 @@ class ProjectInfo(models.Model):
 
 
 class Project(models.Model):
-    company = models.ForeignKey(Company)
+    company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
 
     title = models.CharField(max_length=255)

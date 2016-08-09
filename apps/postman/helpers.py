@@ -59,7 +59,7 @@ def pm_broadcast(sender, recipients, subject, body='', skip_notification=False):
 
 
 def pm_write(sender, recipient, subject, body='', skip_notification=False,
-        auto_archive=False, auto_delete=False, auto_moderators=None, job=None):
+        auto_archive=False, auto_delete=False, auto_moderators=None, job=None, project=None):
     """
     Write a message to a User.
     Contrary to pm_broadcast(), the message is archived and/or deleted on
@@ -77,6 +77,8 @@ def pm_write(sender, recipient, subject, body='', skip_notification=False,
     if job:
         message.job = job
         message.project = job.project
+    if project:
+        message.project = project
     initial_status = message.moderation_status
     if auto_moderators:
         message.auto_moderate(auto_moderators)

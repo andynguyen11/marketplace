@@ -177,7 +177,7 @@ let Checkout = React.createClass({
     const { formElements, formError, showCreditCardForm, cards } = this.state;
 
     return(
-      <div>
+      <div className="checkout">
         <strong>Almost done!</strong>
         <p>
           Loom takes a small service fee for facilitating the connection and contract between you
@@ -191,7 +191,7 @@ let Checkout = React.createClass({
               <p>$3 x {order.job.hours} total project hours in
                 <strong>{order.job.project.name}</strong>
                 contract.</p>
-              <h2>{order.price}</h2>
+              <h2>${order.price}</h2>
             </div>
 
             <div>

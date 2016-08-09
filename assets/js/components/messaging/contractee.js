@@ -36,7 +36,7 @@ const ContracteeTracker = React.createClass({
   },
 
   render() {
-    const { nda, terms, showTerms, toggleTermsPanel, toggleCheckoutPanel, sendNDA , isLoading } = this.props;
+    const { nda, terms, signing_url, showTerms, toggleTermsPanel, toggleCheckoutPanel, sendNDA , isLoading } = this.props;
 
     return (
       <div id="agreement-tracker" className="col-md-4">
@@ -101,7 +101,12 @@ const ContracteeTracker = React.createClass({
                   Loom collects a service fee only when you sign and send your contract to the developer.
                 </p>
                 <div className={this.state.step == 3 ? '' : 'hidden'} >
-                  <button onClick={toggleCheckoutPanel} className="btn btn-brand">Finish Up</button>
+                  <div className={signing_url ? 'hidden': ''}>
+                    <button onClick={toggleCheckoutPanel} className="btn btn-brand">Finish Up</button>
+                  </div>
+                  <div className={signing_url ? '' : 'hidden'}>
+                    <a href={signing_url} className="btn btn-brand">Sign Contract</a>
+                  </div>
                 </div>
               </div>
             </div>

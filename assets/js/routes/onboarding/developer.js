@@ -18,6 +18,7 @@ const DeveloperOnboard = React.createClass({
         biography: '',
         capacity: '',
         role: 'full-stack',
+        country: 'United States of America',
         linkedin: {
           extra_data: ''
         },
@@ -82,10 +83,21 @@ const DeveloperOnboard = React.createClass({
       },
       capacity: {
         name: 'capacity',
-        label: 'Average Weekly Availability (hours)',
-        placeholder: 'XX Hours/Week',
+        label: "Don't see the exact number you want? You can add your hours here:",
+        errorClass: '',
+        placeholder: '24hrs/Week',
         value: profile.capacity || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.capacity.errorClass = 'has-error';
+          } else {
+            formElements.capacity.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.capacity = value;
@@ -95,8 +107,19 @@ const DeveloperOnboard = React.createClass({
       profileFirstName: {
         name: 'profileFirstName',
         label: 'First Name',
+        errorClass: '',
         value: profile.first_name || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.profileFirstName.errorClass = 'has-error';
+          } else {
+            formElements.profileFirstName.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.first_name = value;
@@ -106,8 +129,19 @@ const DeveloperOnboard = React.createClass({
       profileLastName: {
         name: 'profileLastName',
         label: 'Last Name',
+        errorClass: '',
         value: profile.last_name || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.profileLastName.errorClass = 'has-error';
+          } else {
+            formElements.profileLastName.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.last_name = value;
@@ -117,8 +151,19 @@ const DeveloperOnboard = React.createClass({
       profileCity: {
         name: 'profileCity',
         label: 'City',
+        errorClass: '',
         value: profile.city || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.profileCity.errorClass = 'has-error';
+          } else {
+            formElements.profileCity.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.city = value;
@@ -128,17 +173,50 @@ const DeveloperOnboard = React.createClass({
       profileStateProvince: {
         name: 'profileStateProvince',
         label: 'State/Province',
+        errorClass: '',
         value: profile.state || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.profileStateProvince.errorClass = 'has-error';
+          } else {
+            formElements.profileStateProvince.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.state = value;
           this.setState({ profile });
         }
       },
+      profileCountry: {
+        name: 'profileCountry',
+        label: 'Country',
+        errorClass: '',
+        value: profile.country || 'United States of America',
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements } = this.state;
+          if (!valid) {
+            formElements.profileCountry.errorClass = 'has-error';
+          } else {
+            formElements.profileCountry.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
+        update: (value) => {
+          const { profile } = this.state;
+          profile.country = value;
+          this.setState({ profile });
+        }
+      },
       profileBio: {
         name: 'profileBio',
-        label: 'Quick Bio (optional)',
+        label: 'Your Bio (optional)',
         placeholder:'Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself.',
         value: profile.biography || '',
         update: (value) => {
@@ -194,7 +272,6 @@ const DeveloperOnboard = React.createClass({
         processData: false,
         contentType: false,
         success: function(data, textStatus, jqXHR) {
-          this.setState({ isLoading: false });
           window.location = '/profile/dashboard/';
         }
       });
@@ -221,7 +298,6 @@ const DeveloperOnboard = React.createClass({
               this._uploadImage();
             }
             else {
-              this.setState({ isLoading: false });
               window.location = '/profile/dashboard/';
             }
           }.bind(this)
@@ -239,6 +315,16 @@ const DeveloperOnboard = React.createClass({
 
     formElements[fieldName].update(value);
     formElements[fieldName].value = value;
+
+    this.setState({ formElements, formError: false });
+  },
+
+  setHours(event) {
+    const { formElements } = this.state;
+
+
+    formElements['capacity'].update($(event.currentTarget).data('hours'));
+    formElements['capacity'].value = $(event.currentTarget).data('hours');
 
     this.setState({ formElements, formError: false });
   },
@@ -264,11 +350,8 @@ const DeveloperOnboard = React.createClass({
 
     const skillsComponent = !!skills.length && (
       <div>
-        <div className="section-header text-muted col-md-8 col-md-offset-2">
-          Almost done! Tell us about your experience and availability.  We'll use this info to set up your profile and find great projects for you.
-        </div>
-
-        <div className='col-md-8 col-md-offset-2'>
+        <div className='form-group col-md-8 col-md-offset-2'>
+          <label className='control-label'>Your Stack Experience</label>
           <div className='panel panel-default panel-skills'>
             {skills}
             <div className='clearfix'></div>
@@ -279,10 +362,7 @@ const DeveloperOnboard = React.createClass({
 
     return (
       <div>
-        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
-          <p className="text-muted">
-            Let's get your profile set up, so you can be discovered!
-          </p>
+        <div id="basics" className="text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
           <div className="form-group">
             {/*TODO: replace this with the BigSelect component*/}
             {/*<BigSelect onSelect={this.handleChange} options={formElements.role.options} selectedOptionIndex={0} name="role" id="role" prefix="I am a" suffix={<span>developer <span className="text-yellow">looking for incredible projects.</span></span>}/>*/}
@@ -293,6 +373,7 @@ const DeveloperOnboard = React.createClass({
                 <select name="role" id="role" value={profile.role} onChange={this.handleChange}>
                   {roleOptions}
                 </select>
+                <i className="fa fa-chevron-down"></i>
               </div>
               <div className="bigSelect-suffix">developer</div>
               {/*<div className="bigSelect-suffix">developer <span className="text-yellow">looking for incredible projects.</span></div>*/}
@@ -310,10 +391,49 @@ const DeveloperOnboard = React.createClass({
 
         {skillsComponent}
 
-        <div className="form-group col-md-8 col-md-offset-2">
+        <div>
+        <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
+          <div className="col-sm-offset-2 col-sm-2 text-center">
+          <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
+            <h3>
+              10hrs<br />
+              Week
+            </h3>
+          </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+          <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
+            <h3>
+              20hrs<br />
+              Week
+            </h3>
+          </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+          <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
+            <h3>
+              30hrs<br />
+              Week
+            </h3>
+          </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+          <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
+            <h3>
+              40hrs<br />
+              Week
+            </h3>
+          </button>
+          </div>
+          <div className="clearfix"></div>
+        </div>
+        <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
           <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
           <input
-            className="form-control"
+            className={ 'form-control ' + formElements.capacity.errorClass }
             type='text'
             name={formElements.capacity.name}
             id={formElements.capacity.name}
@@ -321,6 +441,7 @@ const DeveloperOnboard = React.createClass({
             value={formElements.capacity.value}
             onChange={this.handleChange}
           />
+          <div className="clearfix"></div>
         </div>
 
         <div className='text-center form-group col-md-8 col-md-offset-2'>

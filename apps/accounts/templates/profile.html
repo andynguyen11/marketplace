@@ -15,20 +15,29 @@
         </h2>
         <p>{{ social.extra_data.summary }}</p>
         <ul class="project-meta">
-          <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ social.extra_data.location.name }}</li>
-          <li><img class="icon" src="{% static 'images/icon-skill.png' %}" /> Python, Javascript, HTML, CSS</li>
+          <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ user.city }}, {{ user.state }}</li>
+          <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
+            {% for skill in user.skills.all %}
+            {{ skill.name }},
+            {% endfor %}
+
+          </li>
         </ul>
         <p>
           <a class="btn btn-dark" data-toggle="modal" data-target="#message-modal">Hire {{ user.first_name }}</a>
+          {% comment %}
           <a class="btn btn-dark" id="writeReview">Review {{ user.first_name }}</a>
+          {% endcomment %}
+          {% if user.linkedin %}
           <a class="btn btn-dark">See on LinkedIn</a>
+          {% endif %}
         </p>
       </div>
       <div class="clearfix"></div>
     </div>
   </div>
 </div>
-
+{% comment %}
 <div id="reviews" class="section">
   <div class="row">
     <div class="container">
@@ -143,7 +152,7 @@
     </div>
   </div>
 </div>
-
+{% endcomment %}
 <div id="past-projects" class="section">
   <div class="row">
     <div class="container">
@@ -206,6 +215,7 @@
   </div>
 </div>
 
+{% comment %}
 <div id="experience" class="section">
   <div class="row">
     <div class="container">
@@ -237,6 +247,7 @@
     </div>
   </div>
 </div>
+{% endcomment %}
 
 <div class="modal fade" tabindex="-1" role="dialog" id="message-modal">
   <div class="modal-dialog">
@@ -248,14 +259,28 @@
           <span class="text-yellow">{{ user.first_name }}</span>
         </h4>
       </div>
+
       <div class="modal-body">
+        {% if projects %}
         <form id="message-form">
           <input type="hidden" name="recipient" value="{{ user.id }}" />
+          <div class="form-group">
+          <label>Which project are you hiring {{ user.first_name }} for?</label>
+          <select class="form-control" name="project" >
+          {% for project in projects %}
+            <option value="{{ project.id }}">{{ project.title }}</option>
+          {% endfor %}
+          </select>
+          </div>
           <textarea cols="40" class="required-input" id="id_message" name="message" placeholder="Write your message..." rows="7"></textarea>
           <input type="submit" class="btn btn-yellow pull-right" value="Send Message" />
           <div class="clearfix"></div>
         </form>
+        {% else %}
+          <h4>You need to <a href="{% url 'create-project' %}">post a project</a> before hiring a developer.</h4>
+        {% endif %}
       </div>
+
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

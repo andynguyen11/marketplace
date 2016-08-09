@@ -39,7 +39,7 @@ const ContractorTracker = React.createClass({
       else if (this.props.nda.status == 'signed') {
         step = 3;
       }
-      else if (this.props.job) {
+      else if (this.props.bid_sent) {
         step = 2;
       }
       console.log(step)
@@ -48,7 +48,7 @@ const ContractorTracker = React.createClass({
   },
 
   render() {
-    const { nda, terms, showTerms, signing_url, toggleTermsPanel, toggleBidPanel, toggleNDAPanel, showNDA, isLoading } = this.props;
+    const { nda, job, bid_sent, terms, showTerms, signing_url, toggleTermsPanel, toggleBidPanel, toggleNDAPanel, showNDA, isLoading } = this.props;
 
     return (
       <div id="agreement-tracker" className="col-md-4">
@@ -59,7 +59,12 @@ const ContractorTracker = React.createClass({
             <h4>Agreement Tracker</h4>
           </div>
           { isLoading &&
-            <p>Loading...</p>
+            <div>
+            <h4 className="text-center">
+              <i className="fa fa-circle-o-notch fa-spin fa-fw"></i>
+              Loading...
+            </h4>
+            </div>
           }
           { isLoading ||
             <div>
@@ -79,7 +84,7 @@ const ContractorTracker = React.createClass({
                   <button
                     onClick={toggleBidPanel}
                     className="btn btn-brand"
-                  >Edit Bid</button>
+                  >{ bid_sent ? 'Edit Bid' : 'Submit Bid' }</button>
                 </div>
 
               </div>

@@ -1,29 +1,43 @@
 import React from 'react';
-import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
 
-const EntrepreneurOnboard = React.createClass({
+const PrelaunchOnboard = React.createClass({
+
+  getUrlParameter(sParam){
+      var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+          sURLVariables = sPageURL.split('&'),
+          sParameterName,
+          i;
+
+      for (i = 0; i < sURLVariables.length; i++) {
+          sParameterName = sURLVariables[i].split('=');
+
+          if (sParameterName[0] === sParam) {
+              return sParameterName[1] === undefined ? true : sParameterName[1];
+          }
+      }
+  },
 
   getInitialState() {
     return {
       profile: {
-        first_name: '',
-        last_name: '',
-        email: '',
-        username: '',
+        first_name: this.getUrlParameter('first_name'),
+        last_name: this.getUrlParameter('last_name'),
+        email: this.getUrlParameter('email'),
+        username: this.getUrlParameter('email'),
         biography: '',
         availability: '',
         role: '',
         title: '',
+        password: '',
         linkedin: {
           extra_data: ''
-        },
-        country: 'United States of America'
+        }
       },
       company: {
         id: '',
-        name: '',
+        name: this.getUrlParameter('company_name'),
         description: '',
         type: '',
         filing_location: '',
@@ -59,72 +73,26 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   formElements() {
-    const { profile, company, isCompany } = this.state;
+    const { profile, company } = this.state;
 
     return {
       title: {
         name: 'title',
-        errorClass: '',
         label: 'Title at Your Company',
         value: profile.title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.profileCountry.errorClass = 'has-error';
-          } else {
-            formElements.profileCountry.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.title = value;
           this.setState({ profile });
         }
       },
-      isCompany: {
-        name: 'isCompany',
-        errorClass: '',
-        label: 'What type of account do you want to set up?',
-        value: isCompany,
-        options: [
-          {
-            label: 'A company can get work made for cash, equity, or a mix of both.',
-            value: 'true',
-            short_label: 'Company'
-          },
-          {
-            label: 'Individual Entrepreneurs can get work made for cash only. Only goverment-filed companies' +
-            'can trade equity.',
-            value: 'false',
-            short_label: 'Individual Entrepreneur'
-          }
-        ],
-        validator: FormHelpers.checks.isRequired,
-        update: (value) => {
-          this.setState({ isCompany: value === 'true' });
-        }
-      },
       companyName: {
         name: 'companyName',
         label: 'Company Name',
-        errorClass: '',
         value: company.name || '',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyName.errorClass = 'has-error';
-          } else {
-            formElements.companyName.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.name = value;
@@ -134,19 +102,8 @@ const EntrepreneurOnboard = React.createClass({
       companyState: {
         name: 'companyState',
         label: 'Company State',
-        errorClass: '',
         value: company.name || '',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyState.errorClass = 'has-error';
-          } else {
-            formElements.companyState.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.state = value;
@@ -157,18 +114,7 @@ const EntrepreneurOnboard = React.createClass({
         name: 'companyCity',
         label: 'Company City',
         value: company.name || '',
-        errorClass: '',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyCity.errorClass = 'has-error';
-          } else {
-            formElements.companyCity.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.city = value;
@@ -177,21 +123,10 @@ const EntrepreneurOnboard = React.createClass({
       },
       companyDescription: {
         name: 'companyDescription',
-        errorClass: '',
         label: 'Company Bio (This is what developers will see)',
         value: company.description || '',
         placeholder: 'Think of this as your elevator pitch to developers.  Get them excited in 250 characters or less.',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyDescription.errorClass = 'has-error';
-          } else {
-            formElements.companyDescription.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.description = value;
@@ -201,7 +136,6 @@ const EntrepreneurOnboard = React.createClass({
       companyType: {
         name: 'companyType',
         label: 'Company Type',
-        errorClass: '',
         value: company.type || '',
         options: [
           {
@@ -229,17 +163,7 @@ const EntrepreneurOnboard = React.createClass({
             value: 'nonprofit'
           }
         ],
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyType.errorClass = 'has-error';
-          } else {
-            formElements.companyType.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.type = value;
@@ -249,20 +173,9 @@ const EntrepreneurOnboard = React.createClass({
       companyFilingLocation: {
         name: 'companyFilingLocation',
         label: 'State Filing Location',
-        errorClass: '',
         value: company.filing_location || '',
         placeholder: 'State/Province',
-        validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.companyFilingLocation.errorClass = 'has-error';
-          } else {
-            formElements.companyFilingLocation.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { company } = this.state;
           company.filing_location = value;
@@ -273,18 +186,7 @@ const EntrepreneurOnboard = React.createClass({
         name: 'profileFirstName',
         label: 'First Name',
         value: profile.first_name || '',
-        errorClass: '',
-        validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
-          if (!valid) {
-            formElements.profileFirstName.errorClass = 'has-error';
-          } else {
-            formElements.profileFirstName.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.first_name = value;
@@ -295,18 +197,7 @@ const EntrepreneurOnboard = React.createClass({
         name: 'profileLastName',
         label: 'Last Name',
         value: profile.last_name || '',
-        errorClass: '',
-        validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
-          if (!valid) {
-            formElements.profileLastName.errorClass = 'has-error';
-          } else {
-            formElements.profileLastName.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.last_name = value;
@@ -317,18 +208,7 @@ const EntrepreneurOnboard = React.createClass({
         name: 'profileCity',
         label: 'City',
         value: profile.city || '',
-        errorClass: '',
-        validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
-          if (!valid) {
-            formElements.profileCity.errorClass = 'has-error';
-          } else {
-            formElements.profileCity.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.city = value;
@@ -339,43 +219,33 @@ const EntrepreneurOnboard = React.createClass({
         name: 'profileStateProvince',
         label: 'State/Province',
         value: profile.state || '',
-        errorClass: '',
-        validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
-          if (!valid) {
-            formElements.profileStateProvince.errorClass = 'has-error';
-          } else {
-            formElements.profileStateProvince.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.state = value;
           this.setState({ profile });
         }
       },
-      profileCountry: {
-        name: 'profileCountry',
-        label: 'Country',
-        value: profile.country || 'United States of America',
-        errorClass: '',
-        validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
-          if (!valid) {
-            formElements.profileCountry.errorClass = 'has-error';
-          } else {
-            formElements.profileCountry.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
+      profileEmail: {
+        name: 'profileEmail',
+        label: 'Email',
+        value: profile.email || '',
+        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
-          profile.country = value;
+          profile.email = value;
+          profile.username = value;
+          this.setState({ profile });
+        }
+      },
+      profilePassword: {
+        name: 'profilePassword',
+        label: 'Password',
+        value: profile.password || '',
+        validator: FormHelpers.checks.isRequired,
+        update: (value) => {
+          const { profile } = this.state;
+          profile.password = value;
           this.setState({ profile });
         }
       },
@@ -415,7 +285,7 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   _createCompany() {
-    const { formElements, isCompany } = this.state;
+    const { formElements } = this.state;
     this.setState({ isLoading: true });
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
@@ -423,22 +293,18 @@ const EntrepreneurOnboard = React.createClass({
 
       if(valid) {
         this.setState({ formError: false });
-        if (isCompany) {
-          $.ajax({
-            url: loom_api.company,
-            method: 'POST',
-            data: JSON.stringify(this.state.company),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (result) {
-              // TODO We should make this one post
-              this._saveAccount();
-            }.bind(this)
-          });
-        }
-        else {
-          this._saveAccount();
-        }
+
+        $.ajax({
+          url: loom_api.company,
+          method: 'POST',
+          data: JSON.stringify(this.state.company),
+          contentType: 'application/json; charset=utf-8',
+          dataType: 'json',
+          success: function (result) {
+            // TODO We should make this one post
+            this._saveAccount()
+          }.bind(this)
+        });
       } else {
         this.setState({ formError: 'Please fill out all fields.', isLoading: false });
       }
@@ -458,6 +324,7 @@ const EntrepreneurOnboard = React.createClass({
         processData: false,
         contentType: false,
         success: function(data, textStatus, jqXHR) {
+          this.setState({ isLoading: false });
           window.location = '/profile/dashboard/';
         }.bind(this)
       });
@@ -485,6 +352,7 @@ const EntrepreneurOnboard = React.createClass({
               this._uploadImage();
             }
             else {
+              this.setState({ isLoading: false });
               window.location = '/profile/dashboard/';
             }
           }.bind(this)
@@ -544,24 +412,133 @@ const EntrepreneurOnboard = React.createClass({
 
     return (
       <div>
+        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
+          <p className="text-muted">
+            Let's quickly get you set up.
+          </p>
+        </div>
+
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
         />
 
-        <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>
+        <div className='section-header text-center col-md-8 col-md-offset-2'>Your Personal Info</div>
 
         {yourTitle}
 
-        <AccountForm
-          photo_url={this.state.photo_url}
-          profile={profile}
-          handleImageChange={this.handleImageChange}
-          formElements={formElements}
-          handleChange={this.handleChange}
-          isCompany={this.state.isCompany}
-        />
+        <div>
+
+        <div className='col-md-6 col-md-offset-2'>
+            <div className="form-group">
+                <label className="control-label" htmlFor={formElements.profileFirstName.name}>{formElements.profileFirstName.label}</label>
+                <input
+                    className="form-control"
+                    type='text'
+                    name={formElements.profileFirstName.name}
+                    value={formElements.profileFirstName.value}
+                    onChange={handleChange}
+                />
+            </div>
+            <div className="form-group">
+                <label className="control-label" htmlFor={formElements.profileLastName.name}>{formElements.profileLastName.label}</label>
+                <input
+                    className="form-control"
+                    type='text'
+                    name={formElements.profileLastName.name}
+                    value={formElements.profileLastName.value}
+                    onChange={handleChange}
+                />
+            </div>
+        </div>
+
+        <div className='form-group col-md-2 profile-photo-upload'>
+            <label className="control-label">Profile Photo</label>
+
+            <div className='text-center profile-image' style={profilePhoto}></div>
+
+            <div href="" className="btn btn-sm btn-brand btn-upload-image">
+                Upload Photo
+                <input
+                    className="form-control"
+                    ref='file'
+                    name='file'
+                    type='file'
+                    label='Profile Photo'
+                    onChange={handleImageChange}
+                />
+            </div>
+        </div>
+
+        <div>
+
+          <div className='form-group col-md-4 col-md-offset-2'>
+
+            <label className="control-label" htmlFor={formElements.profileCity.name}>{formElements.profileCity.label}</label>
+            <input
+              className="form-control"
+              type='text'
+              name={formElements.profileCity.name}
+              value={formElements.profileCity.value}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='form-group col-md-4'>
+
+            <label className="control-label" htmlFor={formElements.profileStateProvince.name}>{formElements.profileStateProvince.label}</label>
+            <input
+              className="form-control"
+              type='text'
+              name={formElements.profileStateProvince.name}
+              value={formElements.profileStateProvince.value}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className='form-group col-md-8 col-md-offset-2'>
+          <label className="control-label" htmlFor={formElements.profileBio.name}>{formElements.profileBio.label}</label>
+          <textarea
+            className="form-control"
+            name={formElements.profileBio.name}
+            id={formElements.profileBio.name}
+            placeholder={formElements.profileBio.placeholder}
+            value={formElements.profileBio.value}
+            onChange={handleChange}
+          >
+          </textarea>
+        </div>
+
+          <div>
+
+          <div className='form-group col-md-4 col-md-offset-2'>
+
+            <label className="control-label" htmlFor={formElements.profileEmail.name}>{formElements.profileEmail.label}</label>
+            <input
+              className="form-control"
+              type='text'
+              name={formElements.profileEmail.name}
+              value={formElements.profileEmail.value}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className='form-group col-md-4'>
+
+            <label className="control-label" htmlFor={formElements.password.name}>{formElements.password.label}</label>
+            <input
+              className="form-control"
+              type='password'
+              name={formElements.password.name}
+              value={formElements.password.value}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+      </div>
 
         <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
@@ -578,5 +555,5 @@ const EntrepreneurOnboard = React.createClass({
 
 });
 
-export default EntrepreneurOnboard;
+export default PrelaunchOnboard;
 

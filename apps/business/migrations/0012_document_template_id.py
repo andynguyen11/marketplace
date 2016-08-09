@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='template_id',
-            field=models.CharField(default=None, max_length=100),
+            field=models.CharField(default=None, max_length=100, blank=True, null=True),
             preserve_default=False,
         ),
     ]

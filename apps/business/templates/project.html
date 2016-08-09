@@ -16,8 +16,8 @@
             <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ project.company.city }}, {{ project.company.state }}</li>
             <li><img class="icon" src="{% static 'images/icon-category.png' %}" />{{ project.type }}</li>
             <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
-              {% for skill in project.skills %}
-                {{ skill }}
+              {% for skill in project.skills.all %}
+                {{ skill.name }}
               {% endfor %}
             </li>
           </ul>
@@ -166,5 +166,26 @@
 {% endblock %}
 
 {% block scripts %}
-	<script type="text/javascript" src="{% static 'js/routes/messaging.js' %}"></script>
+	<script type="text/javascript">
+    $("#send-bid").on("click", function(e) {
+      $.ajax({
+        url: loom_api.job,
+        method: 'POST',
+        data: {
+          message: $('#id_message').val(),
+          equity: $('#id_equity').val(),
+          cash: $('#id_cash').val(),
+          hours: $('#id_hours').val(),
+          project: $('#id_project').val(),
+          contractor: $('#developer').val()
+        },
+        success: function() {
+          $('#bid-modal').modal('hide');
+          $("input[type='text']").val('');
+          $('textarea').val('');
+        }
+      });
+    return false;
+  });
+  </script>
 {% endblock %}

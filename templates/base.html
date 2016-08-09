@@ -37,7 +37,7 @@
   <div class="header" class="{% block header_class %}{% endblock %}">
     <div class="header-inner page-content">
       <a class="logo" href="/">Loom</a>
-
+      {% block nav %}
       {% if request.user.is_authenticated %}
       <div class="header-nav">
 
@@ -72,10 +72,35 @@
             <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
             <li><a href="{% url 'logout' %}">Log Out</a></li>
           </ul>
-        </div>
-      </div>
 
-      {% else %}
+          <div class="header-icons">
+            <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
+              <img src="{% static 'images/icon-message.png' %}" />
+              {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+            </a>
+            <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
+            <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
+            <img class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
+
+            <ul class="dropdown-menu dropdown-menu-right">
+              <li><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+                Messages
+                {% if unread_count %}({{ unread_count }}){% endif %}
+              </a></li>
+              <li><a id="help" href="#" class="hide-desktop">Help</a></li>
+              <li><a href="{% url 'profile' %}">Profile</a></li>
+              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'postman:inbox' %}">Messages</a></li>
+              <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
+              <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li>
+              <li><a href="{% url 'view-documents' %}">Your Documents</a></li>
+              <li><a href="{% url 'view-skills' %}">Your Skills</a></li>
+              <li><a href="{% url 'logout' %}">Log Out</a></li>
+            </ul>
+          </div>
+        </div>
+
+        {% else %}
 
       <ul class="header-links">
         <li class="hide-mobile"><a href="{% url 'home' %}">How it Works</a></li>
@@ -85,7 +110,8 @@
         <li class="header-link--auth"><a href="{% url 'login' %}" class="btn btn-brand--clear">Sign In</a></li>
       </ul>
 
-      {% endif %}
+        {% endif %}
+      {% endblock %}
     </div>
   </div>
 
@@ -162,7 +188,12 @@
   ga('send', 'pageview');
 
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-  heap.load("3046609350");
+    heap.load("1767701272");
+</script>
+{% else %}
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("3419646760");
 </script>
 {% endif %}
 {% block scripts %}{% endblock %}

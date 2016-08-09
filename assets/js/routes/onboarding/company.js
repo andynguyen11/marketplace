@@ -13,9 +13,10 @@ const CompanyForm = React.createClass({
 
     const isCompanySelector = formElements.isCompany.options.map((option, i) => {
       return (
-        <div className="radio" key={i}>
-            <label>
+        <div className="col-md-6" key={i}>
+            <label className="onboard-radio">
               <input type="radio" name={formElements.isCompany.name} id={option.value} onChange={handleChange} value={option.value}/>
+              <h5>{option.short_label}</h5>
               {option.label}
             </label>
         </div>
@@ -24,8 +25,8 @@ const CompanyForm = React.createClass({
 
     const companyTypeSelector = formElements.companyType.options.map((option, i) => {
       return (
-        <div className="radio" key={i}>
-            <label>
+        <div className="col-md-6" key={i}>
+            <label className="radio">
                 <input type="radio" name={formElements.companyType.name} id={option.value} onChange={handleChange} value={option.value}/>
                 {option.label}
             </label>
@@ -35,9 +36,9 @@ const CompanyForm = React.createClass({
 
     const companyForm = isCompany && (
       <div>
-        <div className='section-header text-center col-md-8 col-md-offset-2'>Company Info</div>
+        <h3 className='brand sub-section col-md-8 col-md-offset-2'>Company Info</h3>
 
-        <div className='form-group col-md-8 col-md-offset-2'>
+        <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyName.errorClass }>
           <label className="control-label" htmlFor={formElements.companyName.name}>{formElements.companyName.label}</label>
           <input
               className="form-control"
@@ -50,7 +51,72 @@ const CompanyForm = React.createClass({
           />
         </div>
 
-        <div className='form-group col-md-4 col-md-offset-2'>
+        <div className='form-group col-md-3 col-md-offset-2'>
+          <label className='control-label'>Country</label>
+          <input className='form-control disabled' type="text" disabled="true" value="United States of America" />
+          <i className='fa fa-lock'></i>
+          <i className='fa fa-question-circle' data-toggle="tooltip" data-placement="right" title="Loom is currently open to only U.S. based companies. Drop us a line to request your country be included on Loom. info@joinloom.com"></i>
+        </div>
+
+        <div className={ 'form-group col-md-2 ' + formElements.companyState.errorClass } >
+          <label className="control-label" htmlFor={formElements.companyState.name}>{formElements.companyState.label}</label>
+          <select className={ 'form-control ' + formElements.companyState.errorClass } value={formElements.companyState.value} name={formElements.companyState.name} id={formElements.companyState.name} onChange={handleChange} >
+              <option value="">Choose one...</option>
+              <option value="AL">Alabama</option>
+              <option value="AK">Alaska</option>
+              <option value="AZ">Arizona</option>
+              <option value="AR">Arkansas</option>
+              <option value="CA">California</option>
+              <option value="CO">Colorado</option>
+              <option value="CT">Connecticut</option>
+              <option value="DE">Delaware</option>
+              <option value="DC">District of Columbia</option>
+              <option value="FL">Florida</option>
+              <option value="GA">Georgia</option>
+              <option value="HI">Hawaii</option>
+              <option value="ID">Idaho</option>
+              <option value="IL">Illinois</option>
+              <option value="IN">Indiana</option>
+              <option value="IA">Iowa</option>
+              <option value="KS">Kansas</option>
+              <option value="KY">Kentucky</option>
+              <option value="LA">Louisiana</option>
+              <option value="ME">Maine</option>
+              <option value="MD">Maryland</option>
+              <option value="MA">Massachusetts</option>
+              <option value="MI">Michigan</option>
+              <option value="MN">Minnesota</option>
+              <option value="MS">Mississippi</option>
+              <option value="MO">Missouri</option>
+              <option value="MT">Montana</option>
+              <option value="NE">Nebraska</option>
+              <option value="NV">Nevada</option>
+              <option value="NH">New Hampshire</option>
+              <option value="NJ">New Jersey</option>
+              <option value="NM">New Mexico</option>
+              <option value="NY">New York</option>
+              <option value="NC">North Carolina</option>
+              <option value="ND">North Dakota</option>
+              <option value="OH">Ohio</option>
+              <option value="OK">Oklahoma</option>
+              <option value="OR">Oregon</option>
+              <option value="PA">Pennsylvania</option>
+              <option value="RI">Rhode Island</option>
+              <option value="SC">South Carolina</option>
+              <option value="SD">South Dakota</option>
+              <option value="TN">Tennessee</option>
+              <option value="TX">Texas</option>
+              <option value="UT">Utah</option>
+              <option value="VT">Vermont</option>
+              <option value="VA">Virginia</option>
+              <option value="WA">Washington</option>
+              <option value="WV">West Virginia</option>
+              <option value="WI">Wisconsin</option>
+              <option value="WY">Wyoming</option>
+            </select>
+        </div>
+
+        <div className={ 'form-group col-md-3 ' + formElements.companyCity.errorClass } >
           <label className="control-label" htmlFor={formElements.companyCity.name}>{formElements.companyCity.label}</label>
           <input
               className="form-control"
@@ -63,20 +129,7 @@ const CompanyForm = React.createClass({
           />
         </div>
 
-        <div className='form-group col-md-4'>
-          <label className="control-label" htmlFor={formElements.companyState.name}>{formElements.companyState.label}</label>
-          <input
-              className="form-control"
-              type='text'
-              name={formElements.companyState.name}
-              id={formElements.companyState.name}
-              placeholder={formElements.companyState.placeholder}
-              value={formElements.companyState.value}
-              onChange={handleChange}
-          />
-        </div>
-
-        <div className='form-group col-md-8 col-md-offset-2'>
+        <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyDescription.errorClass } >
           <label className="control-label" htmlFor={formElements.companyDescription.name}>{formElements.companyDescription.label}</label>
           <textarea
             className="form-control"
@@ -89,16 +142,16 @@ const CompanyForm = React.createClass({
           </textarea>
         </div>
 
-        <div className='form-group col-md-8 col-md-offset-2'>
-          <label className="control-label">Company Type</label>
+        <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyType.errorClass }>
+          <label className="control-label col-md-12">Company Type</label>
           {companyTypeSelector}
+          <div className="clearfix"></div>
         </div>
 
-        <div className='form-group col-md-8 col-md-offset-2'>
+        <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyFilingLocation.errorClass }>
           <label className="control-label" htmlFor={formElements.companyFilingLocation.name}>{formElements.companyFilingLocation.label}</label>
           <select className="form-control" value={formElements.companyFilingLocation.value} name={formElements.companyFilingLocation.name} id={formElements.companyFilingLocation.name} onChange={handleChange} >
-            <option value="DE">Delaware</option>
-            <option value="TX">Texas</option>
+            <option value="">Choose one...</option>
             <option value="AL">Alabama</option>
             <option value="AK">Alaska</option>
             <option value="AZ">Arizona</option>
@@ -106,6 +159,7 @@ const CompanyForm = React.createClass({
             <option value="CA">California</option>
             <option value="CO">Colorado</option>
             <option value="CT">Connecticut</option>
+            <option value="DE">Delaware</option>
             <option value="DC">District of Columbia</option>
             <option value="FL">Florida</option>
             <option value="GA">Georgia</option>
@@ -141,6 +195,7 @@ const CompanyForm = React.createClass({
             <option value="SC">South Carolina</option>
             <option value="SD">South Dakota</option>
             <option value="TN">Tennessee</option>
+            <option value="TX">Texas</option>
             <option value="UT">Utah</option>
             <option value="VT">Vermont</option>
             <option value="VA">Virginia</option>
@@ -156,14 +211,15 @@ const CompanyForm = React.createClass({
 
     return (
       <div>
-        <div className="section-header text-center col-md-8 col-md-offset-2">
-          {formElements.isCompany.label}
+        <div>
+          <h3 className="brand sub-section col-md-8 col-md-offset-2">
+            {formElements.isCompany.label}
+          </h3>
+          <div className="form-group col-md-8 col-md-offset-2">
+            {isCompanySelector}
+          </div>
+          <div className="clearfix"></div>
         </div>
-
-        <div className="form-group col-md-8 col-md-offset-2">
-          {isCompanySelector}
-        </div>
-
         {companyForm}
 
       </div>

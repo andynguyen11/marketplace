@@ -1,5 +1,58 @@
+#confirm-profile {
+  .picker {
+    color: @brand-neutral--1;
+    display: inline-block;
+    border: 2px solid @brand-neutral--6;
+    border-radius: 4px;
+    width: 265px;
+    padding: 130px 25px 25px;
+    margin: 20px;
+    h4, p {
+      line-height: 1.5;
+    }
+    p {
+      color: @brand-neutral--3;
+    }
+
+    &.dev{
+      background: url(../images/developer-picker.svg) no-repeat center 25px;
+      &:hover {
+        border: 2px solid @brand--accent;
+      }
+    }
+    &.ent{
+      background: url(../images/entrepreneur-picker.svg) no-repeat center 25px;
+      &:hover {
+        border: 2px solid @brand--primary;
+      }
+    }
+  }
+}
+
 #onboard-form {
-  margin-top: 30px;
+
+  .onboard-radio {
+    position: relative;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 14px;
+    h5 {
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    input {
+      position: absolute;
+      top: 7px;
+      left: -20px;
+    }
+  }
+
+  .radio {
+    text-transform: none;
+    font-size: 14px;
+    letter-spacing: normal;
+    margin: 5px 0;
+  }
 
   .profile-photo-upload {
     display: flex;

@@ -1,5 +1,31 @@
 #login {
-  margin: 100px 0 75px;
+    .login-hero {
+    background: url('../images/login-2g.jpg') no-repeat center;
+    background-size: cover;
+    width: 50%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    border-top-left-radius: @border-radius;
+
+    .login-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: url('../images/brand-gradient--primary.svg');
+      &:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        width: 260px;
+        background: url("../images/overlay-logo-pattern--left.svg") no-repeat right center;
+        background-size: 120%;
+      }
+    }
 
   h2 {
     margin: 0;
@@ -14,7 +40,6 @@
   }
 
   .panel-login {
-    margin-top: 20px;
 
 
     .panel-heading {
@@ -32,33 +57,16 @@
     }
   }
 
-  .login-hero {
-    background: url('../images/login-2g.jpg') no-repeat center;
-    background-size: cover;
-    padding: 30px;
-    width: 50%;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    border-top-left-radius: @border-radius;
-
-    .login-hero-content {
-      position: relative;
-      z-index: 1;
-      color: #fff;
-      margin-top: 90px;
-    }
-
-    .overlay {
-      border-top-left-radius: @border-radius;
-      border-bottom-left-radius: @border-radius;
-    }
   }
 
   .login-content {
+      #welcomeback {
+        background: url('../images/smiley.svg') no-repeat 260px top;
+        padding-top: 0;
+        margin-top: 0;
+      }
     width: 50%;
-    padding: 15px;
+    padding-right: 25px;
   }
 
   .signin-or {
@@ -66,7 +74,6 @@
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
-    margin: 10px 0;
   }
   .signin-or > span {
     position: relative;
@@ -74,15 +81,7 @@
     font-size: 20px;
     font-weight: 600;
   }
-  .signin-or > span:before,
-  .signin-or > span:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 9999px;
-    height: 2px;
-    background: #777;
-  }
+
   .signin-or > span:before {
     right: 100%;
     margin-right: 15px;

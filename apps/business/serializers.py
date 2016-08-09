@@ -62,7 +62,6 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
-    project = ProjectSerializer(read_only=True)
 
     class Meta:
         model = Job
@@ -73,7 +72,7 @@ class JobSerializer(serializers.ModelSerializer):
         # TODO Lazy creating these may not be the most optimal solution
         job = Job.objects.create(**data)
         terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA')
+        nda = Document.objects.create(job=job, type='NDA', project=job.project)
         message = pm_write(
             sender=job.contractor,
             recipient=job.project.project_manager,
@@ -83,6 +82,7 @@ class JobSerializer(serializers.ModelSerializer):
         # TODO Rethink saving these on the message
         message.job = job
         message.nda = nda
+        message.project = job.project
         message.terms = terms
         message.save()
         notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)

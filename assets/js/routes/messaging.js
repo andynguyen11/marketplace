@@ -21,7 +21,21 @@ import _ from 'lodash';
         showNDA: false,
         showCheckout: false,
         showBid: false,
-        order: null
+        order: null,
+        terms: {
+          status: 'new'
+        },
+        nda: {
+          status: 'new'
+        },
+        job: {
+          compensationType: '',
+          cash: '',
+          equity: '',
+          hours: ''
+
+        },
+        bid_sent: false
       };
     },
 
@@ -30,10 +44,13 @@ import _ from 'lodash';
         url: loom_api.messages + $('#contract_container').data('thread'),
         success: function (result) {
           this.setState({
+            current_user: result.current_user,
             isOwner: result.is_owner,
-            terms: result.terms,
-            nda: result.nda,
-            job: result.job,
+            terms: result.terms ? result.terms : this.state.terms,
+            nda: result.nda ? result.nda : this.state.nda,
+            job: result.job ? result.job : this.state.job,
+            bid_sent: result.job ? true : false,
+            project: result.project,
             signing_url: result.signing_url,
             isLoading: false,
             formElements: result.terms ? this.formElements(result.terms) : null
@@ -265,7 +282,7 @@ import _ from 'lodash';
       this.setState({
         showBid: !this.state.showBid,
         showTerms: this.state.showTerms && this.state.showBid,
-        showNDA: this.state.showNDA && this.state.showBid,
+        showNDA: this.state.showNDA && this.state.showBid
       });
     },
 
@@ -273,7 +290,7 @@ import _ from 'lodash';
       // TODO There is probably a better way to lazy create this order
       // we just don't want it created until they hit the last step
       if (!this.state.order) {
-        this.setState({ isLoading: true });
+        this.setState({ checkoutLoading: true });
         $.ajax({
         url: loom_api.order,
         data: {job: this.state.job.id},
@@ -282,7 +299,7 @@ import _ from 'lodash';
         success: function (result) {
             this.setState({
               order: result,
-              isLoading: false,
+              checkoutLoading: false,
               showCheckout: !this.state.showCheckout,
               showTerms: this.state.showTerms && this.state.showCheckout,
               showNDA: this.state.showNDA && this.state.showCheckout
@@ -301,76 +318,90 @@ import _ from 'lodash';
 
     render() {
       // TODO ummm this is a big ass list
-      const { nda, terms, signing_url, formElements, formError, isLoading, showNDA, showTerms, showBid, showCheckout, order, job, isOwner } = this.state;
+      const { nda, current_user, bid_sent, terms, project, signing_url, formElements, formError, isLoading, showNDA, showTerms, showBid, showCheckout, order, job, isOwner, checkoutLoading } = this.state;
 
       const serviceAgreement = isOwner && (isLoading ||
-        <div className={ showTerms ? "panel panel-default" : "hidden"}>
-          <div className="panel-heading text-skinny">
-            <h4 >Master Services Agreement <button onClick={this.toggleTermsPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
-          </div>
-          <ContractBuilder
-            terms={terms}
-            formElements={formElements}
-            formError={formError}
-            handleChange={this.handleChange}
-            saveTerms={this.saveTerms}
-          />
+        <div className={ showTerms ? "col-md-8 agreement-panel" : "hidden"}>
+          <div className={ showTerms ? "panel panel-default" : "hidden"}>
+            <div className="panel-heading text-skinny">
+              <h4 >Master Services Agreement <button onClick={this.toggleTermsPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+            </div>
+            <a onClick={this.toggleTermsPanel}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
+            <ContractBuilder
+              terms={terms}
+              formElements={formElements}
+              formError={formError}
+              handleChange={this.handleChange}
+              saveTerms={this.saveTerms}
+            />
 
+          </div>
         </div>
       );
 
       const NDA = isOwner || (isLoading ||
-        <div className={ showNDA ? "panel panel-default" : "hidden"}>
+        <div className={ showNDA ? "col-md-8 agreement-panel" : "hidden"}>
+        <div className={ showNDA ? "panel panel-default col-md-8" : "hidden"}>
             <div className="panel-heading text-skinny">
               <h4>Non-Disclosure Agreement</h4>
+              <a onClick={this.toggleNDAPanel}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
               <input type="checkbox" />
               By checking this box, I agree to the terms of the
-              non-disclosure agreement for {job.project.title}
+              non-disclosure agreement for {project.title}
               <button onClick={this.signNDA} className="btn btn-brand">Submit</button>
             </div>
           </div>
+        </div>
       );
 
       const signAndSend = isOwner && (isLoading ||
+        <div className={ showNDA ? "col-md-8 agreement-panel" : "hidden"}>
         <div className={ showCheckout ? "panel panel-default" : "hidden"}>
           <div className="panel-heading text-skinny">
             <h4>Sign and Send Contract <button onClick={this.toggleCheckoutPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
+              <a onClick={this.toggleCheckoutPanel()}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
               <Checkout
                 order={order}
                 isLoading={isLoading}
               />
 
         </div>
+        </div>
       );
 
       const editBid = isOwner || (isLoading ||
+          <div className={ showBid ? "col-md-8 agreement-panel" : "hidden"}>
           <div className={ showBid ? "panel panel-default" : "hidden"}>
             <div className="panel-heading text-skinny">
               <h4>Bid</h4>
             </div>
+            <a onClick={this.toggleBidPanel}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
             <Bid
+              current_user={current_user}
               job={job}
+              project={project}
               updateJob={this.updateJob}
+              bid_sent={bid_sent}
             />
+          </div>
           </div>
       );
 
       return (
         <div>
-          <div className="col-md-8">
+
             {editBid}
             {NDA}
             {serviceAgreement}
             {signAndSend}
 
-
-          </div>
             { isOwner ?
               <ContracteeTracker
                 isLoading={isLoading}
                 terms={terms}
                 nda={nda}
+                signing_url={signing_url}
                 sendNDA={this.sendNDA}
                 toggleTermsPanel={this.toggleTermsPanel}
                 toggleCheckoutPanel={this.toggleCheckoutPanel}
@@ -381,6 +412,7 @@ import _ from 'lodash';
               terms={terms}
               nda={nda}
               job={job}
+              bid_sent={bid_sent}
               signing_url={signing_url}
               toggleBidPanel={this.toggleBidPanel}
               toggleTermsPanel={this.toggleTermsPanel}
@@ -389,7 +421,6 @@ import _ from 'lodash';
             />
 
             }
-          <div className="clearfix"></div>
         </div>
       );
     }
@@ -533,27 +564,6 @@ import _ from 'lodash';
         data: $(e.currentTarget).serialize(),
         success: function() {
           $('#message-modal').modal('hide');
-        }
-      });
-    return false;
-  });
-
-  $("#send-bid").on("click", function(e) {
-      $.ajax({
-        url: loom_api.job,
-        method: 'POST',
-        data: {
-          message: $('#id_message').val(),
-          equity: $('#id_equity').val(),
-          cash: $('#id_cash').val(),
-          hours: $('#id_hours').val(),
-          project: $('#id_project').val(),
-          developer: $('#developer').val()
-        },
-        success: function() {
-          $('#bid-modal').modal('hide');
-          $("input[type='text']").val('');
-          $('textarea').val('');
         }
       });
     return false;

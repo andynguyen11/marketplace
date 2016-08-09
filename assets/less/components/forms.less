@@ -1,10 +1,12 @@
 .form-group {
   magin-bottom: 10px;
-
+  position: relative;
   label {
     text-transform: uppercase;
-    font-weight: 100;
-    font-size: 16px;
+    font-weight: 400;
+    color: @brand-neutral--2;
+    font-size: 12px;
+    letter-spacing: 1.5px;
   }
   .form-control {
     padding: 8px;
@@ -12,6 +14,27 @@
     .input-group-btn .btn {
       padding: 8px 12px;
     }
+    &.disabled {
+      padding-left: 25px;
+    }
+  }
+  select.form-control {
+    margin: 7px 0;
+  }
+  .panel-skills {
+    margin-bottom: 0;
+  }
+
+  .fa-lock {
+    position: absolute;
+    left: 25px;
+    bottom: 12px;
+  }
+
+  .fa-question-circle {
+    position: absolute;
+    right: 25px;
+    bottom: 12px;
   }
 }
 

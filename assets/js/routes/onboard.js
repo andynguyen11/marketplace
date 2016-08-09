@@ -5,6 +5,7 @@ import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from
 
 import DeveloperOnboard from './onboarding/developer';
 import EntrepreneurOnboard from './onboarding/entrepreneur';
+import PrelaunchOnboard from './onboarding/prelaunch';
 
 (function(){
   $(document).ready(_ => {
@@ -17,6 +18,9 @@ import EntrepreneurOnboard from './onboarding/entrepreneur';
     }
     else if (window.location.pathname === '/signup/entrepreneur/') {
       ReactDOM.render(<EntrepreneurOnboard />, onboardDiv);
+    }
+    else if (window.location.pathname === '/signup/prelaunch/') {
+      ReactDOM.render(<PrelaunchOnboard />, onboardDiv);
     }
   });
 })();

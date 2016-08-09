@@ -2,45 +2,44 @@
 {% load crispy_forms_tags %}
 {% load staticfiles %}
 
+{% block nav %}{% endblock %}
+
 {% block content %}
   <div id="login">
+    <div class="login-hero hide-mobile">
+      <div class="login-overlay"></div>
+    </div>
     <div class="row">
       <div class="container">
-        <div class="col-md-8 col-md-offset-2">
-          <div class="panel panel-default panel-login">
-            <div class="panel-body">
-                <div class="login-hero">
-                  <div class="overlay"></div>
-                  <div class="login-hero-content">
-                    <h3 class="text-yellow">Get started for free</h3>
-                    <h4 class="text-skinny">Sign up to start discovering or posting amazing projects. Together we can build the future.</h4>
-                  </div>
-                </div>
-                <div class="login-content pull-right">
-                  <div id="social-signup">
-                    <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
-                      <i class="fa fa-linkedin"></i>
-                      Sign Up with LinkedIn
-                    </a>
-                    <p class="text-muted small text-center">
-                      We will never post to LinkedIn without your permission.
-                    </p>
-                  </div>
-                  <div class="text-center"><h3>OR</h3></div>
-                  <div id="email-signup">
-                    <h5 class="text-center">Signup with your email</h5>
-                    <form id="signup-form" method="post" action="{% url 'signup' %}">
-                      {% crispy form %}
-                      <input type="submit" class="btn btn-primary btn-block" value="Sign Up"/>
-                    </form>
-                  </div>
-                </div>
-                <div class="clearfix"></div>
+        <div class="col-md-10 col-md-offset-1">
+          <div class="panel-login">
+            <div class="login-content pull-left">
+              <h1 class="brand sub-section-">Get started for free</h1>
+              <h4 class="brand sub-section text-muted">Sign up to start discovering or posting amazing projects. Together we can build the future.</h4>
+              <div id="social-signup">
+                <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+                  <i class="fa fa-linkedin-square"></i>
+                  Sign Up with LinkedIn
+                </a>
+                <p class="text-muted small text-center">
+                  We'll never post to LinkedIn without your permission.
+                </p>
               </div>
-              <div class="panel-footer">
+              <div id="email-signup">
+                <h4 class="brand sub-section">Or signup with your email</h4>
+                <form id="signup-form" method="post" action="{% url 'signup' %}">
+                  {% crispy form %}
+                  <input type="submit" class="btn btn-block btn-brand btn-fat" value="Sign Up"/>
+                </form>
+              </div>
+              <div class="login-footer text-center sub-section">
                 Already have an account?
                 <a href="{% url 'login' %}"> Login in here.</a>
               </div>
+            </div>
+
+            <div class="clearfix"></div>
+
             </div>
 
           </div>

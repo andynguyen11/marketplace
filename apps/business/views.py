@@ -20,19 +20,22 @@ def view_project(request, project_id=None):
 @login_required
 def create_project(request):
     company = user_company(request.user)
-    return render_to_response('create_project.html', {'company':company, 'project_manager': request.user}, context_instance=RequestContext(request))
+    return render_to_response('create_project.html', {'company': company, 'project_manager': request.user}, context_instance=RequestContext(request))
 
 
 @login_required
 def send_message(request):
     if request.POST:
         recipient = Profile.objects.get(id=request.POST['recipient'])
+        project = Project.objects.get(id=request.POST['project'])
         sender = request.user
         message = pm_write(
             sender=sender,
             recipient=recipient,
             subject='New Inquiry from {0}'.format(sender.first_name),
-            body=request.POST['message'])
+            body=request.POST['message'],
+            project=project
+        )
         return HttpResponse(status=200)
     return HttpResponse(status=403)
 

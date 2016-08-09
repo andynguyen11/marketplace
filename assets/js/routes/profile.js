@@ -16,6 +16,18 @@ const addModalContainer = function(){
 };
 
 $(document).ready(function() {
+  $("#message-form").on("submit", function(e) {
+      $.ajax({
+        url: loom_api.message_send,
+        method: 'POST',
+        data: $(e.currentTarget).serialize(),
+        success: function() {
+          $('#message-modal').modal('hide');
+        }
+      });
+    return false;
+  });
+
     addModalContainer();
 
     $('#writeReview').on('click', function() {

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer
+from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSerializer
 from business.models import Document
 from docusign.models import DocumentSigner
 from postman.models import Message
@@ -17,13 +17,18 @@ class ConversationSerializer(serializers.ModelSerializer):
     nda = DocumentSerializer()
     terms = TermsSerializer()
     job = JobSerializer()
+    project = ProjectSerializer(read_only=True)
     signing_url = serializers.SerializerMethodField()
+    current_user = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
 
+    def get_current_user(self, obj):
+        return self.context['request'].user.id
+
     def get_is_owner(self, obj):
-        return self.context['request'].user == obj.job.project.project_manager
+        return self.context['request'].user == obj.project.project_manager
 
     def get_signing_url(self, obj):
         try:

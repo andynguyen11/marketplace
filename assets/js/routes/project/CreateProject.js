@@ -323,7 +323,8 @@ const CreateProject = React.createClass({
                     </div>
 
                     <h4 className={this.state.currentSection == 'preview' ? "text-skinny" : 'hidden'}>Project Preview</h4>
-                    <ProjectPreview className='preview section' data={this.state.data} active={this.state.currentSection == 'preview'}/>
+
+                    <ProjectPreview className='preview' data={this.state.data} active={this.state.currentSection == 'preview'}/>
 
                 </form>
             </div>
