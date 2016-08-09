@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import tagulous.models
 from django.db import models
-from django.conf import settings
+
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.defaultfilters import slugify
 from ckeditor.fields import RichTextField
@@ -132,7 +132,6 @@ class Document(models.Model):
     job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
-    status = models.CharField(max_length=100, default='new')
 
     @property
     def project(self):
@@ -153,17 +152,6 @@ class Document(models.Model):
     @property
     def status(self):
         return self.docusign_document.status
-
-    @property
-    def signing_url(self):
-        return '/api/docusign/signing/redirect/%s' % self.docusign_document.id
-
-    @property
-    def current_signer(self):
-        if self.status not in ('completed', 'declined', 'voided'):
-            for signer in self.docusign_document.signers:
-                if signer.status in (None, 'sent', 'delivered'):
-                    return signer.profile.id
 
 
 class Project(models.Model):
