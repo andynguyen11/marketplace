@@ -25,4 +25,8 @@ class Migration(migrations.Migration):
             name='update_date',
             field=models.DateTimeField(blank=True, null=True),
         ),
+        migrations.RemoveField(
+            model_name='document',
+            name='project',
+        ),
     ]

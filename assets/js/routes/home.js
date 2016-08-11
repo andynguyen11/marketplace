@@ -89,5 +89,5 @@ import BigSelect from '../components/bigSelect';
         }
     });
 
-    ReactDOM.render(<HomeDevelopers />, developersDiv);
+    // ReactDOM.render(<HomeDevelopers />, developersDiv);
 })();

@@ -6,16 +6,22 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
-from generics.serializers import ParentModelSerializer, AttachmentSerializer
+from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
+from docusign.models import Template
+from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.utils import update_instance, field_names
 from postman.helpers import pm_write
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    logo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Company
-        fields = field_names(Company, exclude=('stripe',)) + ('type',)
+        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type',)
+
+    def get_logo_url(self, obj):
+        return obj.get_logo()
 
     def create(self, data):
         user = self.context['request'].user
@@ -55,6 +61,10 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     def create(self, data, action='create'):
         details = dict(**data.pop('details', {}))
         data['info'] = data.pop('info', [])
+        for i, tab in enumerate(data['info']):
+            if tab['description'] == 'undefined':
+                del data['info'][i]
+        print(data['info'])
         data['info'].append(details)
         project = super(ProjectSerializer, self).create(data, action)
         return project
@@ -89,10 +99,44 @@ class JobSerializer(serializers.ModelSerializer):
         return job
 
 
-class DocumentSerializer(serializers.ModelSerializer):
+class DocumentSerializer(ParentModelSerializer):
+    template = TemplateSerializer(read_only=True)
+    signers = SignerSerializer(many=True, required=False)
+    attachments = AttachmentSerializer(many=True, required=False)
+    docusign_document = DocusignDocumentSerializer(required=False, write_only=True)
+    signing_url  = serializers.CharField(read_only=True)
+    status  = serializers.CharField(read_only=True)
+    current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Document
+        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments', 'signing_url', 'status', 'current_signer')
+        sibling_fields = ('docusign_document',)
+
+    def signer(self, data, role, role_name=None):
+        return {
+            'role_name': role_name or role,
+            'profile': getattr(data['job'], role),
+        }
+
+    def default_template(self, document_type):
+        return Template.objects.get(description=document_type)
+
+    def resolve_relations(self, data):
+        if not data.has_key('docusign_document'):
+            signers = data.pop('signers', [
+                self.signer(data, 'contractor'),
+                self.signer(data, 'owner')])
+
+            data['docusign_document'] = {
+                    'template': data.pop('template', self.default_template(data['type'])),
+                    'signers': signers
+                    }
+
+            attachments = data.pop('attachments', None)
+            if attachments:
+                data['docusign_document']['attachments'] = attachments
+        return data
 
 
 class TermsSerializer(serializers.ModelSerializer):

@@ -85,6 +85,7 @@ if DEBUG:
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -92,7 +93,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -144,40 +144,7 @@ if 'RDS_DB_NAME' in os.environ:
         }
     }
 
-    if DEBUG:
-        LOGGING = {
-            'version': 1,
-            'disable_existing_loggers': False,
-            'formatters': {
-                'verbose': {
-                    'format': '%(levelname)s %(asctime)s %(module)s '
-                              '%(process)d %(thread)d %(message)s'
-                }
-              },
-            'require_debug_true': {
-                '()': 'django.utils.log.RequireDebugTrue',
-            },
-            'handlers': {
-                'console': {
-                    'level': 'DEBUG',
-                    'class': 'logging.StreamHandler',
-                    'formatter': 'simple',
-                },
-            },
-            'loggers': {
-                'django.db.backends': {
-                    'level': 'ERROR',
-                    'handlers': ['console'],
-                    'propagate': False,
-                },
-                'django': {
-                    'handlers': ['stderr'],
-                    'propagate': True,
-                    'level': 'DEBUG',
-                },
-            }
-        }
-    else:
+    if not DEBUG:
         RAVEN_CONFIG = {
             'dsn': os.environ.get('RAVEN_DSN', ''),
         }
@@ -262,17 +229,15 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATIC_URL = 'https://devquity.s3.amazonaws.com/'
 
-#TODO Make these environment variables
-STRIPE_KEY = "sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u" if ENVIRONMENT != 'prod' else 'sk_live_oKCCswUyyFqL1eTx8Cj0xAYJ'
-PUBLIC_STRIPE_KEY = 'pk_test_PhUrky9HrJfcAQvmstWpEna6' if ENVIRONMENT != 'prod' else 'pk_live_K6fVA1aNP7MSLpAZjf0EfuhX'
-MANDRILL_API_KEY = "MTNrjQJntOmZLGNkjPetLw" if ENVIRONMENT == 'prod' else "exv8qBKcFIaKPVZa-Hhm8A"
+STRIPE_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u')
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_PhUrky9HrJfcAQvmstWpEna6')
+MANDRILL_API_KEY = os.environ.get('MANDRILL_API_KEY', 'VzOGiohfxEjbDlX0ekKDlg')
 
-#EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-DEFAULT_FROM_EMAIL = "Sarah from Loom <service@loom.com>"
+DEFAULT_FROM_EMAIL = "Chase from Loom <info@joinloom.com>"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mandrillapp.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'info@devquity.com'
+EMAIL_HOST_USER = 'Loom'
 EMAIL_HOST_PASSWORD = MANDRILL_API_KEY
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
@@ -285,7 +250,7 @@ MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 
 LOGIN_URL = '/login/'
 
-BASE_URL = 'https://dev.devquity.com' if ENVIRONMENT != 'prod' else 'https://devquity.com'
+BASE_URL = os.environ.get('BASE_URL', 'localhost:8000')
 
 SOCIAL_AUTH_LINKEDIN_OAUTH2_KEY = '786yjyq5pud726'
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SECRET = 'UmgWxvWjPKYYGTJo'
@@ -377,6 +342,8 @@ MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]
 
 LOOM_FEE = 3
+
+CKEDITOR_UPLOAD_PATH = "project/uploads/"
 
 try:
     from local_settings import *

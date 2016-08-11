@@ -26,10 +26,6 @@ const ContractorTracker = React.createClass({
     this.updateStep();
   },
 
-  componentWillReceiveProps() {
-    this.updateStep();
-  },
-
   updateStep() {
     let step = this.state.step;
     if (!this.props.isLoading) {

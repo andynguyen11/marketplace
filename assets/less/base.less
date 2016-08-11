@@ -17,7 +17,6 @@ body {
 }
 
 #wrap {
-  padding-bottom: 60px;
   position: relative;
 }
 
@@ -51,6 +50,10 @@ ul {
   .btn, h4 {
     display: inline-block;
   }
+}
+
+.light-section {
+  background: @brand--primary-light;
 }
 
 .page-content {
@@ -153,7 +156,7 @@ a.project-link {
 
 #profile {
   .profile-photo {
-    height: 150px;
+    width: 100%;
     margin-right: 15px;
     margin-bottom: 15px;
   }
@@ -272,28 +275,6 @@ a.project-link {
   }
 }
 
-#project {
-  .project-image {
-    width: 100%;
-  }
-  .specs {
-    ul {
-      list-style: none;
-      padding: 0;
-      li {
-        padding: 10px 0;
-        color: @light-gray;
-        h5 {
-          color: @black;
-          font-size: 36px;
-          margin: 0;
-        }
-      }
-
-    }
-  }
-}
-
 #experience {
   background: #fff;
   .skill {
@@ -335,9 +316,11 @@ a.project-link {
 @import "components/ratingStars.less";
 @import "components/bigSelect.less";
 @import "components/cta.less";
+@import "components/bid.less";
 @import "components/loader.less";
 
 @import "components/home.less";
+@import "components/how.less";
 @import "components/carousel.less";
 @import "components/plates.less";
 

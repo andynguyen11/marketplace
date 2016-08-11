@@ -33,6 +33,8 @@ const EntrepreneurOnboard = React.createClass({
       },
       photo_file: '',
       photo_url: '',
+      logo_file: '',
+      logo_url: '',
       formError: false,
       isCompany: false
     };
@@ -85,29 +87,6 @@ const EntrepreneurOnboard = React.createClass({
           const { profile } = this.state;
           profile.title = value;
           this.setState({ profile });
-        }
-      },
-      isCompany: {
-        name: 'isCompany',
-        errorClass: '',
-        label: 'What type of account do you want to set up?',
-        value: isCompany,
-        options: [
-          {
-            label: 'A company can get work made for cash, equity, or a mix of both.',
-            value: 'true',
-            short_label: 'Company'
-          },
-          {
-            label: 'Individual Entrepreneurs can get work made for cash only. Only goverment-filed companies' +
-            'can trade equity.',
-            value: 'false',
-            short_label: 'Individual Entrepreneur'
-          }
-        ],
-        validator: FormHelpers.checks.isRequired,
-        update: (value) => {
-          this.setState({ isCompany: value === 'true' });
         }
       },
       companyName: {
@@ -394,27 +373,6 @@ const EntrepreneurOnboard = React.createClass({
     }
   },
 
-  _saveAccount(e) {
-    e.preventDefault();
-
-    $.ajax({
-      url: loom_api.profile + this.state.profile.id + '/',
-      method: 'PATCH',
-      data: JSON.stringify(this.state.profile),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      success: function(result) {
-        // TODO This is kinda ghetto.  Figure out a way to async both calls.
-        if (this.state.company.name) {
-          this._createCompany();
-        }
-        else {
-          window.location = '/profile/dashboard/';
-        }
-      }.bind(this)
-    });
-  },
-
   _createCompany() {
     const { formElements, isCompany } = this.state;
     this.setState({ isLoading: true });
@@ -433,6 +391,14 @@ const EntrepreneurOnboard = React.createClass({
             dataType: 'json',
             success: function (result) {
               // TODO We should make this one post
+              this.setState({
+                company: result
+              });
+              if (this.state.logo_file) {
+                this._uploadLogo();
+              } else {
+                this._saveAccount();
+              }
               this._saveAccount();
             }.bind(this)
           });
@@ -460,6 +426,25 @@ const EntrepreneurOnboard = React.createClass({
         contentType: false,
         success: function(data, textStatus, jqXHR) {
           window.location = '/profile/dashboard/';
+        }.bind(this)
+      });
+  },
+
+  // TODO This image upload is redundant to the profile image upload (needs refactor to combine)
+  _uploadLogo() {
+    this.setState({ isLoading: true });
+    let data = new FormData();
+      data.append('logo', this.state.logo_file);
+      $.ajax({
+        url: loom_api.company + this.state.company.id + '/',
+        type: 'PATCH',
+        data: data,
+        cache: false,
+        dataType: 'json',
+        processData: false,
+        contentType: false,
+        success: function(data, textStatus, jqXHR) {
+          this._saveAccount();
         }.bind(this)
       });
   },
@@ -496,6 +481,10 @@ const EntrepreneurOnboard = React.createClass({
     });
   },
 
+  setCompany() {
+    this.setState({isCompany:!this.state.isCompany});
+  },
+
 
   handleChange(event) {
     const { formElements } = this.state;
@@ -525,8 +514,25 @@ const EntrepreneurOnboard = React.createClass({
     }
   },
 
+  handleLogoChange(e) {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
+    if(re.exec(file.name)) {
+      reader.onloadend = () => {
+        debugger
+        this.setState({
+          logo_url: reader.result,
+          logo_file: file
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+
   render() {
-    const { formElements, formError, profile, isCompany } = this.state;
+    const { formElements, formError, profile, company, isCompany } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
     const yourTitle = isCompany && (
       <div className='form-group col-md-8 col-md-offset-2'>
@@ -548,7 +554,11 @@ const EntrepreneurOnboard = React.createClass({
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
+          handleLogoChange={this.handleLogoChange}
           isCompany={this.state.isCompany}
+          setCompany={this.setCompany}
+          logo_url={this.state.logo_url}
+          company={company}
         />
 
         <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>
@@ -562,9 +572,10 @@ const EntrepreneurOnboard = React.createClass({
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
+          linkedIn={true}
         />
 
-        <div className='text-center form-group col-md-8 col-md-offset-2'>
+        <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>
           {error}
 
           <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createCompany}>

@@ -1,0 +1,11 @@
+{% extends "base_account.html" %}
+{% load staticfiles %}
+{% load active_class %}
+
+{% block account_content %}
+<div id="settings"></div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/routes/settings.js' %}"></script>
+{% endblock %}

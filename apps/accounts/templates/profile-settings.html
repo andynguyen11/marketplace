@@ -5,111 +5,14 @@
 <div id="dashboard">
   <div class="row">
     <div class="container">
-      <form id="project-form" method="post" enctype="multipart/form-data">
-        <div class="col-md-12">
-        {% csrf_token %}
-        {% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <h2 style="color:red;">
-                        <strong>{{ field.name }}: {{ error|escape }}</strong>
-                    </h2>
-                {% endfor %}
-            {% endfor %}
-        {% endif %}
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>First Name</label>
-            <input class="form-control" type="text" name="first_name" value="{{ request.user.first_name }}" />
-          </div>
+      <div id="settings" data-id="{{ request.user.id }}">
 
-          <div class="form-group">
-            <label>Last Name</label>
-            <input class="form-control" type="text" name="last_name" value="{{ request.user.last_name }}" />
-          </div>
-
-          <div class="form-group">
-            <label>Picture</label>
-            <input class="form-control" name="photo" type="file" />
-          </div>
-
-          <div class="form-group">
-            <label>Weekly Availability</label>
-            <input class="form-control" type="text" name="capacity" value="{{ request.user.capacity }}" placeholder="Hours per week" />
-            <p class="help-block">
-              Your average weekly availability to work on contract projects.
-              This let’s project managers know how much work they can expect
-              from you to work on their project during any given week.
-            </p>
-          </div>
-          <input type="submit" class="btn btn-yellow" value="Save Profile" />
-
-        </div>
-        <div class="col-md-6">
-          <div class="form-group">
-            <label>Location</label>
-            <input class="form-control" name="location" type="text" />
-          </div>
-
-          <div class="form-group">
-            <label>Biography</label>
-            <textarea name="biography">
-              {{ request.user.biography }}
-            </textarea>
-            <p class="help-block">300 Character Limit</p>
-          </div>
-        </div>
-
-      </form>
+      </div>
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-<script>
-$(document).ready(function() {
-    $('#project-form').formValidation({
-        framework: 'bootstrap',
-        fields: {
-            first_name: {
-                validators: {
-                    notEmpty: {
-                        message: 'A first name is required.'
-                    }
-                }
-            },
-            last_name: {
-                validators: {
-                    notEmpty: {
-                        message: 'A last name is required.'
-                    }
-                }
-            },
-            biography: {
-                validators: {
-                    notEmpty: {
-                        message: 'A quick biography is required.'
-                    }
-                }
-            },
-            capacity: {
-                validators: {
-                    notEmpty: {
-                        message: 'Weekly availability is required.'
-                    }
-                }
-            },
-            location: {
-                validators: {
-                    notEmpty: {
-                        message: 'A location is required.'
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
+<script type="text/javascript" src="{% static 'js/routes/settings.js' %}"></script>
 {% endblock %}

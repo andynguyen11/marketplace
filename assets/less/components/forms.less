@@ -1,5 +1,46 @@
+.base-form {
+  .profile-photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-image, .company-image {
+    height: 75px;
+    width: 75px;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: @brand-neutral--4;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 0 @gutter--medium 0;
+  }
+
+  .company-image {
+    height: 150px;
+    width: 150px;
+  }
+
+  .btn-upload-image {
+    position: relative;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      text-indent: -999em;
+      cursor: pointer;
+    }
+  }
+}
+
 .form-group {
-  magin-bottom: 10px;
+  margin-bottom: 15px;
   position: relative;
   label {
     text-transform: uppercase;
@@ -7,6 +48,13 @@
     color: @brand-neutral--2;
     font-size: 12px;
     letter-spacing: 1.5px;
+  }
+  &.has-error {
+    .radio  {
+      label {
+        color: #a94442;
+      }
+    }
   }
   .form-control {
     padding: 8px;
@@ -27,7 +75,7 @@
 
   .fa-lock {
     position: absolute;
-    left: 25px;
+    left: 10px;
     bottom: 12px;
   }
 
@@ -54,6 +102,14 @@
 
 .form-fancy {
   .form-group {
+    &.has-error {
+      h3 {
+        color: #a94442;
+      }
+      .form-control {
+        color: #a94442;
+      }
+    }
     .form-control {
       &.select {
         padding-top: 0.5em;
@@ -108,4 +164,10 @@
 
 input.invalid, textarea.invalid {
   border: 1px solid red;
+}
+
+.has-error {
+  .description {
+    border: 1px solid #a94442;
+  }
 }

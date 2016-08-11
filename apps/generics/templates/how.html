@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<div class="hero hero-how">
+    <div class="item">
+        <div class="hero-overlay--logo-mark hero-overlay--logo-mark--orange"></div>
+        <div class="hero-slide">
+            <h2 class="brand large">This is how<br/> Loom works</h2>
+        </div>
+    </div>
+</div>
+
+<div class="page-content--medium">
+    <div class="how-tile">
+        <div class="how-tile-content">
+            <h3>Post your project</h3>
+            <p>Easily create a profile for yourself or your company and tell the community about the project you are bringing to life. Tell the basics of the project on your public page and keep your confidential details hidden behind an NDA-protected tab.</p>
+            <p>You can grant developers access to your confidential info by having them agree to an NDA as you see fit. On Loom, you can garner interest from the development community without spilling your secret sauce.</p>
+        </div>
+        <div class="how-tile-image how-tile-image--post"></div>
+    </div>
+
+    <div class="how-tile">
+        <div class="how-tile-image how-tile-image--bid"></div>
+        <div class="how-tile-content">
+            <h3>Receive bids from developers</h3>
+            <p>Developers from around the world will place bids in equity and/or cash to build your project, ultimately setting the price of the work in true marketplace fashion. The current lowest bid is made available for the community to see (and outbid). When you post your project on Loom, you may be surprised at what comes back to you.</p>
+        </div>
+    </div>
+
+    <div class="how-tile">
+        <div class="how-tile-content">
+            <h3>Engage the developer of your choice</h3>
+            <p>Easily create a profile for yourself or your company and tell the community about the project you are bringing to life. Tell the basics of the project on your public page and keep your confidential details hidden behind an NDA-protected tab.</p>
+            <p>You can grant developers access to your confidential info by having them agree to an NDA as you see fit. On Loom, you can garner interest from the development community without spilling your secret sauce.</p>
+        </div>
+        <div class="how-tile-image how-tile-image--engage"></div>
+    </div>
+</div>
+
+<div class="why-loom">
+    <div class="page-content">
+        <h2>Why use loom</h2>
+        <div class="why-row">
+            <img src="/static/images/why-talent.png" alt="">
+            <img src="/static/images/why-legal.png" alt="">
+        </div>
+        <div class="why-row">
+            <img src="/static/images/why-ratings.png" alt="">
+            <img src="/static/images/why-protect.png" alt="">
+            <img src="/static/images/why-support.png" alt="">
+        </div>
+    </div>
+</div>
+
+<div class="how-pricing">
+    <div class="how-pricing-content page-content--medium">
+        <h2>Our Pricing Structure</h2>
+        <p class="important">Developers never pay any fees on Loom.</p>
+        <p>Our goal is to make our fee to engage a developer only a fraction of what you would pay a lawyer for professional legal contracts alone, which are included with every engagement on Loom.</p>
+    </div>
+</div>
+
+<div class="how-pricing-breakdown page-content--alternate">
+    <div class="page-content">
+        <img src="/static/images/pricing-tag.png" class="how-pricing-tag" alt="">
+        <h2>Per hour of work</h2>
+        <h3 class="text-accent">We like to keep things simple, for example:</h3>
+        <div class="how-pricing-breakdown-types">
+            <img src="/static/images/pricing-equity.png" alt="">
+            <img src="/static/images/pricing-cash.png" alt="">
+            <img src="/static/images/pricing-both.png" alt="">
+        </div>
+    </div>
+</div>
+
+<div class="cta cta--primary page-content--medium page-content--alternate">
+    <div class="cta-content">
+        Let's bring your ideas to life.<br class="hide-mobile"/> Posting projects is <span class="highlight">free</span>.
+    </div>
+    <a href="{% url 'create-project' %}" class="btn btn-brand btn-brand--attn">Post your project</a>
+</div>
+
+{% endblock %}

@@ -97,8 +97,7 @@ class CreditCardView(APIView):
                 project=obj.job.project
             )
             signer = DocumentSigner.objects.get(profile=request.user, document=new_document)
-            signing_url = signer.get_signing_url()
-            return signing_url
+            return signer.signing_url
         return status
 
     def get(self, request):

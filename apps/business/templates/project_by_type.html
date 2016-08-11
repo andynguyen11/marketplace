@@ -23,9 +23,9 @@
                                          src="{{ project.project_manager.linkedin.extra_data.picture_url }}"/>
                                     <div class="project-byline pull-left">
                                         <p>
-                                            <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span>
+                                            <span class="project-manager">{{ project.project_manager.name }}</span>
                                             <br/>
-                                            <span class="project-company">{{ project.company.name }}</span>
+                                            {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                                         </p>
                                     </div>
                                     <div class="clearfix"></div>

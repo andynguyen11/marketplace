@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from apps.api.permissions import IsOwner, IsOwnerOrIsStaff, BidPermission
+from apps.api.permissions import IsOwner, IsOwnerOrIsStaff, BidPermission, IsPrimary
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet
 
@@ -14,8 +14,22 @@ from generics.viewsets import NestedModelViewSet
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    # renderer_class = (JSONRenderer,)
     permission_classes = (IsAuthenticated, BidPermission)
+
+
+class NestedJobViewSet(NestedModelViewSet):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+    permission_classes = (IsAuthenticated, BidPermission)
+    parent_keys = ('project',)
+
+
+class DocumentViewSet(NestedModelViewSet):
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
+    permission_classes = (IsAuthenticated, BidPermission)
+    parent_keys = ('job',)
+    exclude_keys = ('project',)
 
 
 class TermsListCreate(generics.ListCreateAPIView):
@@ -58,7 +72,7 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, IsOwner)
+    permission_classes = (IsAuthenticated, IsPrimary)
 
 
 class InfoViewSet(NestedModelViewSet):
@@ -72,12 +86,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-
-
-class DocumentViewSet(viewsets.ModelViewSet):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-    permission_classes = (IsAuthenticated, )
 
 
 class ProjectSearchView(HaystackViewSet):

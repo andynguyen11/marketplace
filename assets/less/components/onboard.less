@@ -4,7 +4,7 @@
     display: inline-block;
     border: 2px solid @brand-neutral--6;
     border-radius: 4px;
-    width: 265px;
+    width: 270px;
     padding: 130px 25px 25px;
     margin: 20px;
     h4, p {
@@ -23,6 +23,24 @@
     &.ent{
       background: url(../images/entrepreneur-picker.svg) no-repeat center 25px;
       &:hover {
+        border: 2px solid @brand--primary;
+      }
+    }
+    &.company{
+      background: url(../images/company.svg) no-repeat center 25px;
+      &:hover {
+        border: 2px solid @brand--accent;
+      }
+      &.active {
+        border: 2px solid @brand--accent;
+      }
+    }
+    &.individual-ent{
+      background: url(../images/individual.svg) no-repeat center 25px;
+      &:hover {
+        border: 2px solid @brand--primary;
+      }
+      &.active {
         border: 2px solid @brand--primary;
       }
     }
@@ -60,7 +78,7 @@
     align-items: center;
   }
 
-  .profile-image {
+  .profile-image, .company-image {
     height: 75px;
     width: 75px;
     border-radius: 100%;
@@ -70,6 +88,11 @@
     background-position: center;
     background-repeat: no-repeat;
     margin: 0 0 @gutter--medium 0;
+  }
+
+  .company-image {
+    height: 150px;
+    width: 150px;
   }
 
   .btn-upload-image {

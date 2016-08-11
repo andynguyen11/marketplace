@@ -2,13 +2,15 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="create-project" class="section">
+<div id="create-project" >
+
   <div class="row">
     <div class="container">
         <div id="project-root" data-id="{% if request.user.id %}{{ request.user.id }}{% endif %}"
-                               data-company={{ company.id }}
+                               data-project="{{ project.id }}"
+                               data-company="{{ company.id }}"
                                data-_company_name="{{ company.name }}"
-                               data-project_manager={{ project_manager.id }}
+                               data-project_manager="{{ project_manager.id }}"
                                data-_project_manager_name="{{ project_manager.first_name }} {{ project_manager.last_name }}" ></div>
     </div>
   </div>
@@ -16,98 +18,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{% static 'js/routes/project.js' %}"></script>
-<script>
-$(document).ready(function() {
-    $('#project-form').formValidation({
-        framework: 'bootstrap',
-        fields: {
-            type: {
-                validators: {
-                    notEmpty: {
-                        message: 'A project type is required'
-                    }
-                }
-            },
-            title: {
-                validators: {
-                    notEmpty: {
-                        message: 'A project title is required'
-                    }
-                }
-            },
-            'image': {
-                validators: {
-                    notEmpty: {
-                        message: 'A project image is required'
-                    }
-                }
-            },
-            'short_blurb': {
-                validators: {
-                    notEmpty: {
-                        message: 'A short blurb about the project is required'
-                    }
-                }
-            },
-            'category': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'secondary_category': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'location': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'estimated_cash': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'estimated_equity': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'estimated_hours': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'skills': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            },
-            'description': {
-                validators: {
-                    notEmpty: {
-                        message: 'Required'
-                    }
-                }
-            }
-        }
-    });
-});
-</script>
+<script type="text/javascript" src="{% static 'js/routes/create-project.js' %}"></script>
 {% endblock %}

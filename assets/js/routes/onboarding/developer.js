@@ -91,7 +91,9 @@ const DeveloperOnboard = React.createClass({
         placeholder: '24hrs/Week',
         value: profile.capacity || '',
         validator: (value) => {
+          console.log(value)
           const valid = FormHelpers.checks.isRequired(value);
+          console.log(valid)
           const { formElements } = this.state;
           if (!valid) {
             formElements.capacity.errorClass = 'has-error';
@@ -99,6 +101,7 @@ const DeveloperOnboard = React.createClass({
             formElements.capacity.errorClass = '';
           }
           this.setState({ formElements });
+          console.log(valid)
           return valid;
         },
         update: (value) => {
@@ -325,9 +328,8 @@ const DeveloperOnboard = React.createClass({
   setHours(event) {
     const { formElements } = this.state;
 
-
-    formElements['capacity'].update($(event.currentTarget).data('hours'));
-    formElements['capacity'].value = $(event.currentTarget).data('hours');
+    formElements['capacity'].update($(event.currentTarget).data('hours').toString());
+    formElements['capacity'].value = $(event.currentTarget).data('hours').toString();
 
     this.setState({ formElements, formError: false });
   },
@@ -390,6 +392,7 @@ const DeveloperOnboard = React.createClass({
             handleImageChange={this.handleImageChange}
             formElements={formElements}
             handleChange={this.handleChange}
+            linkedIn={true}
         />
 
         {skillsComponent}
@@ -450,7 +453,7 @@ const DeveloperOnboard = React.createClass({
         <div className='text-center form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>
+          <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}  >
             <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
             Save Profile
           </a>

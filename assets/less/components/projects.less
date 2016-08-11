@@ -114,8 +114,13 @@
         .section(details);
         .section(budget);
         .section(preview);
-      #project-form .preview {
+      #project-form .project-preview {
           border: 3px dashed @brand-neutral--4;
+          .preview {
+            img {
+              width: 150px;
+            }
+          }
         }
     }
 
@@ -302,4 +307,43 @@
     }
 }
 
+.project-meta {
+  h4, img {
+    display: inline-block;
+  }
+}
+
+#project {
+  .project-image {
+    width: 100%;
+  }
+  .tab-content {
+    .tab-pane {
+      .col-md-8 {
+        img {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .specs {
+    ul {
+      list-style: none;
+      padding: 0;
+      li {
+        padding: 10px 0;
+        color: @brand-neutral--4;
+        h4 {
+          color: @brand-neutral--1;
+        }
+        h5 {
+          color: @brand-neutral--1;
+          font-size: 36px;
+          margin: 0;
+        }
+      }
+
+    }
+  }
+}
 

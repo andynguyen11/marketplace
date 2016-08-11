@@ -1,6 +1,7 @@
 const FormHelpers = {
 	checks: {
 		isRequired(value) {
+      // TODO This fails if an int is passed in
 			return !!value.length;
 		},
 		isEmail(value) {

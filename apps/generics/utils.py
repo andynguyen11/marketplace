@@ -1,3 +1,5 @@
+import re
+
 def to_nice_string(num):
     return {
         1: 'one',
@@ -26,18 +28,35 @@ def collapse_listview(validated_data, singular, count=2, validator=lambda x : x 
     return validated_data
 
 
-def pop_subset(fields, data):
+def pop_subset(fields, data, fallback=[]):
     subset = {
-        field: data.pop(field, [])
+        field: data.pop(field, fallback)
         for field in fields
     }
     return data, subset
+
 
 def update_instance(instance, data):
     for k, v in data.items():
         if hasattr(instance, k): 
             setattr(instance, k, v)
     instance.save()
+    return instance
+
 
 def field_names(model, exclude=tuple()):
     return tuple(field.name for field in model._meta.fields if field.name not in exclude)
+
+def merge(*dicts):
+    res = {}
+    for d in dicts:
+        res.update(d)
+    return res
+
+def camel_to_underscored(name):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
+
+def normalized_subdict(d, keys):
+    return { camel_to_underscored(k): d.get(k, None) for k in keys }
+

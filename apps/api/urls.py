@@ -2,6 +2,7 @@ import tagulous
 
 from django.conf.urls import patterns, url
 from rest_framework_nested import routers
+from generics.routers import DeclarativeRouter
 
 from accounts.api import ProfileViewSet, SkillsList, SkillTestViewSet
 from business.api import *
@@ -11,18 +12,47 @@ from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook
 
-router = routers.SimpleRouter()
-router.register('document', DocumentViewSet)
-router.register('jobs', JobViewSet)
-router.register('profile', ProfileViewSet)
-router.register('project', ProjectViewSet)
-router.register('search/project', ProjectSearchView, base_name='project-search')
-
-project_router = routers.NestedSimpleRouter(router, 'project', lookup='project')
-project_router.register('confidentialinfo', InfoViewSet, base_name='project-confidentialinfo')
-
-profile_router = routers.NestedSimpleRouter(router, 'profile', lookup='profile')
-profile_router.register('skilltest', SkillTestViewSet, base_name='profile-skilltest')
+router = DeclarativeRouter({
+    'jobs': JobViewSet,
+    'profile': {
+        'view': ProfileViewSet,
+        'nested': {
+            'lookup': 'profile',
+            'routes': {
+                'skilltest': SkillTestViewSet,
+            }
+        }
+    },
+    'project': {
+        'view': ProjectViewSet,
+        'nested': {
+            'lookup': 'project',
+            'routes': {
+                'confidentialinfo': {
+                    'view': InfoViewSet,
+                    'base_name': 'project-confidentialinfo'
+                },
+                'job': {
+                    'view': NestedJobViewSet,
+                    'base_name': 'project-job',
+                    'nested': {
+                        'lookup': 'job',
+                        'routes': {
+                            'document': {
+                                'view': DocumentViewSet,
+                                'base_name': 'project-job-documents'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    'search/project': {
+        'view': ProjectSearchView,
+        'base_name': 'project-search',
+    }
+})
 
 urlpatterns = [
     url(r'skills/$', view=SkillsList.as_view(), name='skills', ),
@@ -37,4 +67,4 @@ urlpatterns = [
     url(r'^skilltest/webhook$', view=ExpertRatingsXMLWebhook.as_view(), name='skilltest-webhook'),
     url(r'^terms/$', view=TermsListCreate.as_view(), name='term'),
     url(r'^terms/(?P<pk>[0-9]+)/$', view=TermsRetrieveUpdate.as_view(), name='term-detail'),
-] + router.urls + project_router.urls + profile_router.urls
+] + router.urls 

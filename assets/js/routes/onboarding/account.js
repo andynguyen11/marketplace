@@ -10,11 +10,11 @@ const AccountForm = React.createClass({
   },
 
   render() {
-    const { formElements, handleChange, profile, photo_url, handleImageChange } = this.props;
+    const { formElements, handleChange, profile, photo_url, linkedIn, handleImageChange } = this.props;
 
     const profilePhoto = photo_url && { backgroundImage: 'url(' + photo_url + ')' } || {};
 
-    return (
+    const linkedInSync = linkedIn && (
       <div>
         <div className={ profile.linkedin.extra_data ? 'hidden' : 'text-center col-md-8 col-md-offset-2 mid-section' }>
             <h4 className="brand">
@@ -30,6 +30,12 @@ const AccountForm = React.createClass({
         <div className={ profile.linkedin.extra_data ? 'alert alert-success text-center col-md-8 col-md-offset-2' : 'hidden' } role="alert">
           Your LinkedIn account is now <strong>SYNCED UP</strong>! You can review and edit the fields below.
         </div>
+      </div>
+    )
+
+    return (
+      <div className='base-form'>
+        { linkedInSync }
 
         <div className='col-md-6 col-md-offset-2'>
             <div className={ 'form-group ' + formElements.profileFirstName.errorClass }>

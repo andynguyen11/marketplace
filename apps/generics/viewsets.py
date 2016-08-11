@@ -25,9 +25,18 @@ def resolve_options(kwargs, *optional_refs):
 class NestedModelViewSet(viewsets.ModelViewSet):
     ""
     parent_keys = tuple()
+    exclude_keys = tuple()
+
+    def exclude(self, kwargs):
+        return {
+            k: v for k, v in kwargs.items()
+            if k not in self.exclude_keys
+                and k not in tuple(e+'_id' for e in self.exclude_keys)
+                and k not in tuple(e+'_pk' for e in self.exclude_keys)
+        }
 
     def resolve_options(self, options):
-        return resolve_options(options, *self.parent_keys)
+        return self.exclude(resolve_options(options, *self.parent_keys))
 
     def list(self, request, **kwargs):
         data = self.queryset.filter(**self.resolve_options(kwargs))

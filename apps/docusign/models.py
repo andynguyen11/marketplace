@@ -8,10 +8,9 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 from generics.models import Attachment
 
-from .docusign import create_envelope, Role, get_logged_in_client
+from .docusign import create_envelope, Role, client, parse_exception
 from .tabs import TAB_TYPES, classify as classify_tab
 from business.models import Document as UserDocument
-from generics.external_apis import LazyClient
 
 
 DOCUMENT_STATUS = tuple(
@@ -129,12 +128,12 @@ class DocumentSigner(models.Model):
                     {})
         return data
 
-    def get_signing_url(self, *args, **kwargs):
-        client = LazyClient(get_logged_in_client)
+    @property
+    def signing_url(self):
         envelope = pydocusign.Envelope(envelopeId=self.document.envelope_id)
         signing_url = envelope.post_recipient_view(
             recipient=Role(**self.to_dict()),
-            returnUrl='/profile/documents/',
+            returnUrl=settings.BASE_URL + '/profile/documents/',
             client=client
         )
         return signing_url
@@ -145,18 +144,30 @@ class DocumentSigner(models.Model):
 
 class Document(models.Model):
     template = models.ForeignKey('docusign.Template')
-    status = models.CharField(max_length=100, default='Sent', choices=DOCUMENT_STATUS)
+    status = models.CharField(max_length=100, default='sent', choices=DOCUMENT_STATUS)
     envelope_id = models.CharField(max_length=100, null=True, unique=True)
     attachments = GenericRelation(Attachment, related_query_name='docusign_document')
 
     @property
     def signers(self):
         "Returns the list of Signers who need to sign the document"
-        return DocumentSigner.objects.filter(document=self).order_by('role')
+        return DocumentSigner.objects.filter(document=self).order_by('-role')
 
     @property
     def roles(self):
         return [Role(**signer.to_dict()) for signer in self.signers]
+
+    def get_signer_url(self, profile):
+        try:
+            return DocumentSigner.objects.get(profile=profile, document=self).signing_url
+        except DocumentSigner.DoesNotExist:
+            return None
+        except pydocusign.exceptions.DocuSignException, e:
+            error = parse_exception(e)
+            if error['code'] == 400: # The token for an out of sequence recipient cannot be generated.
+                return error['data']
+            else:
+                raise e
 
     def create(self):
         self.envelope_id = create_envelope(
@@ -168,4 +179,5 @@ class Document(models.Model):
                 signer_return_url=None,
                 status=self.status).envelopeId
         self.save()
+
 

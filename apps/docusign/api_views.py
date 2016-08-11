@@ -56,9 +56,8 @@ class Webhook(APIView):
 
 @api_view(['GET', ])
 def signing_url_redirect(request, document):
-    try:
-        signer = DocumentSigner.objects.get(profile=request.user, document=document)
-    except DocumentSigner.DoesNotExist:
-        return Response(status=405, data={"message": "Forbidden"})
-    signing_url = signer.get_signing_url()
-    return redirect(signing_url)
+    signer_url = Document.objects.get(id=document).get_signer_url(request.user)
+    if type(signer_url) in (str, unicode):
+        return redirect(signer_url)
+    else:
+        return Response(status=405, data=signer_url or {"message": "Forbidden"})

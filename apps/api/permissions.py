@@ -10,6 +10,14 @@ class IsOwner(permissions.BasePermission):
         return obj.user == request.user
 
 
+class IsPrimary(permissions.BasePermission):
+    """
+    Permission to make sure if user is primary to edit company
+    """
+    def has_object_permission(self, request, view, obj):
+        return obj.primary_contact.profile == request.user
+
+
 class IsOwnerOrIsStaff(permissions.BasePermission):
     """
     Custom permission to only allow owners or staff to CRUD

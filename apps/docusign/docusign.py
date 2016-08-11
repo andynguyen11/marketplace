@@ -1,4 +1,4 @@
-import pydocusign, base64, os
+import pydocusign, base64, os, re, json
 
 from django.conf import settings
 
@@ -67,6 +67,10 @@ class Parser(pydocusign.DocuSignCallbackParser):
         recipients.sort(lambda a, b: cmp(a['RoutingOrder'], b['RoutingOrder']))
         return recipients
 
+    @property
+    def envelope_status(self):
+        return self.xml_soup.select('EnvelopeStatus > Status')[0].text.lower()
+
 
 def parse_webhook_update(xml):
     parser = Parser(xml)
@@ -128,7 +132,7 @@ event_notification = pydocusign.EventNotification(
 )
 
 
-def create_envelope( template_id, roles, email_subject, email_blurb, attachments=[],signer_return_url=None, status='Sent'):
+def create_envelope(template_id, roles, email_subject, email_blurb, attachments=[], signer_return_url=None, status='sent'):
     """
     creates an envelope with the template_id filled in with the given roles.
     default status is 'sent', which will automatically send the envelope to the first recipient on creation.
@@ -147,3 +151,18 @@ def create_envelope( template_id, roles, email_subject, email_blurb, attachments
     if initial_status(status, attachments) != status:
         update_envelope(envelope, status=status)
     return envelope
+
+def parse_exception(exception):
+    method_url, recieved, expected, data = re.split(
+            "|".join([ "DocuSign request failed: ", " returned code ", " while expecting code ", "; Message: ", " ; " ]),
+            exception.args[0])[1:-1]
+    method, url = method_url.split(' ')
+    data = json.loads(data)
+    if data.has_key('errorCode'):
+        data['error'] = data.pop('errorCode')
+    return dict(
+            url = url, method = method,
+            code = int(recieved),
+            expected = int(expected),
+            data = data)
+

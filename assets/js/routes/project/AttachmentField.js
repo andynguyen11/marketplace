@@ -129,5 +129,31 @@ const MultipleAttachmentsField = React.createClass({
     }
 })
 
-export { MultipleAttachmentsField }
+const MultipleAttachmentsPreview = React.createClass({
+
+    render(){
+        let { attachments } = this.props;
+        let {
+            onChange, title, multiple, className,
+            Preview = defaultPreview(this.props.accept), ...props
+        } = this.props
+
+        title = title || 'Attachments'
+        className = `multi attachment-field ${attachments.length ? 'preview' : 'button'} ${className}`
+        return (
+                <div className='row'>
+                    {attachments.map(({file, tag}) => (
+                        <div className='col-sm-3' key={tag}>
+                            <div className='preview'>
+                                { Preview(file) }
+                                <span className='file-name'>{ file.name }</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+        )
+    }
+})
+
+export { MultipleAttachmentsField, MultipleAttachmentsPreview }
 export default AttachmentField

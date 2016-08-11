@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
 from django.utils.datastructures import MultiValueDictKeyError
 
@@ -21,6 +21,7 @@ def error500(request):
 
 def user_login(request):
     form = LoginForm()
+    next = request.GET.get('next', 'dashboard')
     if request.method == 'POST':
         form = LoginForm(request.POST or None)
         if form.is_valid():
@@ -28,10 +29,10 @@ def user_login(request):
             if account is not None:
                 if account.is_active:
                     login(request, account)
-                    return redirect('dashboard')
+                    return redirect(next)
             else:
                 form.add_error(None, 'Your email or password is incorrect.')
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'login.html', {'form': form, 'next': next})
 
 
 def signup(request):

@@ -45,19 +45,22 @@ export class SkillWidget extends React.Component {
     }
 
     render(){
-        return (
-            <div className='panel panel-default panel-skills'>
-                { this.state.allSkills.map( (skill, i) => (
-                    <div key={i} className="pull-left">
-                        <SkillButton
-                            skill={skill}
-                            update_skills={this.update_skills}
-                        />
-                    </div>
-                ) ) }
-                <div className='clearfix'></div>
-            </div>
-        )
+      const { mySkills } = this.props;
+
+      return (
+        <div className='panel panel-default panel-skills'>
+          { this.state.allSkills.map( (skill, i) => (
+              <div key={i} className="pull-left">
+                  <SkillButton
+                    skill={skill}
+                    update_skills={this.update_skills}
+                    mySkills={mySkills}
+                  />
+              </div>
+          ) ) }
+          <div className='clearfix'></div>
+        </div>
+      )
     }
 }
 

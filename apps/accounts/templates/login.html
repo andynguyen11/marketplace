@@ -15,6 +15,8 @@
           <div class="panel-login">
             <div class="login-content pull-left">
               <h1 id="welcomeback" class="brand sub-section">Welcome back!</h1>
+
+              <!-- django form validation -->
               {% if form.errors %}
                 <ul class="error-list">
                 {% for error in form.errors %}
@@ -22,11 +24,14 @@
                 {% endfor %}
                 </ul>
               {% endif %}
-              <form id="login-form" method="post" action="{% url 'login' %}">
+
+              <!-- LOGIN FORM -->
+              <form id="login-form" method="post" {% if next %} action="{% url 'login' %}?next={{next}}" {% else %} action="{% url 'login' %}" {% endif %}>
                 {% crispy form %}
                 <input type="submit" class="btn btn-block btn-brand btn-fat" value="Log In"/>
                 <p class="text-center" id="forgot-password">Forgot your password? <a href="{% url 'password_reset_recover' %}">Recover here.</a></p>
               </form>
+
              <div class="signin-or sub-section">
                 <span>OR</span>
               </div>

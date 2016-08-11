@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="4px" height="72px" viewBox="0 0 4 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>Line Copy 4</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M720,0 L720,71.0036163 L720,0 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="-2" y="-2" width="6" height="75.0036163">
+            <rect x="717" y="-2" width="6" height="75.0036163" fill="white"></rect>
+            <use xlink:href="#path-1" fill="black"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="How-It-Works" transform="translate(-718.000000, -3306.000000)" stroke="#1EDDB2" stroke-width="4">
+            <g id="Pricing" transform="translate(0.000000, 3306.000000)">
+                <use id="Line-Copy-4" mask="url(#mask-2)" xlink:href="#path-1"></use>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -24,10 +24,9 @@
           </li>
         </ul>
         <p>
-          <a class="btn btn-dark" data-toggle="modal" data-target="#message-modal">Hire {{ user.first_name }}</a>
-          {% comment %}
+          <a class="btn btn-dark" >Hire {{ user.first_name }}</a>
+
           <a class="btn btn-dark" id="writeReview">Review {{ user.first_name }}</a>
-          {% endcomment %}
           {% if user.linkedin %}
           <a class="btn btn-dark">See on LinkedIn</a>
           {% endif %}
@@ -173,7 +172,7 @@
               <div class="project-byline pull-left">
                 <p>
                   <span class="project-manager">{{ job.project.project_manager.first_name }} {{ job.project.project_manager.last_name }}</span> <br />
-                  <span class="project-company">{{ job.project.company.name }}</span>
+                  {% if job.project.company %}<span class="project-company">{{ job.project.company.name }}</span>{% endif %}
                 </p>
               </div>
               <div class="clearfix"></div>

@@ -68,6 +68,10 @@ def read_file(f):
 def identity(item):
     if(isinstance(item, models.fields.files.FieldFile)):
         return read_file(item)
+    if(isinstance(item, datetime.datetime)):
+        return item.isoformat()
+    if(isinstance(item, datetime.date)):
+        return item.strftime('%Y-%m-%d')
     return item
 
 class UpdateMixin(UpdateAPITestCaseMixin):

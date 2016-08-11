@@ -2,7 +2,6 @@ from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from .models import TemplateRoleTab, TemplateRole, Template, DocumentSignerTab, DocumentSigner, Document
-from generics.utils import to_browsable_fieldset, collapse_listview
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
 
 
@@ -23,7 +22,7 @@ class RoleSerializer(ParentModelSerializer):
 
 
 class TemplateSerializer(ParentModelSerializer):
-    roles = RoleSerializer(many=True)
+    roles = RoleSerializer(many=True, required=False)
 
     class Meta:
         model = Template
@@ -71,34 +70,19 @@ class SignerSerializer(ParentModelSerializer):
 
 class DocumentSerializer(ParentModelSerializer):
     signers = SignerSerializer(many=True)
-    signer_one = SignerSerializer(required=False) # for testing in the BrowsableAPI
-    signer_two = SignerSerializer(required=False)
-
     attachments = AttachmentSerializer(many=True, required=False)
-    attachment_one = AttachmentSerializer(required=False)
-    attachment_two = AttachmentSerializer(required=False)
 
     class Meta:
         model = Document
-        fields = tuple(['template', 'status'] +
-                       to_browsable_fieldset('signer') +
-                       to_browsable_fieldset('attachment'))
+        fields = ('template', 'status', 'signers', 'attachments')
         parent_key = 'document'
         child_fields = ('signers', 'attachments')
 
-    def collapse_data(self, data):
-        data = collapse_listview(data, 'signer')
-        data = collapse_listview(data, 'attachment', required_fields=['file'])
-        return data
-
     def create(self, data, action='create'):
-        data = self.collapse_data(data)
         document = ParentModelSerializer.create(self, data, action)
         document.create()
         return document
 
     def update(self, instance, data):
-        data = self.collapse_data(data)
         document = ParentModelSerializer.update(self, instance, data)
-        document.create()
         return document

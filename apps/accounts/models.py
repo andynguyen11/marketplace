@@ -55,17 +55,17 @@ class Profile(AbstractUser):
 
     @property
     def name(self):
-        return '%s %s' & (self.first_name, self.last_name)
+        return '{0} {1}'.format(self.first_name, self.last_name)
 
     @property
     def get_photo(self):
         if self.photo:
-            return '{0}{1}'.format(settings.STATIC_URL, self.photo)
+            return '{0}{1}'.format(settings.MEDIA_URL, self.photo)
         else:
             try:
                 return self.social_auth.get(provider='linkedin-oauth2').extra_data['picture_urls']['values'][0]
             except UserSocialAuth.DoesNotExist:
-                return '{0}{1}'.format(settings.STATIC_URL, '/images/icon-profile.png')
+                return '{0}{1}'.format(settings.STATIC_URL, 'images/icon-profile.png')
 
     @property
     def linkedin(self):
@@ -94,34 +94,35 @@ class Profile(AbstractUser):
                     return card
         return None
 
-    def save(self, *args, **kwargs):
-        if self.photo:
-            try:
-                current = Profile.objects.get(id=self.id)
-                if current.photo == self.photo:
-                    self.photo = current.photo
-                else:
-                    current.photo.delete(save=False)
-            except:
-                pass
-            img = Image.open(self.photo)
-            width, height = img.size
-            if height > width:
-                top = int((height - width) / 2)
-                img = img.crop((0, top, width, width + top))
-            elif width > height:
-                left = int((width - height) / 2)
-                img = img.crop((left, 0, height + left, height))
-            elif img.mode == "RGBA":
-                # Check if the image has a transparent background.
-                background = Image.new("RGB", img.size, (255, 255, 255))
-                background.paste(img, mask=img.split()[3])
-                img = background
-            output = StringIO.StringIO()
-            img.save(output, format='JPEG')
-            output.seek(0)
-            self.photo = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.photo.name.split('.')[0], 'image/jpeg', output.len, None)
-        super(Profile, self).save(*args, **kwargs)
+    # TODO This image crop breaks if it's not a jpg
+    #def save(self, *args, **kwargs):
+        #if self.photo:
+        #    try:
+        #        current = Profile.objects.get(id=self.id)
+        #        if current.photo == self.photo:
+        #            self.photo = current.photo
+        #        else:
+        #            current.photo.delete(save=False)
+        #    except:
+        #        pass
+        #    img = Image.open(self.photo)
+        #    width, height = img.size
+        #    if height > width:
+        #        top = int((height - width) / 2)
+        #        img = img.crop((0, top, width, width + top))
+        #    elif width > height:
+        #        left = int((width - height) / 2)
+        #        img = img.crop((left, 0, height + left, height))
+        #    elif img.mode == "RGBA":
+        #        # Check if the image has a transparent background.
+        #        background = Image.new("RGB", img.size, (255, 255, 255))
+        #        background.paste(img, mask=img.split()[3])
+        #        img = background
+        #    output = StringIO.StringIO()
+        #    img.save(output, format='JPEG')
+        #    output.seek(0)
+        #    self.photo = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.photo.name.split('.')[0], 'image/jpeg', output.len, None)
+        #super(Profile, self).save(*args, **kwargs)
 
 
 class SkillTest(models.Model):

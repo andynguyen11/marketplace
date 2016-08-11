@@ -7,23 +7,35 @@ from django.http import HttpResponse
 from postman.helpers import pm_write
 from notifications.signals import notify
 
-from business.forms import ProjectForm
+from business.forms import ProjectForm, InfoForm
 from accounts.models import Profile
-from business.models import Company, Job, Project, PROJECT_TYPES, user_company
+
+from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user_company
 
 
 def view_project(request, project_id=None):
     project = Project.objects.get(id=project_id)
     return render_to_response('project.html', {'project': project, }, context_instance=RequestContext(request))
 
+def company_profile(request, company_slug=None):
+    company = Company.objects.get(slug=company_slug)
+    projects = Project.objects.filter(company=company)
+    return render_to_response('company.html', {'company': company, 'projects': projects}, context_instance=RequestContext(request))
 
 @login_required
-def create_project(request):
+def create_project(request, project_id=None):
+    form = InfoForm()
+    project = None
     try:
         company = user_company(request.user)
     except Employee.DoesNotExist:
         company = None
-    return render_to_response('create_project.html', {'company':company, 'project_manager': request.user}, context_instance=RequestContext(request))
+    if project_id:
+        project = Project.objects.get(id=project_id)
+        if project.project_manager != request.user:
+            return HttpResponse(status=403)
+
+    return render_to_response('create_project.html', {'form': form, 'project':project, 'company':company, 'project_manager': request.user}, context_instance=RequestContext(request))
 
 
 @login_required

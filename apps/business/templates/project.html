@@ -3,46 +3,67 @@
 
 {% block content %}
 <div id="project">
-  <div class="row">
+  <div class="row content-wrap">
     <div class="container">
-      <h2 class="section-header text-center sub-section">
+      <h2 class="brand text-center sub-section">
         {{ project.title }} <br />
-        <span class="text-yellow">by {{ project.company.name }}</span>
+        <span class="text-brand">by
+          {% if project.company %}
+          {{ project.company.name }}
+          {% else %}
+          {{ project.project_manager.first_name }} {{ project.project_manager.last_name }}
+          {% endif %}
+        </span>
       </h2>
       <div class="sub-section">
-        <div class="col-md-6">
-          <img class="project-image" src="{% static '' %}{{ project.image.file }}" />
-          <ul class="project-meta">
-            <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ project.company.city }}, {{ project.company.state }}</li>
-            <li><img class="icon" src="{% static 'images/icon-category.png' %}" />{{ project.type }}</li>
-            <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
-              {% for skill in project.skills.all %}
-                {{ skill.name }}
-              {% endfor %}
-            </li>
-          </ul>
+        <div class="col-md-8">
+          <img class="project-image" src="{{ MEDIA_URL }}{{ project.image.file }}" />
+          <div class="sub-section">{{ project.short_blurb }}</div>
         </div>
-        <div class="specs col-md-6">
-          <h5>THE COMPANY</h5>
+        <div class="specs col-md-4">
           <ul>
             <li class="project-hours">
-              <h5>{{ project.estimated_hours }}</h5>
+              <h5 class="brand">{{ project.estimated_hours }}</h5>
               est. hours needed
             </li>
+            {% if project.estimated_equity_percentage %}
             <li class="project-equity">
-              <h5>{{ project.estimated_equity_percentage }}%</h5>
+              <h5 class="brand">{{ project.estimated_equity_percentage }}%</h5>
               equity offered
             </li>
-            <li>
-              or
-            </li>
+            {% endif %}
+            {% if project.estimated_cash and project.estimated_equity_percentage %}
+              <li>
+                or
+              </li>
+            {% endif %}
+            {% if project.estimated_cash %}
             <li class="project-cash">
-              <h5>${{ project.estimated_cash }}</h5>
+              <h5 class="brand">${{ project.estimated_cash }}</h5>
               cash offered
             </li>
+            {% endif %}
           </ul>
-          <button class="btn btn-dark" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
+          <ul class="project-meta sub-section">
+            <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
+              <h4 class="brand">
+              {% if project.company %}
+                {{ project.company.city }}, {{ project.company.state }}
+              {% else %}
+                {{ project.project_manager.city }}, {{ project.project_manager.state }}
+              {% endif %}
+              </h4>
+            </li>
+            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
+          </ul>
+          <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
+          <p class="small text-muted">This company is accepting bids for work in forms of
+            {% if project.estimated_equity_percentage %}equity {% endif %}
+            {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}
+            {% if project.estimated_cash %} cash payment {% endif %}
+            for services rendered.</p>
         </div>
+        <div class="clearfix"></div>
       <!--
         <div class="specs col-md-3">
           <h5>THE COMMUNITY</h5>
@@ -66,7 +87,7 @@
         <div class="clearfix"></div>
       </div>
       -->
-      <div class="section">
+      <div class="sub-section">
         <ul class="nav nav-tabs">
           <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
           {% for tab in project.info %}
@@ -79,21 +100,33 @@
         <div class="tab-content">
           <div class="tab-pane active" role="tab-panel" id="overview">
             <div class="col-md-8">
-              <h2 class="section-header">Project Overview</h2>
-              <p>{{ project.description | safe }}</p>
+              <h2 class="section-header brand">Project Overview</h2>
+              <p>{{ project.details.description | safe }}</p>
             </div>
             <div class="col-md-4">
-              <h5>Posted by</h5>
-              <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
-                <div class="project-byline pull-left">
-                  <p>
-                    <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                    <span class="project-company">{{ project.company.name }}</span>
-                  </p>
-                </div>
-                <div class="clearfix"></div>
+              <div class="sub-section">
+                <h4 class="brand">Stakeholders</h4>
+                <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
+                  <div class="project-byline pull-left">
+                    <p>
+                      <span class="project-manager">{{ project.project_manager.name }}</span> <br />
+                      {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
+                    </p>
+                  </div>
+                 <div class="clearfix"></div>
+              </div>
+              {% if project.skills %}
+              <div class="sub-section">
+                <h4 class="brand">Preferred Technology Stack</h4>
+                  {% for skill in project.skills.all %}
+                  <h5 class="brand text-brand">{{ skill.name }}</h5>
+                  {% endfor %}
+              </div>
+              {% endif %}
+              <div class="clearfix"></div>
             </div>
           </div>
+
           {% for tab in project.info %}
           <div class="tab-pane" role="tab-panel" id="{{ tab.title|slugify }}">
             {% if tab.type == 'private' and request.user.id not in project.nda_list %}
@@ -103,20 +136,22 @@
               </div>
             {% else %}
             <div class="col-md-8">
-              <h2 class="section-header">{{ tab.title }}</h2>
+              <h2 class="section-header brand">{{ tab.title }}</h2>
               <p>{{ tab.description | safe }}</p>
             </div>
             <div class="col-md-4">
-              <h5>Posted by</h5>
+              <h5 class="brand">Stakeholders</h5>
               <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                 <div class="project-byline pull-left">
                   <p>
                     <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
-                    <span class="project-company">{{ project.company.name }}</span>
+                    {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                   </p>
                 </div>
+
                 <div class="clearfix"></div>
-            </div>
+              </div>
+              <div class="clearfix"></div>
             {% endif %}
           </div>
           {% endfor %}
@@ -128,64 +163,21 @@
 
 <div class="modal fade" tabindex="-1" role="dialog" id="bid-modal">
   <div class="modal-dialog">
-    <form class="modal-content" action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title text-center">
-          <span class="text-skinny">Place your bid to work on:</span><br />
-          <span class="text-yellow">{{ project.title }}</span>
-        </h4>
-        <div class="form-group">
-            <label>Cash Offer*</label>
-            <input id="id_cash" class="form-control" maxlength="100" name="cash" placeholder="$0.00" type="text">
-          </div>
-          <div class="form-group">
-            <label>Equity Offer*</label>
-            <input id="id_equity" class="form-control" maxlength="100" name="equity" placeholder="0.00%" type="text">
-          </div>
-          <div class="form-group">
-            <label>Time Estimate</label>
-            <input id="id_hours" class="form-control" maxlength="100" name="hours" placeholder="00 hours" type="text">
-          </div>
       </div>
-      <div class="modal-body">
-          <input type="hidden" id="id_project" name="project" value="{{ project.id }}" />
-          <input type="hidden" id="developer" name="developer" value="{{ request.user.id }}" />
-          <div class="form-group">
-            <textarea cols="40" class="form-control" id="id_message" name="message" placeholder="Include a message with your bid..." rows="7"></textarea>
-          </div>
-          <div class="form-group text-center">
-            <input type="submit" id="send-bid" class="btn btn-yellow" value="Send Bid" />
-            <p class="help-block">By submitting, you agree to the <a href="#">Terms and Conditions</a>.</p>
-          </div>
-          <div class="clearfix"></div>
+
+      <div id="bid-body" class="modal-body">
+
       </div>
-    </form><!-- /.modal-content -->
+
+    </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 {% endblock %}
 
 {% block scripts %}
-	<script type="text/javascript">
-    $("#send-bid").on("click", function(e) {
-      $.ajax({
-        url: loom_api.job,
-        method: 'POST',
-        data: {
-          message: $('#id_message').val(),
-          equity: $('#id_equity').val(),
-          cash: $('#id_cash').val(),
-          hours: $('#id_hours').val(),
-          project: $('#id_project').val(),
-          contractor: $('#developer').val()
-        },
-        success: function() {
-          $('#bid-modal').modal('hide');
-          $("input[type='text']").val('');
-          $('textarea').val('');
-        }
-      });
-    return false;
-  });
-  </script>
+	<script type="text/javascript" src="{% static 'js/routes/project.js' %}"></script>
 {% endblock %}

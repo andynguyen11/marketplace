@@ -19,6 +19,7 @@ var gutil = require('gulp-util');
 const vendorFiles = require('./assets/js/vendor.js');
 const routeFiles = glob.sync('./assets/js/routes/*.js');
 
+
 gulp.task('scripts:vendor', function(){
 	del('./static/js/vendor.js**').then(function(){
 		const b = browserify({
@@ -83,7 +84,7 @@ gulp.task('scripts:routes', function(){
 				.pipe(sourcemaps.init({loadMaps: true}))
 				.pipe(uglify())
 				.pipe(sourcemaps.write('./'))
-				.pipe(gulp.dest('./static/js/routes'));
+                .pipe(gulp.dest('./static/js/routes/'));
 		})
 	})
 });
@@ -131,3 +132,5 @@ gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less',
 	gulp.watch('./assets/fonts/**/*.*', ['fonts']);
 	gulp.watch('./assets/images/**/*.*', ['images']);
 });
+
+

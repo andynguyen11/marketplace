@@ -5,51 +5,29 @@ from django.core.exceptions import ObjectDoesNotExist
 from docusign.docusign import client, all_template_ids
 from docusign.models import Template
 from docusign.tabs import normalize as normalize_tabs
+from generics.utils import normalized_subdict, merge
+from generics.external_apis import external_record_upserter
 
-def upsert(template):
-    template['status'] = 'valid'
-    try:
-        existing = Template.objects.get(template_id=template['template_id'])
-        serializer = TemplateSerializer(existing, data=template, partial=True)
-    except ObjectDoesNotExist, e: 
-        serializer = TemplateSerializer(data=template)
+upsert = external_record_upserter(TemplateSerializer, primary_key='template_id')
 
-    try: 
-        serializer.is_valid(raise_exception=True)
-    except ValidationError, e:
-        err = '\n'.join([
-            key + ': ' + ', '.join(map(str, e.detail[key]))
-            for key in e.detail.keys()
-        ])
-        raise ValidationError(err)
+def normalize(template):
+    normalized = normalized_subdict(
+            template['envelopeTemplateDefinition'],
+            ['templateId', 'name', 'description', 'emailSubject', 'emailBlurb'])
+    normalized['roles'] = [{
+        'id': str(signer['recipientId']),
+        'order': signer['routingOrder'],
+        'role_name': signer['roleName'],
+        'tabs': normalize_tabs(signer['tabs'])
+        } for signer in template.get('recipients', {'signers': []})['signers']]
+    return normalized
 
-    return serializer.save()
-
-def save_docusign_template(template):
-    template_definition = template['envelopeTemplateDefinition']
-
+def load_template_definitions():
     for t in Template.objects.all():
         t.status = 'deleted'
         t.save()
 
-    upsert({
-        'template_id': template_definition['templateId'],
-        'name': template_definition['name'],
-        'description': template_definition['description'],
-        'email_subject': template['emailSubject'],
-        'email_blurb': template['emailBlurb'],
-        'roles': [
-            {
-                'id': str(signer['recipientId']),
-                'order': signer['routingOrder'],
-                'role_name': signer['roleName'],
-                'tabs': normalize_tabs(signer['tabs'])
-            } for signer in template['recipients']['signers']
-        ]
-    })
-
-def load_template_definitions():
     for id in all_template_ids():
-        save_docusign_template(client.get_template(id))
+        upsert(normalize((client.get_template(id))))
 
 def run(): load_template_definitions()
