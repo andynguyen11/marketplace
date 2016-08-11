@@ -1,0 +1,27 @@
+{% extends "password_reset/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Password recovery sent" %}{% endblock %}
+
+{% block content %}
+  <div id="password-reset-sent">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="text-center">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <i class="fa fa-4x fa-check" aria-hidden="true"></i>
+              <h1 class="brand">Sent!</h1>
+            </div>
+            <div class="panel-body">
+              <h3 class="brand">
+                {% blocktrans with ago=timestamp|timesince %}
+                  An email was sent to <strong>{{ email }}</strong> {{ ago }} ago. Use the link in it to set a new password.
+                {% endblocktrans %}
+              </h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
