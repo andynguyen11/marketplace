@@ -14,28 +14,28 @@
 
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
-      <div class="item hero-item--home hero-item--home-post-project active">
+      <div id="home-hero-1" class="item hero-item--home hero-item--home-post-project active">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand">Raise ideas,<br class="hide-desktop"> not funds.</h2>
-          <h5>Loom is the first ever work for equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-lg btn-brand btn-brand--attn">Post Your Project</a>
+          <h2 class="brand-bold">Raise ideas,<br class="hide-desktop"> not funds.</h2>
+          <h5 class="brand">Loom is the first ever work for equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring your product to life.</h5>
+          <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post Your Project</a>
         </div>
       </div>
-      <div class="item hero-item--home hero-item--home-post-project">
+      <div id="home-hero-2" class="item hero-item--home hero-item--home-post-project">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand">Raise ideas,<br class="hide-desktop"> not funds.</h2>
-          <h5>Loom is the first ever work for equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-lg btn-brand btn-brand--attn">Post Your Project</a>
+          <h2 class="brand-bold">Ship code. <br class="hide-desktop">Receive equity.</h2>
+          <h5 class="brand">On Loom, web developers can now share their talent in exchange for equity<br class="hide-mobile"/> in some of the world’s biggest and best ideas.</h5>
+          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign Up Now</a>
         </div>
       </div>
-      <div class="item hero-item--home hero-item--home-post-project">
+      <div id="home-hero-3" class="item hero-item--home hero-item--home-post-project">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand">Raise ideas,<br class="hide-desktop"> not funds.</h2>
-          <h5>Loom is the first ever work for equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring your product to life.</h5>
-          <a href="" class="btn btn-lg btn-brand btn-brand--attn">Post Your Project</a>
+          <h2 class="brand-bold">We’re here <br class="hide-desktop">to help you.</h2>
+          <h5 class="brand">Our goal is to connect the brightest, passionate minds together<br class="hide-mobile"/> for mutual interest in bringing the world’s ideas to life.</h5>
+          <a href="{% url 'how' %}" class="btn btn-lg btn-brand btn-brand--attn">How Loom Works</a>
         </div>
       </div>
 
@@ -53,7 +53,7 @@
 <div class="how page-content">
   <div class="how-content">
     <div class="how-content-block">
-      <h3 class="how-header">How Loom Works</h3>
+      <h3 class="how-header brand-bold">How Loom Works</h3>
       <ul class="how-content-list">
         <li class="how-content-list-item how-post">
           <div class="how-icon how-icon--post"></div>
