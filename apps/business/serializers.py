@@ -103,14 +103,11 @@ class DocumentSerializer(ParentModelSerializer):
     template = TemplateSerializer(read_only=True)
     signers = SignerSerializer(many=True, required=False)
     attachments = AttachmentSerializer(many=True, required=False)
-    docusign_document = DocusignDocumentSerializer(required=False, write_only=True)
-    signing_url  = serializers.CharField(read_only=True)
-    status  = serializers.CharField(read_only=True)
-    current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)
+    docusign_document = DocusignDocumentSerializer(required=False)
 
     class Meta:
         model = Document
-        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments', 'signing_url', 'status', 'current_signer')
+        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments')
         sibling_fields = ('docusign_document',)
 
     def signer(self, data, role, role_name=None):
@@ -123,19 +120,19 @@ class DocumentSerializer(ParentModelSerializer):
         return Template.objects.get(description=document_type)
 
     def resolve_relations(self, data):
-        if not data.has_key('docusign_document'):
-            signers = data.pop('signers', [
-                self.signer(data, 'contractor'),
-                self.signer(data, 'owner')])
+        signers = data.pop('signers', [
+                    self.signer(data, 'contractor'),
+                    self.signer(data, 'owner')])
 
-            data['docusign_document'] = {
-                    'template': data.pop('template', self.default_template(data['type'])),
-                    'signers': signers
-                    }
+        data['docusign_document'] = {
+            'template': data.pop('template', self.default_template(data['type'])), 
+            'signers': signers
+        } 
 
-            attachments = data.pop('attachments', None)
-            if attachments:
-                data['docusign_document']['attachments'] = attachments
+        attachments = data.pop('attachments', None)
+        if attachments:
+            data['docusign_document']['attachments'] = attachments
+
         return data
 
 

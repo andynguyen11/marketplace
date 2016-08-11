@@ -1,4 +1,4 @@
-@header-height--desktop: 96px;
+@header-height--desktop: 87px;
 
 // HEADER
 .header {
@@ -16,7 +16,7 @@
   }
 
   .logo {
-    height: 48px;
+    height: 42px;
     background: url(../images/Loom_Logo_Beta.svg) no-repeat;
     background-size: contain;
     flex-shrink: 0;
@@ -38,9 +38,12 @@
       padding: 0;
       margin: 0;
       list-style: none;
+      margin-left: 60px;
     }
 
     a {
+      font-family: @brand-font;
+      font-size: 16px;
       margin: 0 10px;
       color: @brand-neutral--2;
     }
@@ -59,12 +62,14 @@
       }
 
       &.header-link--sign-up {
-        margin-left: 50px;
-
         @media (max-width: @screen-sm) {
           margin-left: 0;
           margin-right: @gutter--medium;
         }
+      }
+
+      &.header-link--sign-in {
+        margin-left: 0;
       }
     }
   }

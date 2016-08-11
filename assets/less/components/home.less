@@ -40,8 +40,20 @@
 
 	.hero-item--home-post-project {
 		background-image: url("../images/hero--home.jpg");
-		background-size: contain;
+		background-size: cover;
 	}
+
+    #home-hero-1 {
+      background-image: url("../images/home-hero-1.jpg");
+    }
+
+    #home-hero-2 {
+      background-image: url("../images/home-hero-2.jpg");
+    }
+
+    #home-hero-3 {
+      background-image: url("../images/home-hero-3.jpg");
+    }
 
 	.hero-slide {
 		height: @home-hero-height;
@@ -56,9 +68,8 @@
 			margin: 0;
 			padding: 0;
 			color: #FFF;
-			font-weight: 700
-        ;
-			font-size: 60px;
+			font-weight: 700;
+			font-size: 68px;
 		}
 
 		h5 {
@@ -66,8 +77,8 @@
 			padding: 0;
 			color: #FFF;
 			font-weight: normal;
-			font-size: 26px;
-			margin: 45px 0;
+			font-size: 20px;
+			margin: 40px 0;
 		}
 	}
 
@@ -122,7 +133,7 @@
 		padding-top: @gutter * 3;
 		padding-right: @gutter * 6;
 		padding-bottom: @gutter;
-		padding-left: (@gutter * 8) + @gutter--medium;
+		padding-left: (@gutter * 6) + @gutter--medium;
 
 
 		@media (max-width: @screen-sm) {
@@ -133,6 +144,7 @@
 	.how-content-list {
 		display: flex;
 		flex-direction: column;
+        font-family: @brand-font-bold;
 	}
 
 	.how-content-list-item {
@@ -175,12 +187,14 @@
 	}
 
 	.how-content-learn-more {
-		padding: @gutter ((@gutter * 8) + @gutter--medium);
+		padding: @gutter ((@gutter * 6) + @gutter--medium);
 
 		a {
 			display: inline-flex;
 			align-items: center;
 			color: @brand--accent;
+            font-family: @brand-font;
+            font-weight: 700;
 			font-size: 18px;
 
 			&:active, &:hover {
@@ -224,8 +238,8 @@
 	.how-header {
 		margin: 0 0 @gutter;
 		padding: 0;
-		font-size: 64px;
-		font-weight: normal;
+		font-size: 58px;
+		font-weight: 700;
 
 		@media (max-width: @screen-sm) {
 			font-size: 28px;
