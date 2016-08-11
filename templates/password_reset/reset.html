@@ -6,15 +6,17 @@
 {% block content %}
   <div id="password-reset">
     <div class="row">
-      <div class="col-md-8 col-md-offset-2">
+      <div class="col-md-6 col-md-offset-3">
         {% if invalid %}{% url "password_reset" as recovery_url %}
 		      <p>{% blocktrans %}Sorry, this password reset link is invalid. You can still <a href="{{ recovery_url }}">request a new one</a>.{% endblocktrans %}</p>
         {% else %}
-		      <p>{% blocktrans %}Please choose your new password.{% endblocktrans %}</p>
+		      <h1 class="text-center brand">{% blocktrans %}Password Reset{% endblocktrans %}</h1>
 	  	    <form method="post" action="{% url "password_reset_reset" token %}">
 			      {% csrf_token %}
 			      {{ form|crispy }}
-			      <p><input class="btn btn-brand btn-lg footer-newsletter-button" type="submit" value="{% trans "Set new password" %}"></p>
+			      <p>
+              <input class="btn btn-brand btn-lg center-block" type="submit" value="{% trans "Set new password" %}">
+            </p>
 		      </form>
 	      {% endif %}
       </div>
