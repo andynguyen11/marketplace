@@ -32,10 +32,11 @@ class ProfileSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()
+    password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Profile
-        exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions', 'password')
+        exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
 
     def get_photo_url(self, obj):
         return obj.get_photo

@@ -27,12 +27,14 @@
 				background: url("../images/overlay-logo-pattern-orange--left.svg") no-repeat right center;
 				background-position: -60px center;
 				background-size: cover;
+                opacity: .35;
 			}
 
 			&:after {
 				background: url("../images/overlay-logo-pattern-orange--right.svg") no-repeat left center;
 				background-position: 60px center;
 				background-size: cover;
+                opacity: .35;
 			}
 		}
 	}
@@ -155,7 +157,7 @@
 
 	p.important {
 		padding: (@gutter + @gutter--medium) 0;
-		color: red;
+		color: @brand--primary;
 	}
 }
 

@@ -117,9 +117,9 @@ const CompanySettings = React.createClass({
       companyDescription: {
         name: 'companyDescription',
         errorClass: '',
-        label: 'Company Bio (This is what developers will see)',
+        label: 'Company Overview (Limited to 500 characters)',
         value: company.description || '',
-        placeholder: 'Think of this as your elevator pitch to developers.  Get them excited in 250 characters or less.',
+        placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
           const { isCompany, formElements } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
@@ -134,6 +134,18 @@ const CompanySettings = React.createClass({
         update: (value) => {
           const { company } = this.state;
           company.description = value;
+          this.setState({ company });
+        }
+      },
+      companyBio: {
+        name: 'companyBio',
+        errorClass: '',
+        label: 'Company Bio (Optional - You can do this later)',
+        value: company.description || '',
+        placeholder: 'This is a long form bio of your company. Tell developers the story of your company, your goals, and all they need to know about working with you.  You can add images in this section to help your story.',
+        update: (value) => {
+          const { company } = this.state;
+          company.long_description = value;
           this.setState({ company });
         }
       },
@@ -282,6 +294,15 @@ const CompanySettings = React.createClass({
     this.setState({ formElements, formError: false });
   },
 
+  handleBio(event) {
+    const { formElements } = this.state;
+
+    formElements['companyBio'].update(event);
+    formElements['companyBio'].value = event;
+
+    this.setState({ formElements, formError: false });
+  },
+
   handleLogoChange(e) {
     e.preventDefault();
     let reader = new FileReader();
@@ -300,7 +321,7 @@ const CompanySettings = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, isCompany } = this.state;
+    const { formElements, formError, profile, isCompany, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
     return (
@@ -310,6 +331,7 @@ const CompanySettings = React.createClass({
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
+          handleBio={this.handleBio}
           setCompany={this.setCompany}
           handleLogoChange={this.handleLogoChange}
           logo_url={this.state.logo_url}

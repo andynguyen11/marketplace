@@ -5,14 +5,12 @@
   color: #FFF;
 
   .footer-inner {
-    display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: (@gutter * 2) @gutter--medium;
+    padding: (@gutter * 2) @gutter--medium*10;
   }
 
   .footer-actions {
-    display: flex;
     justify-content: space-between;
     align-items: center;
   }
@@ -31,18 +29,20 @@
     }
 
     a {
-      color: #FFF;
+      color: @brand-neutral--4;
+      font-size: 12px;
 
       &:hover {
-        text-decoration: underline;
+        color: #fff;
       }
     }
   }
 
   .footer-nav-header {
-    font-size: 18px;
+    font-size: 15px;
     color: #FFF;
     font-weight: bold;
+    margin-top: 0;
   }
 
   .footer-newsletter {
@@ -58,6 +58,7 @@
       border-radius: @border-radius;
       font-size: 18px;
       outline: none;
+      width: 100%;
     }
 
     #mce-success-response, #mce-error-response{
@@ -67,10 +68,15 @@
   }
 
   .footer-newsletter-header {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 400;
     margin: 0;
     padding: 0;
+    padding-right: 60px;
+  }
+
+  #mc_embed_signup input.mce_inline_error {
+    border-color: red;
   }
 
   .footer-newsletter-button {

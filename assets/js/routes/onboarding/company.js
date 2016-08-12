@@ -1,6 +1,6 @@
 import React from 'react';
 import FormHelpers from '../../utils/formHelpers';
-
+import Quill from '../../components/editor/Quill'
 
 const CompanyForm = React.createClass({
   propTypes: {
@@ -9,8 +9,29 @@ const CompanyForm = React.createClass({
     isCompany: React.PropTypes.bool.isRequired
   },
 
+  quillConf(){
+   return {
+        modules: {
+            toolbar: {
+                container: `#toolbar-long_description`,
+            },
+        },
+        bounds: `#project-info-long_description`,
+        placeholder: this.props.formElements.companyBio.placeholder,
+        theme: 'snow',
+    }
+  },
+
+  expandPanel(){
+
+  },
+
+  minimizePanel() {
+
+  },
+
   render() {
-    const { formElements, handleChange, isCompany, setCompany, handleLogoChange, logo_url, settings, prelaunch } = this.props;
+    const { formElements, handleChange, handleBio, isCompany, setCompany, handleLogoChange, logo_url, settings, prelaunch } = this.props;
 
     const companyPhoto = logo_url && { backgroundImage: 'url(' + logo_url + ')' } || {};
 
@@ -188,6 +209,7 @@ const CompanyForm = React.createClass({
             placeholder={formElements.companyDescription.placeholder}
             value={formElements.companyDescription.value}
             onChange={handleChange}
+            maxLength='500'
           >
           </textarea>
         </div>
@@ -256,6 +278,18 @@ const CompanyForm = React.createClass({
           </select>
         </div>
 
+        <div className='form-group col-md-8 col-md-offset-2' >
+          <label className="control-label" htmlFor={formElements.companyBio.name}>{formElements.companyBio.label}</label>
+          <Quill
+            config={this.quillConf()}
+            name={formElements.companyBio.name}
+            placeholder={formElements.companyBio.placeholder}
+            className="long_description"
+            value={formElements.companyBio.value}
+            onChange={handleBio}
+          />
+        </div>
+        <div className="clearfix"></div>
       </div>
     );
 

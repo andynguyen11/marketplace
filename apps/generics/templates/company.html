@@ -22,6 +22,7 @@
         <div class="sub-section">
         <ul class="project-meta">
           <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> <h4 class="brand">{{ company.city }}, {{ company.state }}</h4></li>
+          {% if company.tags %}
           <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
             <h4 class="brand">
             {% for tag in company.tags %}
@@ -29,11 +30,12 @@
             {% endfor %}
             </h4>
           </li>
+          {% endif %}
         </ul>
         </div>
         <div>
-          <a class="btn btn-dark" >Message Us</a>
-          <a class="btn btn-dark" id="writeReview">Review Us</a>
+          <a class="btn btn-dark" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Message Us</a>
+          <!--<a class="btn btn-dark" id="writeReview">Review Us</a>-->
         </div>
       </div>
       <div class="clearfix"></div>
@@ -44,13 +46,13 @@
 <div id="company-info" class="section light-section">
   <div class="row">
     <div class="container">
-      <div class="col-md-8">
+      <div class="col-md-8 long-description">
         <h2 class="brand">About
           {{ company.name }}
         </h2>
         <div>
           {% if company.long_description %}
-            {{ company.long_description }}
+            {{ company.long_description|safe }}
           {% else %}
             More info about {{ company.name }} is coming soon...
           {% endif %}

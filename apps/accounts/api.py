@@ -1,4 +1,5 @@
 from django.http import HttpResponseForbidden
+from django.contrib.auth import login, authenticate
 from rest_condition import Not
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
@@ -23,6 +24,18 @@ class SkillsList(generics.ListAPIView):
 class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+    def create(self, request, *args, **kwargs):
+        password = request.data.pop('password')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        user.set_password(password)
+        user.save()
+        headers = self.get_success_headers(serializer.data)
+        account = authenticate(username=user.email, password=password)
+        login(request, account)
+        return Response(ProfileSerializer(user).data)
 
     @permission_classes((IsAuthenticated, IsCurrentUser ))
     def update(self, request, *args, **kwargs):
