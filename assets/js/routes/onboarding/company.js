@@ -1,6 +1,7 @@
 import React from 'react';
 import FormHelpers from '../../utils/formHelpers';
 
+
 const CompanyForm = React.createClass({
   propTypes: {
     formElements: React.PropTypes.object.isRequired,
@@ -9,23 +10,36 @@ const CompanyForm = React.createClass({
   },
 
   render() {
-    const { formElements, handleChange, isCompany, setCompany, handleLogoChange, logo_url, settings } = this.props;
+    const { formElements, handleChange, isCompany, setCompany, handleLogoChange, logo_url, settings, prelaunch } = this.props;
 
     const companyPhoto = logo_url && { backgroundImage: 'url(' + logo_url + ')' } || {};
 
     const accountType = settings || (
         <div>
-          <div className="form-group col-md-8 col-md-offset-2">
+          <div className="form-group col-md-10 col-md-offset-1">
             <div id="confirm-profile" className="sub-section text-center">
-                <h2 className="brand text-center">
-                  What type of account do you want?
-                </h2>
+              { prelaunch ? (
+                  <div>
+                    <h2 className="brand text-center">
+                      Welcome to Loom!
+                    </h2>
+                    <h2 className="brand text-center">
+                      Let's quickly get your account set up.
+                    </h2>
+                  </div>
+                  ) :
+                  (
+                    <h2 className="brand text-center">
+                      What type of account do you want?
+                    </h2>
+                  )
+                }
                 <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"}  onClick={setCompany}>
                   <h4><span className="text-accent">Company</span></h4>
                   <p>A company can get work made for cash, equity, or a mix of both.</p>
                 </div>
                 <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"}  onClick={setCompany}>
-                  <h4><span className="text-brand">Individual Entrepreneur</span></h4>
+                  <h4><span className="text-brand">Individual <span className="hide-mobile">Entrepreneur</span></span></h4>
                   <p>Individual Entrepreneurs can get work made for cash only.</p>
                 </div>
             </div>
@@ -66,6 +80,7 @@ const CompanyForm = React.createClass({
           <div className='form-group'>
             <label className='control-label'>Country</label>
             <input className='form-control disabled' type="text" disabled="true" value="United States of America" />
+            <span className='small text-muted'>Loom currently only serves US based companies.</span>
             <i className='fa fa-lock'></i>
           </div>
 

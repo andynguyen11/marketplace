@@ -3,6 +3,7 @@ import AccountForm from '../onboarding/account';
 import CompanyForm from '../onboarding/company';
 import FormHelpers from '../../utils/formHelpers';
 import { objectToFormData } from '../project/utils'
+import Loader from '../../components/loadScreen';
 
 // TODO Create a settings router
 
@@ -304,6 +305,7 @@ const CompanySettings = React.createClass({
 
     return (
       <div>
+        { isLoading && <Loader /> }
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
@@ -312,6 +314,7 @@ const CompanySettings = React.createClass({
           handleLogoChange={this.handleLogoChange}
           logo_url={this.state.logo_url}
           settings={true}
+          prelaunch={false}
         />
 
           <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>

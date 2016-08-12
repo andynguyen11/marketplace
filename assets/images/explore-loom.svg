@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="172px" height="105px" viewBox="0 0 172 105" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39.1 (31720) - http://www.bohemiancoding.com/sketch -->
+    <title>Explore_Loom</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0 103.277 171 103.277 171 0 0 0"></polygon>
+        <polygon id="path-3" points="33 69 55 69 55 52 33 52"></polygon>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="22" height="17" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <polygon id="path-5" points="62 69 84 69 84 52 62 52"></polygon>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="22" height="17" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+        <polygon id="path-7" points="92 69 114 69 114 52 92 52"></polygon>
+        <mask id="mask-8" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="22" height="17" fill="white">
+            <use xlink:href="#path-7"></use>
+        </mask>
+        <polygon id="path-9" points="121 69 143 69 143 52 121 52"></polygon>
+        <mask id="mask-10" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="22" height="17" fill="white">
+            <use xlink:href="#path-9"></use>
+        </mask>
+    </defs>
+    <g id="Home-/-Signup-/-Post-Project" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Explore_Loom" transform="translate(0.000000, 1.000000)">
+            <path d="M154,87 L20,87 L20,9.051 C20,4.605 23.605,1 28.051,1 L145.949,1 C150.395,1 154,4.605 154,9.051 L154,87 L154,87 Z" id="Fill-1" fill="#423D51"></path>
+            <path d="M154,87 L20,87 L20,9.051 C20,4.605 23.605,1 28.051,1 L145.949,1 C150.395,1 154,4.605 154,9.051 L154,87 L154,87 Z" id="Stroke-3" stroke="#423D51" stroke-width="3"></path>
+            <path d="M157.57,101.795 L14.43,101.795 C7.565,101.795 2,96.23 2,89.365 L2,88 L170,88 L170,89.365 C170,96.23 164.435,101.795 157.57,101.795 L157.57,101.795 Z" id="Stroke-5" stroke="#423D51" stroke-width="3"></path>
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <g id="Clip-8"></g>
+            <polygon id="Fill-7" fill="#FFFFFF" points="26 81.679 148 81.679 148 7 26 7"></polygon>
+            <polygon id="Stroke-9" stroke="#423D51" stroke-width="3" points="26 81.679 148 81.679 148 7 26 7"></polygon>
+            <path d="M93.531,92.383 L77.383,92.383 C74.41,92.383 72,89.973 72,87 L72,87 L98.914,87 L98.914,87 C98.914,89.973 96.504,92.383 93.531,92.383" id="Fill-10" fill="#423D51"></path>
+            <path d="M93.531,92.383 L77.383,92.383 C74.41,92.383 72,89.973 72,87 L72,87 L98.914,87 L98.914,87 C98.914,89.973 96.504,92.383 93.531,92.383 L93.531,92.383 Z" id="Stroke-11" stroke="#423D51" stroke-width="3"></path>
+            <path d="M25,20 L148.801,20" id="Stroke-12" stroke="#423D51" stroke-width="3"></path>
+            <path d="M34,13 C34,14.105 33.105,15 32,15 C30.895,15 30,14.105 30,13 C30,11.895 30.895,11 32,11 C33.105,11 34,11.895 34,13" id="Fill-13" fill="#FF7A5C"></path>
+            <path d="M42,13 C42,14.105 41.105,15 40,15 C38.895,15 38,14.105 38,13 C38,11.895 38.895,11 40,11 C41.105,11 42,11.895 42,13" id="Fill-14" fill="#FFAE38"></path>
+            <circle id="Oval-8" fill="#1EDDB2" cx="137" cy="29" r="3"></circle>
+            <path d="M51,13 C51,14.105 50.105,15 49,15 C47.895,15 47,14.105 47,13 C47,11.895 47.895,11 49,11 C50.105,11 51,11.895 51,13" id="Fill-15" fill="#1FDDB2"></path>
+            <path d="M45.4986979,29 L127.501526,29" id="Stroke-18" stroke="#FF7A5C" stroke-width="5"></path>
+            <polygon id="Fill-24-Copy-4" fill="#FFAE38" points="62 80 84 80 84 74 62 74"></polygon>
+            <polygon id="Fill-24-Copy-5" fill="#FFAE38" points="92 80 114 80 114 74 92 74"></polygon>
+            <polygon id="Fill-24-Copy" fill="#FFAE38" points="33 55 55 55 55 40 33 40"></polygon>
+            <polygon id="Fill-24-Copy-6" fill="#FFAE38" points="121 80 143 80 143 74 121 74"></polygon>
+            <polygon id="Fill-24" fill="#FFAE38" points="62 69 84 69 84 40 62 40"></polygon>
+            <polygon id="Fill-24-Copy-7" fill="#FFAE38" points="33 80 55 80 55 74 33 74"></polygon>
+            <polygon id="Fill-24-Copy-2" fill="#FFAE38" points="92 69 114 69 114 40 92 40"></polygon>
+            <polygon id="Fill-24-Copy-3" fill="#FFAE38" points="121 69 143 69 143 40 121 40"></polygon>
+            <use id="Fill-24-Copy" stroke="#FFAE38" mask="url(#mask-4)" stroke-width="2" fill="#FFFFFF" xlink:href="#path-3"></use>
+            <use id="Fill-24-Copy-8" stroke="#FFAE38" mask="url(#mask-6)" stroke-width="2" fill="#FFFFFF" xlink:href="#path-5"></use>
+            <use id="Fill-24-Copy-9" stroke="#FFAE38" mask="url(#mask-8)" stroke-width="2" fill="#FFFFFF" xlink:href="#path-7"></use>
+            <use id="Fill-24-Copy-10" stroke="#FFAE38" mask="url(#mask-10)" stroke-width="2" fill="#FFFFFF" xlink:href="#path-9"></use>
+        </g>
+    </g>
+</svg>

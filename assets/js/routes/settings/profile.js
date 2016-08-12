@@ -4,6 +4,7 @@ import SkillButton from '../../components/skill';
 import AccountForm from '../onboarding/account';
 import FormHelpers from '../../utils/formHelpers';
 import BigSelect from '../../components/bigSelect';
+import Loader from '../../components/loadScreen';
 
 //TODO this is almost an exact copy paster of onboarding/developer.js
 // TODO Create a settings router
@@ -418,7 +419,7 @@ const ProfileSettings = React.createClass({
 
     return (
       <div>
-
+        { isLoading && <Loader /> }
         {roleComponent}
 
         <AccountForm

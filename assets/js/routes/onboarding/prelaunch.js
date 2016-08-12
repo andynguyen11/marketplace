@@ -3,6 +3,7 @@ import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
 import { objectToFormData } from '../project/utils'
+import Loader from '../../components/loadScreen';
 
 const PrelaunchOnboarding = React.createClass({
 
@@ -51,7 +52,7 @@ const PrelaunchOnboarding = React.createClass({
     );
 
     if ( param ) {
-      return vars[param] ? vars[param] : null;
+      return vars[param] ? vars[param] : '';
     }
     return vars;
   },
@@ -438,7 +439,7 @@ const PrelaunchOnboarding = React.createClass({
           contentType: false,
           processData: false,
           success: function (result) {
-              window.location = '/profile/dashboard/';
+              window.location = '/prelaunch/';
           }
         });
       } else {
@@ -472,7 +473,7 @@ const PrelaunchOnboarding = React.createClass({
               this._createCompany();
             }
             else {
-              window.location = '/profile/dashboard/';
+              window.location = '/prelaunch/';
             }
           }.bind(this)
         });
@@ -533,7 +534,7 @@ const PrelaunchOnboarding = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, company, isCompany } = this.state;
+    const { formElements, formError, profile, company, isCompany, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
     const yourTitle = isCompany && (
       <div className='form-group col-md-8 col-md-offset-2'>
@@ -552,6 +553,8 @@ const PrelaunchOnboarding = React.createClass({
 
     return (
       <div>
+      { isLoading && <Loader /> }
+
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
@@ -560,6 +563,8 @@ const PrelaunchOnboarding = React.createClass({
           setCompany={this.setCompany}
           logo_url={this.state.logo_url}
           company={company}
+          settings={false}
+          prelaunch={true}
         />
 
         <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>

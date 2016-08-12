@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block nav %}{% endblock %}
+
+{% block content %}
+<div id="confirm-profile" class="section">
+  <div class="row">
+    <div class="container">
+      <div class="col-md-10 col-md-offset-1 text-center">
+        <h1 class="brand text-center">
+          You're in! Where to next?
+        </h1>
+        <a class="text-center picker post-project" href="{% url 'create-project' %}">
+          <h2 class="brand-bold">Post a</h2>
+          <h2 class="brand-bold text-accent">Project</h2>
+        </a>
+        <a class="text-center picker explore-loom" href="{% url 'home' %}">
+          <h2 class="brand-bold">Explore</h2>
+          <h2 class="brand-bold text-brand">Loom</h2>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@ import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
 import { objectToFormData } from '../project/utils'
+import Loader from '../../components/loadScreen';
 
 const EntrepreneurOnboard = React.createClass({
 
@@ -37,7 +38,8 @@ const EntrepreneurOnboard = React.createClass({
       logo_file: '',
       logo_url: '',
       formError: false,
-      isCompany: false
+      isCompany: false,
+      isLoading: false
     };
   },
 
@@ -488,7 +490,7 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, company, isCompany } = this.state;
+    const { formElements, formError, profile, company, isCompany, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
     const yourTitle = isCompany && (
       <div className='form-group col-md-8 col-md-offset-2'>
@@ -507,6 +509,7 @@ const EntrepreneurOnboard = React.createClass({
 
     return (
       <div>
+        { isLoading && <Loader /> }
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
@@ -516,6 +519,7 @@ const EntrepreneurOnboard = React.createClass({
           logo_url={this.state.logo_url}
           company={company}
           settings={false}
+          prelaunch={false}
         />
 
         <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>

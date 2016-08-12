@@ -44,10 +44,40 @@
         border: 2px solid @brand--primary;
       }
     }
+    &.post-project{
+      background: url(../images/developer-picker.svg) no-repeat center 35px;
+      padding-top: 150px;
+      &:hover {
+        border: 2px solid @brand--accent;
+      }
+      &.active {
+        border: 2px solid @brand--accent;
+      }
+      h2 {
+        margin: 5px 0;
+      }
+    }
+    &.explore-loom{
+      background: url(../images/explore-loom.svg) no-repeat center 35px;
+      padding-top: 150px;
+      &:hover {
+        border: 2px solid @brand--primary;
+      }
+      &.active {
+        border: 2px solid @brand--primary;
+      }
+      h2 {
+        margin: 5px 0;
+      }
+    }
   }
 }
 
 #onboard-form {
+
+  h3 {
+    padding-left: 15px;
+  }
 
   .onboard-radio {
     position: relative;
@@ -94,6 +124,7 @@
     height: 150px;
     width: 150px;
     margin: 5px auto;
+    border-radius: 0;
   }
 
   .btn-upload-image {

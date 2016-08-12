@@ -11,11 +11,20 @@
 #loader {
   height: 300px;
   padding: 120px;
-  .hex-loader {
-    height: 60px;
-    width: 150px;
-    background: url('../images/hex-loader.gif') no-repeat center center;
-    background-size: 200%;
-    margin: auto;
+  z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 250ms;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .loader-content {
+    z-index: 12;
+    .fa {
+      font-size: 80px;
+    }
   }
 }

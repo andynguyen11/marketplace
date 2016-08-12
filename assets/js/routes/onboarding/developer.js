@@ -5,6 +5,7 @@ import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
 import BigSelect from '../../components/bigSelect';
 import { objectToFormData } from '../project/utils'
+import Loader from '../../components/loadScreen';
 
 
 const DeveloperOnboard = React.createClass({
@@ -348,6 +349,7 @@ const DeveloperOnboard = React.createClass({
 
     return (
       <div>
+        { isLoading && <Loader /> }
         <div id="basics" className="text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
           <div className="form-group">
             {/*TODO: replace this with the BigSelect component*/}
