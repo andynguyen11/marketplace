@@ -1,188 +1,69 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createHashHistory } from 'history';
-import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from 'react-router';
+{% extends "base.html" %}
+{% load staticfiles %}
 
-(function(){
-	const aboutDiv = document.getElementById('about');
-
-	const TopNav = React.createClass({
-		render() {
-			const { routes, currentRoute } = this.props;
-
-			const navLinks = routes.map((route, i) => {
-				const linkActive = route.pathname === currentRoute.pathname ? 'active' : '';
-
-				return (
-					<li key={i}>
-            { route.href ?
-            <a href={route.href} target='_blank'>{route.title}</a>
-            :
-            <Link className={linkActive} to={route.pathname} >{route.title}</Link>
-            }
-
-					</li>
-				)
-			});
-
-			return (
-				<div className="account-nav">
-					<div className="row">
-						<div className="container">
-							<ul>
-								{navLinks}
-							</ul>
-						</div>
-					</div>
-				</div>
-			);
-		}
-	});
-
-	const LeftNav = React.createClass({
-		render() {
-			const { pathname, childRoutes } = this.props;
-
-			const leftNavLinks = childRoutes.map((childRoute, i) => {
-				const linkActive = pathname === childRoute.pathname ? 'active' : '';
-
-				return (
-					<li key={i}>
-          { childRoute.href ?
-            <a href={childRoute.href} target='_blank'>{childRoute.title}</a>
-            :
-            <Link className={linkActive} to={childRoute.pathname} >{childRoute.title}</Link>
-          }
-					</li>
-				)
-			});
-
-
-			return (
-				<ul className="left-nav">
-					{leftNavLinks}
-				</ul>
-			);
-		}
-	});
-
-	const AboutPage = React.createClass({
-		render() {
-			const { pathname } = this.props.location;
-			const routes = [
-				{
-					title: 'About Loom',
-					pathname: '/company',
-					childRoutes: [
-						{
-							title: 'About',
-							pathname: '/company',
-              href: ''
-						},
-						{
-							title: 'Careers',
-							pathname: '/company/careers',
-              href: ''
-						},
-            {
-              title: 'Press',
-              pathname: '',
-              href: 'http://loom.totemapp.com/'
-            },
-            {
-              title: 'Support',
-              pathname: '',
-              href: 'http://support.joinloom.com/'
-            },
-            {
-              title: 'Terms of Service',
-              pathname: '/company/terms-of-service',
-              href: ''
-            },
-            {
-              title: 'Privacy Policy',
-              pathname: '/company/privacy',
-              href: ''
-            },
-            {
-              title: 'DMCA Policy',
-              pathname: '/company/dmca',
-              href: ''
-            },
-            {
-              title: 'Contact',
-              pathname: '/company/contact',
-              href: ''
-            }
-					]
-				},
-				{
-					title: 'Freelancing on Loom',
-					pathname: '',
-          href: 'https://joinloom.zendesk.com/hc/en-us/categories/203556327-Help-with-Freelancing-on-Loom'
-				},
-				{
-					title: 'Hiring on Loom',
-					pathname: '',
-          href: 'https://joinloom.zendesk.com/hc/en-us/categories/203556347-Help-with-Hiring-on-Loom'
-				},
-        {
-					title: 'Loom Support Center',
-					pathname: '',
-          href: 'https://joinloom.zendesk.com/hc/en-us'
-				}
-			];
-
-			let currentRoute;
-
-			routes.map((route) => {
-				if(route.pathname === pathname) {
-					currentRoute = route;
-				}
-
-				if(route.childRoutes) {
-					route.childRoutes.map((childRoute) => {
-						if (childRoute.pathname === pathname) {
-							currentRoute = route;
-						}
-					})
-				}
-			});
-
-			const containerComponent = currentRoute.childRoutes ? (
-				<div>
-					<div className="col-md-2">
-						<LeftNav pathname={pathname} childRoutes={currentRoute.childRoutes}/>
-					</div>
-					<div className="col-md-10">
-							{this.props.children}
-					</div>
-				</div>
-			) : (
-				<div className="col-md-12">{this.props.children}</div>
-			)
-
-			return (
-				<div id="about-us">
-
-					<TopNav routes={routes} currentRoute={currentRoute}/>
-
-					<div className="row about-content">
-						<div className="container">
-							{containerComponent}
-						</div>
-					</div>
-
-				</div>
-			)
-		}
-	});
-
-  const Terms = React.createClass({
-    render() {
-      return (
+{% block content %}
+  <div id="about-us">
+    <div class="account-nav">
+      <div class="row">
+        <div class="container">
+          <ul>
+            <li>
+              <a class="active" href="#/company">About Loom</a>
+            </li>
+            <li>
+              <a href=
+              "https://joinloom.zendesk.com/hc/en-us/categories/203556327-Help-with-Freelancing-on-Loom"
+              target="_blank">Freelancing on Loom</a>
+            </li>
+            <li>
+              <a href=
+              "https://joinloom.zendesk.com/hc/en-us/categories/203556347-Help-with-Hiring-on-Loom"
+              target="_blank">Hiring on Loom</a>
+            </li>
+            <li>
+              <a href="https://joinloom.zendesk.com/hc/en-us" target=
+              "_blank">Loom Support Center</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row about-content">
+      <div class="container">
         <div>
-          <h2>Terms of Service</h2>
+          <div class="col-md-2">
+            <ul class="left-nav">
+              <li>
+                <a class="" href="/about">About</a>
+              </li>
+              <li>
+                <a class="" href="/careers">Careers</a>
+              </li>
+              <li>
+                <a href="http://loom.totemapp.com/" target="_blank">Press</a>
+              </li>
+              <li>
+                <a href="http://support.joinloom.com/" target=
+                "_blank">Support</a>
+              </li>
+              <li>
+                <a class="active" href="/terms-of-service">Terms of
+                Service</a>
+              </li>
+              <li>
+                <a class="" href="/privacy">Privacy Policy</a>
+              </li>
+              <li>
+                <a class="" href="/dmca">DMCA Policy</a>
+              </li>
+              <li>
+                <a class="" href="/contact">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-10">
+            <div>
+                        <h2>Terms of Service</h2>
           <p><strong>Loom Terms of Service</strong></p>
 
           <p>Last updated: August 8, 2016</p>
@@ -500,448 +381,10 @@ import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from
           <p>The Site and the other Loom Services, and the Development Services are offered by Loom located at: 501 Pedernales 1B, Austin, Texas 78702 and email: support@joinloom.com. The Development Services are provided directly by the applicable Contractor. If you are a California resident, you may have this same information emailed to you by sending a letter to the foregoing address with your email address and a request for this information.&nbsp;</p>
 
           <p><em>© 2016 Loom Labs, Inc.</em></p>
+            </div>
           </div>
-      )
-    }
-  });
-
-  const Privacy = React.createClass({
-    render() {
-      return (
-            <div>
-              <h2>Privacy Policy</h2>
-              <p><strong>Loom Labs</strong></p>
-
-              <p><strong>Privacy Policy</strong></p>
-
-              <p>Last Updated: August 8, 2016</p>
-
-              <p>Loom Labs, Inc. <strong>"Loom"</strong> <strong>"we" </strong>“<strong>our</strong>” or “<strong>us</strong>” respects your privacy and is committed to protecting it through our compliance with this privacy policy. We provide an independent platform through which companies (“<strong>Companies</strong>”) can connect and engage independent contractors (“<strong>Contractors</strong>”) for web development and other services (the “<strong>Development Services</strong>”).</p>
-
-              <p>Please note that by visiting or using http://joinloom.com (the “<strong>Site)</strong> and the various other related services, features, functions, software, applications, websites and networks (together with the Site and the Development Services, collectively, the “<strong>Loom Services</strong>”) provided by Loom, you are accepting the practices described in this privacy policy. This privacy policy is also incorporated by reference into Terms of Service and the various other agreements and terms and conditions that govern your use of the Site, the Development Services and the other Loom Services (collectively, the “<strong>Terms</strong>”).</p>
-
-              <p>This policy describes the types of information we may collect from you or that you may provide when you access or use the Site, the Development Service, the Other Loom Services or other features, functions, services products and our practices for collecting, using, maintaining, protecting and disclosing that information.&nbsp;</p>
-
-              <p>This policy applies to information we collect or may collect:</p>
-
-              <p>In accessing and using the Site.</p>
-
-              <p>In registering to use or provide the Development Services and the other Loom Services.&nbsp;</p>
-
-              <p>In accessing and using the Development Services and the other Loom Services.</p>
-
-              <p>In e-mail, text and other electronic messages sent through or use of the Site, the Development Services and the other Loom Services.&nbsp;</p>
-
-              <p>In accessing and using social media platforms such as LinkedIn.</p>
-
-              <p>When you interact with Companies, Contractors and the other users of the Site, the Development Services and the other Loom Services.</p>
-
-              <p>When you send any content through the Site, the Development Services or any of the other Loom Services.</p>
-
-              <p>Through services provided to us by third-party companies, agents or contractors.&nbsp;</p>
-
-              <p>It does not apply to information collected by:</p>
-
-              <p>Us offline or through any other means, including on any other website operated by Loom or any third party; or&nbsp;</p>
-
-              <p>Any third party, including through any application or content (including advertising) that may be accessible from or on the Site, the Development Services or any of the other Loom Services.</p>
-
-              <p>Please read this policy carefully to understand our policies and practices regarding your information and how we will treat it. If you do not agree with our policies and practices, your only choice is not to use the Development Services or any of the other Loom Services. By accessing or using any of the Loom Services, you agree to this privacy policy. This policy may change from time to time. Your continued use of the Site, the Development Services and/or any of the other Loom Services, after we make changes is deemed to be acceptance of those changes, so please check the policy periodically for updates.&nbsp;</p>
-
-              <p><strong>Minors under the Age of 18</strong></p>
-
-              <p>None of the Loom Services are intended for minors under 18 years of age. No one under age 13 may provide any information on or through the Site, the Development Services or the other Loom Services. We do not knowingly collect personal information from children under 13. If you are under 13, do not use or provide any information on or through any of the Loom Services or any of its features or register on the Site use any of the interactive or public comment features of any of the Loom Services or provide any information about yourself to us, including your name, address, telephone number, e-mail address or any screen name or user name you may use. If we learn we have collected or received personal information from a child under 13 without verification of parental consent, we will delete that information. If you believe that we might have any information from or about a child under 13, please contact us at support@joinloom.com.&nbsp;</p>
-
-              <p><strong>Information We Collect About You and How We Collect It</strong></p>
-
-              <p>We collect or may collect several types of information from and about Companies, Contractors and other users of the Site, the Development Services and the other Loom Services, including:&nbsp;</p>
-
-              <p>Information by which you may be personally identified, such as name, e-mail address, location, profile picture, job title, biography, recommendations and reviews (<strong>"personal information"</strong>);&nbsp;</p>
-
-              <p>Financial and billing information;</p>
-
-              <p>Analytics information;</p>
-
-              <p>Information that is available on social media platforms such as LinkedIn;</p>
-
-              <p>Information that is about you but individually does not identify you, such as IP address and date and time of visit;</p>
-
-              <p>Information from your device, including contact information;</p>
-
-              <p>Usage details and information, including how you communicate with other users of the Site, the Development Services and the other Loom Services, such as the time, date, sender and your interactions with messages (such as when you open a message or capture a screenshot);</p>
-
-              <p>Information contained in the comments and postings on or through any of the Loom Services;</p>
-
-              <p>Device, internet and mobile information such as the hardware model, operating system version, unique device identifiers, browser type, language, wireless network, and mobile network information (including the mobile phone number);</p>
-
-              <p>Location information when you use the Site; &nbsp;</p>
-
-              <p>Information that you provide by registering or filling in forms or applications on or through the Site. This includes information provided in connection with registering to access and use the Development Services and the other Loom Services; &nbsp;</p>
-
-              <p>When you report a problem with the Site, the Development Services or any of the other Loom Services;</p>
-
-              <p>Records and copies of your correspondence (including e-mail addresses), if you contact us;</p>
-
-              <p>Details of transactions you carry out through the Site, the Development Services and any of the other Loom Services; and/or</p>
-
-              <p>Your search queries on or through any of Loom Services.</p>
-
-              <p>We collect this information:</p>
-
-              <p>Directly from you when you provide it to us.</p>
-
-              <p>Automatically as you navigate through or use the Site, the Development Services and the other Loom Services.</p>
-
-              <p>From third parties, such as Companies, Contractors, other Users and our customers, business partners and other third parties that provide us or you with certain services.&nbsp;</p>
-
-              <p>Certain web transactions may also involve you calling us or our calling you. Please be aware that we may monitor and in some cases record such calls for staff training or quality assurance purposes.</p>
-
-              <p>You may now or in the future provide pictures, audio and video recordings, text, data, information and other input or any other content linked, posted, and/or submitted by you or other users to be published or displayed (hereinafter, <strong>"posted"</strong>) on or through the Site, or transmitted to third parties or other users of, the Development Services or any of the other Loom Services (collectively, <strong>"User Content"</strong>). Your User Content is posted on and transmitted to others at your own risk.&nbsp; We cannot control the actions of other users of the Site, the Development Services or the other Loom Services, with whom your User Content is shared. Therefore, we cannot and do not guarantee that your User Content will not be viewed, downloaded or shared by unauthorized persons.</p>
-
-              <p><strong>Use of Cookies and Other Tracking Technologies.</strong></p>
-
-              <p>The technologies we use for automatic data collection may include: <strong>[</strong></p>
-
-              <p><strong>Cookies (or browser cookies).</strong> A cookie is a small file placed on the hard drive of your computer. You may refuse to accept browser cookies by activating the appropriate setting on your browser. However, if you select this setting you may be unable to access certain parts of the Site. Unless you have adjusted your browser setting so that it will refuse cookies, our system will issue cookies when you direct your browser to the Site.&nbsp;</p>
-
-              <p><strong>Flash Cookies.</strong> Certain features of the Site may use local stored objects (or Flash cookies) to collect and store information about your preferences and navigation to, from and on the Site. Flash cookies are not managed by the same browser settings as are used for browser cookies.</p>
-
-              <p><strong>Web Beacons.</strong> Pages of the Site and our e-mails may contain small electronic files known as web beacons (also referred to as clear gifs, pixel tags and single-pixel gifs) that permit Loom, for example, to count users who have visited those pages or opened an e-mail and for other related website statistics (for example, recording the popularity of certain website content and verifying system and server integrity). &nbsp;</p>
-
-              <p><strong>Do Not Track Policy</strong></p>
-
-              <p>Your web browser may offer you a “Do Not Track” option, which allows you to signal to operators of websites and web applications and services (including behavioral advertising services) that you do not wish such operators to track certain of your online activities over time and across different websites. We do not honor any web browser “Do Not Track” signals or other mechanisms that provide you with the ability to exercise choice regarding the collection of personally identifiable information about your online activities over time and across third-party websites or online services.&nbsp;</p>
-
-              <p><strong>Third-party Responsibilities and Services.&nbsp;</strong></p>
-
-              <p>We may use or partner with other third party companies, agents or contractors for various purposes in connection with our business and operations (“<strong>Service Providers</strong>”), including, billing and payments, relationship building, the marketing and growth of our business and the performance of services on our behalf, such as gathering and analyzing information and the provision of services to you.&nbsp; In the course of performing these responsibilities and providing such services, these other companies may have access to your information.&nbsp; We may also share information, including your information, with these Services Providers in order to enable them to perform these responsibilities and to provide these services.&nbsp; Many Services Providers have adopted their own privacy policies, which are not subject to control by Loom. You should always review the policies of these Service Providers to make sure that you are comfortable with the ways in which they collect, use, maintain, protect and disclose your information.</p>
-
-              <p>The Service Providers may also transmit cookies to your computer or device, when you click on ads that appear on or through the Service. Also, if you click on a link to a third party website, such third party may also transmit cookies to you. Please be aware that cookies placed by third parties may continue to track your activities online even after you are no longer using any our Services, and those third parties may not honor “Do Not Track” requests you have set using your web browser.</p>
-
-              <p><strong>Use of Remarketing with Google Analytics and Google Adwords and other Remarking Services</strong></p>
-
-              <p>The Site may use the Google AdWords and other remarketing service to advertise on third party websites (including Google) to previous visitors to the Site. It could mean that we advertise to previous visitors who haven’t completed a task on the Site, for example using the contact form to make an enquiry. This could be in the form of an advertisement on the Google search results page, or a site in the Google Display Network. Service Providers, including Google, use cookies to serve ads based on someone’s past visits to the Site. Of course, any data collected will be used in accordance with this privacy policy, Google’s privacy policy or the privacy policy of other remarketing services used by Loom.</p>
-
-              <p>You can set preferences for how Google advertises to you using the <a href="http://www.google.com/settings/ads/onweb/">Google Ad Preferences page</a>, and if you want to, you can <a href="http://www.google.com/settings/ads/onweb/">opt out of interest-based advertising entirely by cookie&nbsp; settings</a> or <a href="https://www.google.com/settings/u/0/ads/plugin?hl=en">permanently using a browser plugin</a>.</p>
-
-              <p><em>DoubleClick: We may use Google Analytics remarketing codes to log when users view specific pages or take specific actions on a website. This allows us to provide targeted advertising in the future. If you do not wish to receive this type of advertising from us in the future you can opt out using the </em><a href="https://www.google.com/settings/u/0/ads/plugin?hl=en"><em>DoubleClick opt-out page</em></a><em> or the </em><a href="http://www.networkadvertising.org/managing/opt_out.asp"><em>Network Advertising Initiative opt-out page</em></a><em>.</em></p>
-
-              <p>Google has additional information available about its Remarketing Privacy Guidelines, <a href="http://adwords.google.com/support/aw/bin/answer.py?hl=en&amp;answer=143465">Policies</a>, and Restrictions on its website.</p>
-
-              <p><strong>How We Use Your Information</strong></p>
-
-              <p>We use information that we collect about you or that you provide to us, including any personal information: &nbsp;</p>
-
-              <p>To provide you the Development Services and the other Loom Services and the content and the other products and services that you request from us.</p>
-
-              <p>To provide the Site and its contents to you.&nbsp;</p>
-
-              <p>To process and complete transactions and send you related information, including the request for and the provision of the Development Servicers.</p>
-
-              <p>To provide technical and other support to you.</p>
-
-              <p>To send you promotional communications, such as providing you with information about services, features, surveys, newsletters, offers and events; and providing other news or information about us, our customers and our select partners.&nbsp;</p>
-
-              <p>To enable Service Providers to perform certain responsibilities and provide certain services in connection with our business and operations.</p>
-
-              <p>To fulfill any other purpose for which you provide it.</p>
-
-              <p>To provide you with notices about your account.</p>
-
-              <p>To carry out our obligations and enforce our rights arising from any contracts entered into between you and us, including for billing and collection.</p>
-
-              <p>To notify you about changes to the Site, the Development Services and the other Loom Services.&nbsp;</p>
-
-              <p>To allow you to participate in interactive features on or through any of the Loom Services.&nbsp;</p>
-
-              <p>To enhance the safety and security of all of the Loom Services.&nbsp;</p>
-
-              <p>To verify your identity and prevent fraud or other unauthorized or illegal activity.</p>
-
-              <p>To enable marketing, remarketing and targeted advertising and similar services from us or Service Providers, including direct and indirect marketing and on-line behavioral advertising regarding our own and third party products and services that we believe may be of interest to you, including advertisement on third party websites.</p>
-
-              <p>To perform targeted and other advertising on third party websites.</p>
-
-              <p>In any other way we may describe when you provide the information.</p>
-
-              <p>For any other purpose with your consent.</p>
-
-              <p>Some of the information that we collect automatically is statistical data and does not include personal information, but we may maintain it or associate it with personal information we collect in other ways or receive from third parties or you provide to us. It helps us to improve the Site, the Development Services and the other Loom Services, and to deliver a better and more personalized service, including enabling us to:</p>
-
-              <p>Estimate our audience size and better understand usage patterns.</p>
-
-              <p>Store information about your preferences, enabling us to customize the Site according to your individual interests.</p>
-
-              <p>Speed up your searches.</p>
-
-              <p>Recognize you when you return to the Site.</p>
-
-              <p><strong>Storage and Transfer of Your Information</strong></p>
-
-              <p>We may store any information that we collect (personal or otherwise) ourselves or in databases owned and maintained by us, our affiliates, agents or Service Providers. If you access or use the Site, the Development Services or any of the other Loom Services outside of the United States, information that we collect about you may be transferred to servers inside the United States and maintained indefinitely, which may involve the transfer of information out of countries located in the European Economic Area and other parts of the world unless otherwise prohibited by applicable law or agreed by Loom and you. By allowing Loom to collect information about you, you consent to such transfer and processing of such information without restriction. We may also store some information locally on your computer or other devices. For example, we may store information as local cache so that you can open the Site and view content faster.&nbsp;</p>
-
-              <p>Although users from all over the world may access the Site, the Development Services and the other Loom Services, keep in mind that no matter where you live or where you happen to use our services, you consent to us processing and transferring information in and to the United States and other countries whose data-protection and privacy laws may offer fewer protections than those in your home country.&nbsp;</p>
-
-              <p><strong>Disclosure of Your Information</strong></p>
-
-              <p>We may disclose aggregated information about our users, and information that does not identify any individual, without restriction.&nbsp;</p>
-
-              <p>We may disclose personal information that we collect or you provide as described in this privacy policy:&nbsp; <strong>&nbsp;</strong></p>
-
-              <p>To our subsidiaries and affiliates.</p>
-
-              <p>To other users in your organization in connection with any of the Development Services or any of the other Loom Services.</p>
-
-              <p>To Companies in connection with the Development Services.</p>
-
-              <p>To Contractors in connection with the Development Services.</p>
-
-              <p>To Service Providers, contractors and other third parties we use to support our business, including credit card payment processors and marketing support.</p>
-
-              <p>To a potential or actual buyer. assignee or other successor (including its related advisors and agents) in the event of a merger, divestiture, restructuring, reorganization, dissolution or other sale or transfer of some or all of Loom' assets, whether as a going concern or as part of bankruptcy, liquidation or similar proceeding, in which personal information held by Loom about Companies, Contractors and other users of the Site is among the assets that may be or are actually transferred.</p>
-
-              <p>To fulfill the purpose for which you provide it. &nbsp;</p>
-
-              <p>For any other purpose disclosed by us when you provide the information.</p>
-
-              <p>With your consent.</p>
-
-              <p>We may also disclose your personal information:</p>
-
-              <p>To comply with any court order, law or legal process, including to respond to any government or regulatory request.</p>
-
-              <p>To enforce or apply the Terms and other agreements, including for billing and collection purposes.&nbsp; <strong>&nbsp;</strong></p>
-
-              <p>If we believe disclosure is necessary or appropriate to protect the rights, property, or safety of Loom, our customers or others. &nbsp;</p>
-
-              <p><strong>Choices About How We Use and Disclose Your Information&nbsp;</strong></p>
-
-              <p>We strive to provide you with choices regarding the personal information you provide to us. We have created mechanisms to provide you with the following control over your information:&nbsp;</p>
-
-              <p><strong>Tracking Technologies and Advertising.</strong> You can set your browser to refuse all or some browser cookies, or to alert you when cookies are being sent. To learn how you can manage your Flash cookie settings, visit the Flash player settings page on Adobe's <a href="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html"><em>website</em></a>. If you disable or refuse cookies, please note that all or some parts of the Loom Services, may then be inaccessible or not function properly.</p>
-
-              <p><strong>Promotional Offers from Loom.</strong> If you do not wish to have your e-mail address/contact information used by Loom to promote our own or third parties' products or services, you can opt-out through the unsubscribe mechanism at the bottom of the applicable email. This opt out does not apply to information provided to Loom as a result of a service or product purchase, warranty registration, product service experience or other transactions. &nbsp;</p>
-
-              <p>We do not control third parties' collection or use of your information to serve interest-based advertising. You may be able to opt out of receiving personalized advertisements from companies who are members of the Network Advertising Initiative or who subscribe to the Digital Advertising Alliance's Self-Regulatory Principles for Online Behavioral Advertising. For more information about this practice and to understand your options, please visit: <a href="http://www.aboutads.info">http://www.aboutads.info</a> and <a href="http://www.networkadvertising.org/choices/">http://www.networkadvertising.org/choices/</a>. You may also use TRUSTe's Preference Manager at <a href="http://preferences-mgr.truste.com">http://preferences-mgr.truste.com</a>. &nbsp;</p>
-
-              <p>&nbsp;</p>
-
-              <p><strong>Accessing and Correcting Your Information</strong></p>
-
-              <p>You may change, correct or delete any personal information that you have provided to us through the settings tab of your user dashboard. You may also do this by contacting us by e-mail at support@joinoom.com. We may not accommodate a request to change information if we believe the change would violate any law or legal requirement or cause the information to be incorrect.&nbsp;</p>
-
-              <p>If you delete your User Content from any of the Loom Services (including any User Content stored in the cloud), copies of your User Content may remain viewable in cached and archived pages, or might have been copied or stored by other users of the Servers or the Site. Proper access and use of information provided on or through any of the Loom Services, including User Content, are governed by the Terms.&nbsp;</p>
-
-              <p><strong>Your California Privacy Rights</strong></p>
-
-              <p>California Civil Code Section § 1798.83 permits users of the Site that are California residents to request certain information regarding our disclosure of personal information to third parties for their direct marketing purposes. To make such a request, please send an e-mail to support@joinloom.com or write to us at: Loom Labs, Inc.,501 Pedernales 1B, Austin, Texas 78702, USA.</p>
-
-              <p><strong>Data Security</strong></p>
-
-              <p>We understand that the security of your personal information is important. We provide reasonable administrative, technical, and physical security controls to protect your personal information.&nbsp; However, despite our efforts, no security controls are 100% effective and Loom cannot ensure or warrant the security of your personal information. Any transmission of personal information is at your own risk. We are not responsible for circumvention of any privacy settings or security measures contained on the Site. &nbsp;</p>
-
-              <p>The safety and security of your information also depends on you. Where we have given you (or where you have chosen) a password for access to and use of certain parts of the site, the Development Services and/or the other Loom Services, you are responsible for keeping this password confidential. We ask you not to share your password with anyone. We urge you to be careful about giving out information in public areas of any of the Loom Services. The information you share in public areas may be viewed by any Company, Contractor or other user of the Site.</p>
-
-              <p><strong>Changes to Our Privacy Policy&nbsp;</strong></p>
-
-              <p>It is our policy to post any changes we make to our privacy policy on this page with a notice that the privacy policy has been updated on the home pages of the Site for at least 30 days. If we make material changes to how we treat our users' personal information that are materially less protective than provided in this policy, we will use reasonable efforts to notify you by e-mail to the e-mail address specified in your account and/or through a notice on the home pages of the Site and to attempt to get your consent to the changes. The date the privacy policy was last updated is identified above. You are responsible for ensuring that we have an up-to-date active and deliverable e-mail address for you, and for periodically visiting the Site and this privacy policy to check for any changes.&nbsp; Like our Terms, of which this privacy policy is a part, your use, and/or continued use after our efforts to contact you, of the Site, the Development Services or any of the other Loom Services, means that you agree to be bound by such&nbsp;changes.</p>
-
-              <p><strong>Survival</strong></p>
-
-              <p>The policies indicated in this privacy policy will remain effective, even if the Terms and the other agreements between us are terminated and you are no longer using the Site, the Development Services or any of the other Loom Services.</p>
-
-              <p><strong>&nbsp;Contact Information</strong></p>
-
-              <p>To ask questions or comment about this privacy policy and our privacy practices or need to reach us for any other reason, you may contact us by e-mail at support@joinloom.com or by mail at Loom Labs, Inc., 501 Pedernales 1B, Austin, Texas 78702 USA.</p>
-
-              <p>© Copyright Loom Labs, Inc. 2016</p>
-
-          </div>
-      )
-    }
-  });
-
-  const DMCA = React.createClass({
-    render () {
-      return (
-       <div>
-      <h2>Careers</h2>
-      <p>DMCA Policy</p>
-        <p>Effective starting: August 8, 2016</p>
-        <p>Loom Labs, Inc. (“<strong>Loom Labs</strong>”) respects the intellectual property rights of others and expects its users to do the same as described in this policy. This policy is incorporated by reference into the Terms of Service (the “<strong>Terms of Service</strong>”). Defined terms used in this policy that are not otherwise defined herein shall have the same definitions as in the Terms of Service.</p>
-        <p>We do not allow copyright infringing activities on our Site or through our services (“<strong>Services</strong>”) and will remove a party’s Content from the Site or our Services if properly notified that such Content infringes on another's copyright rights. Loom Labs has a policy of terminating, in appropriate circumstances and at our discretion, to disable and/or terminate the accounts of Users who repeatedly infringe or are repeatedly charged with infringing the copyrights or other intellectual property rights of others.&nbsp; You are a “repeat infringer” if, on more than two occasions, you have been notified of infringing activity or have had your Content removed from our Site or our Services. We also reserve the right in our discretion to terminate any of your accounts suspected of infringing copyrights upon the first incident without further notice, at our sole discretion.</p>
-        <p>If you believe that any Content on our Site or in our Services violates your copyright, you should notify Loom Labs copyright agent in writing pursuant to the Digital Millennium Copyright Act (“<strong>DMCA</strong>”), 17 U.S.C. § 512(c)(3). The contact information for our copyright agent is below.</p>
-        <p>In order for Loom Labs to take action, you must do the following in your written notice (the “<strong>DMCA Takedown Notice</strong>):</p>
-        <p>Your physical or electronic signature.</p>
-        <p>Identification of the copyrighted work you believe to have been infringed or, if the claim involves multiple works on the Site or in the Services, a representative list of such works.</p>
-        <p>Identification of the material you believe to be infringing in a sufficiently precise manner to allow us to locate that material.</p>
-        <p>Adequate information by which we can contact you (including your name, postal address, telephone number and, if available, e-mail address).</p>
-        <p>A statement that you have a good faith belief that use of the copyrighted material is not authorized by the copyright owner, its agent or the law.</p>
-        <p>A statement that the information in the written notice is accurate.</p>
-        <p>A statement, under penalty of perjury, that you are authorized to act on behalf of the copyright owner.</p>
-        <p>We will promptly notify the alleged infringer that you have claimed ownership of the rights in this Content and that we have complied with your DMCA Takedown Notice for the Content.</p>
-        <p>Here is the contact information for our copyright agent:</p>
-        <p>Loom Labs, Inc.&nbsp;</p>
-        <p>501 Pedernales 1B</p>
-        <p>Austin, Texas 78702&nbsp;<br />
-        Attn: Copyright Agent<br />
-        E-Mail: <a href="mailto:copyright@atlassian.com">copyright@joinloom.com</a></p>
         </div>
-      )
-    }
-  });
-
-	const AboutLoom = React.createClass({
-		render() {
-			return (
-					<div>
-						<h1 className="text-brand brand-bold text-center">
-              Loom is a platform that weaves together ideas, equity and code.
-            </h1>
-
-
-            <h3 className="brand text-center">
-              We enthusiastically connect passionate visionaries with talented
-              developers to bring digital products to life.
-            </h3>
-            <p>&nbsp;</p>
-            <p>
-              In addition to equity compensation, Loom also supports cash compensation for work.
-            </p>
-            <p>
-              With an emphasis on building quality digital products in exchange for equity, freelancers on Loom can display their technical proficiencies using our integrated testing service, allowing entrepreneurs to easily find the talent they need. Loom also includes all necessary legal contract templates to engage a qualified freelancer, which are then auto-generated and signed electronically directly through the platform.
-            </p>
-            <p>
-              Our goal with Loom is to create a platform that empowers anyone to actualize their ideas into powerful products without the need for raising venture funding. We believe that some of the world’s best ideas are trapped in the minds of non-technical people. And now, Loom is here to help bring those ideas to life by connecting entrepreneurs directly with technical freelancers willing to work for cash or equity.
-            </p>
-            <p>
-              According to the Bureau of Labor Statistics, employment of web developers is projected to grow 27 percent from 2014 to 2024, much faster than the average for all occupations. And more generally, there are about 15 million freelance workers in the US. That number is expected to grow to over 60 million by 2020.
-            </p>
-            <p>
-              With such high demand for a work-for-equity platform, all freelancers on Loom are rated and reviewed using integrated functionality to ensure quality. Entrepreneurs are also encouraged to chat with freelancers through the platform and see their work history to further qualify them for a given project.
-            </p>
-            <p>
-              Posting a project on Loom is free for entrepreneurs, after which the freelance community can bid on the project in equity or cash offers. As the project’s manager, entrepreneurs can filter all of their bids by equity offer, cash offer, quality or location, then hire any developer of their choosing to complete the project for a small engagement fee. Once a bid is accepted, all industry-standard legal contracts are auto-generated and electronically delivered to both parties to commence the project.
-            </p>
-            <p>
-              On Loom, we charge the hiring party a fee of $3-per-hour of the estimated work to engage any developer on a project. As it is free to post projects on Loom and receive bids from developers around the world, companies only pay a fee if they receive a bid they like and choose to engage a freelancer on their project.
-            </p>
-            <p>
-              Our goal is to never charge fees to contractors on Loom.
-            </p>
-            <p>
-              We’re proud to have you as a contributor to the first work-for-equity platform. Our goal is to connect the brightest, passionate minds together for mutual interest in bringing some of the world’s best ideas to life.
-            </p>
-            <p>
-              Loom is proudly based in Austin, Texas.
-            </p>
-            <p>
-              Raise ideas, not funds, on Loom.
-            </p>
-					</div>
-			)
-		}
-	});
-
-	const Contact = React.createClass({
-		render() {
-			return (
-					<div>
-            <h1 className="text-brand brand-bold text-center">
-              Hey, there. We want to hear what you have to say.
-            </h1>
-
-
-            <h3 className="brand text-center">
-              We’re proud of our community and thrive on your feedback.
-            </h3>
-            <p>&nbsp;</p>
-            <p>
-              To contact Loom regarding support-related issues, please send a detailed email to <a href='mailto:support@joinloom.com'>support@joinloom.com</a> with your request.
-            </p>
-
-            <p>
-              To contact Loom regarding all other issues, please send a detailed email to <a href='mailto:info@joinloom.com'>info@joinloom.com</a> and we’ll get back to you as quickly as possible.
-            </p>
-
-            <p>
-              Please note that our community support center can help with most questions you may have and is located at joinloom.zendesk.com
-            </p>
-
-            <p>
-              You can find us eating tacos and drinking Topo in our office located in the lovely city of Austin, Texas. Our address is:
-            </p>
-
-            <p>
-            <strong>
-              Loom Labs, Inc. <br />
-              501 Pedernales, 1B <br />
-              Austin, Texas 78702
-            </strong>
-            </p>
-					</div>
-			)
-		}
-	});
-
-	const AboutCareers = React.createClass({
-		render() {
-			return (
-					<div>
-						<h1 className="text-brand brand-bold text-center">
-              Join the ranks. We’re a lean, passionate team of builders.
-            </h1>
-
-
-            <h3 className="brand text-center">
-            Our mission is to help people around the world actualize their
-            ideas with the resources they have for mutual benefit. And we’re
-            looking for talented people who believe in this mission to join us
-            as we redefine how the world works.
-            </h3>
-            <p>&nbsp;</p>
-            <p>
-              We’re specifically on the lookout for both a talented marketing lead,
-              as well as a product designer to join our team. If you think you might
-              be a good fit for either of these roles, email your information to
-              <a href='mailto:info@joinloom.com'>info@joinloom.com</a> and someone
-              will be in touch with more information about the position.
-            </p>
-            <p>
-              More roles will be available on the team in the near future, so be sure
-              to follow us on our social channels and sign up for our newsletter for more
-              information as it becomes available. Be sure to also check back here, as we
-              will update this page as we have more concrete details about future roles.
-            </p>
-            <p>
-              Loom is proudly an equal opportunity employer based in Austin, Texas.
-              <i className="emoji-peace"></i>
-            </p>
-
-					</div>
-			)
-		}
-	});
-
-	if(aboutDiv) {
-		const browserHistory = useRouterHistory(createHashHistory)({ queryKey: false });
-
-		// remember to update the list of routes in the AboutPage component to match this. I'd like to consolidate the router configuration at some point.
-		ReactDOM.render((
-			<Router history={browserHistory}>
-					<Route path="/" component={AboutPage}>
-						<IndexRedirect to="/about" />
-						<Route path="/about">
-							<Route path="careers" component={AboutCareers}/>
-              <Route path="privacy" component={Privacy}/>
-              <Route path="terms-of-service" component={Terms}/>
-              <Route path="dmca" component={DMCA}/>
-              <Route path="contact" component={Contact}/>
-							<IndexRoute component={AboutLoom}/>
-						</Route>
-						<Route path="*" component={AboutLoom}/>
-					</Route>
-			</Router>
-		), aboutDiv);
-	}
-})();
+      </div>
+    </div>
+  </div>
+{% endblock %}
