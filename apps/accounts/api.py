@@ -1,15 +1,17 @@
+from django.http import HttpResponseForbidden
+from rest_condition import Not
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes
-from generics.viewsets import NestedModelViewSet
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import generics
-from django.http import HttpResponseForbidden
 
 from accounts.models import Profile, Skills, SkillTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
+from apps.api.permissions import IsCurrentUser
+from generics.viewsets import NestedModelViewSet
 
 
 class SkillsList(generics.ListAPIView):
@@ -21,7 +23,18 @@ class SkillsList(generics.ListAPIView):
 class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = (IsAuthenticated, )
+
+    @permission_classes((IsAuthenticated, IsCurrentUser ))
+    def update(self, request, *args, **kwargs):
+        return super(ProfileViewSet, self).update(request, *args, **kwargs)
+
+    @permission_classes((IsAuthenticated, IsCurrentUser ))
+    def partial_update(self, request, *args, **kwargs):
+        return super(ProfileViewSet, self).partial_update(request, *args, **kwargs)
+
+    @permission_classes((IsAdminUser, ))
+    def destroy(self, request, *args, **kwargs):
+        return super(ProfileViewSet, self).destroy(request, *args, **kwargs)
 
     def get_object(self):
         return self.request.user

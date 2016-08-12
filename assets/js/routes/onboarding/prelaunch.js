@@ -1,87 +1,87 @@
 import React from 'react';
+import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
+import { objectToFormData } from '../project/utils'
 
-const PrelaunchOnboard = React.createClass({
-
-  getUrlParameter(sParam){
-      var sPageURL = decodeURIComponent(window.location.search.substring(1)),
-          sURLVariables = sPageURL.split('&'),
-          sParameterName,
-          i;
-
-      for (i = 0; i < sURLVariables.length; i++) {
-          sParameterName = sURLVariables[i].split('=');
-
-          if (sParameterName[0] === sParam) {
-              return sParameterName[1] === undefined ? true : sParameterName[1];
-          }
-      }
-  },
+const PrelaunchOnboarding = React.createClass({
 
   getInitialState() {
     return {
       profile: {
-        first_name: this.getUrlParameter('first_name'),
-        last_name: this.getUrlParameter('last_name'),
-        email: this.getUrlParameter('email'),
-        username: this.getUrlParameter('email'),
+        first_name: decodeURIComponent(this.getParam('first_name')),
+        last_name: decodeURIComponent(this.getParam('last_name')),
+        email: decodeURIComponent(this.getParam('email')),
+        username: '',
         biography: '',
         availability: '',
         role: '',
         title: '',
-        password: '',
         linkedin: {
           extra_data: ''
-        }
+        },
+        country: 'United States of America'
       },
       company: {
         id: '',
-        name: this.getUrlParameter('company_name'),
+        name: decodeURIComponent(this.getParam('company')),
         description: '',
         type: '',
         filing_location: '',
         city: '',
         state: '',
-        user_id: $('#onboard-form').data('id')
+        user_id: ''
       },
       photo_file: '',
       photo_url: '',
+      logo_file: '',
+      logo_url: '',
       formError: false,
-      isCompany: false
+      isCompany: true
     };
+  },
+
+  getParam(param) {
+    var vars = {};
+    window.location.href.replace( location.hash, '' ).replace(
+      /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+      function( m, key, value ) { // callback
+        vars[key] = value !== undefined ? value : '';
+      }
+    );
+
+    if ( param ) {
+      return vars[param] ? vars[param] : null;
+    }
+    return vars;
   },
 
   componentWillMount() {
     this.setState({ formElements: this.formElements() });
   },
 
-  componentDidMount() {
-    $.get(loom_api.profile + $('#onboard-form').data('id') + '/', (result) => {
-      const new_profile = result;
-      if (result.linkedin.extra_data) {
-        new_profile.biography = result.linkedin.extra_data.summary;
-      }
-
-      this.setState({
-        profile: new_profile,
-        photo_url: result.photo_url
-      }, () => {
-        this.setState({ formElements: this.formElements() });
-      });
-    });
-  },
-
   formElements() {
-    const { profile, company } = this.state;
+    const { profile, company, isCompany } = this.state;
 
     return {
       title: {
         name: 'title',
+        errorClass: '',
         label: 'Title at Your Company',
         value: profile.title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.profileCountry.errorClass = 'has-error';
+          } else {
+            formElements.profileCountry.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.title = value;
@@ -91,8 +91,19 @@ const PrelaunchOnboard = React.createClass({
       companyName: {
         name: 'companyName',
         label: 'Company Name',
+        errorClass: '',
         value: company.name || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyName.errorClass = 'has-error';
+          } else {
+            formElements.companyName.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.name = value;
@@ -102,8 +113,19 @@ const PrelaunchOnboard = React.createClass({
       companyState: {
         name: 'companyState',
         label: 'Company State',
+        errorClass: '',
         value: company.name || '',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyState.errorClass = 'has-error';
+          } else {
+            formElements.companyState.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.state = value;
@@ -113,8 +135,19 @@ const PrelaunchOnboard = React.createClass({
       companyCity: {
         name: 'companyCity',
         label: 'Company City',
-        value: company.name || '',
-        validator: FormHelpers.checks.isRequired,
+        value: company.city || '',
+        errorClass: '',
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyCity.errorClass = 'has-error';
+          } else {
+            formElements.companyCity.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.city = value;
@@ -123,10 +156,21 @@ const PrelaunchOnboard = React.createClass({
       },
       companyDescription: {
         name: 'companyDescription',
+        errorClass: '',
         label: 'Company Bio (This is what developers will see)',
         value: company.description || '',
         placeholder: 'Think of this as your elevator pitch to developers.  Get them excited in 250 characters or less.',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyDescription.errorClass = 'has-error';
+          } else {
+            formElements.companyDescription.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.description = value;
@@ -136,6 +180,7 @@ const PrelaunchOnboard = React.createClass({
       companyType: {
         name: 'companyType',
         label: 'Company Type',
+        errorClass: '',
         value: company.type || '',
         options: [
           {
@@ -163,7 +208,17 @@ const PrelaunchOnboard = React.createClass({
             value: 'nonprofit'
           }
         ],
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyType.errorClass = 'has-error';
+          } else {
+            formElements.companyType.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.type = value;
@@ -173,9 +228,20 @@ const PrelaunchOnboard = React.createClass({
       companyFilingLocation: {
         name: 'companyFilingLocation',
         label: 'State Filing Location',
+        errorClass: '',
         value: company.filing_location || '',
         placeholder: 'State/Province',
-        validator: FormHelpers.checks.isRequired,
+        validator: (value) => {
+          const { isCompany, formElements } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyFilingLocation.errorClass = 'has-error';
+          } else {
+            formElements.companyFilingLocation.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { company } = this.state;
           company.filing_location = value;
@@ -186,7 +252,18 @@ const PrelaunchOnboard = React.createClass({
         name: 'profileFirstName',
         label: 'First Name',
         value: profile.first_name || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileFirstName.errorClass = 'has-error';
+          } else {
+            formElements.profileFirstName.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.first_name = value;
@@ -197,7 +274,18 @@ const PrelaunchOnboard = React.createClass({
         name: 'profileLastName',
         label: 'Last Name',
         value: profile.last_name || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileLastName.errorClass = 'has-error';
+          } else {
+            formElements.profileLastName.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.last_name = value;
@@ -208,7 +296,18 @@ const PrelaunchOnboard = React.createClass({
         name: 'profileCity',
         label: 'City',
         value: profile.city || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileCity.errorClass = 'has-error';
+          } else {
+            formElements.profileCity.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.city = value;
@@ -219,33 +318,43 @@ const PrelaunchOnboard = React.createClass({
         name: 'profileStateProvince',
         label: 'State/Province',
         value: profile.state || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileStateProvince.errorClass = 'has-error';
+          } else {
+            formElements.profileStateProvince.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.state = value;
           this.setState({ profile });
         }
       },
-      profileEmail: {
-        name: 'profileEmail',
-        label: 'Email',
-        value: profile.email || '',
-        validator: FormHelpers.checks.isRequired,
+      profileCountry: {
+        name: 'profileCountry',
+        label: 'Country',
+        value: profile.country || 'United States of America',
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileCountry.errorClass = 'has-error';
+          } else {
+            formElements.profileCountry.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
-          profile.email = value;
-          profile.username = value;
-          this.setState({ profile });
-        }
-      },
-      profilePassword: {
-        name: 'profilePassword',
-        label: 'Password',
-        value: profile.password || '',
-        validator: FormHelpers.checks.isRequired,
-        update: (value) => {
-          const { profile } = this.state;
-          profile.password = value;
+          profile.country = value;
           this.setState({ profile });
         }
       },
@@ -259,51 +368,78 @@ const PrelaunchOnboard = React.createClass({
           profile.biography = value;
           this.setState({ profile });
         }
+      },
+      profileEmail: {
+        name: 'profileEmail',
+        label: 'Email',
+        placeholder:'name@company.com',
+        value: profile.email || '',
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.profileEmail.errorClass = 'has-error';
+          } else {
+            formElements.profileEmail.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
+        update: (value) => {
+          const { profile } = this.state;
+          profile.email = value;
+          profile.username = value;
+          this.setState({ profile });
+        }
+      },
+      password: {
+        name: 'password',
+        label: 'Password',
+        value: profile.password || '',
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const valid = FormHelpers.checks.isRequired(value);
+          if (!valid) {
+            formElements.password.errorClass = 'has-error';
+          } else {
+            formElements.password.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
+        update: (value) => {
+          const { profile } = this.state;
+          profile.password = value;
+          this.setState({ profile });
+        }
       }
     }
   },
 
-  _saveAccount(e) {
-    e.preventDefault();
-
-    $.ajax({
-      url: loom_api.profile + this.state.profile.id + '/',
-      method: 'PATCH',
-      data: JSON.stringify(this.state.profile),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      success: function(result) {
-        // TODO This is kinda ghetto.  Figure out a way to async both calls.
-        if (this.state.company.name) {
-          this._createCompany();
-        }
-        else {
-          window.location = '/profile/dashboard/';
-        }
-      }.bind(this)
-    });
-  },
-
   _createCompany() {
-    const { formElements } = this.state;
+    const { formElements, isCompany } = this.state;
     this.setState({ isLoading: true });
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
       this.setState({ formElements });
 
+      let company = this.state.company;
+      company.user_id = this.state.profile.id;
+      company.logo = this.state.logo_file ? this.state.logo_file : '';
+
       if(valid) {
         this.setState({ formError: false });
-
         $.ajax({
           url: loom_api.company,
           method: 'POST',
-          data: JSON.stringify(this.state.company),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
+          data: objectToFormData(company),
+          contentType: false,
+          processData: false,
           success: function (result) {
-            // TODO We should make this one post
-            this._saveAccount()
-          }.bind(this)
+              window.location = '/profile/dashboard/';
+          }
         });
       } else {
         this.setState({ formError: 'Please fill out all fields.', isLoading: false });
@@ -311,26 +447,7 @@ const PrelaunchOnboard = React.createClass({
     });
   },
 
-  _uploadImage() {
-    this.setState({ isLoading: true });
-    let data = new FormData();
-      data.append('photo', this.state.photo_file);
-      $.ajax({
-        url: loom_api.profile + this.state.profile.id + '/',
-        type: 'PATCH',
-        data: data,
-        cache: false,
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-        success: function(data, textStatus, jqXHR) {
-          this.setState({ isLoading: false });
-          window.location = '/profile/dashboard/';
-        }.bind(this)
-      });
-  },
-
-  _saveAccount() {
+  _createAccount() {
     const { formElements } = this.state;
     this.setState({ isLoading: true });
 
@@ -340,19 +457,21 @@ const PrelaunchOnboard = React.createClass({
       if (valid) {
         this.setState({ formError: false, isLoading: true });
         let profile = this.state.profile;
-        delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+        profile.username = profile.email;
+        profile.photo = this.state.photo_file ? this.state.photo_file : '';
+        //delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
         $.ajax({
-          url: loom_api.profile + profile.id + '/',
-          method: 'PATCH',
-          data: JSON.stringify(profile),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
+          url: loom_api.profile,
+          method: 'POST',
+          data: objectToFormData(profile),
+          contentType: false,
+          processData: false,
           success: function (result) {
-            if (this.state.photo_file) {
-              this._uploadImage();
+            this.setState({ profile:result })
+            if (this.state.isCompany) {
+              this._createCompany();
             }
             else {
-              this.setState({ isLoading: false });
               window.location = '/profile/dashboard/';
             }
           }.bind(this)
@@ -361,6 +480,10 @@ const PrelaunchOnboard = React.createClass({
         this.setState({ formError: 'Please fill out all fields.', isLoading: false });
       }
     });
+  },
+
+  setCompany() {
+    this.setState({isCompany:!this.state.isCompany});
   },
 
 
@@ -392,8 +515,25 @@ const PrelaunchOnboard = React.createClass({
     }
   },
 
+  handleLogoChange(e) {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
+    if(re.exec(file.name)) {
+      reader.onloadend = () => {
+        debugger
+        this.setState({
+          logo_url: reader.result,
+          logo_file: file
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  },
+
   render() {
-    const { formElements, formError, profile, isCompany } = this.state;
+    const { formElements, formError, profile, company, isCompany } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
     const yourTitle = isCompany && (
       <div className='form-group col-md-8 col-md-offset-2'>
@@ -412,140 +552,61 @@ const PrelaunchOnboard = React.createClass({
 
     return (
       <div>
-        <div id="basics" className="section-header text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
-          <p className="text-muted">
-            Let's quickly get you set up.
-          </p>
-        </div>
-
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
+          handleLogoChange={this.handleLogoChange}
           isCompany={this.state.isCompany}
+          setCompany={this.setCompany}
+          logo_url={this.state.logo_url}
+          company={company}
         />
 
-        <div className='section-header text-center col-md-8 col-md-offset-2'>Your Personal Info</div>
+        <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>
 
         {yourTitle}
 
-        <div>
+        <AccountForm
+          photo_url={this.state.photo_url}
+          profile={profile}
+          handleImageChange={this.handleImageChange}
+          formElements={formElements}
+          handleChange={this.handleChange}
+          isCompany={this.state.isCompany}
+          linkedIn={false}
+        />
 
-        <div className='col-md-6 col-md-offset-2'>
-            <div className="form-group">
-                <label className="control-label" htmlFor={formElements.profileFirstName.name}>{formElements.profileFirstName.label}</label>
+        <div className='col-md-4 col-md-offset-2'>
+            <div className={ 'form-group ' + formElements.profileEmail.errorClass }>
+                <label className="control-label" htmlFor={formElements.profileEmail.name}>{formElements.profileEmail.label}</label>
                 <input
-                    className="form-control"
+                    className={ 'form-control ' + formElements.profileEmail.errorClass }
                     type='text'
-                    name={formElements.profileFirstName.name}
-                    value={formElements.profileFirstName.value}
-                    onChange={handleChange}
+                    name={formElements.profileEmail.name}
+                    value={formElements.profileEmail.value}
+                    onChange={this.handleChange}
                 />
             </div>
-            <div className="form-group">
-                <label className="control-label" htmlFor={formElements.profileLastName.name}>{formElements.profileLastName.label}</label>
+        </div>
+        <div className='col-md-4'>
+            <div className={ 'form-group ' + formElements.password.errorClass }>
+                <label className="control-label" htmlFor={formElements.password.name}>{formElements.password.label}</label>
                 <input
-                    className="form-control"
-                    type='text'
-                    name={formElements.profileLastName.name}
-                    value={formElements.profileLastName.value}
-                    onChange={handleChange}
+                    className={ 'form-control ' + formElements.password.errorClass }
+                    type='password'
+                    name={formElements.password.name}
+                    value={formElements.password.value}
+                    onChange={this.handleChange}
                 />
             </div>
         </div>
 
-        <div className='form-group col-md-2 profile-photo-upload'>
-            <label className="control-label">Profile Photo</label>
-
-            <div className='text-center profile-image' style={profilePhoto}></div>
-
-            <div href="" className="btn btn-sm btn-brand btn-upload-image">
-                Upload Photo
-                <input
-                    className="form-control"
-                    ref='file'
-                    name='file'
-                    type='file'
-                    label='Profile Photo'
-                    onChange={handleImageChange}
-                />
-            </div>
-        </div>
-
-        <div>
-
-          <div className='form-group col-md-4 col-md-offset-2'>
-
-            <label className="control-label" htmlFor={formElements.profileCity.name}>{formElements.profileCity.label}</label>
-            <input
-              className="form-control"
-              type='text'
-              name={formElements.profileCity.name}
-              value={formElements.profileCity.value}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className='form-group col-md-4'>
-
-            <label className="control-label" htmlFor={formElements.profileStateProvince.name}>{formElements.profileStateProvince.label}</label>
-            <input
-              className="form-control"
-              type='text'
-              name={formElements.profileStateProvince.name}
-              value={formElements.profileStateProvince.value}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className='form-group col-md-8 col-md-offset-2'>
-          <label className="control-label" htmlFor={formElements.profileBio.name}>{formElements.profileBio.label}</label>
-          <textarea
-            className="form-control"
-            name={formElements.profileBio.name}
-            id={formElements.profileBio.name}
-            placeholder={formElements.profileBio.placeholder}
-            value={formElements.profileBio.value}
-            onChange={handleChange}
-          >
-          </textarea>
-        </div>
-
-          <div>
-
-          <div className='form-group col-md-4 col-md-offset-2'>
-
-            <label className="control-label" htmlFor={formElements.profileEmail.name}>{formElements.profileEmail.label}</label>
-            <input
-              className="form-control"
-              type='text'
-              name={formElements.profileEmail.name}
-              value={formElements.profileEmail.value}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div className='form-group col-md-4'>
-
-            <label className="control-label" htmlFor={formElements.password.name}>{formElements.password.label}</label>
-            <input
-              className="form-control"
-              type='password'
-              name={formElements.password.name}
-              value={formElements.password.value}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-      </div>
-
-        <div className='text-center form-group col-md-8 col-md-offset-2'>
+        <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>
           {error}
 
-          <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createCompany}>
+          <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createAccount}>
             <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-            Save
+            Create Account
           </a>
         </div>
 
@@ -555,5 +616,4 @@ const PrelaunchOnboard = React.createClass({
 
 });
 
-export default PrelaunchOnboard;
-
+export default PrelaunchOnboarding;

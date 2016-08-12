@@ -49,7 +49,7 @@
     display: flex;
     flex-direction: column;
 
-    input {
+    input[type='email'] {
       margin: @gutter 0;
       padding: 7px 14px;
       color: #FFF;
@@ -58,6 +58,11 @@
       border-radius: @border-radius;
       font-size: 18px;
       outline: none;
+    }
+
+    #mce-success-response, #mce-error-response{
+      width: 300px;
+      font-size: 12px;
     }
   }
 

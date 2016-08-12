@@ -50,6 +50,7 @@ urlpatterns = [
     url(r'^signup/type/$', TemplateView.as_view(template_name='onboarding/confirm.html'), name='signup-type'),
     url(r'^signup/developer/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-developer'),
     url(r'^signup/entrepreneur/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-entrepreneur'),
+    url(r'^signup/prelaunch/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-prelaunch'),
     url(r'^profile/$', accounts_views.view_profile, name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', accounts_views.view_profile, name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),

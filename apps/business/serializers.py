@@ -4,6 +4,7 @@ from rest_framework import serializers
 from drf_haystack.serializers import HaystackSerializerMixin
 from html_json_forms.serializers import JSONFormSerializer
 
+from accounts.models import Profile
 from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
@@ -15,16 +16,18 @@ from postman.helpers import pm_write
 
 class CompanySerializer(serializers.ModelSerializer):
     logo_url = serializers.SerializerMethodField()
+    user_id = serializers.CharField(write_only=True)
 
     class Meta:
         model = Company
-        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type',)
+        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type', 'logo_url', 'user_id')
 
     def get_logo_url(self, obj):
         return obj.get_logo()
 
     def create(self, data):
-        user = self.context['request'].user
+        user_id = data.pop('user_id')
+        user = Profile.objects.get(id=user_id)
         company = Company.objects.create(**data)
         Employee.objects.create(profile=user, company=company, primary=True)
         return company

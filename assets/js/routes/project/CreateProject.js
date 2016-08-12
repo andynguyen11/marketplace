@@ -249,7 +249,7 @@ const CreateProject = React.createClass({
             contentType: false,
             processData: false,
             success: result => {
-                //window.location = `/project/${result.id}/`;
+                window.location = `/project/${result.id}/`;
             }
         });
     },
@@ -403,10 +403,7 @@ const CreateProject = React.createClass({
                     <Budget className={currentSection == 'budget' ? 'budget' : 'hidden'}
                       update={this.fieldUpdateMap('estimated_hours', 'estimated_cash', 'estimated_equity_percentage', 'confidential_info')}
                       formErrors={formErrors}
-<<<<<<< 7908b8a1d2ca673868b2c62d6eeaf6c373729adb
                       company={this.state.data.company}
-=======
->>>>>>> Post a project previews, post project validation, api keys to environ (#80)
                     />
 
                     <div className='text-center form-group'>

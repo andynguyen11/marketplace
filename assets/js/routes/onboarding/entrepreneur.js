@@ -2,6 +2,7 @@ import React from 'react';
 import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
+import { objectToFormData } from '../project/utils'
 
 const EntrepreneurOnboard = React.createClass({
 
@@ -136,7 +137,7 @@ const EntrepreneurOnboard = React.createClass({
       companyCity: {
         name: 'companyCity',
         label: 'Company City',
-        value: company.name || '',
+        value: company.city || '',
         errorClass: '',
         validator: (value) => {
           const { isCompany, formElements } = this.state;
@@ -380,25 +381,22 @@ const EntrepreneurOnboard = React.createClass({
     FormHelpers.validateForm(formElements, (valid, formElements) => {
       this.setState({ formElements });
 
+      let company = this.state.company;
+      company.logo = this.state.logo_file;
+
       if(valid) {
         this.setState({ formError: false });
         if (isCompany) {
           $.ajax({
             url: loom_api.company,
             method: 'POST',
-            data: JSON.stringify(this.state.company),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
+            data: objectToFormData(company),
+            contentType: false,
+            processData: false,
             success: function (result) {
-              // TODO We should make this one post
               this.setState({
                 company: result
               });
-              if (this.state.logo_file) {
-                this._uploadLogo();
-              } else {
-                this._saveAccount();
-              }
               this._saveAccount();
             }.bind(this)
           });
@@ -412,43 +410,6 @@ const EntrepreneurOnboard = React.createClass({
     });
   },
 
-  _uploadImage() {
-    this.setState({ isLoading: true });
-    let data = new FormData();
-      data.append('photo', this.state.photo_file);
-      $.ajax({
-        url: loom_api.profile + this.state.profile.id + '/',
-        type: 'PATCH',
-        data: data,
-        cache: false,
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-        success: function(data, textStatus, jqXHR) {
-          window.location = '/profile/dashboard/';
-        }.bind(this)
-      });
-  },
-
-  // TODO This image upload is redundant to the profile image upload (needs refactor to combine)
-  _uploadLogo() {
-    this.setState({ isLoading: true });
-    let data = new FormData();
-      data.append('logo', this.state.logo_file);
-      $.ajax({
-        url: loom_api.company + this.state.company.id + '/',
-        type: 'PATCH',
-        data: data,
-        cache: false,
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-        success: function(data, textStatus, jqXHR) {
-          this._saveAccount();
-        }.bind(this)
-      });
-  },
-
   _saveAccount() {
     const { formElements } = this.state;
     this.setState({ isLoading: true });
@@ -459,20 +420,15 @@ const EntrepreneurOnboard = React.createClass({
       if (valid) {
         this.setState({ formError: false, isLoading: true });
         let profile = this.state.profile;
-        delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+        profile.photo = this.state.photo_file;
         $.ajax({
           url: loom_api.profile + profile.id + '/',
           method: 'PATCH',
-          data: JSON.stringify(profile),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
+          data: objectToFormData(profile),
+          processData: false,
+          contentType: false,
           success: function (result) {
-            if (this.state.photo_file) {
-              this._uploadImage();
-            }
-            else {
-              window.location = '/profile/dashboard/';
-            }
+            window.location = '/profile/dashboard/';
           }.bind(this)
         });
       } else {
@@ -572,7 +528,7 @@ const EntrepreneurOnboard = React.createClass({
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
-          linkedIn={true}
+          linkedIn={false}
         />
 
         <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>

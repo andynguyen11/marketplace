@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from apps.api.permissions import IsOwner, IsOwnerOrIsStaff, BidPermission, IsPrimary
+from apps.api.permissions import BidPermission, IsPrimary
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet
 
@@ -65,7 +65,6 @@ class CompanyListCreate(generics.ListCreateAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, ) #TODO Make permissions more granular (public list, authenticated create)
 
 
 class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
