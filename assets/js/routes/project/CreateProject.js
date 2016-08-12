@@ -150,15 +150,19 @@ const Details = React.createClass({
         return (
             <div {...props}>
               <div className="col-md-8 col-md-offset-2 sub-section">
-                <h3 className="brand">
-                    What are you creating?
+                <h3 className="brand text-center">
+                    Tell us more about what you want to create:
                 </h3>
-                <p className="text-muted">
+                <h4 className="text-muted text-skinny text-center">
                     This is where you should outline all the project specifics.
                     The more details you provide, the more quality bids you will recieve.
-                </p>
+                </h4>
               </div>
                 <BigFormGroup label="Project Image">
+                  <p className="text-muted small text-center">
+                    This is the key image that will be associated with your project. It will appear in search
+                    and help your project stand out to developers.
+                  </p>
                     <AttachmentField accept="image/*" tag="image" onChange={this.attachmentUpdater} />
                 </BigFormGroup>
                 <div className={props.formErrors.details} >

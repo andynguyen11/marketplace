@@ -33,9 +33,9 @@ export function mergeAttachments(existingAttachments=[], newAttachments=[]){
 
 function UploadButton({title}){
     return (
-        <span className='upload-button'>
+        <div className='btn btn-brand text-center'>
             Click or drop to upload {title}
-        </span>
+        </div>
     )
 }
 

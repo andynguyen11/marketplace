@@ -15,15 +15,11 @@ from postman.helpers import pm_write
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    logo_url = serializers.SerializerMethodField()
     user_id = serializers.CharField(write_only=True)
 
     class Meta:
         model = Company
-        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type', 'logo_url', 'user_id')
-
-    def get_logo_url(self, obj):
-        return obj.get_logo()
+        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type', 'user_id')
 
     def create(self, data):
         user_id = data.pop('user_id')

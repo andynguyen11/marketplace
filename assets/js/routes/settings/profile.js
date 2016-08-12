@@ -28,7 +28,7 @@ const ProfileSettings = React.createClass({
         skills: [],
         all_skills: []
       },
-      isLoading: false,
+      isLoading: true,
       formError: false
     };
   },
@@ -39,7 +39,7 @@ const ProfileSettings = React.createClass({
 
   componentDidMount() {
     // TODO No ID in request should return current user so we don't have to pass in the id from the dom
-    $.get(loom_api.profile + $('#settings-form').data('id') + '/', function (result) {
+    $.get(loom_api.profile + $('#settings').data('id') + '/', function (result) {
       let new_profile = result;
       if (result.linkedin.extra_data) {
         new_profile.biography = result.biography ? result.biography : result.linkedin.extra_data.summary;
@@ -48,7 +48,8 @@ const ProfileSettings = React.createClass({
       new_profile.role = 'full-stack';
       this.setState({
         profile: new_profile,
-        photo_url: result.photo_url
+        photo_url: result.photo_url,
+        isLoading: false
       }, () => {
         this.setState({ formElements: this.formElements() });
       });
@@ -193,7 +194,7 @@ const ProfileSettings = React.createClass({
         name: 'profileStateProvince',
         label: 'State/Province',
         errorClass: '',
-        value: profile.state || 'United States of America',
+        value: profile.state || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
           const { formElements } = this.state;
@@ -215,7 +216,7 @@ const ProfileSettings = React.createClass({
         name: 'profileCountry',
         label: 'Country',
         errorClass: '',
-        value: profile.country || '',
+        value: profile.country || 'United States of America',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
           const { formElements } = this.state;
@@ -349,7 +350,7 @@ const ProfileSettings = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile } = this.state;
+    const { formElements, formError, profile, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
     const roleOptions = formElements.role.options.map((option, i) => {
@@ -418,15 +419,15 @@ const ProfileSettings = React.createClass({
     return (
       <div>
 
-        { roleComponent }
+        {roleComponent}
 
         <AccountForm
-            photo_url={this.state.photo_url}
-            profile={profile}
-            handleImageChange={this.handleImageChange}
-            formElements={formElements}
-            handleChange={this.handleChange}
-            linkedIn={false}
+          photo_url={this.state.photo_url}
+          profile={profile}
+          handleImageChange={this.handleImageChange}
+          formElements={formElements}
+          handleChange={this.handleChange}
+          linkedIn={false}
         />
 
         {yourTitle}
@@ -434,67 +435,66 @@ const ProfileSettings = React.createClass({
         {skillsComponent}
 
         <div>
-        <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
-          <div className="col-sm-offset-2 col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              10hrs<br />
-              Week
-            </h3>
-          </button>
+          <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
+            <div className="col-sm-offset-2 col-sm-2 text-center">
+              <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
+                <h3>
+                  10hrs<br />
+                  Week
+                </h3>
+              </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+              <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
+                <h3>
+                  20hrs<br />
+                  Week
+                </h3>
+              </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+              <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
+                <h3>
+                  30hrs<br />
+                  Week
+                </h3>
+              </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+              <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
+                <h3>
+                  40hrs<br />
+                  Week
+                </h3>
+              </button>
+            </div>
+            <div className="clearfix"></div>
+          </div>
+          <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
+            <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
+              <input
+                className={ 'form-control ' + formElements.capacity.errorClass }
+                type='text'
+                name={formElements.capacity.name}
+                id={formElements.capacity.name}
+                placeholder={formElements.capacity.placeholder}
+                value={formElements.capacity.value}
+                onChange={this.handleChange}
+              />
+            <div className="clearfix"></div>
           </div>
 
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              20hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              30hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              40hrs<br />
-              Week
-            </h3>
-          </button>
+          <div className='text-center form-group col-md-8 col-md-offset-2'>
+            {error}
+            <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>
+              <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+              Save Profile
+            </a>
           </div>
           <div className="clearfix"></div>
-        </div>
-        <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
-          <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
-          <input
-            className={ 'form-control ' + formElements.capacity.errorClass }
-            type='text'
-            name={formElements.capacity.name}
-            id={formElements.capacity.name}
-            placeholder={formElements.capacity.placeholder}
-            value={formElements.capacity.value}
-            onChange={this.handleChange}
-          />
-          <div className="clearfix"></div>
-        </div>
-
-        <div className='text-center form-group col-md-8 col-md-offset-2'>
-          {error}
-
-          <a type='submit' className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}>
-            <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-            Save Profile
-          </a>
-        </div>
-
       </div>
     );
   }

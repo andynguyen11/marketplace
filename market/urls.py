@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^skills/', autocomplete, {'tag_model': Skills}, name='skills_autocomplete'),
     url(r'^message/send/$', business_views.send_message, name='send-message'),
     url(r'^signup/$', accounts_views.signup, name='signup'),
+    url(r'^about/$', TemplateView.as_view(template_name='about.html'), name='about'),
     url(r'^signup/type/$', TemplateView.as_view(template_name='onboarding/confirm.html'), name='signup-type'),
     url(r'^signup/developer/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-developer'),
     url(r'^signup/entrepreneur/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-entrepreneur'),
@@ -66,9 +67,7 @@ urlpatterns = [
     url(r'^project/edit/(?P<project_id>[0-9]+)/$', business_views.create_project, name='edit-project'),
     url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^terms-of-service/$', views.flatpage, {'url': '/terms-of-service/'}, name='terms'),
-    url(r'^privacy/$', views.flatpage, {'url': '/privacy/'}, name='privacy'),
-    url(r'^(?P<url>.*/)$', views.flatpage),
+    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :

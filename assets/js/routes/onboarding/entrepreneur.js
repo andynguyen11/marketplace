@@ -515,6 +515,7 @@ const EntrepreneurOnboard = React.createClass({
           setCompany={this.setCompany}
           logo_url={this.state.logo_url}
           company={company}
+          settings={false}
         />
 
         <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>

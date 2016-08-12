@@ -132,6 +132,7 @@ class Document(models.Model):
     job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
+    status = models.CharField(default='new')
 
     @property
     def project(self):
@@ -165,7 +166,7 @@ class Project(models.Model):
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
-    skills = tagulous.models.TagField(to='accounts.Skills')
+    skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
 
     estimated_hours = models.IntegerField(blank=True, null=True)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)

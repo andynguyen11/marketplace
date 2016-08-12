@@ -3,7 +3,7 @@
 {% load active_class %}
 
 {% block account_content %}
-<div id="settings"></div>
+<div id="settings" data-id="{{request.user.id}}" data-company="{{ request.user.company.id }}"></div>
 {% endblock %}
 
 {% block scripts %}

@@ -56,7 +56,7 @@
             </li>
             <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
           </ul>
-          <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
+          <button disabled id="bid-button" class="btn btn-brand" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and will begin accepting bids very soon." data-target="#bid-modal">BID ON PROJECT</button>
           <p class="small text-muted">This company is accepting bids for work in forms of
             {% if project.estimated_equity_percentage %}equity {% endif %}
             {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}

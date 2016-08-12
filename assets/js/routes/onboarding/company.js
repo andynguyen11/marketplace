@@ -9,15 +9,36 @@ const CompanyForm = React.createClass({
   },
 
   render() {
-    const { formElements, handleChange, isCompany, setCompany, handleLogoChange, logo_url } = this.props;
+    const { formElements, handleChange, isCompany, setCompany, handleLogoChange, logo_url, settings } = this.props;
 
     const companyPhoto = logo_url && { backgroundImage: 'url(' + logo_url + ')' } || {};
+
+    const accountType = settings || (
+        <div>
+          <div className="form-group col-md-8 col-md-offset-2">
+            <div id="confirm-profile" className="sub-section text-center">
+                <h2 className="brand text-center">
+                  What type of account do you want?
+                </h2>
+                <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"}  onClick={setCompany}>
+                  <h4><span className="text-accent">Company</span></h4>
+                  <p>A company can get work made for cash, equity, or a mix of both.</p>
+                </div>
+                <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"}  onClick={setCompany}>
+                  <h4><span className="text-brand">Individual Entrepreneur</span></h4>
+                  <p>Individual Entrepreneurs can get work made for cash only.</p>
+                </div>
+            </div>
+          </div>
+          <div className="clearfix"></div>
+        </div>
+    );
 
     const companyTypeSelector = formElements.companyType.options.map((option, i) => {
       return (
         <div className="col-md-6" key={i}>
             <label className="radio">
-                <input type="radio" name={formElements.companyType.name} id={option.value} onChange={handleChange} value={option.value}/>
+                <input type="radio" name={formElements.companyType.name} checked={formElements.companyType.value == option.value ? 'checked' : ''} id={option.value} onChange={handleChange} value={option.value}/>
                 {option.label}
             </label>
         </div>
@@ -46,7 +67,6 @@ const CompanyForm = React.createClass({
             <label className='control-label'>Country</label>
             <input className='form-control disabled' type="text" disabled="true" value="United States of America" />
             <i className='fa fa-lock'></i>
-            <i className='fa fa-question-circle' data-toggle="tooltip" data-placement="right" title="Loom is currently open to only U.S. based companies. Drop us a line to request your country be included on Loom. info@joinloom.com"></i>
           </div>
 
           <div className={ 'form-group ' + formElements.companyState.errorClass } >
@@ -226,26 +246,8 @@ const CompanyForm = React.createClass({
 
     return (
       <div className="base-form">
-        <div>
-          <div className="form-group col-md-8 col-md-offset-2">
-            <div id="confirm-profile" className="sub-section text-center">
-                <h2 className="brand text-center">
-                  What type of account do you want?
-                </h2>
-                <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"}  onClick={setCompany}>
-                  <h4><span className="text-accent">Company</span></h4>
-                  <p>A company can get work made for cash, equity, or a mix of both.</p>
-                </div>
-                <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"}  onClick={setCompany}>
-                  <h4><span className="text-brand">Individual Entrepreneur</span></h4>
-                  <p>Individual Entrepreneurs can get work made for cash only.</p>
-                </div>
-            </div>
-          </div>
-          <div className="clearfix"></div>
-        </div>
+        {accountType}
         {companyForm}
-
       </div>
     );
   }

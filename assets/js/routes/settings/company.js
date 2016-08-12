@@ -2,6 +2,7 @@ import React from 'react';
 import AccountForm from '../onboarding/account';
 import CompanyForm from '../onboarding/company';
 import FormHelpers from '../../utils/formHelpers';
+import { objectToFormData } from '../project/utils'
 
 // TODO Create a settings router
 
@@ -17,7 +18,7 @@ const CompanySettings = React.createClass({
         filing_location: '',
         city: '',
         state: '',
-        user_id: $('#settings-form').data('id')
+        user_id: $('#settings').data('id')
       },
       logo_file: '',
       logo_url: '',
@@ -32,10 +33,10 @@ const CompanySettings = React.createClass({
 
   componentDidMount() {
     // TODO No ID in request should return current user so we don't have to pass in the id from the dom
-    $.get(loom_api.company + $('#settings-form').data('company') + '/', (result) => {
+    $.get(loom_api.company + $('#settings').data('company') + '/', (result) => {
       this.setState({
-        company: company,
-        logo_url: result.logo_url
+        company: result,
+        logo_url: result.logo
       }, () => {
         this.setState({ formElements: this.formElements() });
       });
@@ -215,23 +216,19 @@ const CompanySettings = React.createClass({
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
       this.setState({ formElements });
-
+      let company = this.state.company;
+      company.user_id = $('#settings').data('id');
+      company.logo = this.state.logo_file;
       if(valid) {
         this.setState({ formError: false });
           $.ajax({
             url: loom_api.company + this.state.company.id + '/',
             method: 'PATCH',
-            data: JSON.stringify(this.state.company),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
+            data: objectToFormData(company),
+            contentType: false,
+            processData: false,
             success: function (result) {
-              // TODO We should make this one post
-              if (this.state.logo_file) {
-                this._uploadLogo();
-              }
-              else {
-                this.setState({ isLoading: false });
-              }
+              this.setState({ isLoading: false });
             }.bind(this)
           });
       } else {
@@ -249,52 +246,28 @@ const CompanySettings = React.createClass({
 
       if(valid) {
         this.setState({ formError: false });
-        if (isCompany) {
+        let company = this.state.company;
+        company.user_id = $('#settings').data('id');
+        company.logo = this.state.logo_file;
+        console.log(company)
           $.ajax({
             url: loom_api.company,
             method: 'POST',
-            data: JSON.stringify(this.state.company),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
+            data: objectToFormData(company),
+            contentType: false,
+            processData: false,
             success: function (result) {
               // TODO We should make this one post
               this.setState({
-                company: result
+                company: result,
+                isLoading: false
               });
-              if (this.state.logo_file) {
-                this._uploadLogo();
-              } else {
-                this._saveAccount();
-              }
-              this._saveAccount();
             }.bind(this)
           });
-        }
-        else {
-          this._saveAccount();
-        }
       } else {
         this.setState({ formError: 'Please fill out all fields.', isLoading: false });
       }
     });
-  },
-
-  _uploadLogo() {
-    this.setState({ isLoading: true });
-    let data = new FormData();
-      data.append('logo', this.state.logo_file);
-      $.ajax({
-        url: loom_api.company + this.state.company.id + '/',
-        type: 'PATCH',
-        data: data,
-        cache: false,
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-        success: function(data, textStatus, jqXHR) {
-          this._saveAccount();
-        }.bind(this)
-      });
   },
 
   handleChange(event) {
@@ -317,8 +290,8 @@ const CompanySettings = React.createClass({
       reader.onloadend = () => {
         debugger
         this.setState({
-          photo_url: reader.result,
-          photo_file: file
+          logo_url: reader.result,
+          logo_file: file
         });
       };
       reader.readAsDataURL(file);
@@ -337,6 +310,8 @@ const CompanySettings = React.createClass({
           isCompany={this.state.isCompany}
           setCompany={this.setCompany}
           handleLogoChange={this.handleLogoChange}
+          logo_url={this.state.logo_url}
+          settings={true}
         />
 
           <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>
@@ -351,7 +326,7 @@ const CompanySettings = React.createClass({
             Save
           </a>
         </div>
-
+        <div className="clearfix"></div>
       </div>
     );
   }
