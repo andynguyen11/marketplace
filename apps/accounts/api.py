@@ -30,10 +30,10 @@ class ProfileViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        user.set_password(password)
+        user.set_password(password[0])
         user.save()
         headers = self.get_success_headers(serializer.data)
-        account = authenticate(username=user.email, password=password)
+        account = authenticate(username=user.email, password=password[0])
         login(request, account)
         return Response(ProfileSerializer(user).data)
 
