@@ -60,7 +60,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     #'webpack_loader',
-    'jsonify',
     'tagulous',
     'crispy_forms',
     'raven.contrib.django.raven_compat',

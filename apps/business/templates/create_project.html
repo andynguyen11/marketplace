@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load staticfiles %}
-{% load jsonify %}
 
 {% block content %}
 <div id="create-project" >
@@ -8,6 +7,7 @@
   <div class="row">
     <div class="container">
         <div id="project-root" data-id="{% if request.user.id %}{{ request.user.id }}{% endif %}"
+                               data-project="{{ project.id }}"
                                data-company="{{ company.id }}"
                                data-_company_name="{{ company.name }}"
                                data-project_manager="{{ project_manager.id }}"
@@ -15,9 +15,6 @@
     </div>
   </div>
 </div>
- <script type="text/javascript">
-     window.project = {{ project|jsonify }}
- </script>
 {% endblock %}
 
 {% block scripts %}

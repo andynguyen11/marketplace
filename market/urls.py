@@ -77,7 +77,7 @@ urlpatterns = [
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT or settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = error404
 handler500 = error500

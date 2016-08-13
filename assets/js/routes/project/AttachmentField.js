@@ -60,11 +60,11 @@ const AttachmentField = React.createClass({
     },
 
     render(){
+        let { file } = this.state 
         let {
             onChange, title, tag, multiple, className,
             Preview = defaultPreview(this.props.accept), ...props
         } = this.props
-        let file = this.props.value ? { preview: this.props.value.url, type: props.accept } : this.state.file
         
         title = title || toTitle(tag)
         className = `${tag} attachment-field ${file ? 'preview' : 'button'} ${className}`

@@ -86,20 +86,14 @@ export default class QuillComponent extends React.Component {
             this.onEditorChangeSelection( range, source, editor )
         })
         this.setState({ editor })
-
     }
 
-    shouldComponentUpdate({value}) {
-      if(value && !this.state.value && this.state.editor){
-        this.state.editor.pasteHTML(value);
-      }
-      return false;
-    }
+    shouldComponentUpdate() { return false; }
 
     render(){
         let { config: { modules  = {} }, value, className='', ...props } = this.props
         return (
-            <div className={`quill-wrapper ${className}`} {...props}>
+            <div className={`quill-wrapper ${className}`} {...this.props}>
                 { modules.toolbar && (<Toolbar id={modules.toolbar.container.split('#')[1]} />) }
                 <div ref="editor">{ this.state.value }</div>
             </div>
