@@ -5,14 +5,23 @@
 <div id="dashboard">
   <div class="row">
     <div class="container">
+      {% if projects %}
       <div class="col-md-12">
-        <h2 class="text-yellow">the hub for your project bids</h2>
+        <h2 class="brand">the hub for your project bids</h2>
       </div>
+      {% else %}
+      <div class="col-md-12">
+        <h2 class="brand">You don't have any pending projects.</h2>
+        <div class="text-center">
+          <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+        </div>
+      </div>
+      {% endif %}
       <div class="col-md-12">
         {% for project in projects %}
         <div class="section">
           <div class="section-header">
-            <h4>{{ project.title }} <span class="text-skinny">(5 New)</span></h4>
+            <h4>{{ project.title }}</h4>
           </div>
           <table class="dashboard-table">
             {% if project.job_set.all %}

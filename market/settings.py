@@ -229,6 +229,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATIC_URL = 'https://devquity.s3.amazonaws.com/'
+MEDIA_URL = 'https://devquity.s3.amazonaws.com/uploads/'
 
 STRIPE_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u')
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_PhUrky9HrJfcAQvmstWpEna6')

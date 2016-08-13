@@ -317,7 +317,7 @@ const DeveloperOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile } = this.state;
+    const { formElements, formError, profile, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
     const roleOptions = formElements.role.options.map((option, i) => {

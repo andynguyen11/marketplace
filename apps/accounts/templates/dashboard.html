@@ -11,7 +11,7 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12">
-        <h2 class="brand text-brand">welcome to your dashboard, {{ user.first_name }}</h2>
+        <h2 class="brand">welcome to your dashboard, {{ user.first_name }}</h2>
       </div>
       <div class="col-md-3">
         <div class="section profile-snapshot text-center">
@@ -63,7 +63,7 @@
       <div class="col-md-9">
         <div class="section">
           <div class="section-header">
-            <h4>Notifications <span class="text-skinny">({% notifications_unread %} New)</span></h4>
+            <h4>Notifications <!--<span class="text-skinny">({% notifications_unread %} New)</span>--></h4>
           </div>
           <ul class="notifications">
             {% if notifications %}
@@ -71,12 +71,12 @@
               <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
               {% endfor %}
             {% else %}
-              <li>There are no new notifications.</li>
+              <li>You have successfully created your account. Welcome to Loom!</li>
             {% endif %}
           </ul>
         </div>
 
-      
+      {% comment %}
         <div class="section">
           <div class="section-header">
             <h4>Messages <span class="text-skinny">({{ unread_count }} New)</span></h4>
@@ -137,6 +137,7 @@
             </tbody>
           </table>
         </div>
+      {% endcomment %}
 
       </div>
     </div>
