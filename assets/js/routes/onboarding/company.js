@@ -40,7 +40,7 @@ const CompanyForm = React.createClass({
           <div className="form-group col-md-10 col-md-offset-1">
             <div id="confirm-profile" className="sub-section text-center">
               { prelaunch ? (
-                  <div>
+                  <div className="sub-section">
                     <h2 className="brand text-center">
                       Welcome to Loom!
                     </h2>
@@ -50,9 +50,11 @@ const CompanyForm = React.createClass({
                   </div>
                   ) :
                   (
-                    <h2 className="brand text-center">
-                      What type of account do you want?
-                    </h2>
+                    <div className="sub-section">
+                      <h2 className="brand text-center">
+                        What type of account do you want?
+                      </h2>
+                    </div>
                   )
                 }
                 <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"}  onClick={setCompany}>
