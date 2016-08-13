@@ -63,7 +63,6 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         for i, tab in enumerate(data['info']):
             if tab['description'] == 'undefined':
                 del data['info'][i]
-        print(data['info'])
         data['info'].append(details)
         project = super(ProjectSerializer, self).create(data, action)
         return project

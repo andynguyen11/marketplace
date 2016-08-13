@@ -5,6 +5,7 @@ import AccountForm from '../onboarding/account';
 import FormHelpers from '../../utils/formHelpers';
 import BigSelect from '../../components/bigSelect';
 import Loader from '../../components/loadScreen';
+import { objectToFormData } from '../project/utils'
 
 //TODO this is almost an exact copy paster of onboarding/developer.js
 // TODO Create a settings router
@@ -29,6 +30,7 @@ const ProfileSettings = React.createClass({
         skills: [],
         all_skills: []
       },
+      photo_file: '',
       isLoading: true,
       formError: false
     };
@@ -280,24 +282,6 @@ const ProfileSettings = React.createClass({
     }
   },
 
-  _uploadImage() {
-    this.setState({ isLoading: true });
-    let data = new FormData();
-      data.append('photo', this.state.photo_file);
-      $.ajax({
-        url: loom_api.profile + this.state.profile.id + '/',
-        type: 'PATCH',
-        data: data,
-        cache: false,
-        dataType: 'json',
-        processData: false,
-        contentType: false,
-        success: function(data, textStatus, jqXHR) {
-          window.location = '/profile/dashboard/';
-        }
-      });
-  },
-
   _saveAccount() {
     const { formElements } = this.state;
 
@@ -307,21 +291,16 @@ const ProfileSettings = React.createClass({
       if (valid) {
         this.setState({ formError: false, isLoading: true });
         let profile = this.state.profile;
-        delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
+        profile.photo = this.state.photo_file;
         $.ajax({
           url: loom_api.profile + profile.id + '/',
           method: 'PATCH',
-          data: JSON.stringify(profile),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
+          data: objectToFormData(profile),
+          contentType: false,
+          processData: false,
           success: function (result) {
-            if (this.state.photo_file) {
-              this._uploadImage();
-            }
-            else {
-              window.location = '/profile/dashboard/';
-            }
-          }.bind(this)
+            window.location = '/profile/dashboard/';
+          }
         });
       } else {
         this.setState({ formError: 'Please fill out all fields.' });
@@ -364,6 +343,7 @@ const ProfileSettings = React.createClass({
           <SkillButton
             skill={skill}
             update_skills={this.updateSkills}
+            mySkills={this.state.profile.skills}
           />
         </div>
       );

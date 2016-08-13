@@ -1,9 +1,11 @@
 from rest_framework import serializers
 from social.apps.django_app.default.models import UserSocialAuth
+from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills, SkillTest
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from generics.utils import update_instance, field_names
+from generics.serializers import ParentModelSerializer
 
 
 class PaymentSerializer(serializers.Serializer):
@@ -28,7 +30,7 @@ class SkillsSerializer(serializers.ModelSerializer):
 
 
 #TODO Create an obfuscated profile
-class ProfileSerializer(serializers.ModelSerializer):
+class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()

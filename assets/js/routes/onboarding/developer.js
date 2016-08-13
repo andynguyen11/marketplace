@@ -4,7 +4,7 @@ import SkillButton from '../../components/skill';
 import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
 import BigSelect from '../../components/bigSelect';
-import { objectToFormData } from '../project/utils'
+import { objectToFormData } from '../project/utils';
 import Loader from '../../components/loadScreen';
 
 
@@ -330,6 +330,7 @@ const DeveloperOnboard = React.createClass({
           <SkillButton
             skill={skill}
             update_skills={this.updateSkills}
+            mySkills={this.state.profile.skills}
           />
         </div>
       );
