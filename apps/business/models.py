@@ -162,7 +162,7 @@ class Project(models.Model):
     title = models.CharField(max_length=255)
     video_url = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
-    category = tagulous.models.TagField(to=Category) # not really in the mockup
+    category = tagulous.models.TagField(to=Category, blank=True, null=True) # not really in the mockup
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
@@ -215,6 +215,12 @@ class Project(models.Model):
     def info(self, type=None):
         rest = {'type': type} if type else {}
         return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
+
+   #def info_by_user(self, user):
+   #    permitted_users = [ job.contractor for job in self.active_jobs
+   #            ] + self.company.employees if self.company else [ self.project_manager ]
+   #    return self.info(type=None if user in permitted_users else 'public')
+   #    return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
 
     def documents(self):
         documents = Document.objects.filter(project=self)

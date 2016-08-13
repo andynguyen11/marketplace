@@ -8,6 +8,7 @@ from postman.helpers import pm_write
 from notifications.signals import notify
 
 from business.forms import ProjectForm, InfoForm
+from business.serializers import ProjectSerializer
 from accounts.models import Profile
 
 from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user_company
@@ -35,7 +36,10 @@ def create_project(request, project_id=None):
         if project.project_manager != request.user:
             return HttpResponse(status=403)
 
-    return render_to_response('create_project.html', {'form': form, 'project':project, 'company':company, 'project_manager': request.user}, context_instance=RequestContext(request))
+    return render_to_response('create_project.html', {
+            'project': ProjectSerializer(project).data,
+            'form': form, 'company': company, 'project_manager': request.user
+        }, context_instance=RequestContext(request))
 
 
 @login_required
