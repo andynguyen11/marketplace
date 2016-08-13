@@ -48,7 +48,6 @@ export default function ProjectPreview({data: {title, details, skills, _company_
                             <div className="col-md-8">
                                 <h2 className="section-header">Project Overview</h2>
                                 <div dangerouslySetInnerHTML={{__html: details.description }}/>
-                                <MultipleAttachmentsPreview attachments={details.attachments} />
                             </div>
                             <div className="col-md-4">
                                 <h5>Posted by</h5>

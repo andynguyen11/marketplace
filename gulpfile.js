@@ -120,6 +120,7 @@ gulp.task('images', function(){
 	})
 });
 
+gulp.task('build', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
 gulp.task('dist', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
 gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
 

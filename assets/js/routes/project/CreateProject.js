@@ -103,7 +103,7 @@ function Basics({update, ...props}){
                 This helps developers determine if they're the right person for the job.
                 If you don't have a preference, no sweat. You can leave this section blank.
               </p>
-              <SkillWidget onChange={value => update.skills({value})}/>
+              <SkillWidget mySkills={props.data.skills} onChange={value => update.skills({value})}/>
             </BigFormGroup>
             <div className="clearfix"></div>
         </div>
@@ -274,6 +274,7 @@ const CreateProject = React.createClass({
             },
             formError: false,
             data: {
+                skills: [],
                 details: {
                     title: 'Project Overview',
                     description: undefined,
@@ -395,6 +396,7 @@ const CreateProject = React.createClass({
                       className={currentSection == 'basics' ? 'basics' : 'hidden'}
                       update={this.fieldUpdateMap('title', 'type', 'short_blurb', 'start_date', 'end_date', 'skills')}
                       formErrors={formErrors}
+                      data={this.state.data}
                     />
 
                     <Details

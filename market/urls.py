@@ -73,7 +73,6 @@ urlpatterns = [
     url(r'^project/edit/(?P<project_id>[0-9]+)/$', business_views.create_project, name='edit-project'),
     url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^ckeditor/', include('ckeditor_uploader.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
