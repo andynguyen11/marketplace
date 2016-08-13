@@ -219,18 +219,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
-
-STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-STATIC_URL = 'https://devquity.s3.amazonaws.com/'
-MEDIA_URL = 'https://devquity.s3.amazonaws.com/uploads/'
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'market.custom_storages.StaticStorage'
+STATIC_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', STATICFILES_LOCATION)
+
+MEDIAFILES_LOCATION = 'media'
+MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)
+DEFAULT_FILE_STORAGE = 'market.custom_storages.MediaStorage'
 
 STRIPE_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u')
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_PhUrky9HrJfcAQvmstWpEna6')
