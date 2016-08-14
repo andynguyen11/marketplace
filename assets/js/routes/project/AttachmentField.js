@@ -59,12 +59,21 @@ const AttachmentField = React.createClass({
         }
     },
 
+    file(){
+        let { url: preview, file } = this.props.value
+        if(preview || file){
+            return typeof(file) == 'string' ? { preview, type: this.props.accept } : file
+        } else {
+            return this.state.file
+        }
+    },
+
     render(){
-        let { file } = this.state 
         let {
             onChange, title, tag, multiple, className,
             Preview = defaultPreview(this.props.accept), ...props
         } = this.props
+        let file = this.file()
         
         title = title || toTitle(tag)
         className = `${tag} attachment-field ${file ? 'preview' : 'button'} ${className}`

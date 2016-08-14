@@ -31,14 +31,16 @@ class RelationalModelSerializer(serializers.ModelSerializer):
             return obj
     ```
     """
+
     def resolve_relations(self, obj):
         return obj
 
-    def create_self(self, data, action='create'):
-        data = self.resolve_relations(data)
-        if action == 'update_or_create':
-            data = {'defaults': data, 'id': data['id']}
-
+    def create_self(self, data, action='create', normalize=True):
+        if (normalize):
+            data = self.resolve_relations(data)
+        if action == 'update_or_create' and data.has_key('id'):
+            id = data.pop('id')
+            data = {'defaults': data, 'id': id }
         return normalize_persistence(getattr(self.Meta.model.objects, action)(**data))
 
     def create(self, validated_data, action='create'):

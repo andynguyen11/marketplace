@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     #'webpack_loader',
+    'jsonify',
     'tagulous',
     'crispy_forms',
     'raven.contrib.django.raven_compat',
@@ -338,7 +339,7 @@ EXPERT_RATING = {
         'partneruserid': expert_rating_('PARTNERUSERID'),
     }
 }
-WEBHOOK_BASE_URL = ''
+WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 
 MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]

@@ -1,15 +1,20 @@
 from rest_framework import serializers
+from django.contrib.contenttypes.models import ContentType
 from .models import Attachment
 from .base_serializers import RelationalModelSerializer, ParentModelSerializer
 
+
 class AttachmentSerializer(RelationalModelSerializer):
     file = serializers.FileField(max_length=None, allow_empty_file=False, required=False)
+    url = serializers.CharField(read_only=True)
+    id = serializers.CharField(read_only=True)
 
     class Meta:
         model = Attachment
-        fields = ('file', 'tag')
+        fields = ('id', 'file', 'tag', 'url')
 
     def resolve_relations(self, obj):
+        id, url = obj.pop('id', None), obj.pop('url', None)
         new_obj = {'file': obj.pop('file') }
 
         tag = obj.pop('tag', None)
@@ -19,6 +24,17 @@ class AttachmentSerializer(RelationalModelSerializer):
         values = obj.values()
         assert len(values) == 1
         new_obj['content_object'] = values[0]
+        if id:
+            new_obj['id'] = id
         return new_obj
+
+    def create_self(self, data, action='create'):
+        data = self.resolve_relations(data)
+        if action == 'update_or_create' and data.has_key('tag'):
+            tag = data.pop('tag')
+            content_object = data.pop('content_object')
+            content_type = ContentType.objects.get_for_model(content_object)
+            data = {'defaults': data, 'tag': tag, 'content_type': content_type, 'object_id': content_object.id }
+        return super(AttachmentSerializer, self).create_self(data, action, normalize=False)
 
 

@@ -47,7 +47,7 @@ class Attachment(models.Model):
 
     @property
     def url(self):
-        return settings.MEDIA_URL + self.original_name
+        return settings.MEDIA_URL + self.name
 
     @property
     def data(self):

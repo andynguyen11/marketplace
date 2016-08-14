@@ -103,3 +103,4 @@ django-webpack-loader==0.3.0
 
 wsgiref==0.1.2
 html-json-forms==0.1.1
+django-jsonify==0.3.0

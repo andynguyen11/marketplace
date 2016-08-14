@@ -56,7 +56,7 @@ const ProjectInfoField = React.createClass({
   },
 
   render(){
-      let {update, id, data: {title, type}, className='', ...props} = this.props
+      let {update, id, data: {title, description, type}, className='', ...props} = this.props
       return (
           <div id={`project-info-${id}`} className={`project-info ${className} ${type}`} {...props}>
               {/* Hidden by css for className='primary' */}
@@ -72,7 +72,7 @@ const ProjectInfoField = React.createClass({
               </BigFormGroup>
               <BigFormGroup label={type == 'primary' ? 'Details' : `${toTitle(type)} Info`}>
                 <Quill config={quillConf({id, type})} className="description" onChange={this.fieldUpdater("description")}
-                         />
+                       value={description}  />
               </BigFormGroup>
             <div className={type == 'private' ? 'clearfix' : ''}></div>
           </div>

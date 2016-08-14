@@ -17,7 +17,7 @@
       </h2>
       <div class="sub-section">
         <div class="col-md-8">
-          <img class="project-image" src="{{ MEDIA_URL }}{{ project.image.file }}" />
+          <img class="project-image" src="{{ project.image.url }}" />
           <div class="sub-section">{{ project.short_blurb }}</div>
         </div>
         <div class="specs col-md-4">
@@ -56,7 +56,12 @@
             </li>
             <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
           </ul>
+
+          {% if request.user == project.project_manager %}
+          <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit</a>
+          {% else %}
           <button disabled id="bid-button" class="btn btn-brand" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and will begin accepting bids very soon." data-target="#bid-modal">BID ON PROJECT</button>
+          {% endif %}
           <p class="small text-muted">This company is accepting bids for work in forms of
             {% if project.estimated_equity_percentage %}equity {% endif %}
             {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}
