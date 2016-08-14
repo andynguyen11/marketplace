@@ -44,9 +44,9 @@ const CompanyForm = React.createClass({
                     <h2 className="brand text-center">
                       Welcome to Loom!
                     </h2>
-                    <h2 className="brand text-center">
+                    <h3 className="brand text-center">
                       Let's quickly get your account set up.
-                    </h2>
+                    </h3>
                   </div>
                   ) :
                   (
@@ -57,13 +57,17 @@ const CompanyForm = React.createClass({
                     </div>
                   )
                 }
-                <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"}  onClick={setCompany}>
-                  <h4><span className="text-accent">Company</span></h4>
-                  <p>A company can get work made for cash, equity, or a mix of both.</p>
-                </div>
-                <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"}  onClick={setCompany}>
-                  <h4><span className="text-brand">Individual <span className="hide-mobile">Entrepreneur</span></span></h4>
-                  <p>Individual Entrepreneurs can get work made for cash only.</p>
+                <div className="pickers">
+                    <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"} onClick={setCompany}>
+                        <div className="picker-image"></div>
+                        <h4><span className="text-accent">Company</span></h4>
+                        <p>A company can get work made for cash, equity, or a mix of both.</p>
+                    </div>
+                    <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"} onClick={setCompany}>
+                        <div className="picker-image"></div>
+                        <h4><span className="text-brand">Individual <span className="hide-mobile">Entrepreneur</span></span></h4>
+                        <p>Individual Entrepreneurs can get work made for cash only.</p>
+                    </div>
                 </div>
             </div>
           </div>
@@ -73,8 +77,8 @@ const CompanyForm = React.createClass({
 
     const companyTypeSelector = formElements.companyType.options.map((option, i) => {
       return (
-        <div className="col-md-6" key={i}>
-            <label className="radio">
+        <div className="radio" key={i}>
+            <label>
                 <input type="radio" name={formElements.companyType.name} checked={formElements.companyType.value == option.value ? 'checked' : ''} id={option.value} onChange={handleChange} value={option.value}/>
                 {option.label}
             </label>
@@ -99,7 +103,7 @@ const CompanyForm = React.createClass({
           />
         </div>
 
-        <div className='col-md-5 col-md-offset-2'>
+        <div className='col-md-6 col-md-offset-2'>
           <div className='form-group'>
             <label className='control-label'>Country</label>
             <input className='form-control disabled' type="text" disabled="true" value="United States of America" />
@@ -164,6 +168,7 @@ const CompanyForm = React.createClass({
                 <option value="WY">Wyoming</option>
               </select>
           </div>
+
           <div className={ 'form-group ' + formElements.companyCity.errorClass } >
             <label className="control-label" htmlFor={formElements.companyCity.name}>{formElements.companyCity.label}</label>
             <input
@@ -179,9 +184,8 @@ const CompanyForm = React.createClass({
 
         </div>
 
-        <div className='form-group col-md-3 compay-photo-upload'>
+        <div className='form-group col-md-2 company-photo-upload'>
             <label className="control-label">Company Photo</label>
-            <div className='text-center'>
             <div className='text-center company-image' style={companyPhoto}></div>
 
             <div href="" className="btn btn-sm btn-brand btn-upload-image">
@@ -195,12 +199,7 @@ const CompanyForm = React.createClass({
                     onChange={handleLogoChange}
                 />
             </div>
-            </div>
         </div>
-
-
-
-
 
         <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyDescription.errorClass } >
           <label className="control-label" htmlFor={formElements.companyDescription.name}>{formElements.companyDescription.label}</label>
@@ -217,7 +216,7 @@ const CompanyForm = React.createClass({
         </div>
 
         <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.companyType.errorClass }>
-          <label className="control-label col-md-12">Company Type</label>
+          <label className="control-label">Company Type</label>
           {companyTypeSelector}
           <div className="clearfix"></div>
         </div>
@@ -280,7 +279,7 @@ const CompanyForm = React.createClass({
           </select>
         </div>
 
-        <div className='form-group col-md-8 col-md-offset-2' >
+        <div className={'form-group col-md-8 col-md-offset-2 ' + formElements.companyBio.errorClass } >
           <label className="control-label" htmlFor={formElements.companyBio.name}>{formElements.companyBio.label}</label>
           <Quill
             config={this.quillConf()}

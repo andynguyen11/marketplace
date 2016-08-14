@@ -40,6 +40,7 @@ const BigSelect = React.createClass({
         const optionsList = (
             <div className="bigSelect-options">
                 <div className="bigSelect-selector">{selectedOption}</div>
+                <i className="fa fa-angle-down"></i>
                 <select name={name} id={id} value={selectedOption} onChange={this.onSelectChange}>
                     {selectOptions}
                 </select>

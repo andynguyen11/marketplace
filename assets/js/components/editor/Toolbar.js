@@ -8,11 +8,11 @@ export default function Toolbar({id}){
                     <option value="2">Subheading</option>
                     <option selected>Normal</option>
                 </select>
-                <select class="ql-font">
-                    <option selected>Sans Serif</option>
-                    <option value="serif">Serif</option>
-                    <option value="monospace">Monospace</option>
-                </select>
+                <!--<select class="ql-font">-->
+                    <!--<option selected>Sans Serif</option>-->
+                    <!--<option value="serif">Serif</option>-->
+                    <!--<option value="monospace">Monospace</option>-->
+                <!--</select>-->
             </span>
             <span class="ql-formats">
                 <button class="ql-bold"></button>
@@ -22,15 +22,15 @@ export default function Toolbar({id}){
             <span class="ql-formats">
                 <button class="ql-list" value="ordered"></button>
                 <button class="ql-list" value="bullet"></button>
-                <select class="ql-align">
-                    <option selected></option>
-                    <option value="center"></option>
-                    <option value="right"></option>
-                    <option value="justify"></option>
-                </select>
+                <!--<select class="ql-align">-->
+                    <!--<option selected></option>-->
+                    <!--<option value="center"></option>-->
+                    <!--<option value="right"></option>-->
+                    <!--<option value="justify"></option>-->
+                <!--</select>-->
             </span>
             <span class="ql-formats">
-                <button class="ql-link"></button>
+                <!--<button class="ql-link"></button>-->
                 <button class="ql-image"></button>
                 <!-- button class="ql-video"></button -->
             </span>

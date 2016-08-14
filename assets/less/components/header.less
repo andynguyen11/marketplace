@@ -35,17 +35,21 @@
     align-items: center;
 
     li {
-      padding: 0;
       margin: 0;
+      padding-left: 60px;
       list-style: none;
-      margin-left: 60px;
+      text-align: center;
+
+      @media (max-width: @screen-md) {
+        padding-left: 20px;
+      }
     }
 
     a {
       font-family: @brand-font;
       font-size: 16px;
-      margin: 0 10px;
       color: @brand-neutral--3;
+      text-align: center;
     }
 
     a:hover {
@@ -56,6 +60,10 @@
     .header-link--auth {
       a {
         color: @brand--accent;
+
+        &:hover {
+          color: @brand--primary;
+        }
 
         @media (max-width: @screen-sm) {
           margin: 0;
@@ -68,16 +76,8 @@
         }
       }
 
-      &.header-link--sign-up {
-        margin-left: 0;
-
-      }
-
       &.header-link--sign-in {
-        @media (max-width: @screen-sm) {
-          margin-left: 0;
-          margin-right: @gutter--medium;
-        }
+        padding-left: @gutter;
       }
     }
   }

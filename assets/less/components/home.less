@@ -63,6 +63,7 @@
 		align-items: center;
 		position: relative;
 		text-align: center;
+		padding: 0 (@gutter * 3);
 
 		h2 {
 			margin: 0;
@@ -70,6 +71,10 @@
 			color: #FFF;
 			font-weight: 700;
 			font-size: 68px;
+
+			@media (max-width: @screen-sm) {
+				font-size: 48px;
+			}
 		}
 
 		h5 {
@@ -80,6 +85,14 @@
 			font-size: 24px;
 			margin: 40px 0;
             line-height: 1.5;
+
+			@media (max-width: @screen-sm) {
+				font-size: 21px;
+			}
+		}
+
+		@media (max-width: @screen-sm) {
+			padding: 0 @gutter;
 		}
 	}
 
@@ -100,6 +113,10 @@
 			background: url("../images/overlay-logo-pattern--left.svg") no-repeat right center;
 			background-size: 120%;
             opacity: .65;
+
+			@media (max-width: @screen-sm) {
+				display: none;
+			}
 		}
 
 		&:after {
@@ -112,6 +129,10 @@
 			background: url("../images/overlay-logo-pattern--right.svg") no-repeat left center;
 			background-size: 120%;
             opacity: .65;
+
+			@media (max-width: @screen-sm) {
+				display: none;
+			}
 		}
 	}
 }
@@ -125,7 +146,7 @@
 		display: flex;
 		flex-direction: column;
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			width: 100%;
 			text-align: center;
 		}
@@ -139,7 +160,7 @@
 		padding-left: (@gutter * 6) + @gutter--medium;
 
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			padding: @gutter + @gutter--medium;
 		}
 	}
@@ -160,12 +181,12 @@
 			padding: 0 0 0 (@gutter + @gutter--medium);
 			margin: 0;
 
-			@media (max-width: @screen-sm) {
+			@media (max-width: @screen-md) {
 				padding: @gutter 0 0;
 			}
 		}
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			flex-direction: column;
 		}
 	}
@@ -218,7 +239,7 @@
 			padding-left: @gutter--medium;
 		}
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			padding: @gutter--medium;
 		}
 	}
@@ -233,7 +254,7 @@
 		background-size: cover;
 		opacity: 0.7;
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			display: none;
 		}
 	}
@@ -244,7 +265,7 @@
 		font-size: 58px;
 		font-weight: 700;
 
-		@media (max-width: @screen-sm) {
+		@media (max-width: @screen-md) {
 			font-size: 28px;
 		}
 	}

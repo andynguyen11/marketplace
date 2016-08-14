@@ -163,7 +163,10 @@ const PrelaunchOnboarding = React.createClass({
         placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
           const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          const minLen = 1;
+          const maxLen = 500;
+          const valid = isCompany ? value.length >= minLen && value.length <= maxLen : true;
+
           if (!valid) {
             formElements.companyDescription.errorClass = 'has-error';
           } else {
@@ -180,8 +183,7 @@ const PrelaunchOnboarding = React.createClass({
       },
       companyBio: {
         name: 'companyBio',
-        errorClass: '',
-        label: 'Company Bio (Optional - You can do this later)',
+        label: 'Company Bio (optional)',
         value: company.description || '',
         placeholder: 'This is a long form bio of your company. Tell developers the story of your company, your goals, and all they need to know about working with you.  You can add images in this section to help your story.',
         update: (value) => {
@@ -373,9 +375,24 @@ const PrelaunchOnboarding = React.createClass({
       },
       profileBio: {
         name: 'profileBio',
-        label: 'Quick Bio (optional)',
+        label: 'Quick Bio (max 250 characters)',
         placeholder:'Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself.',
         value: profile.biography || '',
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const maxLen = 250;
+          const minLen = 1;
+          const valid = value && value.length >= minLen && value.length <= maxLen;
+
+          if (!valid) {
+            formElements.profileBio.errorClass = 'has-error';
+          } else {
+            formElements.profileBio.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.biography = value;
@@ -505,18 +522,17 @@ const PrelaunchOnboarding = React.createClass({
     const { value } = event.target;
     const fieldName = event.target.getAttribute('name');
 
-    formElements[fieldName].update(value);
     formElements[fieldName].value = value;
+    formElements[fieldName].update(value);
 
     this.setState({ formElements, formError: false });
   },
 
-  handleBio(event) {
+  handleBio(value) {
     const { formElements } = this.state;
-    const { value } = event
 
-    formElements['companyBio'].update(value);
     formElements['companyBio'].value = value;
+    formElements['companyBio'].update(value);
 
     this.setState({ formElements, formError: false });
   },
@@ -528,7 +544,6 @@ const PrelaunchOnboarding = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
-        debugger
         this.setState({
           photo_url: reader.result,
           photo_file: file
@@ -545,7 +560,6 @@ const PrelaunchOnboarding = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
-        debugger
         this.setState({
           logo_url: reader.result,
           logo_file: file
@@ -584,6 +598,7 @@ const PrelaunchOnboarding = React.createClass({
           isCompany={this.state.isCompany}
           setCompany={this.setCompany}
           logo_url={this.state.logo_url}
+          handleBio={this.handleBio}
           company={company}
           settings={false}
           prelaunch={true}
@@ -597,7 +612,6 @@ const PrelaunchOnboarding = React.createClass({
           photo_url={this.state.photo_url}
           profile={profile}
           handleImageChange={this.handleImageChange}
-          handleBio={this.handleBio}
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
@@ -634,7 +648,7 @@ const PrelaunchOnboarding = React.createClass({
 
           <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createAccount}>
             <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-            Create Account
+            Sign Up
           </a>
         </div>
 

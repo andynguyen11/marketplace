@@ -272,7 +272,6 @@ const ProfileSettings = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
-        debugger
         this.setState({
           photo_url: reader.result,
           photo_file: file

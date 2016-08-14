@@ -78,9 +78,9 @@ const AccountForm = React.createClass({
             </div>
         </div>
 
-        <div>
+        <div className='col-md-6 col-md-offset-2'>
 
-          <div className={ 'form-group col-md-3 col-md-offset-2 ' + formElements.profileCountry.errorClass } >
+          <div className={ 'form-group ' + formElements.profileCountry.errorClass } >
             <label className="control-label" htmlFor={formElements.profileCountry.name}>{formElements.profileCountry.label}</label>
             <select className={ 'form-control ' + formElements.profileCountry.errorClass } name={formElements.profileCountry.name} value={formElements.profileCountry.value} onChange={handleChange}>
               <option value="United States of America">United States of America</option>
@@ -333,7 +333,7 @@ const AccountForm = React.createClass({
               </select>
           </div>
 
-          <div className={ 'form-group col-md-2 ' + formElements.profileStateProvince.errorClass }>
+          <div className={ 'form-group ' + formElements.profileStateProvince.errorClass }>
             <label className="control-label" htmlFor={formElements.profileStateProvince.name}>{formElements.profileStateProvince.label}</label>
 
           { formElements.profileCountry.value == 'United States of America' ?
@@ -404,7 +404,7 @@ const AccountForm = React.createClass({
 
           </div>
 
-          <div className={ 'form-group col-md-3 ' + formElements.profileCity.errorClass }>
+          <div className={ 'form-group ' + formElements.profileCity.errorClass }>
             <label className="control-label" htmlFor={formElements.profileCity.name}>{formElements.profileCity.label}</label>
             <input
               className={ 'form-control ' + formElements.profileCity.errorClass }
@@ -416,7 +416,7 @@ const AccountForm = React.createClass({
           </div>
         </div>
 
-        <div className='form-group col-md-8 col-md-offset-2'>
+        <div className={'form-group col-md-8 col-md-offset-2 ' + formElements.profileBio.errorClass }>
           <label className="control-label" htmlFor={formElements.profileBio.name}>{formElements.profileBio.label}</label>
           <textarea
             className="form-control"

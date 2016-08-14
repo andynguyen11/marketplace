@@ -310,7 +310,6 @@ const CompanySettings = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
-        debugger
         this.setState({
           logo_url: reader.result,
           logo_file: file

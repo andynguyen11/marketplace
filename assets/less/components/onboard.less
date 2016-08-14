@@ -1,74 +1,64 @@
 #confirm-profile {
+  h2 {
+    font-size: 48px;
+  }
+
+  .pickers {
+    display: flex;
+    justify-content: center;
+  }
+
   .picker {
     color: @brand-neutral--1;
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
     border: 2px solid @brand-neutral--6;
     border-radius: 4px;
     width: 270px;
-    padding: 130px 25px 25px;
+    padding: 25px;
     margin: 20px;
+    cursor: pointer;
+
+    .picker-image {
+      flex-basis: 100px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+    }
+
     h4, p {
       line-height: 1.5;
+      margin: @gutter 0 0;
+      padding: 0;
     }
     p {
       color: @brand-neutral--3;
     }
 
-    &.dev{
-      background: url(../images/developer-picker.svg) no-repeat center 25px;
-      &:hover {
-        border: 2px solid @brand--accent;
-      }
+    &:hover {
+      border: 2px solid @brand--accent;
     }
-    &.ent{
-      background: url(../images/entrepreneur-picker.svg) no-repeat center 25px;
-      &:hover {
-        border: 2px solid @brand--primary;
-      }
+    &.active {
+      border: 2px solid @brand--primary;
     }
-    &.company{
-      background: url(../images/company.svg) no-repeat center 25px;
-      &:hover {
-        border: 2px solid @brand--accent;
-      }
-      &.active {
-        border: 2px solid @brand--accent;
-      }
+
+    &.dev .picker-image {
+      background-image: url(../images/developer-picker.svg);
     }
-    &.individual-ent{
-      background: url(../images/individual.svg) no-repeat center 25px;
-      &:hover {
-        border: 2px solid @brand--primary;
-      }
-      &.active {
-        border: 2px solid @brand--primary;
-      }
+    &.ent .picker-image {
+      background-image: url(../images/entrepreneur-picker.svg);
     }
-    &.post-project{
-      background: url(../images/developer-picker.svg) no-repeat center 35px;
-      padding-top: 150px;
-      &:hover {
-        border: 2px solid @brand--accent;
-      }
-      &.active {
-        border: 2px solid @brand--accent;
-      }
-      h2 {
-        margin: 5px 0;
-      }
+    &.company .picker-image {
+      background-image: url(../images/company.svg);
     }
-    &.explore-loom{
-      background: url(../images/explore-loom.svg) no-repeat center 35px;
-      padding-top: 150px;
-      &:hover {
-        border: 2px solid @brand--primary;
-      }
-      &.active {
-        border: 2px solid @brand--primary;
-      }
-      h2 {
-        margin: 5px 0;
-      }
+    &.individual-ent .picker-image {
+      background-image: url(../images/individual.svg);
+    }
+    &.post-project .picker-image {
+      background-image: url(../images/developer-picker.svg);
+    }
+    &.explore-loom .picker-image {
+      background-image: url(../images/explore-loom.svg);
     }
   }
 }
@@ -84,6 +74,7 @@
     text-transform: none;
     letter-spacing: normal;
     font-size: 14px;
+
     h5 {
       text-transform: uppercase;
       letter-spacing: 1.5px;
@@ -120,11 +111,10 @@
     margin: 0 0 @gutter--medium 0;
   }
 
-  .company-image {
-    height: 150px;
-    width: 150px;
-    margin: 5px auto;
-    border-radius: 0;
+  .company-photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .btn-upload-image {
@@ -159,4 +149,14 @@
       background: @off-white;
       padding: 15px;
     }
+}
+
+.quill-wrapper {
+  .ql-toolbar {
+    border-radius: @border-radius @border-radius 0 0;
+  }
+  .ql-container {
+    border-radius: 0 0 @border-radius @border-radius;
+  }
+  overflow: hidden;
 }

@@ -96,9 +96,7 @@ const DeveloperOnboard = React.createClass({
         placeholder: '24hrs/Week',
         value: profile.capacity || '',
         validator: (value) => {
-          console.log(value)
           const valid = FormHelpers.checks.isRequired(value);
-          console.log(valid)
           const { formElements } = this.state;
           if (!valid) {
             formElements.capacity.errorClass = 'has-error';
@@ -106,7 +104,6 @@ const DeveloperOnboard = React.createClass({
             formElements.capacity.errorClass = '';
           }
           this.setState({ formElements });
-          console.log(valid)
           return valid;
         },
         update: (value) => {
@@ -227,9 +224,24 @@ const DeveloperOnboard = React.createClass({
       },
       profileBio: {
         name: 'profileBio',
-        label: 'Your Bio (optional)',
+        label: 'Quick Bio (max 250 characters)',
         placeholder:'Long walks on the beach? Bacon aficionado? Tell potential clients a little bit about yourself.',
         value: profile.biography || '',
+        errorClass: '',
+        validator: (value) => {
+          const { formElements } = this.state;
+          const maxLen = 250;
+          const minLen = 1;
+          const valid = value && value.length >= minLen && value.length <= maxLen;
+
+          if (!valid) {
+            formElements.profileBio.errorClass = 'has-error';
+          } else {
+            formElements.profileBio.errorClass = '';
+          }
+          this.setState({ formElements });
+          return valid;
+        },
         update: (value) => {
           const { profile } = this.state;
           profile.biography = value;
@@ -260,7 +272,6 @@ const DeveloperOnboard = React.createClass({
     let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
     if(re.exec(file.name)) {
       reader.onloadend = () => {
-        debugger
         this.setState({
           photo_url: reader.result,
           photo_file: file
@@ -301,8 +312,8 @@ const DeveloperOnboard = React.createClass({
     const { value } = event.target;
     const fieldName = event.target.getAttribute('name');
 
-    formElements[fieldName].update(value);
     formElements[fieldName].value = value;
+    formElements[fieldName].update(value);
 
     this.setState({ formElements, formError: false });
   },
@@ -359,10 +370,10 @@ const DeveloperOnboard = React.createClass({
               <div className="bigSelect-prefix">I am a</div>
               <div className="bigSelect-options">
                 <div className="bigSelect-selector">{profile.role}</div>
+                <i className="fa fa-angle-down"></i>
                 <select name="role" id="role" value={profile.role} onChange={this.handleChange}>
                   {roleOptions}
                 </select>
-                <i className="fa fa-chevron-down"></i>
               </div>
               <div className="bigSelect-suffix">developer</div>
               {/*<div className="bigSelect-suffix">developer <span className="text-yellow">looking for incredible projects.</span></div>*/}
@@ -439,7 +450,7 @@ const DeveloperOnboard = React.createClass({
 
           <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}  >
             <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-            Save Profile
+            Sign Up
           </a>
         </div>
 

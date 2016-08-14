@@ -42,8 +42,9 @@
 }
 
 .form-group {
-  margin-bottom: 15px;
   position: relative;
+  margin-bottom: 25px;
+
   label {
     text-transform: uppercase;
     font-weight: 400;
@@ -51,9 +52,11 @@
     font-size: 12px;
     letter-spacing: 1.5px;
   }
+
   .ql-container {
     height: 400px;
   }
+
   &.has-error {
     .radio  {
       label {
@@ -61,18 +64,16 @@
       }
     }
   }
+
   .form-control {
     padding: 8px;
-    height: auto;
+
     .input-group-btn .btn {
       padding: 8px 12px;
     }
     &.disabled {
       padding-left: 25px;
     }
-  }
-  select.form-control {
-    margin: 7px 0;
   }
   .panel-skills {
     margin-bottom: 0;
@@ -163,7 +164,10 @@
       border-left: 1em solid;
       right: -1em;
     }
-    &::after{   z-index: 2;  border-left-color: #525252;   }
+    &::after {
+      z-index: 2;
+      border-left-color: #525252;
+    }
   }
 }
 
@@ -174,5 +178,17 @@ input.invalid, textarea.invalid {
 .has-error {
   .description {
     border: 1px solid #a94442;
+  }
+  .quill-wrapper {
+    .ql-toolbar {
+      border-top-color: #a94442;
+      border-right-color: #a94442;
+      border-left-color: #a94442;
+    }
+    .ql-container {
+      border-right-color: #a94442;
+      border-bottom-color: #a94442;
+      border-left-color: #a94442;
+    }
   }
 }

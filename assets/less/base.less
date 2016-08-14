@@ -42,6 +42,14 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+h2 {
+  letter-spacing: 2px;
+}
+
+h3 {
+  letter-spacing: 0.5px;
+}
+
 ul {
   list-style: none;
   padding: 0;
@@ -60,18 +68,42 @@ ul {
   background: @brand--primary-light;
 }
 
+.hide-mobile {
+  @media (max-width: @screen-sm) {
+    display: none !important;
+  }
+}
+
+.hide-medium {
+  @media (max-width: @screen-md) {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @media (min-width: @screen-sm) {
+    display: none !important;
+  }
+}
+
 .page-content {
   max-width: @content-max-width;
-  min-width: @content-width;
   width: 100%;
   margin: auto;
+
+  @media (max-width: @screen-sm) {
+    min-width: 320px !important;
+  }
 }
 
 .page-content--medium {
   max-width: @content-width;
-  min-width: @content-width;
   width: 100%;
   margin: auto;
+
+  @media (max-width: @screen-sm) {
+    min-width: 320px !important;
+  }
 }
 
 .page-content--alternate {

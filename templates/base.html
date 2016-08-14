@@ -29,10 +29,9 @@
 </head>
 
 <body class="{% block bodyclass %}customer-portal{% endblock %}" id="{% block bodyid %}{% endblock %}">
-  <div id="wrap" class="{% block fluid %}{% endblock %}">
-    <!--[if lt IE 7]>
-    <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
-    <![endif]-->
+  <!--[if lt IE 7]>
+  <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
 
   <div class="header" class="{% block header_class %}{% endblock %}">
     <div class="header-inner page-content">
@@ -81,9 +80,9 @@
         <li class="hide-mobile"><a href="{% url 'how' %}">How it Works</a></li>
         <!-- <li class="hide-mobile"><a href="{% url 'home' %}">Browse a Project</a></li> -->
         <li class="hide-mobile"><a href="/signup/prelaunch/">Post a Project</a></li>
-        <li class="hide-moble"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
-        <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign Up</a></li>
+        <li class="hide-mobile"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
+        <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign Up</a></li>
       </ul>
 
         {% endif %}
@@ -96,7 +95,7 @@
   <div class="footer">
     <div class="footer-inner page-content">
       <div class="footer-actions">
-        <div class="footer-nav pull-left">
+        <div class="footer-nav">
           <div class="footer-nav-section">
             <h6 class="footer-nav-header brand">Company</h6>
             <ul>
@@ -140,7 +139,7 @@
         </div>
 
         <!-- Begin MailChimp Signup Form -->
-        <div id="mc_embed_signup" class="footer-newsletter pull-right">
+        <div id="mc_embed_signup" class="footer-newsletter">
         <form action="//joinloom.us13.list-manage.com/subscribe/post?u=20280738ee079976d0dda6c8f&amp;id=f05175664a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
             <div id="mc_embed_signup_scroll">
           <h5 class="footer-newsletter-header brand-bold">Sign up for our newsletter</h5>
@@ -170,31 +169,29 @@
     </div>
   </div>
 
-</div>
+  <script src="https://use.fontawesome.com/3cdb773842.js"></script>
+  <script type="text/javascript" src="https://js.stripe.com/v2/?sensor=false"></script>
+  <script type="text/javascript" src="{% static 'js/vendor.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/main.js' %}"></script>
 
-<script src="https://use.fontawesome.com/3cdb773842.js"></script>
-<script type="text/javascript" src="https://js.stripe.com/v2/?sensor=false"></script>
-<script type="text/javascript" src="{% static 'js/vendor.js' %}"></script>
-<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+  {% if ENVIRONMENT == 'prod' %}
+  <script type="text/javscript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-78466915-1', 'auto');
+    ga('send', 'pageview');
 
-{% if ENVIRONMENT == 'prod' %}
-<script type="text/javscript">
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-78466915-1', 'auto');
-  ga('send', 'pageview');
-
-  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-    heap.load("1767701272");
-</script>
-{% else %}
-<script type="text/javascript">
-  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
-  heap.load("3419646760");
-</script>
-{% endif %}
-{% block scripts %}{% endblock %}
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+      heap.load("1767701272");
+  </script>
+  {% else %}
+  <script type="text/javascript">
+    window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+    heap.load("3419646760");
+  </script>
+  {% endif %}
+  {% block scripts %}{% endblock %}
 </body>
 </html>
