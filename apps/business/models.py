@@ -24,7 +24,7 @@ class Employee(models.Model):
 
 
 class Company(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     slug = models.SlugField()
     legal_entity_name = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=255, blank=True, null=True)
@@ -92,7 +92,7 @@ class Job(models.Model):
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     hours = models.IntegerField(blank=True, null=True)
-    status = models.CharField(max_length=100, blank=True, null=True, choices=JOB_STATUS)
+    status = models.CharField(max_length=100, blank=True, null=True, default='pending', choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
     nda_signed = models.BooleanField(default=False)
     start_date = models.DateField(blank=True, null=True)
@@ -128,6 +128,7 @@ class ProjectInfo(models.Model):
 
 
 class Document(models.Model):
+    date_created = models.DateTimeField(auto_now=True)
     job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
@@ -163,12 +164,16 @@ class Document(models.Model):
                 if signer.status in (None, 'sent', 'delivered'):
                     return signer.profile.id
 
+    def docusign_status(self):
+        return self.docusign_document.status
+
+
 
 class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
-
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField()
     video_url = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
     category = tagulous.models.TagField(to=Category, blank=True, null=True) # not really in the mockup
@@ -176,20 +181,28 @@ class Project(models.Model):
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
-
+    deleted = models.BooleanField(default=False)
     estimated_hours = models.IntegerField(blank=True, null=True)
     estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     estimated_equity_percentage = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2)
     estimated_equity_shares = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
-
     date_created = models.DateTimeField(auto_now_add=True)
-
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
-
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
+    mix = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['-date_created']
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(Project, self).save(*args, **kwargs)
 
     @property
     def image(self):
@@ -210,15 +223,35 @@ class Project(models.Model):
         except ProjectInfo.DoesNotExist:
             return ProjectInfo(project=self, type='primary')
 
+    @property
+    def average_equity(self):
+        average = None
+        bids = Job.objects.filter(project=self, ).exclude(cash__isnull=True)
+        equities = [bid.equity for bid in bids]
+        if equities:
+            average = round((sum(equities) / float(len(equities))), 2)
+        return average
 
-    def __str__(self):
-        return self.title
+    @property
+    def average_cash(self):
+        average = None
+        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True)
+        equities = [bid.equity for bid in bids]
+        if equities:
+            average = round((sum(equities) / float(len(equities))), 2)
+        return average
 
-    class Meta:
-        ordering = ['-date_created']
+    @property
+    def average_combined(self):
+        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(cash__isnull=True)
+        equities = [bid.equity for bid in bids]
+        cash = [bid.cash for bid in bids]
+        average_equity = round((sum(equities) / float(len(equities))), 2)
+        average_cash = round((sum(cash) / float(len(cash))), 2)
+        return { 'cash': average_cash, 'equity': average_equity }
 
     def active_jobs(self):
-        jobs = Job.objects.filter(status='active', project=self)
+        jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
         return jobs
 
     def info(self, type=None):

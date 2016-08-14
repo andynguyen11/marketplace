@@ -23,22 +23,16 @@ const ContractorTracker = React.createClass({
   },
 
   componentWillMount() {
-    this.updateStep();
-  },
 
-  updateStep() {
     let step = this.state.step;
-    if (!this.props.isLoading) {
-      if (this.props.terms.status == 'sent') {
-        step = 4;
-      }
-      else if (this.props.nda.status == 'signed') {
-        step = 3;
-      }
-      else if (this.props.bid_sent) {
-        step = 2;
-      }
-      console.log(step)
+    if (this.props.terms.status == 'sent') {
+      step = 4;
+    }
+    else if (this.props.nda.status == 'signed') {
+      step = 3;
+    }
+    else if (this.props.nda.status == 'sent') {
+      step = 2;
     }
     this.setState({step: step});
   },
@@ -68,10 +62,6 @@ const ContractorTracker = React.createClass({
                 <h5>Step 1</h5>
                 <h4 className="title">Project Bid</h4>
                 <div>
-                  <p>
-                    Your bid should include accurate work hours and your required compensation -
-                    in cash, equity or a mix of both.
-                  </p>
                   <div className={this.state.step > 1 ? '' : 'hidden'}>
                     <h4 className="highlight">Bid Sent&nbsp;
                       <i className="fa fa-check-circle"></i>
@@ -88,14 +78,21 @@ const ContractorTracker = React.createClass({
               <div className={this.state.step < 2 ? 'inactive step' : 'step'}>
                 <h5>Step 2</h5>
                 <h4 className="title">Non-disclosure Agreement</h4>
-                <div className={this.state.step != 2 ? 'hidden' : ''} >
+                <div>
                   <p>
                     An agreement that you will not share details of the project with outside parties.
                     Signing will unlock the private tab of the project, and is required to move forward into
                     the contract phase.
                   </p>
-                  <button onClick={toggleNDAPanel} className={showNDA ? 'hidden' : 'btn btn-brand'}>View and Sign NDA</button>
-                  <button disabled className={showNDA ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
+                  { this.state.step < 2 ?
+                    (<button disabled className='btn btn-secondary'>Not Sent</button>) :
+                    (
+                      <div>
+                      <button onClick={toggleNDAPanel} className={showNDA ? 'hidden' : 'btn btn-brand'}>View and Sign NDA</button>
+                      <button disabled className={showNDA ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
+                      </div>
+                    )
+                  }
                 </div>
                 <div className={this.state.step > 2 ? '' : 'hidden'}>
                   <h4 className="highlight">Signed&nbsp;

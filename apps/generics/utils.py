@@ -38,7 +38,7 @@ def pop_subset(fields, data, fallback=[]):
 
 def update_instance(instance, data):
     for k, v in data.items():
-        if hasattr(instance, k): 
+        if hasattr(instance, k) and v is not None:
             setattr(instance, k, v)
     instance.save()
     return instance

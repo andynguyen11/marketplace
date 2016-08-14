@@ -14,14 +14,22 @@ from accounts.models import Profile
 from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user_company
 
 
-def view_project(request, project_id=None):
-    project = Project.objects.get(id=project_id)
+def view_project(request, project_slug):
+    project = Project.objects.get(slug=project_slug)
     return render_to_response('project.html', {'project': project, }, context_instance=RequestContext(request))
 
 def company_profile(request, company_slug=None):
     company = Company.objects.get(slug=company_slug)
     projects = Project.objects.filter(company=company)
     return render_to_response('company.html', {'company': company, 'projects': projects}, context_instance=RequestContext(request))
+
+def delete_project(request, project_id):
+    project = Project.objects.get(id=project_id)
+    if project.project_manager != request.user:
+        return HttpResponse(status=403)
+    project.delete = True
+    project.save()
+    return redirect('view-bids')
 
 @login_required
 def create_project(request, project_id=None):

@@ -16,7 +16,6 @@ const Bid = React.createClass({
 
   formElements() {
     const { job } = this.props;
-
     // TODO Bad Andy. Passing props into state.  Figure out how not to do this.
     return {
       compensationType: {
@@ -206,7 +205,7 @@ const Bid = React.createClass({
           return result;
         }, {});
         new_job.contractor = current_user.id;
-        new_job.project = project.id
+        new_job.project = project.id;
         $.ajax({
           url: loom_api.job,
           method: 'POST',
@@ -317,7 +316,7 @@ const Bid = React.createClass({
         {messageInput}
 
         {error}
-        <button onClick={bid_sent ? this.saveBid : this.createBid} className="btn btn-brand">
+        <button onClick={bid_sent ? this.saveBid : this.createBid} disabled={ this.state.isLoading ? 'true': ''} className="btn btn-brand">
           <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
            Save Bid
         </button>

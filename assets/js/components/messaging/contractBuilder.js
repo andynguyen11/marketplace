@@ -33,12 +33,17 @@ const ContractBuilder = React.createClass({
 
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
 
+    const scheduleOptions = formElements.schedule.options.map((option, i) => {
+      return <option value={option} key={i}>{option.option}</option>;
+    });
+
     return (
       <div>
         <div className={this.state.step == 1 ? '' : 'hidden'} >
           <div className="form-group col-md-12">
             <label className="control-label" htmlFor={formElements.project.name}>{formElements.project.label}</label>
             <input
+              disabled
               className="form-control"
               type='text'
               name={formElements.project.name}
@@ -138,13 +143,8 @@ const ContractBuilder = React.createClass({
         </div>
 
         <div className={this.state.step == 3 ? '' : 'hidden'}>
-          <div className="form-group col-md-12">
-            <label className="control-label" htmlFor={formElements.compensation_type.name}>{formElements.compensation_type.label}</label>
-            <input className="form-control" type="radio" name="compensation_type" value="1" /> Cash
-            <input className="form-control" type="radio" name="compensation_type" value="2" /> Equity
-            <input className="form-control" type="radio" name="compensation_type" value="3" /> Cash + Equity
-          </div>
 
+          <h5>Compensation</h5>
           <div className="form-group col-md-6">
             <label className="control-label" htmlFor={formElements.cash.name}>{formElements.cash.label}</label>
             <input
@@ -171,18 +171,9 @@ const ContractBuilder = React.createClass({
 
           <div className="form-group col-md-12">
             <label className="control-label" htmlFor={formElements.schedule.name}>{formElements.schedule.label}</label>
-            <select>
-
+            <select className='form-control' name={formElements.schedule.name} id={formElements.schedule.name} value={formElements.schedule.value} onChange={handleChange}>
+                {scheduleOptions}
             </select>
-
-            <input
-              className="form-control"
-              type='text'
-              name={formElements.schedule.name}
-              id={formElements.schedule.name}
-              value={formElements.schedule.value}
-              onChange={handleChange}
-            />
           </div>
 
           <div className="form-group col-md-12">

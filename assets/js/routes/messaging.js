@@ -5,8 +5,10 @@ import ContractBuilder from '../components/messaging/contractBuilder';
 import ContracteeTracker from '../components/messaging/contractee';
 import ContractorTracker from '../components/messaging/contractor';
 import Checkout from '../components/payment/checkout';
+import NDAPanel from '../components/nda';
 import FormHelpers from '../utils/formHelpers';
 import _ from 'lodash';
+import {sprintf} from 'sprintf-js';
 
 (function(){
 
@@ -147,16 +149,6 @@ import _ from 'lodash';
             this.setState({ terms:terms });
           }
         },
-        compensation_type: {
-          name: 'compensation_type',
-          label: 'Compensation Type',
-          value: terms.compensation_type || '',
-          update: (value) => {
-            const { terms } = this.state;
-            terms.compensation_type = value;
-            this.setState({ terms:terms });
-          }
-        },
         equity: {
           name: 'equity',
           label: 'Equity',
@@ -171,6 +163,10 @@ import _ from 'lodash';
           name: 'schedule',
           label: 'How do you want to schedule payment?',
           value: terms.schedule || '',
+          options: [
+            '50% upfront and 50% upon completion',
+            '50% at a halfway milestone and 50% upon completion'
+          ],
           update: (value) => {
             const { terms } = this.state;
             terms.schedule = value;
@@ -226,21 +222,16 @@ import _ from 'lodash';
       });
     },
 
-    sendNDA() {
-      let nda = this.state.nda;
-      nda.status = 'sent';
-      this.updateNDA(nda);
-    },
-
-    signNDA() {
-      let nda = this.state.nda;
-      nda.status = 'signed';
-      this.updateNDA(nda);
-    },
-
-    updateNDA(nda) {
+    updateNDA(e) {
+      const { nda, job } = this.state;
+      const idList = {
+        projectID: job.project,
+        jobID: job.id,
+        documentID: nda.id
+      };
+      nda.status = $(e.currentTarget).data('status');
       $.ajax({
-        url: loom_api.document + nda.id + '/',
+        url: sprintf(loom_api.documentDetails, idList),
         method: 'PATCH',
         data: JSON.stringify(nda),
         contentType: 'application/json; charset=utf-8',
@@ -248,7 +239,8 @@ import _ from 'lodash';
         success: function (result) {
           this.setState({
             nda: result,
-            isLoading: false
+            isLoading: false,
+            showNDA: false
           });
         }.bind(this)
       });
@@ -340,18 +332,9 @@ import _ from 'lodash';
       );
 
       const NDA = isOwner || (isLoading ||
-        <div className={ showNDA ? "col-md-8 agreement-panel" : "hidden"}>
-        <div className={ showNDA ? "panel panel-default col-md-8" : "hidden"}>
-            <div className="panel-heading text-skinny">
-              <h4>Non-Disclosure Agreement</h4>
-              <a onClick={this.toggleNDAPanel}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
-              <input type="checkbox" />
-              By checking this box, I agree to the terms of the
-              non-disclosure agreement for {project.title}
-              <button onClick={this.signNDA} className="btn btn-brand">Submit</button>
-            </div>
+          <div>
+            <NDAPanel showNDA={showNDA} toggleNDAPanel={this.toggleNDAPanel} updateNDA={this.updateNDA} />
           </div>
-        </div>
       );
 
       const signAndSend = isOwner && (isLoading ||
@@ -360,7 +343,7 @@ import _ from 'lodash';
           <div className="panel-heading text-skinny">
             <h4>Sign and Send Contract <button onClick={this.toggleCheckoutPanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
-              <a onClick={this.toggleCheckoutPanel()}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
+              <a onClick={this.toggleCheckoutPanel}><i className="fa fa-arrow-left"></i> Back to Conversation</a>
               <Checkout
                 order={order}
                 isLoading={isLoading}
@@ -396,13 +379,14 @@ import _ from 'lodash';
             {serviceAgreement}
             {signAndSend}
 
-            { isOwner ?
+            { isLoading || (
+              isOwner ?
               <ContracteeTracker
                 isLoading={isLoading}
                 terms={terms}
                 nda={nda}
                 signing_url={signing_url}
-                sendNDA={this.sendNDA}
+                updateNDA={this.updateNDA}
                 toggleTermsPanel={this.toggleTermsPanel}
                 toggleCheckoutPanel={this.toggleCheckoutPanel}
                 showTerms={showTerms}
@@ -418,8 +402,8 @@ import _ from 'lodash';
               toggleTermsPanel={this.toggleTermsPanel}
               toggleNDAPanel={this.toggleNDAPanel}
               showTerms={showTerms}
-            />
-
+              />
+            )
             }
         </div>
       );

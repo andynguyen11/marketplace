@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="project">
+<div id="project" data-user="{{ request.user.id }}" data-id="{{ project.id }}" data-name="{{ project.title }}" >
   <div class="row content-wrap">
     <div class="container">
       <h2 class="brand text-center sub-section">
@@ -19,31 +19,6 @@
         <div class="col-md-8">
           <img class="project-image" src="{{ project.image.url }}" />
           <div class="sub-section">{{ project.short_blurb }}</div>
-        </div>
-        <div class="specs col-md-4">
-          <ul>
-            <li class="project-hours">
-              <h5 class="brand">{{ project.estimated_hours }}</h5>
-              est. hours needed
-            </li>
-            {% if project.estimated_equity_percentage %}
-            <li class="project-equity">
-              <h5 class="brand">{{ project.estimated_equity_percentage }}%</h5>
-              equity offered
-            </li>
-            {% endif %}
-            {% if project.estimated_cash and project.estimated_equity_percentage %}
-              <li>
-                or
-              </li>
-            {% endif %}
-            {% if project.estimated_cash %}
-            <li class="project-cash">
-              <h5 class="brand">${{ project.estimated_cash }}</h5>
-              cash offered
-            </li>
-            {% endif %}
-          </ul>
           <ul class="project-meta sub-section">
             <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
               <h4 class="brand">
@@ -54,14 +29,103 @@
               {% endif %}
               </h4>
             </li>
-            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
+            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize brand">{{ project.type }}</h4></li>
           </ul>
+        </div>
+        <div class="specs col-md-4">
+          <h2 class="brand-bold">Project Budget</h2>
+          <ul>
+            {% if project.estimated_equity_percentage %}
+            <li class="project-equity">
+              <h2 class="brand-bold">{{ project.estimated_equity_percentage }}%</h2>
+              equity
+            </li>
+            {% endif %}
+            {% if project.estimated_cash and project.estimated_equity_percentage %}
+              <li class="andor">
+              {% if project.mix %}
+                AND
+              {% else %}
+                OR
+              {% endif %}
+              </li>
+            {% endif %}
+            {% if project.estimated_cash %}
+            <li class="project-cash">
+              <h2 class="brand-bold">${{ project.estimated_cash }}</h2>
+              cash
+            </li>
+            {% endif %}
+          </ul>
+
+          <h2 class="brand-bold">Pending Bids</h2>
+          <label>Average offer:</label>
+          <ul>
+            <li class="project-equity">
+              <h2 class="brand-bold">2.2%</h2>
+              equity
+            </li>
+            <li>&nbsp;</li>
+            <li class="project-cash">
+              <h2 class="brand-bold">$1,200</h2>
+              cash
+            </li>
+          </ul>
+          <ul>
+            <li class="project-equity">
+              <h2 class="brand-bold">2.2%</h2>
+            </li>
+            <li class="andor">+</li>
+            <li class="project-cash">
+              <h2 class="brand-bold">$1,200</h2>
+            </li>
+          </ul>
+
+          <!-- TEMPLATE CONTEXT VARIABLES FOR LOGIC -->
+
+          {% if project.active_jobs|length >= 2 %}
+              <label>Average Offer:</label>
+
+              {% if project.average_equity or project.average_cash %}
+              <ul>
+                  {% if project.average_equity %}
+                  <li class="project-equity">
+                    <h2 class="brand-bold">2.2%</h2>
+                    equity
+                  </li>
+                  {% endif %}
+                  <li>&nbsp;</li>
+                  {% if project.average_cash %}
+                  <li class="project-cash">
+                    <h2 class="brand-bold">$1,200</h2>
+                    cash
+                  </li>
+                  {% endif %}
+              </ul>
+              {% endif %}
+              {% if project.average_combo %}
+              <ul>
+                  <li class="project-equity">
+                    <h2 class="brand-bold">{{ project.average_combo.equity }}%</h2>
+                  </li>
+                  <li class="andor">+</li>
+                  <li class="project-cash">
+                    <h2 class="brand-bold">${{ project.average_combo.cash }}</h2>
+                  </li>
+              </ul>
+              {% endif %}
+            {% else %}
+               <ul><li>No bids have been placed on this project.  Be the first!</li></ul>
+            {% endif %}
+
+
 
           {% if request.user == project.project_manager %}
           <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit</a>
           {% else %}
-          <button disabled id="bid-button" class="btn btn-brand" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and will begin accepting bids very soon." data-target="#bid-modal">BID ON PROJECT</button>
+          <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
           {% endif %}
+
           <p class="small text-muted">This company is accepting bids for work in forms of
             {% if project.estimated_equity_percentage %}equity {% endif %}
             {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}

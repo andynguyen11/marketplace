@@ -313,6 +313,9 @@
 }
 
 #project {
+  h2 {
+    margin-bottom: 0;
+  }
   .project-image {
     width: 100%;
   }
@@ -326,17 +329,22 @@
     }
   }
   .specs {
+    font-family: @brand-font;
     ul {
+      display: flex;
+      flex-direction: row;
       list-style: none;
       padding: 0;
       li {
         padding: 10px 0;
-        color: @brand-neutral--4;
-        h4 {
-          color: @brand-neutral--1;
+        color: @brand-neutral--3;
+        margin-right: 15px;
+        font-size: 16px;
+        &.andor {
+          align-self: center;
         }
-        h5 {
-          color: @brand-neutral--1;
+        h2 {
+          color: @brand-neutral--2;
           font-size: 36px;
           margin: 0;
         }

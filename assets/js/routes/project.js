@@ -8,11 +8,11 @@ $(document).ready(function() {
     getInitialState() {
       return {
         project: {
-          title: 'This Project',
-          id: 1
+          title: $('#project').data('name'),
+          id: $('#project').data('id')
         },
         user: {
-          id: 2
+          id: $('#project').data('user')
         },
         job: {
           compensationType: '',
@@ -50,4 +50,4 @@ $(document).ready(function() {
   });
   const modalDiv = document.getElementById('bid-body');
   ReactDOM.render(<ModalContent />, modalDiv);
-})
+});

@@ -9,7 +9,7 @@
                     <small> showing {{ count }} of {{ count }}</small>
                 </h2>
                 {% for project in projects %}
-                    <a class="project-link" href="{% url 'project' project.id %}"/>
+                    <a class="project-link" href="{% url 'project' project.slug %}"/>
                     <div class="panel panel-project">
                         <div class="project-image col-md-7"
                              style="background-image: url('{{ MEDIA_URL }}{{ project.image }}');">

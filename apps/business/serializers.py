@@ -92,7 +92,7 @@ class JobSerializer(serializers.ModelSerializer):
         # TODO Lazy creating these may not be the most optimal solution
         job = Job.objects.create(**data)
         terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA', project=job.project)
+        nda = Document.objects.create(job=job, type='NDA', project=job.project, )
         message = pm_write(
             sender=job.contractor,
             recipient=job.project.project_manager,
@@ -113,7 +113,7 @@ class DocumentSerializer(ParentModelSerializer):
     template = TemplateSerializer(read_only=True)
     signers = SignerSerializer(many=True, required=False)
     attachments = AttachmentSerializer(many=True, required=False)
-    docusign_document = DocusignDocumentSerializer(required=False, write_only=True)
+    docusign_document = DocusignDocumentSerializer(required=False, write_only=True, allow_null=True)
     signing_url  = serializers.CharField(read_only=True)
     status  = serializers.CharField(read_only=True)
     current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)

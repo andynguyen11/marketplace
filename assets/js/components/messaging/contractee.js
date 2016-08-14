@@ -36,7 +36,7 @@ const ContracteeTracker = React.createClass({
   },
 
   render() {
-    const { nda, terms, signing_url, showTerms, toggleTermsPanel, toggleCheckoutPanel, sendNDA , isLoading } = this.props;
+    const { nda, terms, signing_url, showTerms, toggleTermsPanel, toggleCheckoutPanel, updateNDA , isLoading } = this.props;
 
     return (
       <div id="agreement-tracker" className="col-md-4">
@@ -60,9 +60,10 @@ const ContracteeTracker = React.createClass({
                     that they will not disclose any sensitive or proprietary information.
                   </p>
                   <button
-                    onClick={sendNDA}
+                    onClick={updateNDA}
                     className={nda.status == 'new' ? 'btn btn-brand' : 'btn btn-secondary'}
                     disabled={nda.status == 'new' ? '' : 'true'}
+                    data-status='sent'
                   >{this.state.statusMap.NDA[nda.status]}</button>
                 </div>
                 <div className={this.state.step != 1 ? '' : 'hidden'}>
@@ -72,16 +73,14 @@ const ContracteeTracker = React.createClass({
                 </div>
               </div>
 
-              <div className={this.state.step < 2 ? 'inactive step' : 'step'}>
+              <div className='step'>
                 <h5>Step 2</h5>
                 <h4 className="title">Build Contract</h4>
-                <div className={this.state.step != 2 ? 'hidden' : ''} >
                   <p>
                     This is the legally-binding work contract agreement between you and the developer.
                   </p>
                   <button onClick={toggleTermsPanel} className={showTerms ? 'hidden' : 'btn btn-brand'}>{this.state.statusMap.terms[terms.status]}</button>
                   <button disabled className={showTerms ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
-                </div>
                 <div className={this.state.step == 3 ? '' : 'hidden'} >
                   <h4 className="highlight">Created on {terms.create_date}
                     <i className="fa fa-check-circle"></i>

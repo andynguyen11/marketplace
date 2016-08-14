@@ -7,7 +7,7 @@ const loom_api = {
     billing: '/api/billing/',
     company: '/api/company/',
     creditcard: '/api/creditcard/',
-    document: '/api/document/',
+    documentDetails: '/api/project/%(projectID)s/job/%(jobID)s/document/%(documentID)s/',
     job: '/api/jobs/',
     messages: '/api/messages/',
     onboard: '/api/onboard/',
