@@ -1,6 +1,7 @@
 from notifications.signals import notify
 
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 from drf_haystack.serializers import HaystackSerializerMixin
 from html_json_forms.serializers import JSONFormSerializer
 
@@ -112,11 +113,21 @@ class DocumentSerializer(ParentModelSerializer):
     template = TemplateSerializer(read_only=True)
     signers = SignerSerializer(many=True, required=False)
     attachments = AttachmentSerializer(many=True, required=False)
-    docusign_document = DocusignDocumentSerializer(required=False)
+    docusign_document = DocusignDocumentSerializer(required=False, write_only=True)
+    signing_url  = serializers.CharField(read_only=True)
+    status  = serializers.CharField(read_only=True)
+    current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    def to_representation(self, instance):
+        ret = super(DocumentSerializer, self).to_representation(instance)
+        for k, v in ret.items():
+            if v is None:
+                ret.pop(k)
+        return ret
 
     class Meta:
         model = Document
-        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments')
+        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments', 'signing_url', 'status', 'current_signer')
         sibling_fields = ('docusign_document',)
 
     def signer(self, data, role, role_name=None):
@@ -126,22 +137,30 @@ class DocumentSerializer(ParentModelSerializer):
         }
 
     def default_template(self, document_type):
-        return Template.objects.get(description=document_type)
+        try:
+            return Template.objects.get(description=document_type)
+        except Template.DoesNotExist, e:
+            return None
 
     def resolve_relations(self, data):
-        signers = data.pop('signers', [
+        if not data.has_key('docusign_document'):
+            template = data.pop('template', self.default_template(data['type']))
+            if template:
+                if not data['job'].owner.stripe:
+                    raise PermissionDenied({
+                        "message": "NO_PAYMENT_METHOD",
+                        "profile": data['job'].owner.id,
+                        "job": data['job'].id })
+                    
+                signers = data.pop('signers', [
                     self.signer(data, 'contractor'),
                     self.signer(data, 'owner')])
 
-        data['docusign_document'] = {
-            'template': data.pop('template', self.default_template(data['type'])), 
-            'signers': signers
-        } 
+                data['docusign_document'] = { 'template': template, 'signers': signers }
 
-        attachments = data.pop('attachments', None)
-        if attachments:
-            data['docusign_document']['attachments'] = attachments
-
+                attachments = data.pop('attachments', None)
+                if attachments:
+                    data['docusign_document']['attachments'] = attachments
         return data
 
 

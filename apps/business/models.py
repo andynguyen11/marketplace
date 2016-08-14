@@ -131,7 +131,7 @@ class Document(models.Model):
     job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
-    status = models.CharField(default='new')
+    status = models.CharField(default='new', max_length=30, null=True)
 
     @property
     def project(self):
@@ -147,11 +147,21 @@ class Document(models.Model):
 
     @property
     def signers(self):
-        return self.docusign_document.signers
+        return self.docusign_document and self.docusign_document.signers
+
+    def getstatus(self):
+        return self.docusign_document.status if self.docusign_document else self.status
 
     @property
-    def status(self):
-        return self.docusign_document.status
+    def signing_url(self):
+        return self.docusign_document and '/api/docusign/signing/redirect/%s' % self.docusign_document.id
+
+    @property
+    def current_signer(self):
+        if self.status not in ('completed', 'declined', 'voided') and self.signers:
+            for signer in self.signers:
+                if signer.status in (None, 'sent', 'delivered'):
+                    return signer.profile.id
 
 
 class Project(models.Model):

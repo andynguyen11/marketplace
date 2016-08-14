@@ -112,15 +112,16 @@ class ParentModelSerializer(RelationalModelSerializer):
 
     def create_siblings_recursively(self, siblings, action='create'):
         return {
-            field: smart_serialize_set(
+            field:  smart_serialize_set(
                 field_siblings,
                 self.get_child_serializer(field),
                 action)
             for field, field_siblings in siblings.items()
+            if self.fields[field].required or field_siblings is not None
         }
 
     def create_siblings(self, data, action='create'):
-        data, siblings = pop_subset(self.sibling_fields, data)
+        data, siblings = pop_subset(self.sibling_fields, data, fallback=None)
         data.update(self.create_siblings_recursively(siblings, action))
         return data
 

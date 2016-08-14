@@ -37,3 +37,9 @@ class BidPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.id == obj.contractor.id or \
                request.user.id == obj.project.project_manager.id
+
+
+class IsJobOwnerPermission(permissions.BasePermission):
+
+    def has_permission(self, request, view, **kwargs):
+        return view.action not in ['create'] or request.user.id == view.parent.owner.id

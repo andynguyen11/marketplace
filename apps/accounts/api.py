@@ -57,7 +57,7 @@ class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
     serializer_class = SkillTestSerializer
     permission_classes = (IsAuthenticated, )
-    parent_keys = ('profile',)
+    parent_key = 'profile'
 
     def new_ticket(self, request):
         instance = SkillTest.objects.get(profile=request.data['profile'], expertratings_test=request.data['expertratings_test'])

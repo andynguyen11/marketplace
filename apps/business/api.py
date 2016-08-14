@@ -2,11 +2,12 @@ from django.http import HttpResponseForbidden, Http404
 from drf_haystack.viewsets import HaystackViewSet
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from apps.api.permissions import BidPermission, IsPrimary
+from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet
 
@@ -21,15 +22,14 @@ class NestedJobViewSet(NestedModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
     permission_classes = (IsAuthenticated, BidPermission)
-    parent_keys = ('project',)
+    parent_key = 'project'
 
 
 class DocumentViewSet(NestedModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
-    permission_classes = (IsAuthenticated, BidPermission)
-    parent_keys = ('job',)
-    exclude_keys = ('project',)
+    permission_classes = (IsAuthenticated, BidPermission, IsJobOwnerPermission)
+    parent_key = 'job'
 
 
 class TermsListCreate(generics.ListCreateAPIView):
@@ -78,7 +78,7 @@ class InfoViewSet(NestedModelViewSet):
     ""
     queryset = ProjectInfo.objects.all()
     serializer_class = InfoSerializer
-    parent_keys = ('project',)
+    parent_key = 'project'
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
