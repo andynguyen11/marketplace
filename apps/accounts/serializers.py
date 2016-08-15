@@ -51,6 +51,16 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         serializer = SkillsSerializer(Skills.objects.all(), many=True)
         return serializer.data
 
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.username = validated_data.get('email', instance.email)
+        password = validated_data.get('password', None)
+        if password:
+            instance.set_password(password)
+        instance.save()
+        return instance
+
 
 class SkillTestSerializer(serializers.ModelSerializer):
 

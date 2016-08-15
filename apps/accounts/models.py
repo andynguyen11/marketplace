@@ -37,6 +37,7 @@ class Profile(AbstractUser):
     phone_number = models.CharField(max_length=50, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     address2 = models.CharField(max_length=255, blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
@@ -52,6 +53,7 @@ class Profile(AbstractUser):
     stripe = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
+    email_notifications = models.BooleanField(default=True)
 
     @property
     def name(self):

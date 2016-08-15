@@ -11,7 +11,13 @@
       <div class="col-md-10">
         <h2 class="section-header">
           {{ user.first_name }} <br />
-          <span class="text-yellow text-skinny">Full-Stack Developer</span>
+          <span class="text-yellow text-skinny">
+            {% if user.role %}
+            {{ user.role }}
+            {% else %}
+            Entrepreneur
+            {% endif %}
+          </span>
         </h2>
         <p>{{ social.extra_data.summary }}</p>
         <ul class="project-meta">

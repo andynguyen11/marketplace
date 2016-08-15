@@ -45,6 +45,10 @@ import CompanySettings from './settings/company';
 		render() {
 			const { pathname } = this.props.location;
 			const routes = [
+        {
+          title: 'Account Settings',
+          pathname: '/account'
+        },
 				{
 					title: 'Profile Settings',
 					pathname: '/profile'
