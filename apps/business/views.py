@@ -71,11 +71,21 @@ def send_message(request):
 def attach_docs(request):
     return NotImplemented
 
+def project_groups(**kwargs):
+    projects = Project.objects
+    new = Project.objects.filter(**kwargs).order_by('-date_created')[:9]
+    try:
+        featured = Project.objects.filter(featured=1, **kwargs)[:9]
+    except Project.DoesNotExist, e:
+        featured = new[0]
+    return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
 
-def projects_by_type(request, type):
-    if type not in [category[0] for category in PROJECT_TYPES]:
-        return redirect('404.html')
-    projects = Project.objects.filter(type=type)
-    count = projects.count()
-    context =  {'projects': projects, 'count': count, 'title': type+' projects', }
-    return render_to_response('project_by_type.html', context, context_instance=RequestContext(request))
+def serialized_project_groups(**kwargs):
+    groups = project_groups(**kwargs)
+    for key in ['new', 'featured']:
+        groups[key] = [ProjectSerializer(project).data for project in groups[key]]
+    return groups
+
+def projects_by_type(request, type=None):
+    kwargs = {'type': type} if type in [category[0] for category in PROJECT_TYPES] else {}
+    return render_to_response('project_by_type.html', serialized_project_groups(**kwargs), context_instance=RequestContext(request))

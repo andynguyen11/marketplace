@@ -9,6 +9,7 @@ from postman.models import Message
 from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm, SignupForm
 from accounts.models import Profile
 from business.models import Project, Job, PROJECT_TYPES
+from business.views import project_groups
 
 
 def error404(request):
@@ -52,15 +53,9 @@ def signup(request):
 
 
 def home(request):
-    new = Project.objects.all().order_by('-date_created')[:3]
-    try:
-        featured = Project.objects.filter(featured=1)[:3]
-    except Project.DoesNotExist, e:
-        featured = new[0]
-    developers = Profile.objects.filter(featured=1).exclude(role__isnull=True)[:4]
-    return render_to_response('home.html',
-        {'featured': featured, 'new': new, 'developers': developers, 'categories': PROJECT_TYPES, },
-        context_instance=RequestContext(request))
+    context = project_groups()
+    context['developers'] = Profile.objects.filter(featured=1).exclude(role__isnull=True)[:4]
+    return render_to_response('home.html', context, context_instance=RequestContext(request))
 
 
 def logout(request):

@@ -16,8 +16,8 @@ const loom_api = {
     review: '/api/review/',
     skills: '/api/skills/',
     terms: '/api/terms/',
-    project: '/api/project/'
-
+    project: '/api/project/',
+    projectUrl: slug => `/project/${slug}`
 };
 
 module.exports = loom_api;
