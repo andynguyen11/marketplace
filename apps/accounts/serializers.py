@@ -36,9 +36,15 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     all_skills = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
 
+
     class Meta:
         model = Profile
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
+        public_fields = ( # this is just used in the view atm
+                'first_name', 'last_name', 'username',
+                'location', 'country', 'city', 'state',
+                'title', 'role', 'biography',
+                'photo_url', 'photo' 'featured', 'skills', 'id')
 
     def get_photo_url(self, obj):
         return obj.get_photo

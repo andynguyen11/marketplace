@@ -258,7 +258,8 @@ const CreateProject = React.createClass({
       contentType: false,
       processData: false,
       success: result => {
-        window.location = `/project/${result.id}/`;
+        if(result.slug)
+            window.location = `/project/${result.slug}/`;
       }
     });
   },

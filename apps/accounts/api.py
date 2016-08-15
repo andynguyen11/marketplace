@@ -1,6 +1,7 @@
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login, authenticate
 from rest_condition import Not
+from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes
@@ -30,12 +31,27 @@ class ProfileViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        user.username = user.email
         user.set_password(password[0])
         user.save()
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
         login(request, account)
-        return Response(ProfileSerializer(user).data)
+        return Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+
+    def public_view(self, profile_dict):
+        return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }
+
+    def list(self, request, *args, **kwargs):
+        response = super(ProfileViewSet, self).list(request, *args, **kwargs)
+        response.data = map(self.public_view, response.data)
+        return response
+
+    def retrieve(self, request, *args, **kwargs):
+        response = super(ProfileViewSet, self).retrieve(request, *args, **kwargs)
+        if response.data['id'] != self.request.user.id:
+            response.data = self.public_view(response.data)
+        return response
 
     @permission_classes((IsAuthenticated, IsCurrentUser ))
     def update(self, request, *args, **kwargs):
@@ -48,9 +64,6 @@ class ProfileViewSet(ModelViewSet):
     @permission_classes((IsAdminUser, ))
     def destroy(self, request, *args, **kwargs):
         return super(ProfileViewSet, self).destroy(request, *args, **kwargs)
-
-    def get_object(self):
-        return self.request.user
 
 
 class SkillTestViewSet(NestedModelViewSet):
@@ -71,5 +84,4 @@ class SkillTestViewSet(NestedModelViewSet):
             return super(SkillTestViewSet, self).create(request, *args, **kwargs)
         except ValidationError, e:
             return Response(self.new_ticket(request))
-            #return super(SkillTestViewSet, self).update(request, *args, **kwargs)
 

@@ -1,10 +1,9 @@
-import factory
+import factory, inspect
 from django.db import models
 from faker.providers import BaseProvider
 from faker.providers.date_time import Provider as BaseDateTimeProvider
 from pytz import timezone
 from generics.utils import field_names
-import inspect
 
 class DateTimeProvider(BaseDateTimeProvider):
     @classmethod
@@ -12,10 +11,26 @@ class DateTimeProvider(BaseDateTimeProvider):
         return super(DateTimeProvider, cls).date_time(tzinfo=tzinfo or timezone('UTC'))
 
 factory.Faker._get_faker().add_provider(DateTimeProvider)
+fake = factory.Faker._get_faker()
 
 def subclasses_provider(subclass):
     return (inspect.isclass(subclass)
             and issubclass(subclass, BaseProvider))
+
+def color_generator(colors=['blue', 'green', 'yellow', 'red', 'purple', 'orange']):
+    closure = dict( length = len(colors), generated = -1 )
+    def generator(*args, **kwargs): 
+        closure['generated'] += 1
+        return colors[closure['generated'] % closure['length']]
+    return generator
+
+def zip_factory(length=10):
+    zips = [int(fake.zipcode()) for i in xrange(length)]
+    return factory.Iterator(zips)
+
+def image_factory():
+    color = color_generator()
+    return factory.django.ImageField(color=factory.LazyAttribute(color))
 
 def is_provider(value):
     return subclasses_provider(value) or (
@@ -119,5 +134,6 @@ class GenericModelFactory(factory.django.DjangoModelFactory):
         kwargs = cls._apply_generics(kwargs)
         attrs = cls.attributes(create=True, extra=kwargs)
         return cls._generate(True, attrs)
+
 
 

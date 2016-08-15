@@ -3,7 +3,8 @@ import { MultipleAttachmentsPreview } from './AttachmentField'
 
 export default function ProjectPreview({data: {title, details, skills, _company_name, _project_manager_name, ...data }, active, ...props}){
 
-
+  let image = details.attachments.filter(a => a.tag == 'image')[0] || {url: ''}
+  let imageUrl = image.file ? image.file.preview : image.url
   return ! active ? <div/> : (
         <div id="project" className="section-first" {...props}>
             <div className="row">
@@ -14,7 +15,7 @@ export default function ProjectPreview({data: {title, details, skills, _company_
                     </h2>
                     <div className="sub-section">
                         <div className="col-md-6">
-                            <img className="project-image" src={ details.attachments.filter(a => a.tag == 'image')[0].file.preview } />
+                            <img className="project-image" src={ imageUrl } />
                         </div>
                         <div className="specs col-md-3">
                             <h5>THE COMPANY</h5>

@@ -40,6 +40,6 @@ class BidPermission(permissions.BasePermission):
 
 
 class IsJobOwnerPermission(permissions.BasePermission):
-
     def has_permission(self, request, view, **kwargs):
         return view.action not in ['create'] or request.user.id == view.parent.owner.id
+

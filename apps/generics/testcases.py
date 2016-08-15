@@ -122,7 +122,7 @@ class UpdateMixin(UpdateAPITestCaseMixin):
                         self.assertIsSubset(self.path('update', key), items, value)
                         continue
 
-            self.assertEqual(attribute, results.get(key, value))
+            self.assertEqual(attribute, results.get(key, value), "[ %s ] expected: %s, got: %s" % (key, attribute, results.get(key, value)))
 
     def get_update_data(self):
         data = {}

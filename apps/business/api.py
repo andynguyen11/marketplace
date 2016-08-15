@@ -2,9 +2,8 @@ from django.http import HttpResponseForbidden, Http404
 from drf_haystack.viewsets import HaystackViewSet
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
-from rest_framework.decorators import detail_route, list_route
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import detail_route, list_route, permission_classes
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
 from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission
@@ -64,13 +63,16 @@ class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
 class CompanyListCreate(generics.ListCreateAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    renderer_classes = (JSONRenderer, )
+
+    @permission_classes(IsAuthenticated)
+    def create(self, request, *args, **kwargs):
+        request.data['user_id'] = request.data.get('user_id', request.user.id)
+        return super(CompanyListCreate, self).create(request, *args, **kwargs)
 
 
 class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    renderer_classes = (JSONRenderer, )
     permission_classes = (IsAuthenticated, IsPrimary)
 
 

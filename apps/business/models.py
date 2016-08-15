@@ -168,7 +168,6 @@ class Document(models.Model):
         return self.docusign_document.status
 
 
-
 class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
@@ -258,12 +257,6 @@ class Project(models.Model):
         rest = {'type': type} if type else {}
         return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
 
-   #def info_by_user(self, user):
-   #    permitted_users = [ job.contractor for job in self.active_jobs
-   #            ] + self.company.employees if self.company else [ self.project_manager ]
-   #    return self.info(type=None if user in permitted_users else 'public')
-   #    return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
-
     def documents(self):
         documents = Document.objects.filter(project=self)
         return documents
@@ -303,4 +296,5 @@ class Terms(models.Model):
             if self.status == 'contracted':
                 order, created = Order.objects.get_or_create(job=self.job, )
         super(Terms, self).save(*args, **kwargs)
+
 

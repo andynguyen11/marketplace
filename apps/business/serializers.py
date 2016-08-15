@@ -50,19 +50,21 @@ class InfoSerializer(ParentModelSerializer):
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     info = InfoSerializer(many=True, required=False)
     details = InfoSerializer(required=False)
+    slug = serializers.CharField(read_only=True)
     #category = serializers.CharField(required=False) # TODO - custom tag serializer needed
 
     class Meta:
         model = Project
-        fields = field_names(Project, exclude=('slug', )) + ('info', 'details', 'skills')
+        fields = field_names(Project) + ('info', 'details', 'skills')
         parent_key = 'project'
         child_fields = ('info',)
 
     def handle_details(self, data, instance=None):
+        data = data.copy()
         details = dict(**data.pop('details', {}))
         if instance:
             details['id'] = ProjectInfo.objects.get(project=instance, type='primary').id
-        data['info'] = data.pop('info', [])
+        data['info'] = [ i for i in data.pop('info', []) if i['type'] != 'primary']
         for i, tab in enumerate(data['info']):
             if tab['description'] == 'undefined':
                 del data['info'][i]

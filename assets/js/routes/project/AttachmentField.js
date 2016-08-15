@@ -60,9 +60,9 @@ const AttachmentField = React.createClass({
     },
 
     file(){
-        let { url: preview, file } = this.props.value
+        let { url: preview, file } = this.props.value || {}
         if(preview || file){
-            return typeof(file) == 'string' ? { preview, type: this.props.accept } : file
+            return file || { preview, type: this.props.accept }
         } else {
             return this.state.file
         }
