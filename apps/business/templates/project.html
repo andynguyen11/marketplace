@@ -5,10 +5,11 @@
 <div id="project" data-user="{{ request.user.id }}" data-id="{{ project.id }}" data-name="{{ project.title }}" >
   <div class="row content-wrap">
     <div class="container">
+    <div class="project-header">
       <h1 class="brand-bold text-brand text-center">
         {{ project.title }}
       </h1>
-      <h4 class="brand text-center">
+      <h4 class="brand text-skinny text-center">
         by
         {% if project.company %}
         {{ project.company.name }}
@@ -16,13 +17,14 @@
         {{ project.project_manager.first_name }} {{ project.project_manager.last_name }}
         {% endif %}
       </h4>
-      <div class="sub-section">
-        <div class="col-md-8">
+    </div>
+      <div class="section">
+        <div class="col-md-7 project-header-left">
           <img class="project-image" src="{{ project.image.url }}" />
           <div class="sub-section">{{ project.short_blurb }}</div>
           <ul class="project-meta sub-section">
             <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
-              <h4 class="brand">
+              <h4>
               {% if project.company %}
                 {{ project.company.city }}, {{ project.company.state }}
               {% else %}
@@ -30,11 +32,11 @@
               {% endif %}
               </h4>
             </li>
-            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize brand">{{ project.type }}</h4></li>
+            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
           </ul>
         </div>
-        <div class="specs col-md-4">
-          <h2 class="brand">Project Budget</h2>
+        <div class="specs col-md-5">
+          <h2 class="brand">project budget</h2>
           <ul>
             {% if project.estimated_equity_percentage %}
             <li class="project-equity">
@@ -45,9 +47,9 @@
             {% if project.estimated_cash and project.estimated_equity_percentage %}
               <li class="andor">
               {% if project.mix %}
-                AND
+                and
               {% else %}
-                OR
+                or
               {% endif %}
               </li>
             {% endif %}
@@ -59,7 +61,7 @@
             {% endif %}
           </ul>
         
-          <h2 class="brand">Average Bid Placed</h2>
+          <h2 class="brand">average bid placed</h2>
           {% if project.active_jobs|length >= 2 %}
               <label>Average Offer:</label>
 
@@ -93,7 +95,7 @@
               {% endif %}
             {% else %}
                <ul><li>
-                 <h4 class="brand">Bids haven't been placed on this project yet.<br /><br />  Be the first!</h4>
+                 <h4 class="brand-bold text-spaced">Bids haven't been placed on this project yet.<br /><br />  Be the first!</h4>
                </li></ul>
             {% endif %}
 
@@ -104,10 +106,10 @@
           {% else %}
             <ul>
             <li>
-              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">BID ON PROJECT</button>
+              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Bid on Project</button>
             </li>
             <li>
-              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">SEND MESSAGE</button>
+              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Send Message</button>
             </li>
             </ul>
           {% endif %}
@@ -165,9 +167,13 @@
           {% for tab in project.info %}
           <div class="tab-pane" role="tab-panel" id="{{ tab.title|slugify }}">
             {% if tab.type == 'private' and request.user.id not in project.nda_list %}
-              <div class="text-center">
+              <div class="text-center nda-content col-md-8 col-md-offset-2 section">
                 <h2><i class="fa fa-lock"></i></h2>
-                <h3>Please sign a Non-Disclosure Agreement with the project owner to view this content.</h3>
+                <div class="sub-section">
+                  <h3>You’ll need to sign a Non-disclosure Agreement to view private information.</h3>
+                  <h4 class="text-skinny">Send a message to the project manager to let them know you’re interested to learn more!</h4>
+                </div>
+                <button class="btn btn-lg btn-brand-fade">Request NDA Access</button>
               </div>
             {% else %}
             <div class="col-md-8">

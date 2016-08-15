@@ -183,7 +183,7 @@ class Project(models.Model):
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
     deleted = models.BooleanField(default=False)
     estimated_hours = models.IntegerField(blank=True, null=True)
-    estimated_cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
+    estimated_cash = models.IntegerField(blank=True, null=True)
     estimated_equity_percentage = models.DecimalField(blank=True, null=True, max_digits=4, decimal_places=2)
     estimated_equity_shares = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
     date_created = models.DateTimeField(auto_now_add=True)
