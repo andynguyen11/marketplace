@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="profile" data-id="{{ company.id }}" class="sub-section ">
+<div id="profile" data-id="{{ company.id }}" class="sub-section light-section">
   <div class="row">
     <div class="container">
       <div class="col-md-5">
@@ -34,7 +34,7 @@
         </ul>
         </div>
         <div>
-          <a class="btn btn-dark" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Message Us</a>
+          <button class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Message Us</button>
           <!--<a class="btn btn-dark" id="writeReview">Review Us</a>-->
         </div>
       </div>
@@ -43,11 +43,11 @@
   </div>
 </div>
 
-<div id="company-info" class="section light-section">
+<div id="company-info" class="section">
   <div class="row">
     <div class="container">
       <div class="col-md-8 long-description">
-        <h2 class="brand">About
+        <h2 class="brand-bold">About
           {{ company.name }}
         </h2>
         <div>
@@ -59,7 +59,7 @@
         </div>
       </div>
       <div class="col-md-4">
-        <h3 class="brand">Team Members</h3>
+        <h3 class="brand-bold">Team Members</h3>
         {% for employee in company.employees.all %}
           <div class="form-group">
           <img class="project-manager-photo pull-left" src="{{ employee.profile.get_photo }}" />
@@ -76,16 +76,37 @@
   </div>
 </div>
 
-<div id="past-projects" class="sub-section">
+<div id="reviews" class="section light-section">
+  <div class="row">
+    <div class="container">
+      <h2 class="brand-bold">Reviews</h2>
+      <div class="review-stars text-brand">
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <span class="text-dark">Overall Rating</span>
+      </div>
+      <hr />
+       <div class="text-center">
+        <h4 class="text-skinny sub-section ">Have you worked with {{ company.name }}?  Be the first to give them a review.</h4>
+        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Review {{ company.name }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="past-projects" class="section">
   <div class="row">
     <div class="container">
       <div class="plates page-content--medium">
         <div class="text-center">
-          <h2 class="brand">{{ company.name }}'s Open Projects</h2>
+          <h2 class="brand-bold">{{ company.name }}'s Open Projects</h2>
           <!-- <a href="" class="btn btn--clear btn-lg">View all</a> -->
         </div>
       {% if not projects %}
-      <h3 class="text-center">No open projects</h3>
+      <h3 class="brand sub-section text-center">No open projects</h3>
       {% endif %}
         <div class="plates-inner">
           {% for project in projects %}
@@ -125,41 +146,6 @@
     </div>
   </div>
 </div>
-
-
-{% comment %}
-<div id="experience" class="section">
-  <div class="row">
-    <div class="container">
-      <h2 class="section-header text-center">
-        Andy's stack experience
-      </h2>
-      <div class="sub-section text-center">
-        <div class="skill nginx col-md-3">
-          <div class="skill-image center-block"></div>
-          nginx <br />
-          <span class="text-muted">Web Servers</span>
-        </div>
-        <div class="skill cloudfront col-md-3">
-          <div class="skill-image center-block"></div>
-          Amazon CloudFront <br />
-          <span class="text-muted">Content Delivery Network</span>
-        </div>
-        <div class="skill javascript col-md-3">
-          <div class="skill-image center-block"></div>
-          Javascript <br />
-          <span class="text-muted">Language</span>
-        </div>
-        <div class="skill rubyonrails col-md-3">
-          <div class="skill-image center-block"></div>
-          Ruby on Rails <br />
-          <span class="text-muted">Application Framework</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% endcomment %}
 
 <div class="modal fade" tabindex="-1" role="dialog" id="message-modal">
   <div class="modal-dialog">

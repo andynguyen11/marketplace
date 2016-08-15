@@ -16,19 +16,17 @@
       <div class="col-md-3">
         <div class="section profile-snapshot text-center">
             <img src="{{ user.get_photo }}" class="profile-photo" />
-          <div class="section-body">
-            <h3 class="text-skinny">{{ user.first_name }}</h3>
+            <h3 class="brand-bold">{{ user.first_name }}</h3>
             <p>
               <a href="{% url 'profile' %}">View Profile</a><br />
-              <a href="{% url 'settings' %}">Edit Profile</a>
+              <a href="{% url 'settings' %}#/profile/">Edit Profile</a>
             </p>
-          </div>
         </div>
         <div class="section">
           <div class="section-header">
             <h4 class="brand">Quick Links</h4>
           </div>
-          <div class="section-body text-center">
+          <div class="section-body flex-column text-center">
             {% comment %}
             <p>
               <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
@@ -71,16 +69,20 @@
               <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
               {% endfor %}
             {% else %}
-              <li>You have successfully created your account. Welcome to Loom!</li>
+              <li class="text-brand-bold">You have successfully created your account. Welcome to Loom!</li>
             {% endif %}
           </ul>
         </div>
 
-      {% comment %}
+
         <div class="section">
           <div class="section-header">
-            <h4>Messages <span class="text-skinny">({{ unread_count }} New)</span></h4>
+            <h4>Messages {% comment %}<span class="text-skinny">({{ unread_count }} New)</span>{% endcomment %}</h4>
           </div>
+          <div class="section-body">
+            <p class="text-muted">You haven't received any messages... yet.</p>
+          </div>
+          {% if messages %}
           <table id="pm_messages">
             <tbody>
               {% for message in messages %}
@@ -136,8 +138,33 @@
               </tr>
             </tbody>
           </table>
+          {% endif %}
         </div>
-      {% endcomment %}
+
+        <div class="section">
+          <div class="section-header">
+            <h4>Connected Company <!--<span class="text-skinny">({% notifications_unread %} New)</span>--></h4>
+          </div>
+          <div class="section-body">
+            {% if request.user.company %}
+              <div class="company-logo-small" style="background-image:url('{{ request.user.company.get_logo }}');"></div>
+              <div class="flex-align-center">
+                <h5 class="brand">{{ request.user.company.name }}</h5>
+                <span class="text-muted small">Member since {{ request.user.date_joined }}</span>
+              </div>
+              <div class="flex-right">
+                <a class="flex-align-center btn btn-brand--clear " href="{% url 'company' request.user.company.slug %}">View Profile</a>
+                <a class="flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Edit Profile</a>
+              </div>
+            {% else %}
+              <p class="flex-left text-muted">
+                You are not associated with a company. <br />
+                This means you can compensate for work in cash only.
+              </p>
+              <a class="flex-right flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Add Company</a>
+            {% endif %}
+          </div>
+        </div>
 
       </div>
     </div>

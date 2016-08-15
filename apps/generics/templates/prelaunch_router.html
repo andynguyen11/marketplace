@@ -11,14 +11,18 @@
         <h1 class="brand text-center">
           You're in! Where to next?
         </h1>
-        <a class="text-center picker post-project" href="{% url 'create-project' %}">
-          <h2 class="brand-bold">Post a</h2>
-          <h2 class="brand-bold text-accent">Project</h2>
-        </a>
-        <a class="text-center picker explore-loom" href="{% url 'home' %}">
-          <h2 class="brand-bold">Explore</h2>
-          <h2 class="brand-bold text-brand">Loom</h2>
-        </a>
+        <div class="pickers">
+          <a class="text-center picker post-project" href="{% url 'create-project' %}">
+            <div class="picker-image"></div>
+            <h2 class="brand-bold">Post a</h2>
+            <h2 class="brand-bold text-accent">Project</h2>
+          </a>
+          <a class="text-center picker explore-loom" href="{% url 'home' %}">
+            <div class="picker-image"></div>
+            <h2 class="brand-bold">Explore</h2>
+            <h2 class="brand-bold text-brand">Loom</h2>
+          </a>
+        </div>
       </div>
     </div>
   </div>

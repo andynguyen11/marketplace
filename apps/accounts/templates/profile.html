@@ -2,13 +2,13 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="profile" data-id="{{ user.id }}" class="section-first">
+<div id="profile" data-id="{{ user.id }}" class="section">
   <div class="row">
     <div class="container">
-      <div class="col-md-2">
+      <div class="col-md-5">
         <img src="{{ user.get_photo }}" class="profile-photo" />
       </div>
-      <div class="col-md-10">
+      <div class="col-md-7">
         <h2 class="section-header">
           {{ user.first_name }} <br />
           <span class="text-yellow text-skinny">
@@ -159,6 +159,27 @@
   </div>
 </div>
 {% endcomment %}
+<div id="reviews" class="section light-section">
+  <div class="row">
+    <div class="container">
+      <h2 class="brand-bold">Reviews</h2>
+      <div class="review-stars text-brand">
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <i class="fa fa-star-o"></i>
+        <span class="text-dark">Overall Rating</span>
+      </div>
+      <hr />
+       <div class="text-center">
+        <h4 class="text-skinny sub-section ">Have you worked with {{ user.first_name }}?  Be the first to give them a review.</h4>
+        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Review {{ user.first_name }}</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="past-projects" class="section">
   <div class="row">
     <div class="container">

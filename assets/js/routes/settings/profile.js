@@ -5,10 +5,8 @@ import AccountForm from '../onboarding/account';
 import FormHelpers from '../../utils/formHelpers';
 import BigSelect from '../../components/bigSelect';
 import Loader from '../../components/loadScreen';
-import { objectToFormData } from '../project/utils'
 
 //TODO this is almost an exact copy paster of onboarding/developer.js
-// TODO Create a settings router
 
 const ProfileSettings = React.createClass({
 
@@ -43,14 +41,8 @@ const ProfileSettings = React.createClass({
   componentDidMount() {
     // TODO No ID in request should return current user so we don't have to pass in the id from the dom
     $.get(loom_api.profile + $('#settings').data('id') + '/', function (result) {
-      let new_profile = result;
-      if (result.linkedin.extra_data) {
-        new_profile.biography = result.biography ? result.biography : result.linkedin.extra_data.summary;
-        new_profile.username = result.email;
-      }
-      new_profile.role = 'full-stack';
       this.setState({
-        profile: new_profile,
+        profile: result,
         photo_url: result.photo_url,
         isLoading: false
       }, () => {
@@ -283,6 +275,7 @@ const ProfileSettings = React.createClass({
 
   _saveAccount() {
     const { formElements } = this.state;
+    const { saveAccount } = this.props;
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
       this.setState({formElements});
@@ -291,16 +284,7 @@ const ProfileSettings = React.createClass({
         this.setState({ formError: false, isLoading: true });
         let profile = this.state.profile;
         profile.photo = this.state.photo_file;
-        $.ajax({
-          url: loom_api.profile + profile.id + '/',
-          method: 'PATCH',
-          data: objectToFormData(profile),
-          contentType: false,
-          processData: false,
-          success: function (result) {
-            window.location = '/profile/dashboard/';
-          }
-        });
+        saveAccount(profile);
       } else {
         this.setState({ formError: 'Please fill out all fields.' });
       }
@@ -320,7 +304,6 @@ const ProfileSettings = React.createClass({
 
   setHours(event) {
     const { formElements } = this.state;
-
 
     formElements['capacity'].update($(event.currentTarget).data('hours'));
     formElements['capacity'].value = $(event.currentTarget).data('hours');

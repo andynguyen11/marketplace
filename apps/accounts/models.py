@@ -54,6 +54,7 @@ class Profile(AbstractUser):
     biography = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False)
 
     @property
     def name(self):

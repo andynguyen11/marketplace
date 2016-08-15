@@ -12,6 +12,7 @@
     require('bootstrap');
     require('bootstrap-datepicker');
     require('bootstrap-select');
+    require('react-interpolate-component');
 
     // import non-npm vendor files
     require('./vendor/select2-adaptor');

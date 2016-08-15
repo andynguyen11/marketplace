@@ -54,7 +54,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     class Meta:
         model = Project
-        fields = field_names(Project) + ('info', 'details', 'skills')
+        fields = field_names(Project, exclude=('slug', )) + ('info', 'details', 'skills')
         parent_key = 'project'
         child_fields = ('info',)
 

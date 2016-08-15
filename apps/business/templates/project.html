@@ -5,16 +5,17 @@
 <div id="project" data-user="{{ request.user.id }}" data-id="{{ project.id }}" data-name="{{ project.title }}" >
   <div class="row content-wrap">
     <div class="container">
-      <h2 class="brand text-center sub-section">
-        {{ project.title }} <br />
-        <span class="text-brand">by
-          {% if project.company %}
-          {{ project.company.name }}
-          {% else %}
-          {{ project.project_manager.first_name }} {{ project.project_manager.last_name }}
-          {% endif %}
-        </span>
-      </h2>
+      <h1 class="brand-bold text-brand text-center">
+        {{ project.title }}
+      </h1>
+      <h4 class="brand text-center">
+        by
+        {% if project.company %}
+        {{ project.company.name }}
+        {% else %}
+        {{ project.project_manager.first_name }} {{ project.project_manager.last_name }}
+        {% endif %}
+      </h4>
       <div class="sub-section">
         <div class="col-md-8">
           <img class="project-image" src="{{ project.image.url }}" />
@@ -33,11 +34,11 @@
           </ul>
         </div>
         <div class="specs col-md-4">
-          <h2 class="brand-bold">Project Budget</h2>
+          <h2 class="brand">Project Budget</h2>
           <ul>
             {% if project.estimated_equity_percentage %}
             <li class="project-equity">
-              <h2 class="brand-bold">{{ project.estimated_equity_percentage }}%</h2>
+              <h2 class="brand-bold text-brand">{{ project.estimated_equity_percentage }}%</h2>
               equity
             </li>
             {% endif %}
@@ -52,37 +53,14 @@
             {% endif %}
             {% if project.estimated_cash %}
             <li class="project-cash">
-              <h2 class="brand-bold">${{ project.estimated_cash }}</h2>
+              <h2 class="brand-bold text-brand">${{ project.estimated_cash }}</h2>
               cash
             </li>
             {% endif %}
           </ul>
 
-          <h2 class="brand-bold">Pending Bids</h2>
-          <label>Average offer:</label>
-          <ul>
-            <li class="project-equity">
-              <h2 class="brand-bold">2.2%</h2>
-              equity
-            </li>
-            <li>&nbsp;</li>
-            <li class="project-cash">
-              <h2 class="brand-bold">$1,200</h2>
-              cash
-            </li>
-          </ul>
-          <ul>
-            <li class="project-equity">
-              <h2 class="brand-bold">2.2%</h2>
-            </li>
-            <li class="andor">+</li>
-            <li class="project-cash">
-              <h2 class="brand-bold">$1,200</h2>
-            </li>
-          </ul>
 
-          <!-- TEMPLATE CONTEXT VARIABLES FOR LOGIC -->
-
+          <h2 class="brand">Average Bid Placed</h2>
           {% if project.active_jobs|length >= 2 %}
               <label>Average Offer:</label>
 
@@ -115,7 +93,9 @@
               </ul>
               {% endif %}
             {% else %}
-               <ul><li>No bids have been placed on this project.  Be the first!</li></ul>
+               <ul><li>
+                 <h4 class="brand">Bids haven't been placed on this project yet.<br /><br />  Be the first!</h4>
+               </li></ul>
             {% endif %}
 
 
@@ -123,42 +103,29 @@
           {% if request.user == project.project_manager %}
           <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit</a>
           {% else %}
-          <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">BID ON PROJECT</button>
+            <ul>
+            <li>
+              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">BID ON PROJECT</button>
+            </li>
+            <li>
+              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">SEND MESSAGE</button>
+            </li>
+            </ul>
           {% endif %}
 
+          {% comment %}
           <p class="small text-muted">This company is accepting bids for work in forms of
             {% if project.estimated_equity_percentage %}equity {% endif %}
             {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}
             {% if project.estimated_cash %} cash payment {% endif %}
             for services rendered.</p>
+            {% endcomment %}
         </div>
         <div class="clearfix"></div>
-      <!--
-        <div class="specs col-md-3">
-          <h5>THE COMMUNITY</h5>
-          <ul>
-            <li class="project-hours">
-              <h5>246</h5>
-              total hours offered
-            </li>
-            <li class="project-equity">
-              <h5>0.5%</h5>
-              lowest equity request
-            </li>
-            <li>or</li>
-            <li class="project-cash">
-              <h5>$2100</h5>
-              lowest cash request
-            </li>
-          </ul>
-          <p class="text-muted"><i class="fa fa-star-o"></i> send me alerts on this project</p>
-        </div>
-        <div class="clearfix"></div>
-      </div>
-      -->
+
       <div class="sub-section">
         <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Information</a></li>
           {% for tab in project.info %}
           <li role="presentation"><a href="#{{ tab.title|slugify }}" aria-controls="{{ tab.title|slugify }}" role="tab" data-toggle="tab">{{ tab.title }}
             {% if tab.type == 'private' %}
@@ -169,12 +136,12 @@
         <div class="tab-content">
           <div class="tab-pane active" role="tab-panel" id="overview">
             <div class="col-md-8">
-              <h2 class="section-header brand">Project Overview</h2>
+              <h1 class="brand">Project Details</h1>
               <p>{{ project.details.description | safe }}</p>
             </div>
             <div class="col-md-4">
-              <div class="sub-section">
-                <h4 class="brand">Stakeholders</h4>
+              <div class="">
+                <h2 class="brand sub-section">Project Manager</h2>
                 <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                   <div class="project-byline pull-left">
                     <p>
@@ -185,8 +152,8 @@
                  <div class="clearfix"></div>
               </div>
               {% if project.skills %}
-              <div class="sub-section">
-                <h4 class="brand">Preferred Technology Stack</h4>
+              <div>
+                <h2 class="brand sub-section">Preferred Technology Stack</h2>
                   {% for skill in project.skills.all %}
                   <h5 class="brand text-brand">{{ skill.name }}</h5>
                   {% endfor %}
@@ -229,7 +196,7 @@
     </div>
   </div>
 </div>
-
+{% comment %}
 <div class="modal fade" tabindex="-1" role="dialog" id="bid-modal">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -243,7 +210,7 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
+{% endcomment %}
 {% endblock %}
 
 {% block scripts %}

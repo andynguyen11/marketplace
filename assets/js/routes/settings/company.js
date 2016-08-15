@@ -24,7 +24,8 @@ const CompanySettings = React.createClass({
       logo_file: '',
       logo_url: '',
       formError: false,
-      isCompany: true
+      isCompany: true,
+      isLoading: true
     };
   },
 
@@ -34,14 +35,18 @@ const CompanySettings = React.createClass({
 
   componentDidMount() {
     // TODO No ID in request should return current user so we don't have to pass in the id from the dom
-    $.get(loom_api.company + $('#settings').data('company') + '/', (result) => {
-      this.setState({
-        company: result,
-        logo_url: result.logo
-      }, () => {
-        this.setState({ formElements: this.formElements() });
+    if ($('#settings').data('company')) {
+      $.get(loom_api.company + $('#settings').data('company') + '/', (result) => {
+        this.setState({
+          company: result,
+          logo_url: result.logo,
+          isLoading: false
+        }, () => {
+          this.setState({ formElements: this.formElements() });
+        });
       });
-    });
+    }
+    this.setState({ isLoading: false });
   },
 
   formElements() {

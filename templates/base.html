@@ -65,11 +65,11 @@
           <img class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="{{ request.user.get_photo }}" />
           <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
-            <li><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+             <!-- <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
               Messages
               {% if unread_count %}({{ unread_count }}){% endif %}
-            </a></li>
-            <li><a id="help" href="#" class="hide-desktop">Help</a></li>
+            </a></li> -->
+            <li class="hide-desktop"><a id="help" href="#" class="hide-desktop">Help</a></li>
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <!-- <li><a href="{% url 'postman:inbox' %}">Messages</a></li> -->
@@ -97,6 +97,7 @@
       {% endblock %}
     </div>
   </div>
+</div>
 
   {% block content %}{% endblock content %}
 

@@ -1,4 +1,5 @@
 #dashboard {
+  background: #fafafa;
   h2 {
     margin: 30px 0;
   }
@@ -10,6 +11,8 @@
     padding: 0;
     margin-bottom: 25px;
     background: #fff;
+    border: 1px solid @brand-neutral--4;
+    min-height: 200px;
     .section-header {
       background: @brand-neutral--1;
       color: #fff;
@@ -22,22 +25,36 @@
       }
     }
     .section-body {
-      padding: 15px;
+      padding: 25px 15px 0;
+      display: flex;
+      h5 {
+        margin: 0;
+      }
+      .company-logo-small {
+        height: 50px;
+        width: 50px;
+        background-size: cover;
+        background-repeat: no-repeat;
+        margin-right: 15px;
+      }
     }
     ul li {
       padding: 15px 20px;
       border-bottom: 1px solid #ccc;
     }
-    a, a:hover, a:visited {
+    a.btn-linkedin, a.btn-linkedin:hover,
+    a.btn-linkedin:visited, a.btn, a.btn:hover,
+    a.btn:visited, a.btn.btn-brand--clear:hover {
+      color: #fff;
+    }
+    a, a:hover, a:visited, a.btn.btn-brand--clear {
       color: @brand--accent;
       text-decoration: none;
     }
     a.social, a.social:hover, a.social:visited {
       color: @brand-neutral--1;
     }
-    a.btn-linkedin, a.btn-linkedin:hover, a.btn-linkedin:visited, a.btn, a.btn:hover, a.btn:visited {
-      color: #fff;
-    }
+
     table.dashboard-table {
       width: 100%;
       .profile-photo {
@@ -61,9 +78,16 @@
     }
   }
 
-  .profile-snapshot .profile-photo {
-    width: 100%;
+  .profile-snapshot {
+    .profile-photo {
+      width: 100%;
+    }
+    h3 {
+      margin: 25px 0;
+    }
   }
+
+
 
   #pm_messages tr td {
     background: #fff;

@@ -10,12 +10,28 @@
         <h2 class="brand">the hub for your project bids</h2>
       </div>
       {% else %}
-      <div class="col-md-12">
-        <h2 class="brand">You don't have any pending projects.</h2>
-        <div class="text-center">
-          <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-        </div>
-      </div>
+        {% comment %}
+          TODO
+            This is a hacky way of distinguishing developer vs entrepreneur
+            Also need to correctly link to discover page instead of home once it's up.
+         {% endcomment %}
+        {% if request.user.role %}
+          <div class="col-md-12">
+            <h2 class="brand">You don't have any pending bids.</h2>
+            <h3 class="text-skinny sub-section">When you start biddig on projects, you can keep track of them here.</h3>
+            <div class="text-center">
+              <a href="{% url 'home' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
+            </div>
+          </div>
+        {% else %}
+          <div class="col-md-12">
+            <h2 class="brand">You don't have any pending projects.</h2>
+            <h3 class="text-skinny sub-section">Post a project. Receive bids.  Keep track of everything here.</h3>
+            <div class="text-center">
+              <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+            </div>
+          </div>
+        {% endif %}
       {% endif %}
       <div class="col-md-12">
         {% for project in projects %}
