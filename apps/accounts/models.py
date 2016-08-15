@@ -73,7 +73,7 @@ class Profile(AbstractUser):
     @property
     def linkedin(self):
         try:
-            return self.social_auth.get(provider='linkedin-oauth2')
+            return self.social_auth.get(provider='linkedin-oauth2').extra_data
         except UserSocialAuth.DoesNotExist:
             return None
 

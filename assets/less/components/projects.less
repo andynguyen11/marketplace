@@ -312,6 +312,7 @@ ul.project-meta {
   li {
     display: flex;
     flex-direction: row;
+    margin-right: 50px;
   }
   h4, img {
     align-self: center;
@@ -344,9 +345,24 @@ ul.project-meta {
   }
   .tab-content {
     .tab-pane {
-      .col-md-8 {
+      .project-details {
+        padding-right: 75px;
+        padding-bottom: 100px;
+        h2 {
+          font-size: 48px;
+        }
         img {
           width: 100%;
+        }
+      }
+      .project-details-rail {
+        h2 {
+          font-size: 36px;
+        }
+        .technology-panel {
+          .btn {
+            cursor: default;
+          }
         }
       }
       .nda-content {
@@ -355,11 +371,6 @@ ul.project-meta {
           color: @brand-neutral--3;
         }
       }
-    }
-  }
-  .project-meta {
-    li {
-      margin-right: 50px;
     }
   }
   .specs {

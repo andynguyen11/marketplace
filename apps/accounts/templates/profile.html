@@ -2,47 +2,51 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="profile" data-id="{{ user.id }}" class="section">
-  <div class="row">
+<div id="profile" data-id="{{ user.id }}" >
+  <div class="row section">
     <div class="container">
-      <div class="col-md-5">
-        <img src="{{ user.get_photo }}" class="profile-photo" />
+      <div class="col-md-4">
+        <div class="profile-photo" style="background-image:url('{{ user.get_photo }}');"></div>
       </div>
-      <div class="col-md-7">
-        <h2 class="section-header">
-          {{ user.first_name }} <br />
-          <span class="text-yellow text-skinny">
+      <div class="col-md-8">
+        <h2 class="brand-bold text-brand text-header-main">
+          {{ user.first_name }}
+          <br />
+          <span class="text-brand-light">
             {% if user.role %}
-            {{ user.role }}
+              {{ user.role }} developer
             {% else %}
-            Entrepreneur
+              Entrepreneur
             {% endif %}
           </span>
         </h2>
-        <p>{{ social.extra_data.summary }}</p>
-        <ul class="project-meta">
-          <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ user.city }}, {{ user.state }}</li>
-          <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
-            {% for skill in user.skills.all %}
-            {{ skill.name }},
-            {% endfor %}
 
+        <p>
+            {{ user.biography }}
+        </p>
+        <ul class="project-meta">
+          <li>
+            <h4><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ user.city }}, {{ user.state }}</h4>
+          </li>
+          <li>
+            <h4>
+              <img class="icon" src="{% static 'images/icon-skill.png' %}" />
+              {{ user.capacity }} hours/week
+            </h4>
           </li>
         </ul>
-        <p>
-          <a class="btn btn-dark" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and hiring will be available soon.">Hire {{ user.first_name }}</a>
-          <!--
-          <a class="btn btn-dark" id="writeReview">Review {{ user.first_name }}</a>
-          {% if user.linkedin %}
-          <a class="btn btn-dark">See on LinkedIn</a>
-          {% endif %}
-          -->
-        </p>
+        <div class="button-actions">
+          <a class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Send Message</a>
+          <a class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and leaving a review will be available soon.">Leave Review</a>
+          {% comment %}{% if user.linkedin %}
+            <button class="btn btn-primary" data-toggle="modal" data-target="#linkedin-modal">LinkedIn Info</button>
+          {% endif %}{% endcomment %}
+        </div>
       </div>
       <div class="clearfix"></div>
     </div>
   </div>
-</div>
+
 {% comment %}
 <div id="reviews" class="section">
   <div class="row">
@@ -159,10 +163,24 @@
   </div>
 </div>
 {% endcomment %}
-<div id="reviews" class="section light-section">
+<div id="skills" class="section light-section">
   <div class="row">
     <div class="container">
-      <h2 class="brand-bold">Reviews</h2>
+      <div class="col-md-12 text-center">
+        <h2 class="brand-bold text-header-main sub-section">{{ request.user.first_name }}'s Stack Experience</h2>
+        <div class="sub-section">
+        {% for skill in user.skills.all %}
+        <a class="btn btn-dark--clear"><h3>{{ skill.name }}</h3></a>
+        {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="reviews" class="section">
+  <div class="row">
+    <div class="container">
+      <h2 class="brand-bold text-header-main">Reviews of {{ request.user.first_name }}</h2>
       <div class="review-stars text-brand">
         <i class="fa fa-star-o"></i>
         <i class="fa fa-star-o"></i>
@@ -180,13 +198,13 @@
   </div>
 </div>
 
-<div id="past-projects" class="section">
+<div id="past-projects" class="section light-section">
   <div class="row">
     <div class="container">
-      <h2 class="text-center section-header">Past Projects</h2>
+      <h2 class="text-center brand-bold text-header-main sub-section">Past Projects</h2>
       <div class="sub-section">
       {% if not jobs %}
-      <h3 class="text-center">No past projects</h3>
+      <h3 class="text-center">{{ request.user.first_name }} does not have any past projects on Loom.</h3>
       {% endif %}
       {% for job in jobs %}
       <div class="col-md-4">
@@ -241,7 +259,6 @@
     </div>
   </div>
 </div>
-
 {% comment %}
 <div id="experience" class="section">
   <div class="row">
@@ -275,6 +292,23 @@
   </div>
 </div>
 {% endcomment %}
+<div class="modal fade" tabindex="-1" role="dialog" id="linkedin-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="brand">
+          Some of <span class="text-brand">{{ request.user.first_name }}'s</span> work experience
+        </h4>
+      </div>
+
+      <div class="modal-body">
+      </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <div class="modal fade" tabindex="-1" role="dialog" id="message-modal">
   <div class="modal-dialog">

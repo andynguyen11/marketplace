@@ -6,9 +6,9 @@
   <div class="row content-wrap">
     <div class="container">
     <div class="project-header">
-      <h1 class="brand-bold text-brand text-center">
+      <h2 class="brand-bold text-brand text-center text-header-main">
         {{ project.title }}
-      </h1>
+      </h2>
       <h4 class="brand text-skinny text-center">
         by
         {% if project.company %}
@@ -106,10 +106,10 @@
           {% else %}
             <ul>
             <li>
-              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Bid on Project</button>
+              <button id="bid-button" class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Bid on Project</button>
             </li>
             <li>
-              <button id="bid-button" class="btn btn-brand-fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Send Message</button>
+              <button id="bid-button" class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Send Message</button>
             </li>
             </ul>
           {% endif %}
@@ -136,13 +136,13 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" role="tab-panel" id="overview">
-            <div class="col-md-8">
-              <h1 class="brand">Project Details</h1>
+            <div class="col-md-7 project-details">
+              <h2 class="brand-bold sub-section">Project Details</h2>
               <p>{{ project.details.description | safe }}</p>
             </div>
-            <div class="col-md-4">
-              <div class="">
-                <h2 class="brand sub-section">Project Manager</h2>
+            <div class="col-md-5 project-details-rail">
+              <div class="section">
+                <h2 class="brand sub-section brand-bold">Project Manager</h2>
                 <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                   <div class="project-byline pull-left">
                     <p>
@@ -154,10 +154,12 @@
               </div>
               {% if project.skills %}
               <div>
-                <h2 class="brand sub-section">Preferred Technology Stack</h2>
+                <h2 class="brand-bold sub-section">Preferred Technology Stack</h2>
+                  <div class="technology-panel">
                   {% for skill in project.skills.all %}
-                  <h5 class="brand text-brand">{{ skill.name }}</h5>
+                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
                   {% endfor %}
+                  </div>
               </div>
               {% endif %}
               <div class="clearfix"></div>
@@ -170,18 +172,18 @@
               <div class="text-center nda-content col-md-8 col-md-offset-2 section">
                 <h2><i class="fa fa-lock"></i></h2>
                 <div class="sub-section">
-                  <h3>You’ll need to sign a Non-disclosure Agreement to view private information.</h3>
+                  <h2 class="brand-bold">You’ll need to sign a Non-disclosure Agreement to view private information.</h2>
                   <h4 class="text-skinny">Send a message to the project manager to let them know you’re interested to learn more!</h4>
                 </div>
-                <button class="btn btn-lg btn-brand-fade">Request NDA Access</button>
+                <button class="btn btn-lg btn-brand--fade">Request NDA Access</button>
               </div>
             {% else %}
-            <div class="col-md-8">
-              <h2 class="section-header brand">{{ tab.title }}</h2>
+            <div class="col-md-7 project-details">
+              <h2 class="section-header brand-bold">{{ tab.title }}</h2>
               <p>{{ tab.description | safe }}</p>
             </div>
-            <div class="col-md-4">
-              <h5 class="brand">Stakeholders</h5>
+            <div class="col-md-5 project-details-rail">
+              <h5 class="brand">Project Manager</h5>
               <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                 <div class="project-byline pull-left">
                   <p>
@@ -189,7 +191,16 @@
                     {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                   </p>
                 </div>
-
+              {% if project.skills %}
+              <div>
+                <h2 class="brand-bold sub-section">Preferred Technology Stack</h2>
+                  <div class="technology-panel">
+                  {% for skill in project.skills.all %}
+                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                  {% endfor %}
+                  </div>
+              </div>
+              {% endif %}
                 <div class="clearfix"></div>
               </div>
               <div class="clearfix"></div>
