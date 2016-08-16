@@ -20,7 +20,7 @@ const AccountForm = React.createClass({
             <h4 className="brand">
               Want to skip over filling out this form?  No problem.
             </h4>
-            <a className="btn btn-linkedin text-center" href={'/login/linkedin-oauth2/?next=' + window.location.pathname + window.location.hash }>
+            <a className="btn btn-linkedin btn-linkedin--inline text-center" href={'/login/linkedin-oauth2/?next=' + window.location.pathname + window.location.hash }>
               <i className="fa fa-linkedin-square"></i>
               Sync with LinkedIn
             </a>

@@ -39,7 +39,7 @@ const EntrepreneurOnboard = React.createClass({
       logo_file: '',
       logo_url: '',
       formError: false,
-      isCompany: false,
+      isCompany: true,
       isLoading: false
     };
   },
