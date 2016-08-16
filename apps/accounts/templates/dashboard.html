@@ -45,16 +45,16 @@
               Post a Project
             </a>
             </div>
-            <div class="form-group">
-            <a class="btn btn-brand btn-wide sub-section" href="{% url 'create-project' %}">
-              Browse Projects
-            </a>
-            </div>
-            <div class="form-group">
-            <a class="btn btn-brand btn-wide sub-section" href="{% url 'create-project' %}">
-              Browse Talent
-            </a>
-            </div>
+            <!--<div class="form-group">-->
+              <!--<a class="btn btn-brand btn-wide sub-section" href="{% url 'create-project' %}">-->
+                <!--Browse Projects-->
+              <!--</a>-->
+            <!--</div>-->
+            <!--<div class="form-group">-->
+              <!--<a class="btn btn-brand btn-wide sub-section" href="{% url 'create-project' %}">-->
+                <!--Browse Talent-->
+              <!--</a>-->
+            <!--</div>-->
           </div>
         </div>
       </div>
@@ -153,8 +153,8 @@
                 <span class="text-muted small">Member since {{ request.user.date_joined }}</span>
               </div>
               <div class="flex-right">
-                <a class="flex-align-center btn btn-brand--clear " href="{% url 'company' request.user.company.slug %}">View Profile</a>
-                <a class="flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Edit Profile</a>
+                <a class="flex-align-center btn btn-brand--clear " href="{% url 'company' request.user.company.slug %}">View</a>
+                <a class="flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Edit</a>
               </div>
             {% else %}
               <p class="flex-left text-muted">

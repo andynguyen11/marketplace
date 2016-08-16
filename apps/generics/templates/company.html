@@ -96,7 +96,7 @@
       <hr />
        <div class="text-center">
         <h4 class="text-skinny sub-section ">Have you worked with {{ company.name }}?  Be the first to give them a review.</h4>
-        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon.">Review {{ company.name }}</a>
+        <a class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon." disabled>Review {{ company.name }}</a>
       </div>
     </div>
   </div>
@@ -130,7 +130,7 @@
                 <p class="plate-info-project-description">{{ project.short_blurb }}</p>
               </div>
             </div>
-            <div class="plate-stats">
+            <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
               {% if project.estimated_equity_percentage %}
               <div class="plate-stat">
                 <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>

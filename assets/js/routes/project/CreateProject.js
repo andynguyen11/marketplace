@@ -100,7 +100,7 @@ function Basics({update, data, formErrors, ...props}) {
 
       <div className={'form-group col-md-8 col-md-offset-2 ' + formErrors.short_blurb}>
         <label className='control-label'>Project Overview</label>
-        <textarea type="text" rows="3" className="form-control" {...cursor({update, data, key: 'short_blurb'})}
+        <textarea type="text" rows="3" className="form-control" {...cursor({update, data, key: 'short_blurb'})} maxLength="250"
                   placeholder="Think of this as your elevator pitch to developers. Get them excited in 250 characters or less."/>
       </div>
 
@@ -551,7 +551,7 @@ const CreateProject = React.createClass({
   render(){
     let {data: {details, info}, sections, currentSection, formErrors, formError, isLoading} = this.state;
     const error = formError &&
-      <div className="alert alert-danger col-md-8 col-md-offset-2" role="alert">Please correct errors above.</div>;
+      <div className="alert alert-danger" role="alert">Please correct errors above.</div>;
     return (
       <div className={`sections ${currentSection} is active`}>
          { isLoading && <Loader /> }
@@ -584,7 +584,7 @@ const CreateProject = React.createClass({
             budgetMix={this.state.budgetMix}
           />
 
-          <div className='text-center form-group'>
+          <div className='text-center form-group col-md-8 col-md-offset-2'>
             {error}
             <a type='submit' className='btn btn-brand btn-brand--attn btn-create-project' onClick={this.sectionAction}>
               { (sections.indexOf(currentSection) < sections.length - 1) ? 'Save Project and Continue' : 'Post Project'}

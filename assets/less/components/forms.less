@@ -28,6 +28,47 @@
     border-radius: 0;
   }
 
+
+  .profile-photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .profile-image, .company-image {
+    height: 75px;
+    width: 75px;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: @brand-neutral--4;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0 0 @gutter--medium 0;
+  }
+
+  .company-photo-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-upload-image {
+    position: relative;
+    cursor: pointer;
+
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      text-indent: -999em;
+      cursor: pointer;
+    }
+  }
+
   .btn-upload-image {
     position: relative;
     cursor: pointer;

@@ -425,6 +425,7 @@ const AccountForm = React.createClass({
             placeholder={formElements.profileBio.placeholder}
             value={formElements.profileBio.value}
             onChange={handleChange}
+            maxLength="250"
           >
           </textarea>
         </div>
