@@ -79,7 +79,7 @@ const CompanySettings = React.createClass({
         name: 'companyState',
         label: 'Company State',
         errorClass: '',
-        value: company.name || '',
+        value: company.state || '',
         validator: (value) => {
           const { isCompany, formElements } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
@@ -100,7 +100,7 @@ const CompanySettings = React.createClass({
       companyCity: {
         name: 'companyCity',
         label: 'Company City',
-        value: company.name || '',
+        value: company.city || '',
         errorClass: '',
         validator: (value) => {
           const { isCompany, formElements } = this.state;
