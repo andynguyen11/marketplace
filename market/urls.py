@@ -72,7 +72,7 @@ urlpatterns = [
     url(r'^project/edit/(?P<project_id>[0-9]+)/$', business_views.create_project, name='edit-project'),
     url(r'^project/(?P<project_slug>[-\w]+)/$', business_views.view_project, name='project'),
     url(r'^project/delete/(?P<project_id>[0-9]+)/$', business_views.delete_project, name='delete-project'),
-    url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),
+    #url(r'^(?P<type>[\w-]+)/$', business_views.projects_by_type, name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 

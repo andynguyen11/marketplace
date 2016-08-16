@@ -4,58 +4,54 @@
 
 {% block nav %}{% endblock %}
 
+{% block bodyid %}login{% endblock %}
+
 {% block content %}
-  <div id="login">
-    <div class="login-hero hide-mobile">
-      <div class="login-overlay"></div>
-    </div>
-    <div class="row">
-      <div class="container">
-        <div class="col-md-10 col-md-offset-1">
-          <div class="panel-login">
-            <div class="sub-section"></div>
-            <div class="login-content pull-left">
-              <h1 id="welcomeback" class="brand sub-section">Welcome back!</h1>
+<div>
+  <div class="login-hero hide-mobile">
+    <div class="login-overlay"></div>
+  </div>
+    <div class="login-panel">
+      <div class="login-content">
+        <h2 id="welcomeback" class="brand-bold sub-section">Welcome back!</h2>
 
-              <!-- django form validation -->
-              {% if form.errors %}
-                <ul class="error-list">
-                {% for error in form.errors %}
-                  <li class="text-center">{{ error.as_html }}</li>
-                {% endfor %}
-                </ul>
-              {% endif %}
-
-              <!-- LOGIN FORM -->
-              <form id="login-form" method="post" {% if next %} action="{% url 'login' %}?next={{next}}" {% else %} action="{% url 'login' %}" {% endif %}>
-                {% crispy form %}
-                <input type="submit" class="btn btn-block btn-brand btn-fat" value="Log In"/>
-                <p class="text-center" id="forgot-password">Forgot your password? <a href="{% url 'password_reset_recover' %}">Recover here.</a></p>
-              </form>
-
-             <div class="signin-or sub-section">
-                <span>OR</span>
-              </div>
-              <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
-                <i class="fa fa-linkedin"></i>
-                Sign In with LinkedIn
-              </a>
-
-              <div class="login-footer text-center sub-section">
-                Don't have an account?
-                <a href="{% url 'signup' %}"> Sign up here.</a>
-              </div>
+        <div id="email-signup">
+          <!-- django form validation -->
+          {% if form.errors %}
+            <ul class="error-list">
+            {% for error in form.errors %}
+              <li class="text-center">{{ error.as_html }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+          <form id="signup-form" method="post" {% if next %} action="{% url 'login' %}?next={{next}}" {% else %} action="{% url 'login' %}" {% endif %}>
+            <div class="form-inputs">
+            {% crispy form %}
             </div>
-
-            <div class="clearfix"></div>
-
-            </div>
-
-          </div>
+            <input type="submit" class="btn btn-block btn-brand btn-fat" value="Log In"/>
+            <p class="text-center login-footer" id="forgot-password">Forgot your password? <a href="{% url 'password_reset_recover' %}">Recover here.</a></p>
+          </form>
         </div>
+        <h3 class="brand-bold text-dark text-center sub-section">or</h3>
+        <div id="social-signup" class="sub-section">
+          <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+            <i class="fa fa-linkedin-square"></i>
+            <span>Sign Up with LinkedIn</span>
+          </a>
+          <p class="text-center text-blue text-small">
+            We'll never post to your profile.
+          </p>
+        </div>
+        <div class="login-footer text-center">
+          Don't have an account?
+          <a href="{% url 'signup' %}"> Sign up here.</a>
+        </div>
+        <div class="sub-section">&nbsp;</div>
       </div>
+      <div class="clearfix"></div>
     </div>
   </div>
+</div>
 {% endblock %}
 
 {% block footer %}{% endblock %}

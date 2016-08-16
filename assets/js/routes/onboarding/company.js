@@ -65,7 +65,7 @@ const CompanyForm = React.createClass({
                     </div>
                     <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"} onClick={setCompany}>
                         <div className="picker-image"></div>
-                        <h4><span className="text-brand">Individual <span className="hide-mobile">Entrepreneur</span></span></h4>
+                        <h4><span className="text-brand">Individual</span></h4>
                         <p>Individual Entrepreneurs can get work made for cash only.</p>
                     </div>
                 </div>

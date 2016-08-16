@@ -236,12 +236,12 @@ STRIPE_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u'
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_PhUrky9HrJfcAQvmstWpEna6')
 MANDRILL_API_KEY = os.environ.get('MANDRILL_API_KEY', 'VzOGiohfxEjbDlX0ekKDlg')
 
-DEFAULT_FROM_EMAIL = "Chase from Loom <info@joinloom.com>"
+DEFAULT_FROM_EMAIL = "Loom <info@joinloom.com>"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mandrillapp.com'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'Loom'
-wEMAIL_HOST_PASSWORD = MANDRILL_API_KEY
+EMAIL_HOST_PASSWORD = MANDRILL_API_KEY
 
 CRISPY_TEMPLATE_PACK = "bootstrap3"
 
