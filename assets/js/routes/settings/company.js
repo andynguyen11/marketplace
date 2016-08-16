@@ -146,7 +146,7 @@ const CompanySettings = React.createClass({
         name: 'companyBio',
         errorClass: '',
         label: 'Company Bio (Optional - You can do this later)',
-        value: company.description || '',
+        value: company.long_description || '',
         placeholder: 'This is a long form bio of your company. Tell developers the story of your company, your goals, and all they need to know about working with you.  You can add images in this section to help your story.',
         update: (value) => {
           const { company } = this.state;

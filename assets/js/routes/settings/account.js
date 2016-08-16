@@ -104,6 +104,23 @@ const AccountSettings = React.createClass({
     this.setState({ formElements, formError: false });
   },
 
+  handleCheckboxChange(event) {
+    const { formElements } = this.state;
+    let { value } = event.target;
+    const fieldName = event.target.getAttribute('name');
+
+    if(value === 'false') {
+      value = false;
+    }else{
+      value = true;
+    }
+
+    formElements[fieldName].value = value;
+    formElements[fieldName].update(value);
+
+    this.setState({ formElements, formError: false });
+  },
+
   _saveAccount() {
     const { formElements, profile } = this.state;
     const { saveAccount } = this.props;
@@ -124,6 +141,10 @@ const AccountSettings = React.createClass({
   render() {
     const { formElements, formError, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const notificationsChecked = {};
+    if(formElements.email_notifications.value) {
+      notificationsChecked.checked = 'checked';
+    }
 
     return (
       <div className='base-form sub-section'>
@@ -168,8 +189,8 @@ const AccountSettings = React.createClass({
                 type='checkbox'
                 name={formElements.email_notifications.name}
                 value={!formElements.email_notifications.value}
-                checked={formElements.email_notifications.value ? 'checked' : ''}
-                onChange={this.handleChange}
+                {...notificationsChecked}
+                onChange={this.handleCheckboxChange}
               />
               {formElements.email_notifications.label}
             </label>
