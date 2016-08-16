@@ -8,6 +8,7 @@ import AttachmentField, {MultipleAttachmentsField, mergeAttachments} from './Att
 import ProjectInfoField from './ProjectInfoField';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import Loader from '../../components/loadScreen';
 
 function convertToDate(event) {
   event.preventDefault();
@@ -194,7 +195,7 @@ const Details = React.createClass({
         </BigFormGroup>
         <ProjectInfoField type="primary" id='details' data={details} update={update.details}
                           formErrors={formErrors.details} label="Public Details" placeholder="lol"/>
-        <ProjectInfoField type="private" id="private" update={this.infoUpdater('private')} className="private"
+        <ProjectInfoField type="private" id="private" update={this.infoUpdater(0)} className="private"
                           label="Private Details"
                           placeholder="This private information tab is secure and can only be unlocked by a developer you approve, and only after they sign a non-disclosure agreement."/>
         <div className="clearfix"></div>
@@ -548,11 +549,12 @@ const CreateProject = React.createClass({
   },
 
   render(){
-    let {data: {details, info}, sections, currentSection, formErrors, formError} = this.state;
+    let {data: {details, info}, sections, currentSection, formErrors, formError, isLoading} = this.state;
     const error = formError &&
       <div className="alert alert-danger col-md-8 col-md-offset-2" role="alert">Please correct errors above.</div>;
     return (
       <div className={`sections ${currentSection} is active`}>
+         { isLoading && <Loader /> }
         <ProgressBar flow={sections} active={currentSection} isEditing={this.state.isEditing}
                      onSelect={this.selectSection}/>
         <form id="project-form" method="post" encType="multipart/form-data">

@@ -22,10 +22,10 @@ const ProjectInfoField = React.createClass({
   getDefaultProps() {
     return {
       data: {
-        title: 'Info',
+        title: 'Private Info',
         description: undefined,
         attachments: [],
-        type: 'public' // private primary
+        type: 'private' // private primary
       }
     }
   },

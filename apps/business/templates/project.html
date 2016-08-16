@@ -183,11 +183,11 @@
               </div>
             {% else %}
             <div class="col-md-7 project-details">
-              <h2 class="section-header brand-bold">{{ tab.title }}</h2>
+              <h2 class="sub-section brand-bold">{{ tab.title }}</h2>
               <p>{{ tab.description | safe }}</p>
             </div>
-            <div class="col-md-5 project-details-rail">
-              <h5 class="brand">Project Manager</h5>
+            <div class="col-md-5 section project-details-rail">
+              <h2 class="brand-bold">Project Manager</h2>
               <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
                 <div class="project-byline pull-left">
                   <p>

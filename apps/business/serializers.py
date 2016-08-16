@@ -62,6 +62,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     def handle_details(self, data, instance=None):
         data = data.copy()
         details = dict(**data.pop('details', {}))
+
         if instance:
             details['id'] = ProjectInfo.objects.get(project=instance, type='primary').id
         data['info'] = [ i for i in data.pop('info', []) if i['type'] != 'primary']
