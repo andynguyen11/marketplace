@@ -168,7 +168,7 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12 text-center">
-        <h2 class="brand-bold text-header-main sub-section">{{ request.user.first_name }}'s Stack Experience</h2>
+        <h2 class="brand-bold text-header-main sub-section">{{ user.first_name }}'s Stack Experience</h2>
         <div class="sub-section">
         {% for skill in user.skills.all %}
         <a class="btn btn-dark--clear"><h3>{{ skill.name }}</h3></a>
@@ -181,7 +181,7 @@
 <div id="reviews" class="section">
   <div class="row">
     <div class="container">
-      <h2 class="brand-bold text-header-main">Reviews of {{ request.user.first_name }}</h2>
+      <h2 class="brand-bold text-header-main">Reviews of {{ user.first_name }}</h2>
       <div class="review-stars text-brand">
         <i class="fa fa-star-o"></i>
         <i class="fa fa-star-o"></i>
@@ -205,7 +205,7 @@
       <h2 class="text-center brand-bold text-header-main sub-section">Past Projects</h2>
       <div class="sub-section">
       {% if not jobs %}
-      <h3 class="text-center">{{ request.user.first_name }} does not have any past projects on Loom.</h3>
+      <h3 class="text-center">{{ user.first_name }} does not have any past projects on Loom.</h3>
       {% endif %}
       {% for job in jobs %}
       <div class="col-md-4">
@@ -299,7 +299,7 @@
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="brand">
-          Some of <span class="text-brand">{{ request.user.first_name }}'s</span> work experience
+          Some of <span class="text-brand">{{ user.first_name }}'s</span> work experience
         </h4>
       </div>
 
