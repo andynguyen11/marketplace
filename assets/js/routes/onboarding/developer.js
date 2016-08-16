@@ -31,7 +31,8 @@ const DeveloperOnboard = React.createClass({
       photo_file: '',
       photo_url: '',
       isLoading: false,
-      formError: false
+      formError: false,
+      formErrorsList: []
     };
   },
 
@@ -97,13 +98,14 @@ const DeveloperOnboard = React.createClass({
         value: profile.capacity || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.capacity.errorClass = 'has-error';
+            formErrorsList.push('Please add your weekly availability.');
           } else {
             formElements.capacity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -119,13 +121,14 @@ const DeveloperOnboard = React.createClass({
         value: profile.first_name || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileFirstName.errorClass = 'has-error';
+            formErrorsList.push('Please add a first name.');
           } else {
             formElements.profileFirstName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -141,19 +144,38 @@ const DeveloperOnboard = React.createClass({
         value: profile.last_name || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileLastName.errorClass = 'has-error';
+            formErrorsList.push('Please add a last name.');
           } else {
             formElements.profileLastName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { profile } = this.state;
           profile.last_name = value;
           this.setState({ profile });
+        }
+      },
+      profilePhoto: {
+        errorClass: '',
+        validator: () => {
+          const { photo_file, formElements, formErrorsList } = this.state;
+          let valid = false;
+
+          if(typeof photo_file === 'object') {
+            formElements.profilePhoto.errorClass = '';
+            valid = true;
+          }else {
+            formElements.profilePhoto.errorClass = 'has-error';
+            formErrorsList.push('Please add a profile picture.');
+            valid =  false;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
         }
       },
       profileCity: {
@@ -163,13 +185,14 @@ const DeveloperOnboard = React.createClass({
         value: profile.city || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a city.');
           } else {
             formElements.profileCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -185,13 +208,14 @@ const DeveloperOnboard = React.createClass({
         value: profile.state || '',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileStateProvince.errorClass = 'has-error';
+            formErrorsList.push('Please add a state/province.');
           } else {
             formElements.profileStateProvince.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -207,13 +231,14 @@ const DeveloperOnboard = React.createClass({
         value: profile.country || 'United States of America',
         validator: (value) => {
           const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCountry.errorClass = 'has-error';
+            formErrorsList.push('Please add a country.');
           } else {
             formElements.profileCountry.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -229,17 +254,18 @@ const DeveloperOnboard = React.createClass({
         value: profile.biography || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           const maxLen = 250;
           const minLen = 1;
           const valid = value && value.length >= minLen && value.length <= maxLen;
 
           if (!valid) {
             formElements.profileBio.errorClass = 'has-error';
+            formErrorsList.push('Please add a bio.');
           } else {
             formElements.profileBio.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -284,27 +310,29 @@ const DeveloperOnboard = React.createClass({
   _saveAccount() {
     const { formElements } = this.state;
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements});
+    this.setState({ formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({ formElements });
 
-      if (valid) {
-        this.setState({ formError: false, isLoading: true });
-        let profile = this.state.profile;
-        profile.photo = this.state.photo_file;
-        $.ajax({
-          url: loom_api.profile + profile.id + '/',
-          method: 'PATCH',
-          data: objectToFormData(profile),
-          contentType: false,
-          processData: false,
-          success: function (result) {
-            window.location = '/profile/dashboard/';
-          }.bind(this)
-        });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.' });
-      }
-    });
+        if (valid) {
+          this.setState({ formError: false, isLoading: true });
+          let profile = this.state.profile;
+          profile.photo = this.state.photo_file;
+          $.ajax({
+            url: loom_api.profile + profile.id + '/',
+            method: 'PATCH',
+            data: objectToFormData(profile),
+            contentType: false,
+            processData: false,
+            success: function (result) {
+              window.location = '/profile/dashboard/';
+            }.bind(this)
+          });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.' });
+        }
+      });
+    })
   },
 
   handleChange(event) {
@@ -328,8 +356,18 @@ const DeveloperOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, isLoading } = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const { formElements, formError, formErrorsList, profile, isLoading } = this.state;
+    const error = formError && function() {
+      let errorsList = formErrorsList.map((thisError, i) => {
+        return <span key={i}>{thisError}<br/></span>;
+      });
+
+      if(!formErrorsList.length){
+        errorsList = formError;
+      }
+
+      return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+    }();
 
     const roleOptions = formElements.role.options.map((option, i) => {
       return <option value={option.value} key={i}>{option.label}</option>;

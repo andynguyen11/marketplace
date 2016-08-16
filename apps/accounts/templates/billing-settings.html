@@ -99,7 +99,6 @@ function createCC(status, response) {
   } else {
     var token = response.id;
     $('.stripe').val(token);
-    console.log();
     $.ajax({
       url: dq_api.billing,
       method: 'POST',

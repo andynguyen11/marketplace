@@ -267,7 +267,6 @@ const CompanySettings = React.createClass({
         let company = this.state.company;
         company.user_id = $('#settings').data('id');
         company.logo = this.state.logo_file;
-        console.log(company)
           $.ajax({
             url: loom_api.company,
             method: 'POST',
