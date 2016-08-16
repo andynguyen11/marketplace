@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom';
                             <p className="welcome-paragraph">
                                 We’d love to help connect you with developers to bring your product to life in exchange for cash or equity.
                             </p>
-                            <a href="" className="btn btn-brand btn-brand--attn">Post your project</a>
+                            <a href="/signup/prelaunch/" className="btn btn-brand btn-brand--attn">Post your project</a>
                         </div>
                     </div>
                     <div className="welcome-splash">
