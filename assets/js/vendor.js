@@ -8,7 +8,10 @@ module.exports = [
 	'bootstrap',
 	'bootstrap-select',
 	'bootstrap-datepicker',
-	'react-bootstrap',
+	'react-datepicker',
 	'moment',
-	'lodash'
+	'lodash',
+	'react-dropzone',
+	'react-router',
+	'quill'
 ];

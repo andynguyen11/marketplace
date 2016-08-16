@@ -7,124 +7,82 @@
 {% load postman_tags %}
 
 {% postman_unread as unread_count %}
-<!--[if lt IE 7]>
-<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>
-<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>
-<html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!-->
-<html class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <title>{% block title %}Loom{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}{% endblock %}"/>
-  <meta name="author" content="{% block meta_author %}{% endblock %}"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="{% block meta_description %}{% endblock %}" />
+  <meta name="author" content="{% block meta_author %}{% endblock %}" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
-  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}"/>
-  <link type="text/css" rel="stylesheet" href="{% static 'css/select2.css' %}"/>
+  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
+  <link type="text/css" rel="stylesheet" href="{% static 'css/select2.css' %}" />
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
 
   <!-- Facebook Pixel -->
   {% block fb_pixel %}
-  <script>!function (f, b, e, v, n, t, s) {
-    if (f.fbq)return;
-    n = f.fbq = function () {
-      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-    };
-    if (!f._fbq)f._fbq = n;
-    n.push = n;
-    n.loaded = !0;
-    n.version = '2.0';
-    n.queue = [];
-    t = b.createElement(e);
-    t.async = !0;
-    t.src = v;
-    s = b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t, s)
-  }(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '1090817730993966');
-  fbq('track', "PageView");
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-                 src="https://www.facebook.com/tr?id=1090817730993966&ev=PageView&noscript=1"/></noscript>
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1090817730993966'); fbq('track', "PageView");
+    </script><noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1090817730993966&ev=PageView&noscript=1"/></noscript>
   {% endblock %}
 
   <!-- Zendesk -->
-  <script>/*<![CDATA[*/
-  window.zEmbed || function (e, t) {
-    var n, o, d, i, s, a = [], r = document.createElement("iframe");
-    window.zEmbed = function () {
-      a.push(arguments)
-    }, window.zE = window.zE || window.zEmbed, r.src = "javascript:false", r.title = "", r.role = "presentation", (r.frameElement || r).style.cssText = "display: none", d = document.getElementsByTagName("script"), d = d[d.length - 1], d.parentNode.insertBefore(r, d), i = r.contentWindow, s = i.document;
-    try {
-      o = s
-    } catch (e) {
-      n = document.domain, r.src = 'javascript:var d=document.open();d.domain="' + n + '";void(0);', o = s
-    }
-    o.open()._l = function () {
-      var o = this.createElement("script");
-      n && (this.domain = n), o.id = "js-iframe-async", o.src = e, this.t = +new Date, this.zendeskHost = t, this.zEQueue = a, this.body.appendChild(o)
-    }, o.write('<body onload="document._l();">'), o.close()
-  }("https://assets.zendesk.com/embeddable_framework/main.js", "joinloom.zendesk.com");
-  /*]]>*/</script>
+  <script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(e){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","joinloom.zendesk.com");/*]]>*/</script>
 </head>
 
 <body class="{% block bodyclass %}customer-portal{% endblock %}" id="{% block bodyid %}{% endblock %}">
-<!--[if lt IE 7]>
-<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser
-  today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better
-  experience this site.</p>
-<![endif]-->
+  <!--[if lt IE 7]>
+  <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
+  <![endif]-->
 
-<div class="header" class="{% block header_class %}{% endblock %}">
-  <div class="header-inner page-content">
-    <a class="logo" href="/">Loom</a>
-    {% block nav %}
-    {% if request.user.is_authenticated %}
-    <div class="header-nav">
+  <div class="header" class="{% block header_class %}{% endblock %}">
+    <div class="header-inner page-content">
+      <a class="logo" href="/">Loom</a>
+      {% block nav %}
+      {% if request.user.is_authenticated %}
+      <div class="header-nav">
 
-      <ul class="header-links hide-mobile">
-        <li><a href="{% url 'how' %}">How it Works</a></li>
-        <!-- <li><a href="{% url 'home' %}">Browse a Project</a></li> -->
-        <li><a href="{% url 'create-project' %}">Post a Project</a></li>
-      </ul>
-
-      <div class="header-icons">
-        <!--
-        <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
-          <img src="{% static 'images/icon-message.png' %}" />
-          {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
-        </a>
-        -->
-        <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}"/></a>
-        <img class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true"
-             aria-expanded="false" src="{{ request.user.get_photo }}"/>
-        <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-             aria-expanded="false"></div>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <!-- <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
-           Messages
-           {% if unread_count %}({{ unread_count }}){% endif %}
-         </a></li> -->
-          <li class="hide-desktop"><a id="help" href="#" class="hide-desktop">Help</a></li>
-          <li><a href="{% url 'profile' %}">Profile</a></li>
-          <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-          <!-- <li><a href="{% url 'postman:inbox' %}">Messages</a></li> -->
-          <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
-          <!-- <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> -->
-          <!-- <li><a href="{% url 'view-documents' %}">Your Documents</a></li> -->
-          <!-- <li><a href="{% url 'view-skills' %}">Your Skills</a></li> -->
-          <li><a href="{% url 'logout' %}">Log Out</a></li>
+        <ul class="header-links hide-mobile">
+          <li><a href="{% url 'how' %}">How it Works</a></li>
+          <!-- <li><a href="{% url 'home' %}">Browse a Project</a></li> -->
+          <li><a href="{% url 'create-project' %}">Post a Project</a></li>
         </ul>
 
-      </div>
+        <div class="header-icons">
+          <!--
+          <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
+            <img src="{% static 'images/icon-message.png' %}" />
+            {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+          </a>
+          -->
+          <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
+          <div class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-image: url('{{ request.user.get_photo }}');"></div>
+          <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
+          <ul class="dropdown-menu dropdown-menu-right">
+             <!-- <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+              Messages
+              {% if unread_count %}({{ unread_count }}){% endif %}
+            </a></li> -->
+            <li class="hide-desktop"><a id="help" href="#" class="hide-desktop">Help</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <!-- <li><a href="{% url 'postman:inbox' %}">Messages</a></li> -->
+            <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
+            <!-- <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> -->
+            <!-- <li><a href="{% url 'view-documents' %}">Your Documents</a></li> -->
+            <!-- <li><a href="{% url 'view-skills' %}">Your Skills</a></li> -->
+            <li><a href="{% url 'logout' %}">Log Out</a></li>
+          </ul>
 
-      {% else %}
+        </div>
+
+        {% else %}
 
       <ul class="header-links">
         <li class="hide-mobile"><a href="{% url 'how' %}">How it Works</a></li>
@@ -132,134 +90,93 @@
         <li class="hide-mobile"><a href="/signup/prelaunch/">Post a Project</a></li>
         <li class="hide-mobile"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
-        <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign
-          Up</a></li>
+        <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign Up</a></li>
       </ul>
 
-      {% endif %}
+        {% endif %}
       {% endblock %}
     </div>
   </div>
 </div>
 
-{% block content %}{% endblock content %}
+  {% block content %}{% endblock content %}
 
-<div class="footer">
-  <div class="footer-inner page-content">
-    <div class="footer-actions">
-      <div class="footer-nav">
-        <div class="footer-nav-section">
-          <h6 class="footer-nav-header brand">Company</h6>
-          <ul>
-            <li><a href="/about/">About</a></li>
-            <li><a href="/careers">Careers</a></li>
-            <li><a target="_blank" href="http://loom.totemapp.com/">Press</a></li>
-            <li><a target="_blank" href="http://blog.joinloom.com">Blog</a></li>
-            <li><a target="_blank" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
-            <li><a href="/privacy/">Privacy Policy</a></li>
-            <li><a href="/terms-of-service/">Terms of Service</a></li>
-            <li><a href="/contact/">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-nav-section">
-          <h6 class="footer-nav-header brand">Freelancing on Loom</h6>
-          <ul>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859107-Why-would-I-freelance-on-Loom-">Why
-              Freelance on Loom</a></li>
-            <li><a
-              href="https://joinloom.zendesk.com/hc/en-us/articles/224994788-Do-you-have-any-tips-for-new-freelancers-on-Loom-">Profile
-              Creation Tips</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224994728-How-do-I-submit-a-bid-">Placing Bids
-              on Loom</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859227-How-do-I-get-paid-on-Loom-">Getting
-              Paid on Loom</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859407-How-can-I-rate-employers-on-Loom-">Rating
-              Employers</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/sections/205532507-Developer-Skill-Tests">Developer Skill
-              Tests</a></li>
-            <li><a
-              href="https://joinloom.zendesk.com/hc/en-us/articles/224994448-What-are-the-fees-for-freelancers-on-Loom-">Freelancer
-              Fees</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859647-How-do-I-send-a-message-">Sending
-              Messages</a></li>
-
-          </ul>
-        </div>
-        <div class="footer-nav-section">
-          <h6 class="footer-nav-header brand">Hiring on Loom</h6>
-          <ul>
-            <li><a
-              href="https://joinloom.zendesk.com/hc/en-us/articles/224858147-Why-would-I-hire-contractors-on-Loom-">Why
-              Hire on Loom</a></li>
-            <li><a
-              href="https://joinloom.zendesk.com/hc/en-us/articles/224858927-Do-you-have-any-tips-for-creating-my-project-page-">Project
-              Creation Tips</a></li>
-            <li><a
-              href="https://joinloom.zendesk.com/hc/en-us/articles/224858187-What-kinds-of-projects-should-I-post-on-Loom-">Ideal
-              Projects for Loom</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224993828-How-do-I-pay-my-developer-I-hired-">Paying
-              Freelancers</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224993988-How-can-I-rate-freelancers-on-Loom-">Rating
-              Freelancers</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224857947-What-fee-does-Loom-charge-">Hiring
-              Fees</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859647-How-do-I-send-a-message-">Sending
-              Messages</a></li>
-            <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859727-What-is-a-Featured-Project-">Featured
-              Projects</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Begin MailChimp Signup Form -->
-      <div id="mc_embed_signup" class="footer-newsletter">
-        <form action="//joinloom.us13.list-manage.com/subscribe/post?u=20280738ee079976d0dda6c8f&amp;id=f05175664a"
-              method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate"
-              target="_blank" novalidate>
-          <div id="mc_embed_signup_scroll">
-            <h5 class="footer-newsletter-header brand-bold">Sign up for our newsletter</h5>
-            <input placeholder="name@company.com" type="email" value="" name="EMAIL" class="required email"
-                   id="mce-EMAIL"/>
-            <div id="mce-responses" class="clear">
-              <div class="response" id="mce-error-response" style="display:none"></div>
-              <div class="response" id="mce-success-response" style="display:none"></div>
-            </div>
-            <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-            <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text"
-                                                                                      name="b_20280738ee079976d0dda6c8f_f05175664a"
-                                                                                      tabindex="-1" value=""></div>
-            <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe"
-                                      class="btn btn-brand"/></div>
+  <div class="footer">
+    <div class="footer-inner page-content">
+      <div class="footer-actions">
+        <div class="footer-nav">
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header brand">Company</h6>
+            <ul>
+              <li><a href="/about/">About</a></li>
+              <li><a href="/careers">Careers</a></li>
+              <li><a target="_blank" href="http://loom.totemapp.com/">Press</a></li>
+              <li><a target="_blank" href="http://blog.joinloom.com">Blog</a></li>
+              <li><a target="_blank" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
+              <li><a href="/privacy/">Privacy Policy</a></li>
+              <li><a href="/terms-of-service/">Terms of Service</a></li>
+              <li><a href="/contact/">Contact</a></li>
+            </ul>
           </div>
-        </form>
-      </div>
-      <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script>
-      <script type='text/javascript'>(function ($) {
-        window.fnames = new Array();
-        window.ftypes = new Array();
-        fnames[0] = 'EMAIL';
-        ftypes[0] = 'email';
-        fnames[1] = 'FNAME';
-        ftypes[1] = 'text';
-        fnames[2] = 'LNAME';
-        ftypes[2] = 'text';
-      }(jQuery));
-      var $mcj = jQuery.noConflict(true);</script>
-      <!--End mc_embed_signup-->
-      <div class="clearfix"></div>
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header brand">Freelancing on Loom</h6>
+            <ul>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859107-Why-would-I-freelance-on-Loom-">Why Freelance on Loom</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224994788-Do-you-have-any-tips-for-new-freelancers-on-Loom-">Profile Creation Tips</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224994728-How-do-I-submit-a-bid-">Placing Bids on Loom</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859227-How-do-I-get-paid-on-Loom-">Getting Paid on Loom</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859407-How-can-I-rate-employers-on-Loom-">Rating Employers</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/sections/205532507-Developer-Skill-Tests">Developer Skill Tests</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224994448-What-are-the-fees-for-freelancers-on-Loom-">Freelancer Fees</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859647-How-do-I-send-a-message-">Sending Messages</a></li>
 
-    </div>
-    <div class="footer-base">
-      <div class="footer-logo"></div>
-      <div class="footer-social">
-        <a href="https://twitter.com/joinloom" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-        <a href="https://www.facebook.com/joinloom" target="_blank"><i class="fa fa-facebook"
-                                                                       aria-hidden="true"></i></a>
-        <a href="https://www.instagram.com/loom/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+            </ul>
+          </div>
+          <div class="footer-nav-section">
+            <h6 class="footer-nav-header brand">Hiring on Loom</h6>
+            <ul>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224858147-Why-would-I-hire-contractors-on-Loom-">Why Hire on Loom</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224858927-Do-you-have-any-tips-for-creating-my-project-page-">Project Creation Tips</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224858187-What-kinds-of-projects-should-I-post-on-Loom-">Ideal Projects for Loom</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224993828-How-do-I-pay-my-developer-I-hired-">Paying Freelancers</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224993988-How-can-I-rate-freelancers-on-Loom-">Rating Freelancers</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224857947-What-fee-does-Loom-charge-">Hiring Fees</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859647-How-do-I-send-a-message-">Sending Messages</a></li>
+              <li><a href="https://joinloom.zendesk.com/hc/en-us/articles/224859727-What-is-a-Featured-Project-">Featured Projects</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Begin MailChimp Signup Form -->
+        <div id="mc_embed_signup" class="footer-newsletter">
+        <form action="//joinloom.us13.list-manage.com/subscribe/post?u=20280738ee079976d0dda6c8f&amp;id=f05175664a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">
+          <h5 class="footer-newsletter-header brand-bold">Sign up for our newsletter</h5>
+          <input placeholder="name@company.com" type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" />
+          <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+          </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+            <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_20280738ee079976d0dda6c8f_f05175664a" tabindex="-1" value=""></div>
+            <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn btn-brand btn-lg footer-newsletter-button" /></div>
+            </div>
+        </form>
+        </div>
+        <script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+        <!--End mc_embed_signup-->
+        <div class="clearfix"></div>
+
+      </div>
+      <div class="footer-base">
+        <div class="footer-logo"></div>
+        <div class="footer-social">
+          <a href="https://twitter.com/joinloom" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+          <a href="https://www.facebook.com/joinloom" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+          <a href="https://www.instagram.com/loom/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
 </div>
 
@@ -271,7 +188,6 @@
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
-
 </script>
 
 {% if ENVIRONMENT == 'prod' %}
@@ -285,22 +201,10 @@ $(function () {
 
   window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
     heap.load("1767701272");
-
 </script>
 {% else %}
 <script type="text/javascript">
-  window.heap = window.heap || [], heap.load = function (e, t) {
-    window.heap.appid = e, window.heap.config = t = t || {};
-    var r = t.forceSSL || "https:" === document.location.protocol, a = document.createElement("script");
-    a.type = "text/javascript", a.async = !0, a.src = (r ? "https:" : "http:") + "//cdn.heapanalytics.com/js/heap-" + e + ".js";
-    var n = document.getElementsByTagName("script")[0];
-    n.parentNode.insertBefore(a, n);
-    for (var o = function (e) {
-      return function () {
-        heap.push([e].concat(Array.prototype.slice.call(arguments, 0)))
-      }
-    }, p = ["addEventProperties", "addUserProperties", "clearEventProperties", "identify", "removeEventProperty", "setEventProperties", "track", "unsetEventProperty"], c = 0; c < p.length; c++)heap[p[c]] = o(p[c])
-  };
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
   heap.load("3419646760");
 </script>
 {% endif %}

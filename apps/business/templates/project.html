@@ -4,7 +4,7 @@
 {% block content %}
 <div id="project" data-user="{{ request.user.id }}" data-id="{{ project.id }}" data-name="{{ project.title }}" >
   <div class="row content-wrap">
-    <div class="container">
+    <div class="container project-container">
     <div class="project-header">
       <h2 class="brand-bold text-brand text-center text-header-main">
         {{ project.title }}
@@ -60,7 +60,7 @@
             </li>
             {% endif %}
           </ul>
-        
+
           <h2 class="brand">average bid placed</h2>
           {% if project.active_jobs|length >= 2 %}
               <label>Average Offer:</label>
@@ -128,10 +128,14 @@
         <ul class="nav nav-tabs">
           <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Information</a></li>
           {% for tab in project.info %}
-          <li role="presentation"><a href="#{{ tab.title|slugify }}" aria-controls="{{ tab.title|slugify }}" role="tab" data-toggle="tab">{{ tab.title }}
-            {% if tab.type == 'private' %}
-            <i class="fa fa-lock"></i></a></li>
-            {% endif %}
+          <li role="presentation">
+            <a href="#{{ tab.title|slugify }}" aria-controls="{{ tab.title|slugify }}" role="tab" data-toggle="tab">
+              {{ tab.title }}
+              {% if tab.type == 'private' %}
+                <i class="fa fa-lock"></i>
+              {% endif %}
+            </a>
+          </li>
           {% endfor %}
         </ul>
         <div class="tab-content">

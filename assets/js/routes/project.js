@@ -49,5 +49,7 @@ $(document).ready(function() {
     }
   });
   const modalDiv = document.getElementById('bid-body');
-  ReactDOM.render(<ModalContent />, modalDiv);
+  if(modalDiv) {
+    ReactDOM.render(<ModalContent />, modalDiv);
+  }
 });

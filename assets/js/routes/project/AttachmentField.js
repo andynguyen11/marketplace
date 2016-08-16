@@ -34,7 +34,7 @@ export function mergeAttachments(existingAttachments=[], newAttachments=[]){
 function UploadButton({title}){
     return (
         <div className='btn btn-brand text-center'>
-            Click or drop to upload {title}
+            Upload {title}
         </div>
     )
 }
@@ -74,7 +74,7 @@ const AttachmentField = React.createClass({
             Preview = defaultPreview(this.props.accept), ...props
         } = this.props
         let file = this.file()
-        
+
         title = title || toTitle(tag)
         className = `${tag} attachment-field ${file ? 'preview' : 'button'} ${className}`
         return (
@@ -112,12 +112,12 @@ const MultipleAttachmentsField = React.createClass({
     },
 
     render(){
-        let { attachments } = this.state 
+        let { attachments } = this.state
         let {
             onChange, title, multiple, className,
             Preview = defaultPreview(this.props.accept), ...props
         } = this.props
-        
+
         title = title || 'Attachments'
         className = `multi attachment-field ${attachments.length ? 'preview' : 'button'} ${className}`
         return (
