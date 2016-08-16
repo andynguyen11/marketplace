@@ -38,6 +38,7 @@ const PrelaunchOnboarding = React.createClass({
       logo_file: '',
       logo_url: '',
       formError: false,
+      formErrorsList: [],
       isCompany: true
     };
   },
@@ -72,16 +73,17 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.profileCountry.errorClass = 'has-error';
-          } else {
-            formElements.profileCountry.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
 
+          if (!valid) {
+            formElements.title.errorClass = 'has-error';
+            formErrorsList.push('Please add your job title.');
+          } else {
+            formElements.title.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
         },
         update: (value) => {
           const { profile } = this.state;
@@ -95,14 +97,15 @@ const PrelaunchOnboarding = React.createClass({
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyName.errorClass = 'has-error';
+            formErrorsList.push('Please add a company name.');
           } else {
             formElements.companyName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -117,14 +120,15 @@ const PrelaunchOnboarding = React.createClass({
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyState.errorClass = 'has-error';
+            formErrorsList.push('Please add a company state.');
           } else {
             formElements.companyState.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -139,20 +143,39 @@ const PrelaunchOnboarding = React.createClass({
         value: company.city || '',
         errorClass: '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a company city.');
           } else {
             formElements.companyCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { company } = this.state;
           company.city = value;
           this.setState({ company });
+        }
+      },
+      companyPhoto: {
+        errorClass: '',
+        validator: () => {
+          const { isCompany, logo_file, formElements, formErrorsList } = this.state;
+          let valid = false;
+
+          if(typeof logo_file !== 'object' && isCompany) {
+            formElements.companyPhoto.errorClass = 'has-error';
+            formErrorsList.push('Please add a company logo.');
+            valid =  false;
+          }else {
+            formElements.companyPhoto.errorClass = '';
+            valid = true;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
         }
       },
       companyDescription: {
@@ -162,17 +185,18 @@ const PrelaunchOnboarding = React.createClass({
         value: company.description || '',
         placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const minLen = 1;
           const maxLen = 500;
           const valid = isCompany ? value.length >= minLen && value.length <= maxLen : true;
 
           if (!valid) {
             formElements.companyDescription.errorClass = 'has-error';
+            formErrorsList.push('Please add a company overview.');
           } else {
             formElements.companyDescription.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -224,14 +248,15 @@ const PrelaunchOnboarding = React.createClass({
           }
         ],
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyType.errorClass = 'has-error';
+            formErrorsList.push('Please add a company type.');
           } else {
             formElements.companyType.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -247,14 +272,15 @@ const PrelaunchOnboarding = React.createClass({
         value: company.filing_location || '',
         placeholder: 'State/Province',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyFilingLocation.errorClass = 'has-error';
+            formErrorsList.push('Please add a company filing location.');
           } else {
             formElements.companyFilingLocation.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -269,14 +295,15 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.first_name || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileFirstName.errorClass = 'has-error';
+            formErrorsList.push('Please add a first name.');
           } else {
             formElements.profileFirstName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -291,14 +318,15 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.last_name || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileLastName.errorClass = 'has-error';
+            formErrorsList.push('Please add a last name.');
           } else {
             formElements.profileLastName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -307,20 +335,39 @@ const PrelaunchOnboarding = React.createClass({
           this.setState({ profile });
         }
       },
+      profilePhoto: {
+        errorClass: '',
+        validator: () => {
+          const { photo_url, formElements, formErrorsList } = this.state;
+          let valid = false;
+
+          if(photo_url.length) {
+            formElements.profilePhoto.errorClass = '';
+            valid = true;
+          }else {
+            formElements.profilePhoto.errorClass = 'has-error';
+            formErrorsList.push('Please add a profile picture.');
+            valid =  false;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        }
+      },
       profileCity: {
         name: 'profileCity',
         label: 'City',
         value: profile.city || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a city.');
           } else {
             formElements.profileCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -335,14 +382,15 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.state || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileStateProvince.errorClass = 'has-error';
+            formErrorsList.push('Please add a state/province.');
           } else {
             formElements.profileStateProvince.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -357,14 +405,15 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.country || 'United States of America',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCountry.errorClass = 'has-error';
+            formErrorsList.push('Please add a country.');
           } else {
             formElements.profileCountry.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -380,17 +429,18 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.biography || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           const maxLen = 250;
           const minLen = 1;
           const valid = value && value.length >= minLen && value.length <= maxLen;
 
           if (!valid) {
             formElements.profileBio.errorClass = 'has-error';
+            formErrorsList.push('Please add a bio.');
           } else {
             formElements.profileBio.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -406,14 +456,16 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.email || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
-          const valid = FormHelpers.checks.isRequired(value);
+          // const valid = FormHelpers.checks.isRequired(value);
+          const valid = FormHelpers.checks.isEmail(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileEmail.errorClass = 'has-error';
+            formErrorsList.push('Please enter a valid email address.');
           } else {
             formElements.profileEmail.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -429,14 +481,15 @@ const PrelaunchOnboarding = React.createClass({
         value: profile.password || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.password.errorClass = 'has-error';
+            formErrorsList.push('Please enter a password.');
           } else {
             formElements.password.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -450,65 +503,69 @@ const PrelaunchOnboarding = React.createClass({
 
   _createCompany() {
     const { formElements, isCompany } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      let company = this.state.company;
-      company.user_id = this.state.profile.id;
-      company.logo = this.state.logo_file ? this.state.logo_file : '';
+        if (valid) {
+          this.setState({ formError: false });
 
-      if(valid) {
-        this.setState({ formError: false });
-        $.ajax({
-          url: loom_api.company,
-          method: 'POST',
-          data: objectToFormData(company),
-          contentType: false,
-          processData: false,
-          success: function (result) {
+          let company = this.state.company;
+          company.logo = this.state.logo_file ? this.state.logo_file : '';
+          company.user_id = this.state.profile.id;
+
+          $.ajax({
+            url: loom_api.company,
+            method: 'POST',
+            data: objectToFormData(company),
+            contentType: false,
+            processData: false,
+            success: function (result) {
               window.location = '/prelaunch/';
-          }
-        });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+            }
+          });
+        } else {
+          this.setState({formError: 'Please fill out all fields.', isLoading: false});
+        }
+      });
     });
   },
 
   _createAccount() {
     const { formElements } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements});
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      if (valid) {
-        this.setState({ formError: false, isLoading: true });
-        let profile = this.state.profile;
-        profile.username = profile.email;
-        profile.photo = this.state.photo_file ? this.state.photo_file : '';
-        //delete profile.photo; // Hacky way to prevent 400: delete photo from profile since it's not a file
-        $.ajax({
-          url: loom_api.profile,
-          method: 'POST',
-          data: objectToFormData(profile),
-          contentType: false,
-          processData: false,
-          success: function (result) {
-            this.setState({ profile:result })
-            if (this.state.isCompany) {
-              this._createCompany();
-            }
-            else {
-              window.location = '/prelaunch/';
-            }
-          }.bind(this)
-        });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+        if (valid) {
+          this.setState({ formError: false });
+
+          let profile = this.state.profile;
+          profile.username = profile.email;
+          profile.photo = this.state.photo_file ? this.state.photo_file : '';
+
+          $.ajax({
+            url: loom_api.profile,
+            method: 'POST',
+            data: objectToFormData(profile),
+            contentType: false,
+            processData: false,
+            success: function (result) {
+              this.setState({profile: result})
+              if (this.state.isCompany) {
+                this._createCompany();
+              }
+              else {
+                window.location = '/prelaunch/';
+              }
+            }.bind(this)
+          });
+        } else {
+          this.setState({formError: 'Please fill out all fields.', isLoading: false});
+        }
+      });
     });
   },
 
@@ -570,10 +627,21 @@ const PrelaunchOnboarding = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, company, isCompany, isLoading } = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const { formElements, formError, formErrorsList, profile, company, isCompany, isLoading } = this.state;
+    const error = formError && function() {
+        let errorsList = formErrorsList.map((thisError, i) => {
+          return <span key={i}>{thisError}<br/></span>;
+        });
+
+        if(!formErrorsList.length){
+          errorsList = formError;
+        }
+
+        return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+      }();
+
     const yourTitle = isCompany && (
-      <div className='form-group col-md-8 col-md-offset-2'>
+      <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.title.errorClass }>
         <label className="control-label" htmlFor={formElements.title.name}>{formElements.title.label}</label>
         <input
             className="form-control"

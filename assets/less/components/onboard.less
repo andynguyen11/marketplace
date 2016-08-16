@@ -99,7 +99,20 @@
     align-items: center;
   }
 
-  .profile-image, .company-image {
+  .profile-image {
+    height: 75px;
+    width: 75px;
+    border-radius: 100%;
+    overflow: hidden;
+    background-color: @brand-neutral--4;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('/static/images/icon-profile.png');
+    margin: 0 0 @gutter--medium 0;
+  }
+
+  .company-image {
     height: 75px;
     width: 75px;
     border-radius: 100%;

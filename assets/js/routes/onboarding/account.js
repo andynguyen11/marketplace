@@ -31,11 +31,17 @@ const AccountForm = React.createClass({
           Your LinkedIn account is now <strong>SYNCED UP</strong>! You can review and edit the fields below.
         </div>
       </div>
-    )
+    );
+
+    const linkedinConfirm = linkedIn && (
+      <div className={ profile.linkedin.extra_data ? 'alert alert-success text-center col-md-8 col-md-offset-2' : 'hidden' } role="alert">
+        Your LinkedIn account is now <strong>SYNCED UP</strong>! You can review and edit the fields below.
+      </div>
+    );
 
     return (
       <div className='base-form'>
-        { linkedInSync }
+        { linkedinConfirm }
 
         <div className='col-md-6 col-md-offset-2'>
             <div className={ 'form-group ' + formElements.profileFirstName.errorClass }>

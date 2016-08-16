@@ -163,10 +163,10 @@ const DeveloperOnboard = React.createClass({
       profilePhoto: {
         errorClass: '',
         validator: () => {
-          const { photo_file, formElements, formErrorsList } = this.state;
+          const { photo_url, formElements, formErrorsList } = this.state;
           let valid = false;
 
-          if(typeof photo_file === 'object') {
+          if(photo_url.length) {
             formElements.profilePhoto.errorClass = '';
             valid = true;
           }else {
