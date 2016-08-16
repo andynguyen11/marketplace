@@ -21,16 +21,17 @@
           </span>
         </h2>
 
-        <p>
+        <p class="short-description">
             {{ user.biography }}
         </p>
         <ul class="project-meta">
           <li>
-            <h4><img class="icon" src="{% static 'images/icon-location.png' %}" /> {{ user.city }}, {{ user.state }}</h4>
+            <img class="icon" src="{% static 'images/icon-location.png' %}" />
+            <h4>{{ user.city }}, {{ user.state }}</h4>
           </li>
           <li>
+            <img class="icon" src="{% static 'images/icon-clock.png' %}" />
             <h4>
-              <img class="icon" src="{% static 'images/icon-skill.png' %}" />
               {{ user.capacity }} hours/week
             </h4>
           </li>
@@ -192,7 +193,7 @@
       <hr />
        <div class="text-center">
         <h4 class="text-skinny sub-section ">Have you worked with {{ user.first_name }}?  Be the first to give them a review.</h4>
-        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Review {{ user.first_name }}</a>
+        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon.">Review {{ user.first_name }}</a>
       </div>
     </div>
   </div>

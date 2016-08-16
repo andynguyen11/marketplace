@@ -4,47 +4,45 @@
 
 {% block nav %}{% endblock %}
 
+{% block bodyid %}login{% endblock %}
+
 {% block content %}
-  <div id="login">
+  <div>
     <div class="login-hero hide-mobile">
       <div class="login-overlay"></div>
     </div>
-    <div class="row">
-      <div class="container">
-        <div class="col-md-10 col-md-offset-1">
-          <div class="panel-login">
-            <div class="login-content pull-left">
-              <h1 class="brand sub-section-">Get started for free</h1>
-              <h4 class="brand sub-section text-muted">Sign up to start discovering or posting amazing projects. Together we can build the future.</h4>
-              <div id="social-signup">
-                <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
-                  <i class="fa fa-linkedin-square"></i>
-                  Sign Up with LinkedIn
-                </a>
-                <p class="text-muted small text-center">
-                  We'll never post to LinkedIn without your permission.
-                </p>
+      <div class="panel-login">
+        <div class="login-content">
+          <h2 class="brand-bold text-header-main sub-section">Get started for free</h2>
+          <h3 class="brand sub-section text-muted hide-mobile" style="margin-top: -35px;">Sign up to start discovering or posting amazing projects. Together we can build the future.</h3>
+          <div class="sub-section hide-desktop"></div>
+          <div id="social-signup" class="sub-section">
+            <a class="btn btn-block btn-linkedin text-center" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
+              <i class="fa fa-linkedin-square"></i>
+              <span>Sign Up with LinkedIn</span>
+            </a>
+            <p class="text-center text-blue text-small">
+              We'll never post to your profile.
+            </p>
+          </div>
+          <div id="email-signup">
+            <h3 class="brand-bold text-dark sub-section">Or signup with your email</h3>
+            <form id="signup-form" method="post" class="sub-section" action="{% url 'signup' %}">
+              <div class="form-inputs">
+              {% crispy form %}
               </div>
-              <div id="email-signup">
-                <h4 class="brand sub-section">Or signup with your email</h4>
-                <form id="signup-form" method="post" action="{% url 'signup' %}">
-                  {% crispy form %}
-                  <input type="submit" class="btn btn-block btn-brand btn-fat" value="Sign Up"/>
-                </form>
-              </div>
-              <div class="login-footer text-center sub-section">
-                Already have an account?
-                <a href="{% url 'login' %}"> Login in here.</a>
-              </div>
-            </div>
-
-            <div class="clearfix"></div>
-
-            </div>
-
+              <input type="submit" class="btn btn-block btn-brand btn-fat" value="Sign Up"/>
+            </form>
+          </div>
+          <div class="login-footer text-center sub-section">
+            Already have an account?
+            <a href="{% url 'login' %}"> Login in here.</a>
           </div>
         </div>
+        <div class="clearfix"></div>
       </div>
     </div>
   </div>
 {% endblock %}
+
+{% block footer %}{% endblock %}

@@ -2,17 +2,17 @@
 {% load staticfiles %}
 
 {% block content %}
-<div id="profile" data-id="{{ company.id }}" class="sub-section light-section">
+<div id="profile" data-id="{{ company.id }}" class="section">
   <div class="row">
     <div class="container">
-      <div class="col-md-5">
-        <img src="{{ company.get_logo }}" class="profile-photo" />
+      <div class="col-md-4">
+        <div class="profile-photo" style="background-image:url('{{ company.get_logo }}');"></div>
       </div>
-      <div class="col-md-7">
-        <h2 class="brand text-header-main">
+      <div class="col-md-8">
+        <h2 class="brand-bold text-brand text-header-main">
           {{ company.name }}
         </h2>
-        <div>
+        <div class="short-description">
           {% if company.description %}
             {{ company.description }}
           {% else %}
@@ -20,21 +20,25 @@
           {% endif %}
         </div>
         <div class="sub-section">
-        <ul class="project-meta">
-          <li><img class="icon" src="{% static 'images/icon-location.png' %}" /> <h4 class="brand">{{ company.city }}, {{ company.state }}</h4></li>
-          {% if company.tags %}
-          <li><img class="icon" src="{% static 'images/icon-skill.png' %}" />
-            <h4 class="brand">
-            {% for tag in company.tags %}
-            {{ tag }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-            </h4>
-          </li>
-          {% endif %}
-        </ul>
+          <ul class="project-meta">
+            <li>
+              <img class="icon" src="{% static 'images/icon-location.png' %}" />
+              <h4>{{ company.city }}, {{ company.state }}</h4>
+            </li>
+            <li>
+              <img class="icon" src="{% static 'images/icon-category.png' %}" />
+              <h4 class="text-capitalize">
+                {% for tag in company.tags %}
+                  {{ tag }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </h4>
+            </li>
+          </ul>
         </div>
-        <div>
-          <button class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Message Us</button>
+
+        <div class="button-actions">
+          <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Message Us</button>
+          <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon.">Leave Review</button>
           <!--<a class="btn btn-dark" id="writeReview">Review Us</a>-->
         </div>
       </div>
@@ -43,14 +47,16 @@
   </div>
 </div>
 
-<div id="company-info" class="section">
+<div id="company-info" class="section light-section">
   <div class="row">
     <div class="container">
-      <div class="col-md-8 long-description">
-        <h2 class="brand-bold">About
+      <div class="col-md-7 long-description">
+        <h2 class="brand-bold text-header-main">
+          About
           {{ company.name }}
         </h2>
-        <div>
+
+        <div class="sub-section">
           {% if company.long_description %}
             {{ company.long_description|safe }}
           {% else %}
@@ -58,15 +64,14 @@
           {% endif %}
         </div>
       </div>
-      <div class="col-md-4">
-        <h3 class="brand-bold">Team Members</h3>
+      <div class="col-md-5 sub-section">
+        <h3 class="brand-bold sub-section">Team Members</h3>
         {% for employee in company.employees.all %}
-          <div class="form-group">
-          <img class="project-manager-photo pull-left" src="{{ employee.profile.get_photo }}" />
-            <div class="project-byline pull-left">
-              <p>
-                <span class="project-manager">{{ employee.profile.name }}</span>
-              </p>
+          <div class="profile-snapshot">
+            <div class="profile-photo" style="background-image:url('{{ employee.profile.get_photo }}');"></div>
+            <div class="project-byline">
+              <strong>{{ employee.profile.name }}</strong> <br />
+               {% if employee.profile.title %}{{ employee.profile.title }}{% else %}{{ employee.profile.role }} developer{% endif %}
             </div>
            <div class="clearfix"></div>
           </div>
@@ -76,10 +81,10 @@
   </div>
 </div>
 
-<div id="reviews" class="section light-section">
+<div id="reviews" class="section">
   <div class="row">
     <div class="container">
-      <h2 class="brand-bold">Reviews</h2>
+      <h2 class="brand-bold text-header-main">Reviews</h2>
       <div class="review-stars text-brand">
         <i class="fa fa-star-o"></i>
         <i class="fa fa-star-o"></i>
@@ -91,24 +96,24 @@
       <hr />
        <div class="text-center">
         <h4 class="text-skinny sub-section ">Have you worked with {{ company.name }}?  Be the first to give them a review.</h4>
-        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Review {{ company.name }}</a>
+        <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon.">Review {{ company.name }}</a>
       </div>
     </div>
   </div>
 </div>
 
-<div id="past-projects" class="section">
+<div id="past-projects" class="section light-section">
   <div class="row">
     <div class="container">
       <div class="plates page-content--medium">
         <div class="text-center">
-          <h2 class="brand-bold">{{ company.name }}'s Open Projects</h2>
+          <h2 class="brand-bold text-header-main sub-section">{{ company.name }}'s Open Projects</h2>
           <!-- <a href="" class="btn btn--clear btn-lg">View all</a> -->
         </div>
       {% if not projects %}
       <h3 class="brand sub-section text-center">No open projects</h3>
       {% endif %}
-        <div class="plates-inner">
+        <div class="plates-inner sub-section">
           {% for project in projects %}
           <a class="plate" href="{% url 'project' project.slug %}">
             <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>

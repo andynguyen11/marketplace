@@ -64,9 +64,8 @@ class Company(models.Model):
         tags = []
         for project in projects:
             # TODO List comprehension here bro
-            for skill in project.skills.all():
-                if skill.name not in tags:
-                    tags.append(skill.name)
+            if project.type not in tags:
+                tags.append(project.type)
         return tags
 
     def save(self, *args, **kwargs):
