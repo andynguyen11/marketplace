@@ -49,8 +49,8 @@
 }
 
 .how-tile {
-  padding: 0 0 (@gutter * 3);
   display: flex;
+  padding: 0 0 (@gutter * 3);
   align-items: center;
 
   .how-tile-content {
@@ -69,6 +69,11 @@
 
     & + .how-tile-image {
       background-position: right center;
+    }
+
+    @media (max-width: @screen-lg) {
+      flex-shrink: 0;
+      flex-basis: auto;
     }
   }
 
@@ -94,6 +99,11 @@
 
     &.how-tile-image--engage {
       background-image: url('../images/Engage-Illustration.png');
+    }
+
+    @media (max-width: @screen-lg) {
+      flex-shrink: 0;
+      flex-basis: auto;
     }
   }
 
