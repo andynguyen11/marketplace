@@ -77,7 +77,6 @@ const ProfileSettings = React.createClass({
             value: 'back-end'
           }
         ],
-        validator: FormHelpers.checks.isRequired,
         update: (value) => {
           const { profile } = this.state;
           profile.role = value;

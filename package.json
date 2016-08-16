@@ -58,6 +58,7 @@
     "react-dom": "^15.1.0",
     "react-router": "^2.5.2",
     "react-select2-wrapper": "^1.0.0",
+    "react-slick": "^0.12.5",
     "select2": "^4.0.3",
     "sprintf-js": "^1.0.3"
   }

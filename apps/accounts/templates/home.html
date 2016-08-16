@@ -109,7 +109,7 @@
           <p class="plate-info-project-description">{{ project.short_blurb }}</p>
         </div>
       </div>
-      <div class="plate-stats">
+      <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
         {% if project.estimated_equity_percentage %}
         <div class="plate-stat">
           <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
@@ -186,7 +186,7 @@
             <p class="plate-info-project-description">{{ project.short_blurb }}</p>
           </div>
         </div>
-        <div class="plate-stats">
+        <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
           {% if project.estimated_equity_percentage %}
           <div class="plate-stat">
             <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>

@@ -14,8 +14,8 @@ import {objectToFormData} from './project/utils'
     render() {
       const {routes, currentRoute} = this.props;
 
-      const navLinks = routes.map((route, i) => {
-        const linkActive = currentRoute && route.pathname === currentRoute.pathname ? 'active' : '';
+			const navLinks = routes.map((route, i) => {
+				const linkActive = currentRoute && route.pathname === currentRoute.pathname ? 'active' : '';
 
         return (
           <li key={i}>

@@ -55,6 +55,7 @@
     overflow: hidden;
     color: @font-color--light;
     background: #FFF;
+    letter-spacing: 0.5px;
 
     &:hover, &:active, &:visited {
       text-decoration: none;
@@ -102,30 +103,44 @@
     margin: -@gutter @gutter 0 0;
   }
 
-  .plate-info-profile-name {}
-
-  .plate-info-profile-name--primary {
-    color: @font-color--base;
+  .plate-info-profile-name {
+    font-size: 16px;
+    line-height: 26px;
   }
 
-  .plate-info-profile-name--secondary {}
+  .plate-info-profile-name--primary {
+    color: @brand-neutral--1;
+    font-family: @brand-font;
+  }
+
+  .plate-info-profile-name--secondary {
+    font-family: @brand-font;
+  }
 
   .plate-info-project {
     flex-grow: 1;
     overflow-y: hidden;
+    padding-top: @gutter--medium;
   }
 
   .plate-info-project-name {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow-y: hidden;
     color: @font-color--base;
-    font-size: 18px;
+    font-family: @brand-font-bold;
+    font-size: 20px;
   }
 
   .plate-info-project-description {
     display: -webkit-box;
-    -webkit-line-clamp: 6;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow-y: hidden;
     text-overflow: -o-ellipsis-lastline;
+    font-family: @brand-font;
+    font-size: 16px;
   }
 
   .plate-stats {
@@ -138,13 +153,15 @@
 
   .plate-stat {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     flex-grow: 1;
     flex-basis: 50%;
     position: relative;
     padding: 0 @gutter;
+    font-size: 32px;
+    font-family: @brand-font-bold;
 
     & + .plate-stat {
       border-left: 1px solid @brand-neutral--5;
@@ -164,17 +181,29 @@
         text-align: center;
         border: 1px solid @brand-neutral--5;
         border-radius: 50%;
+        font-weight: normal;
+        font-family: @brand-font;
       }
     }
   }
 
   .plate-stat-amount {
-    font-size: 18px;
     color: #FF7B5C;
   }
 
   .plate-stat-type {
-    font-size: 18px;
+    color: @brand-neutral--1;
+    padding-left: 7px;
+  }
+
+  .plate-stats-dual {
+    .plate-stat {
+      flex-direction: column;
+      font-size: 20px;
+    }
+    .plate-stat-type {
+      padding-left: 0;
+    }
   }
 
   .plate--dev {
@@ -184,6 +213,7 @@
     height: 270px;
     position: relative;
     display: flex;
+    font-family: @brand-font-bold;
 
     @media (max-width: @screen-sm) {
       flex-basis: 95%;
@@ -258,5 +288,7 @@
     font-weight: bold;
   }
 
-  .plate--dev-info-hire-button {}
+  .plate--dev-info-hire-button {
+    font-family: @brand-font;
+  }
 }

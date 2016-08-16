@@ -41,7 +41,8 @@
       text-align: center;
 
       @media (max-width: @screen-md) {
-        padding-left: 20px;
+        padding-left: @gutter--medium;
+        flex-shrink: 0;
       }
     }
 
@@ -67,12 +68,17 @@
 
         @media (max-width: @screen-sm) {
           margin: 0;
+          font-size: 14px !important;
         }
       }
 
       a.btn-brand--clear {
         &:hover {
           color: #fff;
+        }
+
+        @media (max-width: @screen-sm) {
+          padding: 3px 5px !important;
         }
       }
 
@@ -147,6 +153,7 @@
       background-size: cover;
       vertical-align: initial;
       display: inline-block;
+      cursor: pointer;
     }
 
     .header-icon-messages {

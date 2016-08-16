@@ -13,5 +13,6 @@ module.exports = [
 	'lodash',
 	'react-dropzone',
 	'react-router',
-	'quill'
+	'quill',
+	'react-slick'
 ];
