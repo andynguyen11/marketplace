@@ -96,7 +96,6 @@ const AccountSettings = React.createClass({
   handleChange(event) {
     const { formElements } = this.state;
     const { value } = event.target;
-    console.log(value)
     const fieldName = event.target.getAttribute('name');
 
     formElements[fieldName].value = value;

@@ -29,12 +29,14 @@
             <img class="icon" src="{% static 'images/icon-location.png' %}" />
             <h4>{{ user.city }}, {{ user.state }}</h4>
           </li>
+          {% if user.capacity %}
           <li>
             <img class="icon" src="{% static 'images/icon-clock.png' %}" />
             <h4>
               {{ user.capacity }} hours/week
             </h4>
           </li>
+          {% endif %}
         </ul>
         <div class="button-actions">
           <a class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon.">Send Message</a>
