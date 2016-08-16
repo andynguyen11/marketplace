@@ -212,7 +212,7 @@ function Budget({update, data, company, formErrors, ...props, updateBudgetType, 
     updateBudgetType && updateBudgetType(type, mix);
   };
 
-  const headerPrefix = company && <span>Set your budget in equity, cash or a mix of both.<br/></span>;
+  const headerPrefix = company && <span>Set your budget in equity, cash or a mix of both.</span>;
   const budgetSelector = company && (
       <div className={'form-group col-md-8 col-md-offset-2 budget-selector ' + formErrors.budgetType}>
         <label>Budget Types (Select one)</label>
@@ -276,7 +276,8 @@ function Budget({update, data, company, formErrors, ...props, updateBudgetType, 
         <h3 className="brand text-center">What's your budget?</h3>
         <h4 className="text-muted text-skinny text-center">
           {headerPrefix}
-          This is just a starting point fot bidding. You'll confirm compensation once you accept a bid you like.
+          This is just a starting point fot bidding. You'll confirm compensation once you accept a bid you like.<br/><br/>
+          <span>Note: The "Cash or Equity" option allows you to set your budget for cash and equity, but signals to the developer that you’ll pay in either cash or equity, not both.</span>
         </h4>
       </div>
 
