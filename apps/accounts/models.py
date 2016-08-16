@@ -34,7 +34,7 @@ class Skills(tagulous.models.TagModel):
 
 
 class Profile(AbstractUser):
-    phone_number = models.CharField(max_length=50, blank=True, null=True)
+
     address = models.CharField(max_length=255, blank=True, null=True)
     address2 = models.CharField(max_length=255, blank=True, null=True)
     phone = models.CharField(max_length=50, blank=True, null=True)
@@ -126,6 +126,8 @@ class Profile(AbstractUser):
         #    output.seek(0)
         #    self.photo = InMemoryUploadedFile(output, 'ImageField', "%s.jpg" % self.photo.name.split('.')[0], 'image/jpeg', output.len, None)
         #super(Profile, self).save(*args, **kwargs)
+
+Profile._meta.get_field('username').max_length = 75
 
 
 class SkillTest(models.Model):
