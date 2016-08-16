@@ -354,7 +354,7 @@ const ProfileSettings = React.createClass({
                 <select name="role" id="role" value={profile.role} onChange={this.handleChange}>
                   {roleOptions}
                 </select>
-                <i className="fa fa-chevron-down"></i>
+                <i className="fa fa-angle-down"></i>
               </div>
               <div className="bigSelect-suffix">developer</div>
               {/*<div className="bigSelect-suffix">developer <span className="text-yellow">looking for incredible projects.</span></div>*/}
