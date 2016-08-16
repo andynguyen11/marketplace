@@ -5,6 +5,9 @@ import {Checkbox} from 'react-bootstrap';
 import Quill from '../../components/editor/Quill'
 
 function quillConf({id, type}) {
+  const primary_placeholder = "This is the public long-form description of your project. This is where you should get really detailed to help developers understand what you’re trying to build and how much they should bid on your project.  You can add text and images to this field."
+  const private_placeholder = "The private information tab is secure and can only be unlocked by a developer you approve, after they sign a non-disclosure agreement."
+  let placeholder = (type == 'primary') ? primary_placeholder : private_placeholder;
   return {
     modules: {
       toolbar: {
@@ -12,7 +15,7 @@ function quillConf({id, type}) {
       },
     },
     bounds: `#project-info-${id}`,
-    placeholder: `This is the ${type} longform description associated with your project.`,
+    placeholder: placeholder,
     theme: 'snow',
   }
 }

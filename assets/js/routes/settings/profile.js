@@ -89,17 +89,6 @@ const ProfileSettings = React.createClass({
         errorClass: '',
         placeholder: '24hrs/Week',
         value: profile.capacity || '',
-        validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const { formElements } = this.state;
-          if (!valid) {
-            formElements.capacity.errorClass = 'has-error';
-          } else {
-            formElements.capacity.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
-        },
         update: (value) => {
           const { profile } = this.state;
           profile.capacity = value;
@@ -330,7 +319,7 @@ const ProfileSettings = React.createClass({
       );
     }.bind(this));
 
-    const skillsComponent = !!skills.length && (
+    const skillsComponent = !!skills.length && profile.role && (
       <div>
         <div className='form-group col-md-8 col-md-offset-2'>
           <label className='control-label'>Your Stack Experience</label>
@@ -378,6 +367,63 @@ const ProfileSettings = React.createClass({
       </div>
     );
 
+    const yourCapacity = profile.role && (
+      <div>
+        <div>
+          <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
+          <div className="col-sm-offset-2 col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                10hrs<br />
+                Week
+              </h3>
+            </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                20hrs<br />
+                Week
+              </h3>
+            </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                30hrs<br />
+                Week
+              </h3>
+            </button>
+          </div>
+
+          <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                40hrs<br />
+                Week
+              </h3>
+            </button>
+          </div>
+          <div className="clearfix"></div>
+        </div>
+        <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
+          <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
+            <input
+              className={ 'form-control ' + formElements.capacity.errorClass }
+              type='text'
+              name={formElements.capacity.name}
+              id={formElements.capacity.name}
+              placeholder={formElements.capacity.placeholder}
+              value={formElements.capacity.value}
+              onChange={this.handleChange}
+            />
+          <div className="clearfix"></div>
+        </div>
+      </div>
+    )
+
     return (
       <div>
         { isLoading && <Loader /> }
@@ -396,58 +442,7 @@ const ProfileSettings = React.createClass({
 
         {skillsComponent}
 
-        <div>
-          <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
-            <div className="col-sm-offset-2 col-sm-2 text-center">
-              <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
-                <h3>
-                  10hrs<br />
-                  Week
-                </h3>
-              </button>
-            </div>
-
-            <div className="col-sm-2 text-center">
-              <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
-                <h3>
-                  20hrs<br />
-                  Week
-                </h3>
-              </button>
-            </div>
-
-            <div className="col-sm-2 text-center">
-              <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
-                <h3>
-                  30hrs<br />
-                  Week
-                </h3>
-              </button>
-            </div>
-
-            <div className="col-sm-2 text-center">
-              <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
-                <h3>
-                  40hrs<br />
-                  Week
-                </h3>
-              </button>
-            </div>
-            <div className="clearfix"></div>
-          </div>
-          <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
-            <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
-              <input
-                className={ 'form-control ' + formElements.capacity.errorClass }
-                type='text'
-                name={formElements.capacity.name}
-                id={formElements.capacity.name}
-                placeholder={formElements.capacity.placeholder}
-                value={formElements.capacity.value}
-                onChange={this.handleChange}
-              />
-            <div className="clearfix"></div>
-          </div>
+        {yourCapacity}
 
           <div className='text-center form-group col-md-8 col-md-offset-2'>
             {error}
