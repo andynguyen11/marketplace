@@ -39,6 +39,7 @@ const EntrepreneurOnboard = React.createClass({
       logo_file: '',
       logo_url: '',
       formError: false,
+      formErrorsList: [],
       isCompany: true,
       isLoading: false
     };
@@ -76,16 +77,17 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
-          if (!valid) {
-            formElements.profileCountry.errorClass = 'has-error';
-          } else {
-            formElements.profileCountry.errorClass = '';
-          }
-          this.setState({ formElements });
-          return valid;
 
+          if (!valid) {
+            formElements.title.errorClass = 'has-error';
+            formErrorsList.push('Please add your job title.');
+          } else {
+            formElements.title.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
         },
         update: (value) => {
           const { profile } = this.state;
@@ -99,14 +101,15 @@ const EntrepreneurOnboard = React.createClass({
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyName.errorClass = 'has-error';
+            formErrorsList.push('Please add a company name.');
           } else {
             formElements.companyName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -121,14 +124,15 @@ const EntrepreneurOnboard = React.createClass({
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyState.errorClass = 'has-error';
+            formErrorsList.push('Please add a company state.');
           } else {
             formElements.companyState.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -143,20 +147,39 @@ const EntrepreneurOnboard = React.createClass({
         value: company.city || '',
         errorClass: '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a company city.');
           } else {
             formElements.companyCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { company } = this.state;
           company.city = value;
           this.setState({ company });
+        }
+      },
+      companyPhoto: {
+        errorClass: '',
+        validator: () => {
+          const { isCompany, logo_file, formElements, formErrorsList } = this.state;
+          let valid = false;
+
+          if(typeof logo_file !== 'object' && isCompany) {
+            formElements.companyPhoto.errorClass = 'has-error';
+            formErrorsList.push('Please add a company logo.');
+            valid =  false;
+          }else {
+            formElements.companyPhoto.errorClass = '';
+            valid = true;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
         }
       },
       companyDescription: {
@@ -166,14 +189,15 @@ const EntrepreneurOnboard = React.createClass({
         value: company.description || '',
         placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyDescription.errorClass = 'has-error';
+            formErrorsList.push('Please add a company overview.');
           } else {
             formElements.companyDescription.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -214,14 +238,15 @@ const EntrepreneurOnboard = React.createClass({
           }
         ],
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyType.errorClass = 'has-error';
+            formErrorsList.push('Please add a company type.');
           } else {
             formElements.companyType.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -237,14 +262,15 @@ const EntrepreneurOnboard = React.createClass({
         value: company.filing_location || '',
         placeholder: 'State/Province',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyFilingLocation.errorClass = 'has-error';
+            formErrorsList.push('Please add a company filing location.');
           } else {
             formElements.companyFilingLocation.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -270,14 +296,15 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.first_name || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileFirstName.errorClass = 'has-error';
+            formErrorsList.push('Please add a first name.');
           } else {
             formElements.profileFirstName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -292,14 +319,15 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.last_name || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileLastName.errorClass = 'has-error';
+            formErrorsList.push('Please add a last name.');
           } else {
             formElements.profileLastName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -308,20 +336,39 @@ const EntrepreneurOnboard = React.createClass({
           this.setState({ profile });
         }
       },
+      profilePhoto: {
+        errorClass: '',
+        validator: () => {
+          const { photo_file, formElements, formErrorsList } = this.state;
+          let valid = false;
+
+          if(typeof photo_file === 'object') {
+            formElements.profilePhoto.errorClass = '';
+            valid = true;
+          }else {
+            formElements.profilePhoto.errorClass = 'has-error';
+            formErrorsList.push('Please add a profile picture.');
+            valid =  false;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        }
+      },
       profileCity: {
         name: 'profileCity',
         label: 'City',
         value: profile.city || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a city.');
           } else {
             formElements.profileCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -336,14 +383,15 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.state || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileStateProvince.errorClass = 'has-error';
+            formErrorsList.push('Please add a state/province.');
           } else {
             formElements.profileStateProvince.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -358,14 +406,15 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.country || 'United States of America',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
           const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileCountry.errorClass = 'has-error';
+            formErrorsList.push('Please add a country.');
           } else {
             formElements.profileCountry.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -381,17 +430,18 @@ const EntrepreneurOnboard = React.createClass({
         value: profile.biography || '',
         errorClass: '',
         validator: (value) => {
-          const { formElements } = this.state;
+          const { formElements, formErrorsList } = this.state;
           const maxLen = 250;
           const minLen = 1;
           const valid = value.length >= minLen && value.length <= maxLen;
 
           if (!valid) {
             formElements.profileBio.errorClass = 'has-error';
+            formErrorsList.push('Please add a bio.');
           } else {
             formElements.profileBio.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -405,64 +455,66 @@ const EntrepreneurOnboard = React.createClass({
 
   _createCompany() {
     const { formElements, isCompany } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      let company = this.state.company;
-      company.logo = this.state.logo_file;
+        if (valid) {
+          this.setState({ formError: false, isLoading: true });
 
-      if(valid) {
-        this.setState({ formError: false });
-        if (isCompany) {
-          $.ajax({
-            url: loom_api.company,
-            method: 'POST',
-            data: objectToFormData(company),
-            contentType: false,
-            processData: false,
-            success: function (result) {
-              this.setState({
-                company: result
-              });
-              this._saveAccount();
-            }.bind(this)
-          });
+          let company = this.state.company;
+          company.logo = this.state.logo_file;
+          if (isCompany) {
+            $.ajax({
+              url: loom_api.company,
+              method: 'POST',
+              data: objectToFormData(company),
+              contentType: false,
+              processData: false,
+              success: function (result) {
+                this.setState({
+                  company: result
+                });
+                this._saveAccount();
+              }.bind(this)
+            });
+          }
+          else {
+            this._saveAccount();
+          }
+        } else {
+          this.setState({formError: 'Please fill out all fields.', isLoading: false});
         }
-        else {
-          this._saveAccount();
-        }
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+      });
     });
   },
 
   _saveAccount() {
     const { formElements } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements});
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      if (valid) {
-        this.setState({ formError: false, isLoading: true });
-        let profile = this.state.profile;
-        profile.photo = this.state.photo_file;
-        $.ajax({
-          url: loom_api.profile + profile.id + '/',
-          method: 'PATCH',
-          data: objectToFormData(profile),
-          processData: false,
-          contentType: false,
-          success: function (result) {
-            window.location = '/profile/dashboard/';
-          }.bind(this)
-        });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+        if (valid) {
+          this.setState({ formError: false, isLoading: true });
+          let profile = this.state.profile;
+          profile.photo = this.state.photo_file;
+          $.ajax({
+            url: loom_api.profile + profile.id + '/',
+            method: 'PATCH',
+            data: objectToFormData(profile),
+            processData: false,
+            contentType: false,
+            success: function (result) {
+              window.location = '/profile/dashboard/';
+            }.bind(this)
+          });
+        } else {
+          this.setState({formError: 'Please fill out all fields.', isLoading: false});
+        }
+      });
     });
   },
 
@@ -524,10 +576,21 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, company, isCompany, isLoading } = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const { formElements, formError, formErrorsList, profile, company, isCompany, isLoading } = this.state;
+    const error = formError && function() {
+        let errorsList = formErrorsList.map((thisError, i) => {
+          return <span key={i}>{thisError}<br/></span>;
+        });
+
+        if(!formErrorsList.length){
+          errorsList = formError;
+        }
+
+        return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+      }();
+
     const yourTitle = isCompany && (
-      <div className='form-group col-md-8 col-md-offset-2'>
+      <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.title.errorClass }>
         <label className="control-label" htmlFor={formElements.title.name}>{formElements.title.label}</label>
         <input
             className="form-control"

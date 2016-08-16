@@ -185,17 +185,17 @@ const CompanyForm = React.createClass({
         </div>
 
         <div className='form-group col-md-2 company-photo-upload'>
-            <label className="control-label">Company Photo</label>
+            <label className="control-label">Company Logo</label>
             <div className='text-center company-image' style={companyPhoto}></div>
 
             <div href="" className="btn btn-sm btn-brand btn-upload-image">
-                Upload Photo
+                Upload Logo
                 <input
                     className="form-control"
                     ref='file'
                     name='file'
                     type='file'
-                    label='Company Photo'
+                    label='Company Logo'
                     onChange={handleLogoChange}
                 />
             </div>
