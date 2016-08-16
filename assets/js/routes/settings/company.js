@@ -246,7 +246,7 @@ const CompanySettings = React.createClass({
             contentType: false,
             processData: false,
             success: function (result) {
-              this.setState({ isLoading: false });
+              window.location = '/profile/dashboard/';
             }.bind(this)
           });
       } else {

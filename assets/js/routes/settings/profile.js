@@ -271,7 +271,12 @@ const ProfileSettings = React.createClass({
       if (valid) {
         this.setState({ formError: false, isLoading: true });
         let profile = this.state.profile;
-        profile.photo = this.state.photo_file;
+        if (this.state.photo_file) {
+          profile.photo = this.state.photo_file;
+        }
+        else {
+          delete profile.photo;
+        }
         saveAccount(profile);
       } else {
         this.setState({ formError: 'Please fill out all fields.' });
