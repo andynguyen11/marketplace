@@ -41,10 +41,10 @@
       </div>
 
       <!-- Controls -->
-      <a class="left carousel-control hide-mobile" href="#hero-carousel--home" role="button" data-slide="prev">
+      <a class="left carousel-control" href="#hero-carousel--home" role="button" data-slide="prev">
         <span class="sr-only">Previous</span>
       </a>
-      <a class="right carousel-control hide-mobile" href="#hero-carousel--home" role="button" data-slide="next">
+      <a class="right carousel-control" href="#hero-carousel--home" role="button" data-slide="next">
         <span class="sr-only">Next</span>
       </a>
     </div>
@@ -95,10 +95,10 @@
   <div class="plates-inner">
     {% for project in featured %}
     <a class="plate" href="{% url 'project' project.slug %}">
-      <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+      <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
+          <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
           <div class="plate-info-profile-name">
             <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
             {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
@@ -139,10 +139,10 @@
     <div class='plates-inner plates-inner--dev'>
       {% for developer in developers %}
       <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
-        <div class='plate--dev-profile-overlay' style="background-image: url('{{ developer.get_photo }}')"></div>
+        <div class='plate--dev-profile-overlay' style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=400&url={{ developer.get_photo }}')"></div>
         <div class='plate--dev-type'>{{ developer.role }} </div>
         <div class='plate--dev-info'>
-            <div class="plate--dev-info-profile-photo" style="background-image: url('{{ developer.get_photo }}')"></div>
+            <div class="plate--dev-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ developer.get_photo }}')"></div>
             <div class="plate--dev-info-availability">{{ developer.capacity }}hrs / week</div>
             <div class="plate--dev-info-hire-button btn btn-white--clear">Hire {{ developer.first_name }}</div>
         </div>
@@ -172,10 +172,10 @@
 
       {% for project in new %}
       <a class="plate" href="{% url 'project' project.slug %}">
-        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
         <div class="plate-info">
           <div class="plate-info-profile">
-            <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
+            <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
             <div class="plate-info-profile-name">
               <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
               {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}

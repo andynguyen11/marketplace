@@ -1,26 +1,51 @@
 
 .home-section {
-	.carousel-inner {
-		.item-featured, .item-project {
-			padding: 0 50px;
-			margin: 0 auto;
-		}
-	}
+  .carousel-inner {
+    .item-featured, .item-project {
+      padding: 0 50px;
+      margin: 0 auto;
+    }
+  }
 
-	.carousel-control {
-		width: 5%;
-		background: none !important;
+  .carousel-control {
+    width: 5%;
+    background: none !important;
 
-		.glyphicon {
-			color: @dark-gray;
-		}
-	}
+    .glyphicon {
+      color: @dark-gray;
+    }
+
+    @media (max-width: @screen-md) {
+      bottom: @gutter--small + @gutter--medium;
+      top: auto;
+      width: 30px;
+      height: 30px;
+      margin: 0 @gutter;
+    }
+  }
 }
 
 #new-projects {
-	.carousel-inner {
-		.item-featured, .item-project {
-			padding: 0 35px;
-		}
-	}
+  .carousel-inner {
+    .item-featured, .item-project {
+      padding: 0 35px;
+    }
+  }
+}
+
+.hero {
+  .carousel-indicators {
+    @media (max-width: @screen-md) {
+      bottom: 18px;
+    }
+  }
+  .carousel-control {
+    @media (max-width: @screen-md) {
+      bottom: 25px;
+      top: auto;
+      width: 30px;
+      height: 30px;
+      margin: 0 @gutter;
+    }
+  }
 }
