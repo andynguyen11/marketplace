@@ -47,28 +47,28 @@
         </ul>
 
         <div class="header-icons">
-          <!--
+          {% comment %}
           <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
             <img src="{% static 'images/icon-message.png' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
-          -->
+          {% endcomment %}
           <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
           <div class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-image: url('{{ request.user.get_photo }}');"></div>
           <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
-             <!-- <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+             {% comment %} <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
               Messages
               {% if unread_count %}({{ unread_count }}){% endif %}
-            </a></li> -->
+            </a></li> {% endcomment %}
             <li class="hide-desktop"><a id="help" href="#" class="hide-desktop">Help</a></li>
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-            <!-- <li><a href="{% url 'postman:inbox' %}">Messages</a></li> -->
+            {% comment %} <li><a href="{% url 'postman:inbox' %}">Messages</a></li> {% endcomment %}
             <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
-            <!-- <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> -->
-            <!-- <li><a href="{% url 'view-documents' %}">Your Documents</a></li> -->
-            <!-- <li><a href="{% url 'view-skills' %}">Your Skills</a></li> -->
+            {% comment %} <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> {% endcomment %}
+            {% comment %} <li><a href="{% url 'view-documents' %}">Your Documents</a></li> {% endcomment %}
+            {% comment %} <li><a href="{% url 'view-skills' %}">Your Skills</a></li> {% endcomment %}
             <li><a href="{% url 'logout' %}">Log Out</a></li>
           </ul>
 
@@ -105,7 +105,7 @@
             <li><a href="/about/">About</a></li>
             <li><a href="/careers/">Careers</a></li>
             <li><a target="_blank" href="http://loom.totemapp.net/">Press</a></li>
-            <li><a target="_blank" href="http://blog.joinloom.com">Blog</a></li>
+            {% comment %} <li><a target="_blank" href="http://blog.joinloom.com">Blog</a></li> {% endcomment %}
             <li><a target="_blank" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
             <li><a href="/privacy/">Privacy Policy</a></li>
             <li><a href="/terms-of-service/">Terms of Service</a></li>
