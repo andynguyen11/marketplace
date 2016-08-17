@@ -67,7 +67,7 @@ class Profile(AbstractUser):
         else:
             try:
                 return self.social_auth.get(provider='linkedin-oauth2').extra_data['picture_urls']['values'][0]
-            except UserSocialAuth.DoesNotExist:
+            except:
                 return ''
 
     @property
