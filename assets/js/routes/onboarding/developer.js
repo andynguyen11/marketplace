@@ -32,7 +32,8 @@ const DeveloperOnboard = React.createClass({
       photo_url: '',
       isLoading: false,
       formError: false,
-      formErrorsList: []
+      formErrorsList: [],
+      apiError: false
     };
   },
 
@@ -317,7 +318,7 @@ const DeveloperOnboard = React.createClass({
 
     this.setState({ formErrorsList: [] }, () => {
       FormHelpers.validateForm(formElements, (valid, formElements) => {
-        this.setState({ formElements });
+        this.setState({ formElements, apiError: false });
 
         if (valid) {
           this.setState({ formError: false, isLoading: true });
@@ -331,7 +332,11 @@ const DeveloperOnboard = React.createClass({
             processData: false,
             success: function (result) {
               window.location = '/profile/dashboard/';
-            }.bind(this)
+            }.bind(this),
+            error: (xhr, status, error) => {
+              console.log(xhr, status, error);
+              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+            }
           });
         } else {
           this.setState({ formError: 'Please fill out all fields.' });
@@ -361,14 +366,18 @@ const DeveloperOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, formErrorsList, profile, isLoading } = this.state;
-    const error = formError && function() {
+    const { formElements, formError, formErrorsList, apiError, profile, isLoading } = this.state;
+    const error = (formError || apiError) && function() {
       let errorsList = formErrorsList.map((thisError, i) => {
         return <span key={i}>{thisError}<br/></span>;
       });
 
       if(!formErrorsList.length){
         errorsList = formError;
+      }
+
+      if(apiError) {
+        errorsList = apiError;
       }
 
       return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;

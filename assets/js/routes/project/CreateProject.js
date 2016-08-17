@@ -48,7 +48,7 @@ function ProgressBar({flow, active, isEditing, onSelect}) {
 
   let navItemProps = (eventKey) => ({
     eventKey,
-    className: `${eventKey} info-pill ${(flow.indexOf(eventKey) === flow.indexOf(active) ? ' active' : '')}`,
+    className: `${eventKey} info-pill ${(flow.indexOf(eventKey) === flow.indexOf(active) ? ' active' : '')} ${(flow.indexOf(eventKey) < flow.indexOf(active) ? ' done' : '')}`,
     disabled: !hasValidIndex(eventKey)
   })
 
@@ -308,8 +308,8 @@ const CreateProject = React.createClass({
 
   save(e){
     if (e) e.preventDefault();
-    this.setState({isLoading: true});
-    let {id = undefined} = this.state.data
+    this.setState({ isLoading: true, apiError: false });
+    let {id = undefined} = this.state.data;
     $.ajax({
       url: loom_api.project + (id !== undefined ? id + '/' : ''),
       method: (id !== undefined ? 'PUT' : 'POST'),
@@ -319,6 +319,10 @@ const CreateProject = React.createClass({
       success: result => {
         if(result.slug)
             window.location = `/project/${result.slug}/`;
+      },
+      error: (xhr, status, error) => {
+        console.log(xhr, status, error)
+        this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
       }
     });
   },
@@ -358,7 +362,8 @@ const CreateProject = React.createClass({
         estimated_equity_percentage: ''
       },
       budgetType: '',
-      budgetMix: false
+      budgetMix: false,
+      apiError: false
     }
   },
 
@@ -460,7 +465,7 @@ const CreateProject = React.createClass({
   },
 
   sectionAction(event){
-    $('html body').animate({scrollTop: 0}, 'fast');
+    $('html body').scrollTop(0);
     event.preventDefault();
     let {currentSection, sections} = this.state;
     if (this.sectionIsValid(currentSection)) {
@@ -550,9 +555,9 @@ const CreateProject = React.createClass({
   },
 
   render(){
-    let {data: {details, info}, sections, currentSection, formErrors, formError, isLoading} = this.state;
-    const error = formError &&
-      <div className="alert alert-danger" role="alert">Please correct errors above.</div>;
+    let {data: {details, info}, sections, currentSection, formErrors, formError, apiError, isLoading} = this.state;
+    const error = (formError || apiError) &&
+      <div className="alert alert-danger" role="alert">{ apiError || 'Please correct errors above.' }</div>;
     return (
       <div className={`sections ${currentSection} is active`}>
          { isLoading && <Loader /> }

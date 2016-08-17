@@ -40,6 +40,7 @@ const EntrepreneurOnboard = React.createClass({
       logo_url: '',
       formError: false,
       formErrorsList: [],
+      apiError: false,
       isCompany: true,
       isLoading: false
     };
@@ -463,7 +464,7 @@ const EntrepreneurOnboard = React.createClass({
 
     this.setState({ isLoading: true, formErrorsList: [] }, () => {
       FormHelpers.validateForm(formElements, (valid, formElements) => {
-        this.setState({formElements});
+        this.setState({formElements, apiError: false});
 
         if (valid) {
           this.setState({ formError: false, isLoading: true });
@@ -482,7 +483,11 @@ const EntrepreneurOnboard = React.createClass({
                   company: result
                 });
                 this._saveAccount();
-              }.bind(this)
+              }.bind(this),
+              error: (xhr, status, error) => {
+                console.log(xhr, status, error)
+                this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+              }
             });
           }
           else {
@@ -500,7 +505,7 @@ const EntrepreneurOnboard = React.createClass({
 
     this.setState({ isLoading: true, formErrorsList: [] }, () => {
       FormHelpers.validateForm(formElements, (valid, formElements) => {
-        this.setState({formElements});
+        this.setState({formElements, apiError: false});
 
         if (valid) {
           this.setState({ formError: false, isLoading: true });
@@ -514,7 +519,11 @@ const EntrepreneurOnboard = React.createClass({
             contentType: false,
             success: function (result) {
               window.location = '/profile/dashboard/';
-            }.bind(this)
+            }.bind(this),
+            error: (xhr, status, error) => {
+              console.log(xhr, status, error)
+              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+            }
           });
         } else {
           this.setState({formError: 'Please fill out all fields.', isLoading: false});
@@ -581,14 +590,18 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   render() {
-    const { formElements, formError, formErrorsList, profile, company, isCompany, isLoading } = this.state;
-    const error = formError && function() {
+    const { formElements, formError, formErrorsList, apiError, profile, company, isCompany, isLoading } = this.state;
+    const error = (formError || apiError) && function() {
         let errorsList = formErrorsList.map((thisError, i) => {
           return <span key={i}>{thisError}<br/></span>;
         });
 
         if(!formErrorsList.length){
           errorsList = formError;
+        }
+
+        if(apiError) {
+          errorsList = apiError;
         }
 
         return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
