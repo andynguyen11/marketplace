@@ -261,7 +261,12 @@ const DeveloperOnboard = React.createClass({
 
           if (!valid) {
             formElements.profileBio.errorClass = 'has-error';
-            formErrorsList.push('Please add a bio.');
+            if (value.length > maxLen) {
+              formErrorsList.push('Your bio is longer than 250 characters.');
+            }
+            else {
+              formErrorsList.push('Please add a bio.');
+            }
           } else {
             formElements.profileBio.errorClass = '';
           }
