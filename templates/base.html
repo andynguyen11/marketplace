@@ -15,9 +15,16 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
   <title>{% block title %}Loom{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}{% endblock %}" />
+
   <meta name="author" content="{% block meta_author %}{% endblock %}" />
+  <meta name="description" content="Loom is the first ever work-for-equity platform that connects visionaries with developers to bring digital products to life." />
+  <meta name="keywords" content="loom, loom labs, freelance, startups, equity" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta property="og:title" content="Raise ideas, not funds, on Loom." />
+  <meta property="og:description" content="Loom is the first ever work-for-equity platform that connects visionaries with developers to bring digital products to life." />
+  <meta property="og:image" content="https://devquity.s3.amazonaws.com/static/images/Loom_Logo.svg" />
+
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
   <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -35,7 +42,9 @@
 
   <div class="header" class="{% block header_class %}{% endblock %}">
     <div class="header-inner page-content">
-      <a class="logo" href="/">Loom</a>
+      <h1 class="logo">
+        <a href="/">Raise ideas, not funds, on Loom.</a>
+      </h1>
       {% block nav %}
       {% if request.user.is_authenticated %}
       <div class="header-nav">
@@ -224,22 +233,23 @@ $(function () {
 {% endif %}
 {% block scripts %}{% endblock %}
 
-
-<!-- Facebook Pixel -->
-{% block fb_pixel %}
+<div class="pixels">
+  <!-- Facebook Pixel -->
+  {% block fb_pixel %}
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod? n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init', '1090817730993966'); fbq('track', "PageView");
   </script><noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1090817730993966&ev=PageView&noscript=1"/></noscript>
-{% endblock %}
+  {% endblock %}
 
-{% block ad_pixel %}
+  {% block ad_pixel %}
   <!-- Segment Pixel - Loom - Retargeting Pixel - DO NOT MODIFY -->
   <img src="https://secure.adnxs.com/seg?add=6166186&t=2" width="1" height="1" />
   <!-- End of Segment Pixel -->
   <!-- Conversion Pixel - Loom Conversion Pixel - DO NOT MODIFY -->
   <img src="https://secure.adnxs.com/px?id=756522&t=2" width="1" height="1" />
   <!-- End of Conversion Pixel -->
-{% endblock %}
+  {% endblock %}
+</div>
 
 </body>
 </html>
