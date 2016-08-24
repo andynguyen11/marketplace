@@ -1,20 +1,51 @@
 from django.http import HttpResponseForbidden, Http404
 from drf_haystack.viewsets import HaystackViewSet
-from rest_framework import generics, viewsets
+from rest_framework import generics, viewsets, authentication, permissions
 from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet
 
 
+class AgreeTerms(APIView):
+    """
+    View to list all users in the system.
+    * Requires token authentication.
+    * Only admin users are able to access this view.
+    """
+    permission_classes = (IsAuthenticated, BidPermission)
+
+    def post(self, request):
+        """
+        Return a list of all users.
+        """
+        terms = Terms.objects.get(id=request.data['terms_id'])
+        if request.user == terms.job.contractor:
+            terms.status = 'agreed'
+            terms.save()
+            serializer = TermsSerializer(terms)
+            return Response(serializer.data)
+        return Response(status=403)
+
+
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
+    renderer_classes = (JSONRenderer, )
     permission_classes = (IsAuthenticated, BidPermission)
+
+    def create(self, request, *args, **kwargs):
+        # DRF doesn't recognize blank strings as null values, replace with None
+        cash = request.data['cash']
+        equity = request.data['equity']
+        request.data['cash'] = cash if cash else None
+        request.data['equity'] = equity if equity else None
+        return super(JobViewSet, self).create(request, *args, **kwargs)
 
 
 class NestedJobViewSet(NestedModelViewSet):
@@ -108,3 +139,6 @@ class ProjectSearchView(HaystackViewSet):
     """
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
+
+
+

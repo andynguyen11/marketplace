@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
+from accounts.models import Profile
 from .models import TemplateRoleTab, TemplateRole, Template, DocumentSignerTab, DocumentSigner, Document
 from generics.serializers import RelationalModelSerializer, ParentModelSerializer, AttachmentSerializer
+from generics.utils import field_names
 
 
 class TabSerializer(serializers.ModelSerializer):
@@ -41,9 +43,13 @@ class SignerTabSerializer(RelationalModelSerializer):
 
     def resolve_relations(self, obj):
         if not obj.get('template_role_tab', None):
-            obj['template_role_tab'] = TemplateRoleTab.objects.get(
-                    label=obj.get('label', None),
-                    template_role=obj['document_signer'].role)
+            kwargs = dict(template_role=obj['document_signer'].role)
+            if obj.has_key('label'):
+                kwargs['label'] = obj.get('label', None)
+            if obj.has_key('type'):
+                kwargs['type'] = obj.get('type', None)
+            if len(kwargs.keys()) > 1:
+                obj['template_role_tab'] = TemplateRoleTab.objects.get(**kwargs)
         return obj
 
 
@@ -51,11 +57,10 @@ class SignerSerializer(ParentModelSerializer):
     tabs = SignerTabSerializer(many=True, required=False)
     role = serializers.PrimaryKeyRelatedField(queryset=TemplateRole.objects.all(), required=False)
     role_name = serializers.CharField(required=False)
-    status = serializers.CharField(required=False, read_only=True)
 
     class Meta:
         model = DocumentSigner
-        fields = ('role', 'role_name', 'profile', 'tabs', 'status')
+        fields = ('role', 'role_name', 'profile', 'tabs', 'status' )
         parent_key = 'document_signer'
         child_fields = ('tabs',)
 
@@ -65,16 +70,19 @@ class SignerSerializer(ParentModelSerializer):
                     role_name=obj.get('role_name', None),
                     template=obj['document'].template)
 
+        if not isinstance(obj.get('profile', None), Profile):
+            obj['profile'] = Profile.objects.get(id=obj.get('profile', None))
+
         return obj
 
 
 class DocumentSerializer(ParentModelSerializer):
-    signers = SignerSerializer(many=True)
+    signers = SignerSerializer(many=True, required=False)
     attachments = AttachmentSerializer(many=True, required=False)
 
     class Meta:
         model = Document
-        fields = ('template', 'status', 'signers', 'attachments')
+        fields = field_names(Document) + ('signers', 'attachments', 'signing_url')
         parent_key = 'document'
         child_fields = ('signers', 'attachments')
 

@@ -14,9 +14,9 @@ from django.conf import settings
 
 from accounts.models import Profile
 from business.models import Job, Document, Terms
-from docusign.models import DocumentSigner
-from docusign.serializers import DocumentSerializer
-from payment.models import Order
+from business.serializers import DocumentSerializer
+from docusign.models import Document as DocusignDocument
+from payment.models import Order, Promo
 from payment.serializers import OrderSerializer
 from postman.forms import build_payload
 
@@ -27,78 +27,84 @@ class CreditCardView(APIView):
     """
 
     def post(self, request):
-
         stripe.api_key = settings.STRIPE_KEY
-        token = stripe.Token.create(
+        stripe_customer = None
+        stripe_token = stripe.Token.create(
             card={
-                "number": request.data['number'],
-                "exp_month": request.data['month'],
-                "exp_year": request.data['year'],
-                "cvc": request.data['cvc']
+                "number": request.data['card']['number'],
+                "exp_month": request.data['card']['month'],
+                "exp_year": request.data['card']['year'],
+                "cvc": request.data['card']['cvc']
             },
         )
-        if request.data['save_card']:
-            try:
-                # Create a Customer
-                stripe_customer = stripe.Customer.create(
-                    source=token,
-                    description="{0}, {1}".format(
-                        request.user.last_name,
-                        request.user.first_name,
+        if request.data['card']['save_card']:
+            if request.user.stripe:
+                try:
+                    stripe_customer = stripe.Customer.retrieve(request.user.stripe)
+                    stripe_customer.sources.create(source=stripe_token)
+                except stripe.error.CardError, e:
+                    body = e.json_body
+                    error = body['error']['message']
+                    return Response(status=500, data={"error": error})
+            else:
+                try:
+                    # Create a Customer
+                    stripe_customer = stripe.Customer.create(
+                        source=stripe_token,
+                        description="{0}, {1} - {2}".format(
+                            request.user.last_name,
+                            request.user.first_name,
+                            request.user.company
+                        )
                     )
-                )
-            except stripe.error.CardError, e:
-                body = e.json_body
-                error = body['error']['message']
-                return Response(status=500, data={"error": error})
+                except stripe.error.CardError, e:
+                    body = e.json_body
+                    error = body['error']['message']
+                    return Response(status=500, data={"error": error})
             user = request.user
             user.stripe = stripe_customer.id
             user.save()
-        self.send_payment(request, token)
-        return Response(status=200, data={"message": "Success"})
+        message, url = self.send_payment(request, stripe_token, stripe_customer)
+        return Response(status=200, data={"message": message, "url": url})
 
     def patch(self, request):
         stripe.api_key = settings.STRIPE_KEY
         stripe_customer = stripe.Customer.retrieve(request.user.stripe)
         if stripe_customer.id == request.data['customer']:
-            status = self.send_payment(request, request.data['customer'], request.data['card'])
-            return Response(status=200, data={"message": status})
+            message, url = self.send_payment(request, request.data['card'], request.data['customer'])
+            return Response(status=200, data={"message": message, "url": url})
         return Response(status=403)
 
-    def send_payment(self, request, customer, card):
-        order = Order.objects.get(job=request.data['job'])
-        status = "There was a problem with your payment."
-        if order.stats == 'paid':
-            return 'Already paid'
+    def send_payment(self, request, card, customer=None):
+        job = Job.objects.get(id=request.data['job'])
+        order, created = Order.objects.get_or_create(job=job)
+        if order.status == 'paid':
+            return ("Already Paid", "/profile/dashboard/")
 
         if request.user == order.job.project.project_manager:
             #TODO don't hard code promos
-            if request.data['promo'] != 'raiseideas':
+            if request.data.get('promo', None) == 'raiseideas':
+                order.price = 0
+            else:
                 stripe.Charge.create(
                     amount=int(order.price*100),
                     currency='usd',
                     source=card,
-                    customer=customer
+                    customer=customer,
+                    description='Loom fee for "{0}"'.format(order.job.project.title)
                 )
             order.date_charged = datetime.datetime.now()
             order.status = 'paid'
             order.save()
             status = "Success"
             terms = Terms.objects.get(job=order.job)
-            payload = build_payload(request.user, order.job.contractor, terms)
+            payload = build_payload(request.user, terms.job.contractor, terms)
             serializer = DocumentSerializer(data=payload)
             serializer.is_valid(raise_exception=True)
             new_document = serializer.create(serializer.validated_data)
-            Document.objects.create(
-                docusign_document=self,
-                status=self.status,
-                type='MSA',
-                job=obj.job,
-                project=obj.job.project
-            )
-            signer = DocumentSigner.objects.get(profile=request.user, document=new_document)
-            return signer.signing_url
-        return status
+            signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
+            return ("Success", signer_url)
+        return ("There was a problem processing your payment.", "/profile/dashboard/")
 
     def get(self, request):
         stripe.api_key = settings.STRIPE_KEY
@@ -165,3 +171,22 @@ class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OrderSerializer
     renderer_classes = (JSONRenderer, )
     permission_classes = (IsAuthenticated, )
+
+
+class PromoCheck(APIView):
+    #TODO This is a hack implementation, revisit and apply promo to order object
+    permission_classes = (IsAuthenticated, )
+
+    def post(self, request):
+        try:
+            promo = Promo.objects.get(code=request.data.get('promo', 'wrongpromo'))
+        except Promo.DoesNotExist:
+            return Response(status=500, data='This promo code is invalid.')
+
+        if request.user in promo.customers.all():
+            return Response(status=500, data='This promo code has already been used.')
+
+        promo.customers.add(request.user)
+        promo.save()
+
+        return Response(status=200, data={'message': 'Promo successfully applied.'})

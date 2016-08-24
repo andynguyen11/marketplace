@@ -1,14 +1,50 @@
-.bid-form {
-  padding: 25px;
-  .radio {
-    margin-right: 30px;
-    display: inline-block;
-    input[type="radio"] {
-      left: 5px;
-      bottom: 5px;
-      margin-left: 0;
+#bid-modal {
+  .modal-dialog{
+    width: 400px;
+  }
+}
 
+.bid-form {
+  h3.text-brand {
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  h4.bid-and {
+    margin-top: -15px;
+  }
+  textarea {
+    height: 150px;
+  }
+  .radio {
+    margin: 0;
+    margin-right: 15px;
+    input[type="radio"] {
+      position: relative;
+      margin-right: 5px;
     }
   }
-
+  .form-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .control-label {
+      margin-bottom: 0;
+    }
+    .input-group {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .input-group-addon {
+        padding: 9px 12px;
+        width: auto;
+      }
+    }
+    label {
+     display: inline;
+    }
+    input[type="number"].form-control {
+     display: inline;
+     width: 100px;
+    }
+  }
 }

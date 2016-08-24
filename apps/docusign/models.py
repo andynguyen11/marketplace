@@ -69,7 +69,7 @@ class Template(models.Model):
 class DocumentSignerTab(models.Model):
     template_role_tab = models.ForeignKey('docusign.TemplateRoleTab')
     document_signer = models.ForeignKey('docusign.DocumentSigner')
-    value = models.CharField(max_length=100)
+    value = models.TextField()
 
     @property
     def label(self):
@@ -165,9 +165,12 @@ class Document(models.Model):
         except pydocusign.exceptions.DocuSignException, e:
             error = parse_exception(e)
             if error['code'] == 400: # The token for an out of sequence recipient cannot be generated.
-                return error['data']
+                return None
             else:
                 raise e
+    @property
+    def signing_url(self):
+        return '/api/docusign/signing/redirect/%s' % self.id
 
     def create(self):
         self.envelope_id = create_envelope(

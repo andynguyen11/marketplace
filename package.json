@@ -42,7 +42,8 @@
     "react-dropzone": "^3.5.3",
     "react-slick": "^0.12.3",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
@@ -59,7 +60,7 @@
     "react-router": "^2.5.2",
     "react-select2-wrapper": "^1.0.0",
     "react-slick": "^0.12.5",
-    "select2": "^4.0.3",
-    "sprintf-js": "^1.0.3"
+    "react-textarea-autosize": "^4.0.4",
+    "select2": "^4.0.3"
   }
 }

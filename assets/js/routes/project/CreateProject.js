@@ -321,7 +321,6 @@ const CreateProject = React.createClass({
             window.location = `/project/${result.slug}/`;
       },
       error: (xhr, status, error) => {
-        console.log(xhr, status, error)
         this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
       }
     });

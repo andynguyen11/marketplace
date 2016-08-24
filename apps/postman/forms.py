@@ -43,6 +43,9 @@ def build_payload(sender, recipient, terms):
     """
     return {
         'template': '054c2981-9e38-42ac-8451-f8b43230ccea',
+        'status': 'new',
+        'job': terms.job.id,
+        'type': 'MSA',
         'signers': [
             {
                 'role_name': 'Contractee',
@@ -90,7 +93,7 @@ def build_payload(sender, recipient, terms):
                     },
                     {
                         'label': 'ContractorTitle',
-                        'value': recipient.title
+                        'value': '{0} Developer'.format(recipient.role)
                     }
 
                 ]

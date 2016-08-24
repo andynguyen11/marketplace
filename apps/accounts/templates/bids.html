@@ -5,24 +5,108 @@
 <div id="dashboard">
   <div class="row">
     <div class="container">
-      {% if projects %}
       <div class="col-md-12">
-        <h2 class="brand">the hub for your project bids</h2>
-      </div>
-      {% else %}
-        {% comment %}
-          TODO
-            This is a hacky way of distinguishing developer vs entrepreneur
-            Also need to correctly link to discover page instead of home once it's up.
-         {% endcomment %}
-        {% if request.user.role %}
-          <div class="col-md-12">
-            <h2 class="brand">You don't have any pending bids.</h2>
-            <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
-            <div class="text-center">
-              <a href="{% url 'home' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
+        <div class="sub-section">&nbsp;</div>
+        {% if bids %}
+          <div class="section">
+            <div class="section-header">
+              <h4>My Bids</h4>
             </div>
+            <table class="dashboard-table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Cash</th>
+                  <th>Equity</th>
+                  <th>Hours</th>
+                  <th>Date Submitted</th>
+                </tr>
+              </thead>
+              {% for bid in bids %}
+                <tr>
+                  <td>{{ bid.project.title }}</td>
+                  <td>{% if bid.cash %}${{ bid.cash }}{% endif %}</td>
+                  <td>{% if bid.equity %}{{ bid.equity }}%{% endif %}</td>
+                  <td>{{ bid.hours }} hours</td>
+                  <td>{{ bid.date_created }}</td>
+                </tr>
+              {% endfor %}
+            </table>
           </div>
+          {% else %}
+            <div class="col-md-12">
+              <h2 class="brand">You don't have any pending bids.</h2>
+              <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
+              <div class="text-center">
+                <a href="{% url 'home' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
+              </div>
+            </div>
+          {% endif %}
+
+        {% if projects %}
+          {% for project in projects %}
+          <div class="section">
+            <div class="section-header">
+              <h4 class="pull-left"><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h4>
+              <div class="action-buttons pull-right">
+                <a href="{% url 'edit-project' project.id %}" class="btn btn-brand">Edit</a>
+                <a href="{% url 'delete-project' project.id %}" onclick="return confirm('Are you sure ?')" class="btn btn-brand">Remove</a>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+            {% if project.job_set.all %}
+              <table class="dashboard-table">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Location</th>
+                    <th>Availability</th>
+                    <th>Cash</th>
+                    <th>Equity</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                {% for bid in project.job_set.all %}
+                <tr>
+                  <td>
+                    <img src="{{ bid.contractor.get_photo }}" class="profile-photo img-circle" />
+                  </td>
+                  <td>
+                    <strong>{{ bid.contractor.first_name }}</strong> <br/>
+                    {{ bid.date_created }}
+                  </td>
+                  <td>
+                    <strong>{{ bid.contractor.role }}</strong><br/>
+                    Developer
+                  </td>
+                  <td>
+                    <strong>{{ bid.contractor.city }}</strong><br/>
+                    {{ bid.contractor.state }}
+                  </td>
+                  <td>
+                    <strong>{{ bid.contractor.capacity }} hours/wk</strong>
+                  </td>
+                  <td>
+                    <strong>{% if bid.cash %}${{ bid.cash }}{% endif %}</strong>
+                  </td>
+                  <td>
+                    <strong>{% if bid.equity %}{{ bid.equity }}%{% endif %}</strong>
+                  </td>
+                  <td>
+                    {% if bid.conversation %}
+                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.0.id %}" class="btn btn-dark pull-left">Message</a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+                </table>
+              {% else %}
+                <h4>There are currently no bids on this project.   <a href="#">Start searching</a> for some developers!</h4>
+              {% endif %}
+          </div>
+        {% endfor %}
         {% else %}
           <div class="col-md-12">
             <h2 class="brand">You don't have any pending projects.</h2>
@@ -32,71 +116,6 @@
             </div>
           </div>
         {% endif %}
-      {% endif %}
-      <div class="col-md-12">
-        {% for project in projects %}
-        <div class="section">
-          <div class="section-header">
-            <h4 class="pull-left"><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h4>
-            <div class="action-buttons pull-right">
-              <a href="{% url 'edit-project' project.id %}" class="btn btn-brand">Edit</a>
-              <a href="{% url 'delete-project' project.id %}" onclick="return confirm('Are you sure ?')" class="btn btn-brand">Remove</a>
-            </div>
-            <div class="clearfix"></div>
-          </div>
-          <table class="dashboard-table">
-            {% if project.job_set.all %}
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Name</th>
-                  <th>Role</th>
-                  <th>Location</th>
-                  <th>Availability</th>
-                  <th>Cash</th>
-                  <th>Equity</th>
-                  <th></th>
-                </tr>
-              </thead>
-              {% for bid in project.job_set.all %}
-              <tr>
-                <td>
-                  <img src="{{ bid.contractor.get_photo }}" class="profile-photo img-circle" />
-                </td>
-                <td>
-                  <strong>{{ bid.contractor.first_name }}</strong> <br/>
-                  {{ bid.date_created }}
-                </td>
-                <td>
-                  <strong>{{ bid.contractor.role }}</strong><br/>
-                  Developer
-                </td>
-                <td>
-                  <strong>{{ bid.contractor.city }}</strong><br/>
-                  {{ bid.contractor.state }}
-                </td>
-                <td>
-                  <strong>{{ bid.contractor.capacity }} hours/wk</strong>
-                </td>
-                <td>
-                  <strong>${{ bid.cash }}</strong>
-                </td>
-                <td>
-                  <strong>{{ bid.equity }}%</strong>
-                </td>
-                <td>
-                  {% if bid.conversation %}
-                    <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.0.id %}" class="btn btn-dark pull-left">Message</a>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            {% else %}
-              <tr><td><h4>There are currently no bids on this project.   <a href="#">Start searching</a> for some developers!</h4></td></tr>
-            {% endif %}
-          </table>
-        </div>
-      {% endfor %}
       </div>
 
     </div>

@@ -92,7 +92,9 @@ def dashboard(request):
 @login_required
 def view_bids(request):
     projects = Project.objects.filter(project_manager=request.user)
-    return render_to_response('bids.html', {'projects': projects, }, context_instance=RequestContext(request))
+    bids = Job.objects.filter(contractor=request.user)
+    print(bids)
+    return render_to_response('bids.html', {'projects': projects, 'bids': bids }, context_instance=RequestContext(request))
 
 
 @login_required

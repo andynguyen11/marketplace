@@ -89,7 +89,7 @@ class Job(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_completed = models.DateTimeField(blank=True, null=True)
     equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
-    cash = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=2)
+    cash = models.IntegerField(blank=True, null=True)
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True, default='pending', choices=JOB_STATUS)
     progress = models.IntegerField(default=0)
@@ -102,11 +102,24 @@ class Job(models.Model):
 
     @property
     def conversation(self):
-        return Message.objects.filter(job=self, project=self.project)
+        return Message.objects.get(job=self, project=self.project, sender=self.contractor)
 
     @property
     def owner(self):
         return self.project.project_manager
+
+    def save(self, *args, **kwargs):
+        try:
+            terms = Terms.objects.get(job=self)
+            if terms.status != 'contracted' or terms.status != 'agreed':
+                terms.update_date = datetime.now()
+                terms.cash = self.cash
+                terms.equity = self.equity
+                terms.hours = self.hours
+                terms.save()
+        except Terms.DoesNotExist:
+            pass
+        super(Job, self).save(*args, **kwargs)
 
 
 class ProjectInfo(models.Model):
@@ -154,7 +167,7 @@ class Document(models.Model):
 
     @property
     def signing_url(self):
-        return self.docusign_document and '/api/docusign/signing/redirect/%s' % self.docusign_document.id
+        return self.docusign_document and self.docusign_document.signing_url
 
     @property
     def current_signer(self):
@@ -270,7 +283,7 @@ class Project(models.Model):
 class Terms(models.Model):
     create_date = models.DateTimeField(auto_now=True)
     update_date = models.DateTimeField(blank=True, null=True)
-    job = models.ForeignKey(Job)
+    job = models.OneToOneField(Job)
     contractor = models.CharField(max_length=100)
     contractee = models.CharField(max_length=100)
     start_date = models.DateField()
@@ -278,9 +291,10 @@ class Terms(models.Model):
     scope = models.TextField(blank=True, null=True)
     deliverables = models.TextField(blank=True, null=True)
     milestones = models.TextField(blank=True, null=True)
-    cash = models.DecimalField(max_digits=10, decimal_places=2)
-    equity = models.DecimalField(max_digits=5, decimal_places=2)
-    schedule = models.CharField(max_length=255, blank=True, null=True, choices=COMPENSATION_SCHEDULE)
+    cash = models.IntegerField(blank=True, null=True)
+    equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+    hours = models.IntegerField(blank=True, null=True)
+    schedule = models.CharField(max_length=255, default='50% upfront and 50% upon completion', blank=True, null=True, choices=COMPENSATION_SCHEDULE)
     halfway = models.CharField(max_length=255, blank=True, null=True)
     status = models.CharField(max_length=100, default='new')
 
@@ -288,14 +302,12 @@ class Terms(models.Model):
         if not self.pk:
             self.contractee = self.job.project.company.name if self.job.project.company else self.job.project.project_manager.name
             self.contractor = '{0} {1}'.format(self.job.contractor.first_name, self.job.contractor.last_name)
+            self.update_date = datetime.now()
             self.cash = self.job.cash
             self.equity = self.job.equity
+            self.hours = self.job.hours
             self.start_date = self.job.project.start_date
             self.end_date = self.job.project.end_date
-        else:
-            self.update_date = datetime.now()
-            if self.status == 'contracted':
-                order, created = Order.objects.get_or_create(job=self.job, )
         super(Terms, self).save(*args, **kwargs)
 
 

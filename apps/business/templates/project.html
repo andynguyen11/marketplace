@@ -106,10 +106,20 @@
           {% else %}
             <ul>
             <li>
-              <button id="bid-button" class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Bid on Project</button>
+              {% if not job %}
+                {% if user.is_authenticated %}
+                  <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+                {% else %}
+                  <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'view-project' project.slug %}">Bid on Project</a>
+                {% endif %}
+              {% endif %}
             </li>
             <li>
-              <button id="bid-button" class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and bidding will be available soon.">Send Message</button>
+              {% if job %}
+                <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+              {% else %}
+                <button id="message-button" class="btn btn-brand" data-toggle="modal" data-target="#message-modal">Send Message</button>
+              {% endif %}
             </li>
             </ul>
           {% endif %}
@@ -216,21 +226,44 @@
     </div>
   </div>
 </div>
-{% comment %}
+
 <div class="modal fade" tabindex="-1" role="dialog" id="bid-modal">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-      </div>
-      <div id="bid-body" class="modal-body">
-
+        <div id="bid-body"></div>
       </div>
 
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-{% endcomment %}
+
+<div class="modal fade" tabindex="-1" role="dialog" id="message-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title brand brand-bold">
+          Messaging about
+          <span class="text-brand">{{ project.title }}</span>
+        </h4>
+      </div>
+
+      <div class="modal-body">
+        <form id="message-form">
+          <input type="hidden" name="recipient" value="{{ project.project_manager.id }}" />
+          <input type="hidden" name="title" value="{{ project.title }}" />
+          <input type="hidden" name="project" value="{{ project.id }}" />
+          <textarea cols="40" class="required-input" id="id_message" name="body" placeholder="Write your message..." rows="7"></textarea>
+          <input type="submit" class="btn btn-brand pull-right" value="Send Message" />
+          <div class="clearfix"></div>
+        </form>
+      </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 {% endblock %}
 
 {% block scripts %}

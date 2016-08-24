@@ -29,7 +29,17 @@ class SkillsSerializer(serializers.ModelSerializer):
         exclude = ('protected', 'slug', )
 
 
-#TODO Create an obfuscated profile
+class ObfuscatedProfileSerializer(serializers.ModelSerializer):
+    photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'first_name', 'photo_url')
+
+    def get_photo_url(self, obj):
+        return obj.get_photo
+
+
 class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()

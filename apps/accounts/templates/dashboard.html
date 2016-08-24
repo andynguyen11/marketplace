@@ -79,9 +79,7 @@
           <div class="section-header">
             <h4>Messages {% comment %}<span class="text-skinny">({{ unread_count }} New)</span>{% endcomment %}</h4>
           </div>
-          <div class="section-body">
-            <p class="text-muted">You haven't received any messages... yet.</p>
-          </div>
+
           {% if messages %}
           <table id="pm_messages">
             <tbody>
@@ -98,38 +96,10 @@
                 {% endblock %}
                 <td>
                   {% block pm_subject %}
-                  <a href="{% if by_conversation and message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+                  <a href="{% if message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
                   {% include "postman/inc_subject_ex.html" %}
                   </a>
                   {% endblock %}
-                </td>
-                <td>
-
-                </td>
-
-                <td class="text-right">
-                  {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}
-                    {% if message.thread_id %}
-                    <button class="thread-unbookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-                      <img src="{% static "images/star-active.png" %}">
-                    </button>
-                    {% else %}
-                    <button class="message-unbookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-                      <img src="{% static "images/star-active.png" %}">
-                    </button>
-                    {% endif %}
-                  {% else %}
-                    {% if message.thread_id %}
-                    <button class="thread-bookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-                      <img src="{% static "images/star-open.png" %}">
-                    </button>
-                    {% else %}
-                    <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-                      <img src="{% static "images/star-open.png" %}">
-                    </button>
-                    {% endif %}
-                  {% endif %}
-
                 </td>
               </tr>
               {% endfor %}
@@ -138,6 +108,10 @@
               </tr>
             </tbody>
           </table>
+            {% else %}
+            <div class="section-body">
+            <p class="text-muted">You haven't received any messages... yet.</p>
+          </div>
           {% endif %}
         </div>
 

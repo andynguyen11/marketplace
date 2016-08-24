@@ -8,6 +8,7 @@ except ImportError:
     from django.contrib.sites.models import get_current_site
 from django.utils.translation import ugettext, ugettext_lazy as _
 
+from generics.admin import AttachmentInline
 from postman.models import Message, PendingMessage
 
 
@@ -85,6 +86,7 @@ class MessageAdminForm(forms.ModelForm):
 
 class MessageAdmin(admin.ModelAdmin):
     form = MessageAdminForm
+    inlines = [AttachmentInline]
     search_fields = ('subject', 'body')
     date_hierarchy = 'sent_at'
     list_display = ('subject', 'admin_sender', 'admin_recipient', 'sent_at', 'moderation_status')
@@ -108,7 +110,7 @@ class MessageAdmin(admin.ModelAdmin):
             ('moderation_status', 'moderation_date', 'moderation_by'),
             'moderation_reason',
             )}),
-        (_('Project'), {'fields': ('project', 'job')})
+        (_('Project'), {'fields': ('project', 'job')}),
     )
     raw_id_fields = ('sender', 'recipient', 'moderation_by', )
     readonly_fields = (

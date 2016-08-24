@@ -485,7 +485,6 @@ const EntrepreneurOnboard = React.createClass({
                 this._saveAccount();
               }.bind(this),
               error: (xhr, status, error) => {
-                console.log(xhr, status, error)
                 this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
               }
             });
@@ -521,7 +520,6 @@ const EntrepreneurOnboard = React.createClass({
               window.location = '/profile/dashboard/';
             }.bind(this),
             error: (xhr, status, error) => {
-              console.log(xhr, status, error)
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
           });

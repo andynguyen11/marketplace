@@ -303,7 +303,7 @@ class Message(models.Model):
     sender_deleted_at = models.DateTimeField(_("deleted by sender at"), null=True, blank=True)
     recipient_deleted_at = models.DateTimeField(_("deleted by recipient at"), null=True, blank=True)
     # moderation fields
-    moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
     moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='moderated_messages',
         null=True, blank=True, verbose_name=_("moderator"))
     moderation_date = models.DateTimeField(_("moderated at"), null=True, blank=True)
@@ -320,7 +320,7 @@ class Message(models.Model):
     class Meta:
         verbose_name = _("message")
         verbose_name_plural = _("messages")
-        ordering = ['-sent_at', '-id']
+        ordering = ['sent_at', 'id']
 
     def __str__(self):
         return "{0}>{1}:{2}".format(self.obfuscated_sender, self.obfuscated_recipient, Truncator(self.subject).words(5))

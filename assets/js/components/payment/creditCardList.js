@@ -3,10 +3,15 @@ import FormHelpers from '../../utils/formHelpers';
 
 
 const CreditCardList = React.createClass({
+  propTypes: {
+    cards: React.PropTypes.array,
+    showCardForm: React.PropTypes.func,
+    setCard: React.PropTypes.func
+  },
 
   render() {
 
-    const { setCard, addCard } = this.props;
+    const { setCard, showCardForm } = this.props;
 
     const cards = this.props.cards.map(function(card, i) {
       let card_class = '';
@@ -23,19 +28,32 @@ const CreditCardList = React.createClass({
       return(
         <li key={i}>
           <input onClick={setCard} type="radio" name="card" value={card.id} />
-          <i className={'fa fa-cc-'+card_class}></i>
-          card ending in {card.last4}
-          Expiration {card.exp_month}/{card.exp_year}
+          <div className="card-details">
+            <h2><i className={'fa fa-cc-'+card_class}></i></h2>
+            <div>card ending in {card.last4}</div>
+            <div>
+              Expiration <br />
+              {card.exp_month}/{card.exp_year}
+            </div>
+          </div>
         </li>
       )
     });
 
     return(
       <div>
-        <ul>
+      <div className="col-md-10 col-md-offset-1">
+        <strong>How do you want to pay?</strong>
+      </div>
+      <div className="col-md-8 col-md-offset-2">
+        <ul className="card-list">
           {cards}
-          <li><input type="radio" onClick={addCard} /> Different card</li>
+          <li>
+            <input name="card" type="radio" onClick={showCardForm} />
+            <div className="new-card">Use different card</div>
+          </li>
         </ul>
+      </div>
       </div>
     )
   }

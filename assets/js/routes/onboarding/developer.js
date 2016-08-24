@@ -334,7 +334,6 @@ const DeveloperOnboard = React.createClass({
               window.location = '/profile/dashboard/';
             }.bind(this),
             error: (xhr, status, error) => {
-              console.log(xhr, status, error);
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
           });

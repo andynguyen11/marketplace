@@ -526,7 +526,6 @@ const PrelaunchOnboarding = React.createClass({
               window.location = '/prelaunch/';
             },
             error: (xhr, status, error) => {
-              console.log(xhr, status, error)
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
           });
@@ -558,7 +557,7 @@ const PrelaunchOnboarding = React.createClass({
             contentType: false,
             processData: false,
             success: function (result) {
-              this.setState({profile: result})
+              this.setState({profile: result});
               if (this.state.isCompany) {
                 this._createCompany();
               }
@@ -567,7 +566,6 @@ const PrelaunchOnboarding = React.createClass({
               }
             }.bind(this),
             error: (xhr, status, error) => {
-              console.log(xhr, status, error)
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
           });

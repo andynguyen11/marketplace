@@ -7,13 +7,7 @@ const ContracteeTracker = React.createClass({
       statusMap: {
         NDA: {
           new:' Send Non-Disclosure Agreement',
-          sent: 'Awaiting Signature',
-          signed: 'Signed!'
-        },
-        terms: {
-          new: 'Enter Contract Terms',
-          sent: 'Edit Contract Terms',
-          contract: 'Purchase and Send Contract',
+          sent: 'Sent! Awaiting Signature',
           signed: 'Signed!'
         }
       },
@@ -22,99 +16,108 @@ const ContracteeTracker = React.createClass({
   },
 
   componentWillMount() {
-    let step = this.state.step;
-    if (this.props.terms.status == 'signed') {
+    let { step } = this.state;
+    const { terms, nda } = this.props;
+    if (terms.status == 'agreed') {
       step = 4;
     }
-    else if (this.props.terms.status == 'sent') {
+    else if (terms.status == 'sent') {
       step = 3;
     }
-    else if (this.props.nda.status == 'signed') {
+    else if (nda.status == 'sent') {
       step = 2;
     }
     this.setState({step: step});
   },
 
   render() {
-    const { nda, terms, signing_url, showTerms, toggleTermsPanel, toggleCheckoutPanel, updateNDA , isLoading } = this.props;
+    const { nda, ndaSending, terms, signing_url, togglePanel, updateNDA, panel } = this.props;
+    const { step, statusMap } = this.state;
+
+    const ndaStatus = () => {
+      switch (nda.status) {
+        case "sent":
+          return (
+              <button className="btn">Non-Disclosure Sent</button>
+          );
+        case "signed":
+          return (
+            <button className="btn">Signed</button>
+          );
+        default:
+          return (
+            <button
+              onClick={updateNDA}
+              className='btn btn-brand'
+              data-status='sent'
+            >
+              <i className={ ndaSending ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+              Send Non-Disclosure Agreement
+            </button>
+          );
+      }
+    }
+
+    const termsStatus = () => {
+      switch (terms.status) {
+        case "agreed":
+          return (
+            <button className="btn"><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
+          );
+        case "sent":
+          return (
+            <div>
+              <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
+              <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Edit Contract</button>
+            </div>
+          );
+        default:
+          return (
+            <div>
+              <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
+              <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Build &amp; Send Preview</button>
+            </div>
+          );
+      }
+   }
 
     return (
-      <div id="agreement-tracker" className="col-md-4">
-        <h4>Want to work with this developer?</h4>
-        <h4>Follow the steps below:</h4>
-        <div className="panel panel-default">
-          <div className="panel-heading text-skinny">
-            <h4>Agreement Tracker</h4>
-          </div>
-          { isLoading &&
-            <p>Loading...</p>
-          }
-          { isLoading ||
-            <div>
-              <div className="step">
-                <h5>Step 1</h5>
-                <h4 className="title">Non-Disclosure Agreement</h4>
-                <div className={this.state.step > 1 ? 'hidden' : ''}>
-                  <p>
-                    This is a legally-binding agreement between you and the developer
-                    that they will not disclose any sensitive or proprietary information.
-                  </p>
-                  <button
-                    onClick={updateNDA}
-                    className={nda.status == 'new' ? 'btn btn-brand' : 'btn btn-secondary'}
-                    disabled={nda.status == 'new' ? '' : 'true'}
-                    data-status='sent'
-                  >{this.state.statusMap.NDA[nda.status]}</button>
-                </div>
-                <div className={this.state.step != 1 ? '' : 'hidden'}>
-                  <h4 className="highlight">Signed
-                    <i className="fa fa-check-circle"></i>
-                  </h4>
-                </div>
-              </div>
+      <div id="agreement-tracker">
+        <div className="step">
+          <h5 className="step-number">1</h5>
+          <h5 className="title">Non-Disclosure Agreement <i className={ nda.status != 'new' ? 'fa fa-check-circle text-brand' : ''}></i></h5>
+          <p className="small">
+            Sending this agreement will unlock the project's private info tab and prevents your
+            developer from sharing proprietary information about your idea with outside parties.
+          </p>
+          { ndaStatus() }
+        </div>
 
-              <div className='step'>
-                <h5>Step 2</h5>
-                <h4 className="title">Build Contract</h4>
-                  <p>
-                    This is the legally-binding work contract agreement between you and the developer.
-                  </p>
-                  <button onClick={toggleTermsPanel} className={showTerms ? 'hidden' : 'btn btn-brand'}>{this.state.statusMap.terms[terms.status]}</button>
-                  <button disabled className={showTerms ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
-                <div className={this.state.step == 3 ? '' : 'hidden'} >
-                  <h4 className="highlight">Created on {terms.create_date}
-                    <i className="fa fa-check-circle"></i>
-                  </h4>
-                  <a onClick={toggleTermsPanel}>
-                    <i className="fa fa-edit"></i>
-                  &nbsp;
-                   {this.state.statusMap.terms[terms.status]}
-                  </a>
-                </div>
-              </div>
+        <div className='step'>
+          <h5 className="step-number">2</h5>
+          <h5 className="title">Build Your Work Contract <i className={ terms.status != 'new' ? 'fa fa-check-circle text-brand' : ''}></i></h5>
+          <p className="small">
+            Use our contract builder to quickly build your contract, and preview the contract terms with your developer.
+          </p>
+          { termsStatus() }
+        </div>
 
-              <div className={this.state.step < 3 ? 'inactive step' : 'step'}>
-                <h5>Step 3</h5>
-                <h4 className="title">Sign and Send Contract</h4>
-                <p>
-                  Loom collects a service fee only when you sign and send your contract to the developer.
-                </p>
-                <div className={this.state.step == 3 ? '' : 'hidden'} >
-                  <div className={signing_url ? 'hidden': ''}>
-                    <button onClick={toggleCheckoutPanel} className="btn btn-brand">Finish Up</button>
-                  </div>
-                  <div className={signing_url ? '' : 'hidden'}>
-                    <a href={signing_url} className="btn btn-brand">Sign Contract</a>
-                  </div>
-                </div>
-              </div>
+        <div className={step < 3 ? 'inactive step' : 'step'}>
+          <h5 className="step-number">3</h5>
+          <h5 className="title">Sign &amp; Send Work Contract</h5>
+          <p className="small">
+            Loom collects a service fee only when you sign and send your contract to this developer to engage them on your project.
+          </p>
+          <div className={step == 4 ? '' : 'hidden'} >
+            <div className={signing_url ? 'hidden': ''}>
+              <button onClick={togglePanel} data-panel='checkout' className="btn btn-brand">Finish Up</button>
             </div>
-          }
+            <div className={signing_url ? '' : 'hidden'}>
+              <a href={signing_url} className="btn btn-brand">Sign Contract</a>
+            </div>
+          </div>
         </div>
       </div>
-
-
-
     );
   }
 

@@ -1,9 +1,11 @@
 from django.shortcuts import redirect
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from rest_framework.parsers import BaseParser
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from generics.viewsets import NestedModelViewSet
 
 from .docusign import parse_webhook_update
 from .models import Template, Document, DocumentSigner
@@ -16,18 +18,18 @@ class TemplateAPI(generics.ListCreateAPIView):
     serializer_class = TemplateSerializer
 
 
-class DocumentAPI(generics.ListCreateAPIView):
+class DocumentViewSet(viewsets.ModelViewSet):
     ""
+    permission_classes = (IsAuthenticated,)
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
 
-class SignerAPI(generics.RetrieveUpdateAPIView):
-    ""
-    def get_queryset(self):
-        id = self.request.query_params['id']
-        return DocumentSigner.objects.get(id=id)
+class SignerViewSet(NestedModelViewSet):
+    permission_classes = (IsAuthenticated,)
+    queryset = DocumentSigner.objects.all()
     serializer_class = SignerSerializer
+    parent_key = 'document'
 
 
 class RawXMLParser(BaseParser):

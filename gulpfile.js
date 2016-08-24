@@ -13,7 +13,7 @@ const glob = require('glob');
 var less = require('gulp-less-sourcemap');
 var uglifyCss = require('gulp-uglifycss');
 var LessAutoprefix = require('less-plugin-autoprefix');
-var autoprefix = new LessAutoprefix({ browsers: ['last 2 versions'] });
+var autoprefix = new LessAutoprefix({ browsers: ['>0%'] });
 var gutil = require('gulp-util');
 
 const vendorFiles = require('./assets/js/vendor.js');

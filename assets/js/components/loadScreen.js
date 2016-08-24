@@ -5,7 +5,10 @@ let Loader = React.createClass({
       return (
         <div id='loader'>
           <div className='loader-content'>
-            <h2 className='text-center'><i className='fa fa-circle-o-notch fa-spin fa-fw'></i></h2>
+            <div className="spinner">
+              <div className="dot1"></div>
+              <div className="dot2"></div>
+            </div>
             <h1 className='brand-bold text-center text-brand'>Raising ideas...</h1>
           </div>
           <div className='modal-overlay'></div>

@@ -3,6 +3,19 @@ import ReactDOM from 'react-dom';
 import Bid from '../components/bid';
 
 $(document).ready(function() {
+    $("#message-form").on("submit", function(e) {
+      e.preventDefault();
+      $("#message-form input[type=submit]").attr('disabled','disabled');
+      $.ajax({
+        url: loom_api.message,
+        method: 'POST',
+        data: $(e.currentTarget).serialize(),
+        success: function() {
+          $('#message-modal').modal('hide');
+        }
+      });
+    return false;
+  });
 
   const ModalContent = React.createClass({
     getInitialState() {
@@ -15,6 +28,7 @@ $(document).ready(function() {
           id: $('#project').data('user')
         },
         job: {
+          id: '',
           compensationType: '',
           cash: '',
           equity: '',
@@ -39,11 +53,11 @@ $(document).ready(function() {
       return (
           <Bid
             project={project}
-            bid_sent={false}
             job={job}
-            current_user={user}
+            current_user={user.id}
             updateJob={this.updateJob}
             closeModal={this.closeModal}
+            isModal={true}
           />
       )
     }

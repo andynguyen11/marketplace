@@ -6,18 +6,32 @@ import FormHelpers from '../../utils/formHelpers';
 import _ from 'lodash';
 
 let Checkout = React.createClass({
+  propTypes: {
+    job: React.PropTypes.object,
+    updateNDA: React.PropTypes.func
+  },
 
   getInitialState() {
+    const { job } = this.props;
     return {
       isLoading: false,
+      sendingPayment: false,
+      applyingPromo: false,
       showCreditCardForm: false,
       currentCard: null,
       creditCard: {
         number: '',
         month: '',
         year: '',
-        cvc: ''
-      }
+        cvc: '',
+        save_card: false,
+      },
+      promo : '',
+      promo_message: '',
+      promo_error: '',
+      formError: false,
+      formErrorsList: [],
+      price: 3 * parseInt(job.hours)
     }
   },
 
@@ -34,7 +48,7 @@ let Checkout = React.createClass({
       success: function (result) {
         this.setState({
           cards: result,
-          showCreditCardForm: !result,
+          showCreditCardForm: result.length == 0,
           isLoading: false
         });
       }.bind(this)
@@ -49,44 +63,104 @@ let Checkout = React.createClass({
         name: 'number',
         label: 'Credit Card Number',
         value: creditCard.number || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
+          if (!valid) {
+            formElements.number.errorClass = 'has-error';
+            formErrorsList.push('Please add a credit card number.');
+          } else {
+            formElements.number.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
         update: (value) => {
           const { creditCard } = this.state;
           creditCard.number = value;
-          this.setState({ creditCard:creditCard });
+          this.setState({ creditCard });
         }
       },
       month: {
         name: 'month',
         label: 'Expiration Month',
+        placeholder: 'MM',
         value: creditCard.month || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
+          if (!valid) {
+            formElements.month.errorClass = 'has-error';
+            formErrorsList.push('Please add an expiry month.');
+          } else {
+            formElements.month.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
         update: (value) => {
           const { creditCard } = this.state;
           creditCard.month = value;
-          this.setState({ creditCard:creditCard });
+          this.setState({ creditCard });
         }
       },
       year: {
         name: 'year',
         label: 'Expiration Year',
+        placeholder: 'YYYY',
         value: creditCard.year || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
+          if (!valid) {
+            formElements.year.errorClass = 'has-error';
+            formErrorsList.push('Please add an expiry year.');
+          } else {
+            formElements.year.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
         update: (value) => {
           const { creditCard } = this.state;
           creditCard.year = value;
-          this.setState({ creditCard:creditCard });
+          this.setState({ creditCard });
         }
       },
       cvc: {
         name: 'cvc',
         label: 'Security Code',
         value: creditCard.cvc || '',
-        validator: FormHelpers.checks.isRequired,
+        errorClass: '',
+        validator: (value) => {
+          const valid = FormHelpers.checks.isRequired(value);
+          const { formElements, formErrorsList } = this.state;
+          if (!valid) {
+            formElements.cvc.errorClass = 'has-error';
+            formErrorsList.push('Please add a security code.');
+          } else {
+            formElements.cvc.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
         update: (value) => {
           const { creditCard } = this.state;
           creditCard.cvc = value;
-          this.setState({ creditCard:creditCard });
+          this.setState({ creditCard });
+        }
+      },
+      save_card: {
+        name: 'save_card',
+        label: 'Save this information for future purchases on Loom.',
+        value: creditCard.save_card || false,
+        update: (value) => {
+          const { creditCard } = this.state;
+          creditCard.save_card = value;
+          this.setState({ creditCard });
         }
       }
     }
@@ -103,50 +177,83 @@ let Checkout = React.createClass({
     this.setState({ formElements, formError: false });
   },
 
-  handlePromoChange(e) {
-    this.setState({
-      promo: $(e.currentTarget).val()
-    })
-  },
+  handleCheckboxChange(event) {
+    const { formElements } = this.state;
+    let { value } = event.target;
+    const fieldName = event.target.getAttribute('name');
 
-  applyPromo() {
-    $.ajax({
-      url: loom_api.promo,
-      data: { promo: this.state.promo },
-      success: function (result) {
+    if(value === 'false') {
+      value = false;
+    } else {
+      value = true;
+    }
 
-      }
-    });
+    formElements[fieldName].value = value;
+    formElements[fieldName].update(value);
+
+    this.setState({ formElements, formError: false });
   },
 
   setCard(e) {
     this.setState({
-      currentCard: e.currentTarget.value
+      currentCard: e.currentTarget.value,
+      showCreditCardForm: false
     });
   },
 
-  addCard() {
+  showCardForm() {
     this.setState({
       showCreditCardForm: true
     });
   },
 
+  applyPromo() {
+    // TODO Need to reimplement with dynamic pricing by updating order on backend when promo is applied
+    this.setState({ applyingPromo: true, promo_error: '' })
+    $.ajax({
+      url: loom_api.promo,
+      method: 'POST',
+      data: JSON.stringify({
+        promo: $('#promo').val()
+      }),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: function (result) {
+        this.setState({
+          promo: $('#promo').val().toLowerCase(),
+          promo_message: result.message,
+          price: 0,
+          applyingPromo: false
+        });
+      }.bind(this),
+      error: function(result) {
+        this.setState({
+          promo_error: result.responseText,
+          applyingPromo: false
+        });
+      }.bind(this)
+    })
+  },
+
   submitPayment() {
-    const { formElements, currentCard } = this.state;
+    const { formElements, currentCard, creditCard } = this.state;
+    const { job } = this.props;
+
     if (currentCard) {
-      this.setState({ formError: false, isLoading: true });
+      this.setState({ formError: false, sendingPayment: true });
       $.ajax({
         url: loom_api.creditcard,
         method: 'PATCH',
         data: JSON.stringify({
           card: this.state.currentCard,
           customer: this.state.cards[0].customer,
-          job: this.props.order.job.id
+          job: job.id,
+          promo: this.state.promo
         }),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         success: function (result) {
-          window.location = result.message;
+          window.location = result.url;
         }.bind(this)
       });
     }
@@ -154,15 +261,19 @@ let Checkout = React.createClass({
       FormHelpers.validateForm(formElements, (valid, formElements) => {
         this.setState({formElements});
         if (valid) {
-          this.setState({formError: false, isLoading: true});
+          this.setState({formError: false, sendingPayment: true});
           $.ajax({
             url: loom_api.creditcard,
             method: 'POST',
-            data: JSON.stringify(this.state.creditCard),
+            data: JSON.stringify({
+              card: creditCard,
+              job: job.id,
+              promo: this.state.promo
+            }),
             contentType: 'application/json; charset=utf-8',
             dataType: 'json',
             success: function (result) {
-              window.location = result.message;
+              window.location = result.url;
             }.bind(this)
           });
         } else {
@@ -173,63 +284,85 @@ let Checkout = React.createClass({
   },
 
   render() {
-    const { order, isLoading } =  this.props;
-    const { formElements, formError, showCreditCardForm, cards } = this.state;
+    const { job, terms } =  this.props;
+    const { price, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message } = this.state;
 
     return(
       <div className="checkout">
-        <strong>Almost done!</strong>
-        <p>
-          Loom takes a small service fee for facilitating the connection and contract between you
-          and the developer.
-        </p>
-        { order &&
-          <div>
+          <div className="col-md-10 col-md-offset-1">
+            <h5>Almost done!</h5>
+            <h5>
+              Loom takes a small service fee for facilitating the connection and contract between you
+              and the developer.
+            </h5>
+          </div>
+          <div className="fee-container col-md-10 col-md-offset-1">
             <strong>Loom service fee breakdown:</strong>
-
-            <div>
-              <p>$3 x {order.job.hours} total project hours in
-                <strong>{order.job.project.name}</strong>
-                contract.</p>
-              <h2>${order.price}</h2>
+            <div className="fee-details">
+              <strong>$3 x {job.hours} total project hours in {terms.project.title} contract.</strong>
+              <div className="fees">
+                <div>fee total</div>
+                <h2>${price}</h2>
+                <div>usd</div>
+              </div>
             </div>
+          </div>
 
-            <div>
-              Do you have a Loom coupon code?
-              <input type="text" className="form-control" name="promo" placeholder="Enter Code" />
-            </div>
+            { isLoading && (
+              <div>
+              <div className="clearfix"></div>
+              <div className="spinner">
+                <div className="dot1"></div>
+                <div className="dot2"></div>
+              </div>
+              </div>
+            )}
 
-            { cards && !showCreditCardForm &&
+            { isLoading || (
+              <div className="col-md-10 col-md-offset-1">
+                <div className='form-group'>
+                  <div className='promo'>
+                    <label className='label-control'>Do you have a Loom coupon code?</label>
+                    <input type="text" id="promo" className="form-control" name="promo" placeholder="Enter Code" />
+                    <button className="btn-sm" onClick={this.applyPromo}>
+                      <i className={ applyingPromo ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+                      Apply
+                    </button>
+                  </div>
+                  <div className={ promo_error ? "alert alert-danger" : "hidden"} role="alert">{ promo_error }</div>
+                  <div className={ promo_message ? "alert alert-success" : "hidden"} role="alert">{ promo_message }</div>
+                </div>
+              </div>
+            )}
+
+
+            { cards &&
               <CreditCardList
                 cards={cards}
                 setCard={this.setCard}
-                addCard={this.addCard}
+                showCardForm={this.showCardForm}
               />
             }
 
             { showCreditCardForm &&
-            <CreditCardForm
-              formElements={formElements}
-              formError={formError}
-              handleChange={this.handleChange}
-              submitCreditCard={this.submitCreditCard}
-            />
+              <CreditCardForm
+                formElements={formElements}
+                formError={formError}
+                formErrorsList={formErrorsList}
+                handleChange={this.handleChange}
+                handleCheckboxChange={this.handleCheckboxChange}
+              />
             }
 
-
-            <div className="col-md-4 col-md-offset-4">
-              <button onClick={this.submitPayment} type="submit" className="btn btn-success form-control">
-                Pay ${order.price} and Sign Contract
-              </button>
-              <p className="payment-errors hidden"></p>
-              <div className="security text-center">
-                Secured by
-                <img src="/static/images/comodo_secure_76x26_transp.png" />
-                <img src="/static/images/stripe.png" />
+            { isLoading || (
+              <div className="col-md-4 col-md-offset-4">
+                <button onClick={this.submitPayment} type="submit" className="btn btn-brand">
+                  <i className={ sendingPayment ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+                  Pay ${price} and Sign Contract
+                </button>
+                <p className="payment-errors hidden"></p>
               </div>
-            </div>
-          </div>
-        }
+            )}
         <div className='clearfix'></div>
       </div>
     );

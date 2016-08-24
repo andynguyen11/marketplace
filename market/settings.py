@@ -346,7 +346,7 @@ FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]
 
 LOOM_FEE = 3
 
-CKEDITOR_UPLOAD_PATH = "project/uploads/"
+SENDBIRD_API = 'EE7E8860-E9A8-49B2-9192-DBA542C8C07E'
 
 try:
     from local_settings import *

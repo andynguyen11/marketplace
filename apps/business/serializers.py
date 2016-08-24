@@ -13,6 +13,7 @@ from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.utils import update_instance, field_names
 from postman.helpers import pm_write
+from postman.models import Message
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -45,6 +46,13 @@ class InfoSerializer(ParentModelSerializer):
         fields = field_names(ProjectInfo) + ('attachments',)
         parent_key = 'info'
         child_fields = ('attachments',)
+
+
+class ProjectSummarySerializer(serializers.ModelSerializer):
+
+     class Meta:
+         model = Project
+         fields = ('id', 'title', 'slug' , 'type', 'date_created', 'short_blurb', 'company', 'project_manager')
 
 
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
@@ -85,6 +93,8 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
+    cash = serializers.IntegerField(required=False, allow_null=True )
+    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
 
     class Meta:
         model = Job
@@ -96,29 +106,68 @@ class JobSerializer(serializers.ModelSerializer):
         job = Job.objects.create(**data)
         terms = Terms.objects.create(job=job)
         nda = Document.objects.create(job=job, type='NDA', project=job.project, )
+        cash = ''
+        equity = ''
+        if job.equity:
+            equity = "{0}% Equity".format(job.equity)
+        if job.cash:
+            cash = "${0} Cash".format(job.cash)
+        if equity and cash:
+            compensation = "{0} and {1}".format(equity, cash)
+        else:
+            compensation = cash if cash else equity
+        message = "Hi, I'm interested in working on your project and just submitted a bid. \n\n" \
+                  "The bid terms are: \n\n" \
+                  "{0} for an estimated {1} hours of work. \n\n" \
+                  "Personal message from developer: {2}".format(compensation, job.hours, msg)
         message = pm_write(
             sender=job.contractor,
             recipient=job.project.project_manager,
-            subject='New Bid from {0} for {1}'.format(job.contractor.first_name or job.contractor.email, job.project.title),
-            body=msg
+            subject='New bid on {1}'.format(job.project.title),
+            body=message
         )
         # TODO Rethink saving these on the message
         message.job = job
         message.nda = nda
         message.project = job.project
         message.terms = terms
+        message.thread = message
         message.save()
         notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)
         return job
 
+    def update(self, instance, validated_data):
+        thread = Message.objects.get(job=instance, sender=instance.contractor)
+        cash = ''
+        equity = ''
+        if validated_data.get('equity', None):
+            equity = "{0}% Equity".format(validated_data['equity'])
+        if validated_data.get('cash', None):
+            cash = "${0} Cash".format(validated_data['cash'])
+        if equity and cash:
+            compensation = "{0} and {1}".format(equity, cash)
+        else:
+            compensation = cash if cash else equity
+        message = "Hi, I have adjusted my bid. \n\n" \
+                  "The bid terms are now: \n\n" \
+                  "{0} for an estimated {1} hours of work.".format(compensation, validated_data['hours'])
+        message = Message.objects.create(
+            sender=instance.contractor,
+            recipient=instance.project.project_manager,
+            subject='re:{0}'.format(thread.subject),
+            body=message,
+            thread=thread
+        )
+        return super(JobSerializer, self).update(instance, validated_data)
+
 
 class DocumentSerializer(ParentModelSerializer):
-    template = TemplateSerializer(read_only=True)
+    template = serializers.PrimaryKeyRelatedField(required=False, write_only=True, queryset=Template.objects.all())
     signers = SignerSerializer(many=True, required=False)
     attachments = AttachmentSerializer(many=True, required=False)
     docusign_document = DocusignDocumentSerializer(required=False, write_only=True, allow_null=True)
     signing_url  = serializers.CharField(read_only=True)
-    status  = serializers.CharField(read_only=True)
+    status  = serializers.CharField()
     current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def to_representation(self, instance):
@@ -169,12 +218,13 @@ class DocumentSerializer(ParentModelSerializer):
 
 class TermsSerializer(serializers.ModelSerializer):
     project = serializers.SerializerMethodField()
+    update_date = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Terms
 
     def get_project(self, obj):
-        return obj.job.project.title
+        return { 'title': obj.job.project.title, 'id': obj.job.project.id }
 
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):

@@ -58,20 +58,18 @@
         </ul>
 
         <div class="header-icons">
-          {% comment %}
           <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
             <img src="{% static 'images/icon-message.png' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
-          {% endcomment %}
           <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
           <div class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-image: url('{{ request.user.get_photo }}');"></div>
           <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
-             {% comment %} <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+             <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
               Messages
               {% if unread_count %}({{ unread_count }}){% endif %}
-            </a></li> {% endcomment %}
+            </a></li>
             <li class="hide-desktop"><a id="help" href="#" class="hide-desktop">Help</a></li>
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>

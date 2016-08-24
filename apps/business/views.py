@@ -16,7 +16,13 @@ from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user
 
 def view_project(request, project_slug):
     project = Project.objects.get(slug=project_slug)
-    return render_to_response('project.html', {'project': project, }, context_instance=RequestContext(request))
+    job = None
+    try:
+        if request.user.is_authenticated():
+            job = Job.objects.get(project=project, contractor=request.user)
+    except Job.DoesNotExist:
+        pass
+    return render_to_response('project.html', {'project': project, 'job': job }, context_instance=RequestContext(request))
 
 def company_profile(request, company_slug=None):
     company = Company.objects.get(slug=company_slug)
@@ -48,23 +54,6 @@ def create_project(request, project_id=None):
             'project': ProjectSerializer(project).data,
             'form': form, 'company': company, 'project_manager': request.user
         }, context_instance=RequestContext(request))
-
-
-@login_required
-def send_message(request):
-    if request.POST:
-        recipient = Profile.objects.get(id=request.POST['recipient'])
-        project = Project.objects.get(id=request.POST['project'])
-        sender = request.user
-        message = pm_write(
-            sender=sender,
-            recipient=recipient,
-            subject='New Inquiry from {0}'.format(sender.first_name),
-            body=request.POST['message'],
-            project=project
-        )
-        return HttpResponse(status=200)
-    return HttpResponse(status=403)
 
 
 @login_required
