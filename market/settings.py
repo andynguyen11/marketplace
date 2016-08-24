@@ -220,14 +220,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
+    os.path.join(PROJECT_ROOT, 'static'),
 )
-STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-STATIC_URL = 'https://devquity.s3.amazonaws.com/'
+STATICFILES_LOCATION = 'static'
+STATICFILES_STORAGE = 'market.custom_storages.StaticStorage'
+STATIC_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', STATICFILES_LOCATION)
 
 MEDIAFILES_LOCATION = 'media'
 MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)
