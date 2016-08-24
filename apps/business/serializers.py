@@ -123,7 +123,7 @@ class JobSerializer(serializers.ModelSerializer):
         message = pm_write(
             sender=job.contractor,
             recipient=job.project.project_manager,
-            subject='New bid on {1}'.format(job.project.title),
+            subject='New bid on {0}'.format(job.project.title),
             body=message
         )
         # TODO Rethink saving these on the message

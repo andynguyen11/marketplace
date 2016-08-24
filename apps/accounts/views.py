@@ -93,7 +93,6 @@ def dashboard(request):
 def view_bids(request):
     projects = Project.objects.filter(project_manager=request.user)
     bids = Job.objects.filter(contractor=request.user)
-    print(bids)
     return render_to_response('bids.html', {'projects': projects, 'bids': bids }, context_instance=RequestContext(request))
 
 

@@ -66,27 +66,26 @@ in the INSTALLED_APPS setting.
             </div>
           </a>
           <div class="messages-list-message-star">
-            {% if message.sender == user and message.sender_bookmarked or message.recipient == user and
-            message.recipient_bookmarked %}
-            {% if message.thread_id %}
-            <button class="thread-unbookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-              <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
+            {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}
+              {% if message.thread_id %}
+              <button class="thread-unbookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              {% else %}
+              <button class="message-unbookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                <i class="fa fa-star" aria-hidden="true"></i>
+              </button>
+              {% endif %}
             {% else %}
-            <button class="message-unbookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-              <i class="fa fa-star" aria-hidden="true"></i>
-            </button>
-            {% endif %}
-            {% else %}
-            {% if message.thread_id %}
-            <button class="thread-bookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
-              <i class="fa fa-star-o" aria-hidden="true"></i>
-            </button>
-            {% else %}
-            <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
-              <i class="fa fa-star-o" aria-hidden="true"></i>
-            </button>
-            {% endif %}
+              {% if message.thread_id %}
+              <button class="thread-bookmark" data-value="{{ message.thread_id }}" data-url="{{ next_url }}">
+                <i class="fa fa-star-o" aria-hidden="true"></i>
+              </button>
+              {% else %}
+              <button class="message-bookmark" data-value="{{ message.pk }}" data-url="{{ next_url }}">
+                <i class="fa fa-star-o" aria-hidden="true"></i>
+              </button>
+              {% endif %}
             {% endif %}
           </div>
         </div>

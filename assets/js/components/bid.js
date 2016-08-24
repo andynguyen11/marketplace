@@ -313,7 +313,7 @@ const Bid = React.createClass({
       );
 
 
-    const messageInput = newBid && (
+    const messageInput = (newBid && !job.id) && (
         <div className={"form-group " + formElements.message.errorClass}>
         <textarea
           className="form-control"
