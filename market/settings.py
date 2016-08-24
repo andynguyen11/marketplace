@@ -222,7 +222,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(PROJECT_ROOT, 'assets'),
 )
 STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'market.custom_storages.StaticStorage'
