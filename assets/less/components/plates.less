@@ -6,7 +6,7 @@
     align-items: center;
     justify-content: space-between;
     padding-top: @gutter * 4;
-    padding-bottom: @gutter * 2;
+    padding-bottom: @gutter;
 
     @media (max-width: @screen-sm) {
       padding: (@gutter * 2) @gutter 0;
@@ -36,7 +36,7 @@
 
   .plates-inner {
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
 
     @media (max-width: @screen-sm) {
       padding: @gutter;
@@ -57,6 +57,8 @@
     color: @font-color--light;
     background: #FFF;
     letter-spacing: 0.5px;
+    margin-top: 20px;
+    margin-right: 13px;
 
     &:hover, &:active, &:visited {
       text-decoration: none;

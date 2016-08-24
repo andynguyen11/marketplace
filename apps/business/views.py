@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
@@ -72,10 +72,9 @@ def attach_docs(request):
     return NotImplemented
 
 def project_groups(**kwargs):
-    projects = Project.objects
     new = Project.objects.filter(**kwargs).order_by('-date_created')[:9]
     try:
-        featured = Project.objects.filter(featured=1, **kwargs)[:9]
+        featured = Project.objects.filter(featured=1, **kwargs)[:3]
     except Project.DoesNotExist, e:
         featured = new[0]
     return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
@@ -88,4 +87,22 @@ def serialized_project_groups(**kwargs):
 
 def projects_by_type(request, type=None):
     kwargs = {'type': type} if type in [category[0] for category in PROJECT_TYPES] else {}
-    return render_to_response('project_by_type.html', serialized_project_groups(**kwargs), context_instance=RequestContext(request))
+    return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
+
+def discover_projects(request, type=None):
+    # create list of projects types that exist.
+    project_types = []
+    for item in PROJECT_TYPES:
+        if Project.objects.filter(type=item[0]):
+            project_types.append(item)
+
+    all = Project.objects.all()
+    new = all.filter(type=type).order_by('-date_created')
+    featured = all.filter(type=type, featured=1)
+    return render(request, 'project_by_type.html', {
+        'all': all,
+        'featured': featured,
+        'new': new,
+        'type': type,
+        'project_types': project_types,
+    })
