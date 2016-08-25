@@ -13,12 +13,12 @@ const NDA = React.createClass({
     }
   },
 
-  updateNDA() {
+  updateNDA(e) {
     const {termsAgreed} = this.state;
     const {updateNDA} = this.props;
 
     if (termsAgreed) {
-      updateNDA();
+      updateNDA(e);
     }
   },
 

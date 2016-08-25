@@ -133,7 +133,7 @@ class DocumentSigner(models.Model):
         envelope = pydocusign.Envelope(envelopeId=self.document.envelope_id)
         signing_url = envelope.post_recipient_view(
             recipient=Role(**self.to_dict()),
-            returnUrl=settings.BASE_URL + '/profile/documents/',
+            returnUrl=settings.BASE_URL + '/profile/dashboard/',
             client=client
         )
         return signing_url

@@ -31,7 +31,7 @@ const ContracteeTracker = React.createClass({
   },
 
   render() {
-    const { nda, ndaSending, terms, signing_url, togglePanel, updateNDA, panel } = this.props;
+    const { nda, job, ndaSending, terms, signing_url, togglePanel, updateNDA, panel } = this.props;
     const { step, statusMap } = this.state;
 
     const ndaStatus = () => {
@@ -48,7 +48,7 @@ const ContracteeTracker = React.createClass({
           return (
             <button
               onClick={updateNDA}
-              className='btn btn-brand'
+              className='btn btn-brand btn-collapse'
               data-status='sent'
             >
               <i className={ ndaSending ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
@@ -62,7 +62,7 @@ const ContracteeTracker = React.createClass({
       switch (terms.status) {
         case "agreed":
           return (
-            <button className="btn"><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
+            <button className="btn btn-collapse"><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
           );
         case "sent":
           return (
@@ -75,7 +75,11 @@ const ContracteeTracker = React.createClass({
           return (
             <div>
               <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
-              <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Build &amp; Send Preview</button>
+            { job.hours ? (
+                <button className='btn'>Create New</button>
+              ) : (
+                <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Create New</button>
+            )}
             </div>
           );
       }
@@ -95,7 +99,7 @@ const ContracteeTracker = React.createClass({
 
         <div className='step'>
           <h5 className="step-number">2</h5>
-          <h5 className="title">Build Your Work Contract <i className={ terms.status != 'new' ? 'fa fa-check-circle text-brand' : ''}></i></h5>
+          <h5 className="title">Create Your Work Contract <i className={ terms.status != 'new' ? 'fa fa-check-circle text-brand' : ''}></i></h5>
           <p className="small">
             Use our contract builder to quickly build your contract, and preview the contract terms with your developer.
           </p>

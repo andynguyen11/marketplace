@@ -148,7 +148,7 @@ class JobSerializer(serializers.ModelSerializer):
             compensation = "{0} and {1}".format(equity, cash)
         else:
             compensation = cash if cash else equity
-        message = "Hi, I have adjusted my bid. \n\n" \
+        message = "I adjusted my bid. \n\n" \
                   "The bid terms are now: \n\n" \
                   "{0} for an estimated {1} hours of work.".format(compensation, validated_data['hours'])
         message = Message.objects.create(

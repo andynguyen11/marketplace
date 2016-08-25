@@ -114,6 +114,7 @@ const MessageAgreement = React.createClass({
   },
 
   updateNDA(e) {
+    console.log(e)
     const { nda, job, terms } = this.state;
     this.setState({ ndaUpdating: true });
     nda.status = $(e.currentTarget).data('status');
@@ -231,6 +232,7 @@ const MessageAgreement = React.createClass({
               nda={nda}
               signing_url={signing_url}
               panel={panel}
+              job={job}
               updateNDA={this.updateNDA}
               ndaUpdating={ndaUpdating}
               togglePanel={this.togglePanel}

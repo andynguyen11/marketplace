@@ -152,7 +152,7 @@ const Bid = React.createClass({
         errorClass: '',
         validator: (value) => {
           const {newBid} = this.state;
-          const valid = newBid ? FormHelpers.checks.isRequired(value) : true;
+          const valid = (newBid && !job.id) ? FormHelpers.checks.isRequired(value) : true;
           const {formElements} = this.state;
           if (!valid) {
             formElements.message.errorClass = 'has-error';

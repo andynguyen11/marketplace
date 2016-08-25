@@ -80,7 +80,7 @@ const ContractorTracker = React.createClass({
           <div>
           { terms.status == 'agreed' ? (
             <button className="btn">
-              Bid Locked
+              Bid Accepted
             </button>
             ) : (
             <button onClick={togglePanel} data-panel='bid' className="btn btn-brand">

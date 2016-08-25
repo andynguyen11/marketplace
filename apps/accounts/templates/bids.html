@@ -96,7 +96,7 @@
                   </td>
                   <td>
                     {% if bid.conversation %}
-                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.0.id %}" class="btn btn-dark pull-left">Message</a>
+                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-dark pull-left">Message</a>
                     {% endif %}
                   </td>
                 </tr>

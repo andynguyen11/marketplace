@@ -59,7 +59,7 @@ class ConversationSerializer(serializers.ModelSerializer):
             return None
 
     def get_interactions(self, obj):
-        messages = Message.objects.filter(thread=obj.id)
+        messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
         interactions = []
         for message in messages:
             interaction = MessageInteraction(

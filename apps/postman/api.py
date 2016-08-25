@@ -14,7 +14,7 @@ from postman.serializers import ConversationSerializer, InteractionSerializer, M
 
 
 class ConversationDetail(generics.RetrieveAPIView):
-    queryset = Message.objects.all()
+    queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
     permission_classes = (IsAuthenticated, IsPartOfConversation)
     renderer_classes = (JSONRenderer, )
@@ -66,7 +66,7 @@ class MessageAPI(APIView):
         return Response(status=403)
 
     def get(self, request, thread_id):
-        messages = Message.objects.filter(thread=thread_id)
+        messages = Message.objects.filter(thread=thread_id).order_by('sent_at')
         if request.user == messages[0].sender or request.user == messages[0].recipient:
             interactions = []
             for message in messages:
