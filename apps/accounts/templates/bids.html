@@ -34,6 +34,7 @@
             </table>
           </div>
           {% else %}
+            {% if user.role %}
             <div class="col-md-12">
               <h2 class="brand">You don't have any pending bids.</h2>
               <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
@@ -41,6 +42,7 @@
                 <a href="{% url 'home' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
               </div>
             </div>
+            {% endif %}
           {% endif %}
 
         {% if projects %}
@@ -108,6 +110,7 @@
           </div>
         {% endfor %}
         {% else %}
+          {% if not user.role %}
           <div class="col-md-12">
             <h2 class="brand">You don't have any pending projects.</h2>
             <h3 class="text-skinny sub-section">Post a project. Receive bids.  Keep track of everything here.</h3>
@@ -115,6 +118,7 @@
               <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
             </div>
           </div>
+          {% endif %}
         {% endif %}
       </div>
 

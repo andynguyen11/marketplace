@@ -18,6 +18,7 @@ let Checkout = React.createClass({
       sendingPayment: false,
       applyingPromo: false,
       showCreditCardForm: false,
+      cards: [],
       currentCard: null,
       creditCard: {
         number: '',
@@ -65,8 +66,8 @@ let Checkout = React.createClass({
         value: creditCard.number || '',
         errorClass: '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const { formElements, formErrorsList } = this.state;
+          const { formElements, formErrorsList, promo } = this.state;
+          const valid = promo ? true : FormHelpers.checks.isRequired(value);
           if (!valid) {
             formElements.number.errorClass = 'has-error';
             formErrorsList.push('Please add a credit card number.');
@@ -89,8 +90,8 @@ let Checkout = React.createClass({
         value: creditCard.month || '',
         errorClass: '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const { formElements, formErrorsList } = this.state;
+          const { formElements, formErrorsList, promo } = this.state;
+          const valid = promo ? true : FormHelpers.checks.isRequired(value);
           if (!valid) {
             formElements.month.errorClass = 'has-error';
             formErrorsList.push('Please add an expiry month.');
@@ -113,8 +114,8 @@ let Checkout = React.createClass({
         value: creditCard.year || '',
         errorClass: '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const { formElements, formErrorsList } = this.state;
+          const { formElements, formErrorsList, promo } = this.state;
+          const valid = promo ? true : FormHelpers.checks.isRequired(value);
           if (!valid) {
             formElements.year.errorClass = 'has-error';
             formErrorsList.push('Please add an expiry year.');
@@ -136,8 +137,8 @@ let Checkout = React.createClass({
         value: creditCard.cvc || '',
         errorClass: '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const { formElements, formErrorsList } = this.state;
+          const { formElements, formErrorsList, promo } = this.state;
+          const valid = promo ? true : FormHelpers.checks.isRequired(value);
           if (!valid) {
             formElements.cvc.errorClass = 'has-error';
             formErrorsList.push('Please add a security code.');
@@ -223,7 +224,10 @@ let Checkout = React.createClass({
           promo: $('#promo').val().toLowerCase(),
           promo_message: result.message,
           price: 0,
-          applyingPromo: false
+          applyingPromo: false,
+          showCreditCardForm: false,
+          currentCard: null,
+          cards: []
         });
       }.bind(this),
       error: function(result) {
@@ -285,7 +289,7 @@ let Checkout = React.createClass({
 
   render() {
     const { job, terms } =  this.props;
-    const { price, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message } = this.state;
+    const { price, promo, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message } = this.state;
 
     return(
       <div className="messages-tracker-content">
@@ -337,7 +341,7 @@ let Checkout = React.createClass({
             )}
 
 
-            { cards &&
+            { (cards.length != 0) &&
               <CreditCardList
                 cards={cards}
                 setCard={this.setCard}
@@ -359,7 +363,7 @@ let Checkout = React.createClass({
               <div className="col-md-4 col-md-offset-4">
                 <button onClick={this.submitPayment} type="submit" className="btn btn-brand">
                   <i className={ sendingPayment ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-                  Pay ${price} and Sign Contract
+                  <span className={ promo ? 'hidden' : ''}>Pay ${price} and</span> Sign Contract
                 </button>
                 <p className="payment-errors hidden"></p>
               </div>

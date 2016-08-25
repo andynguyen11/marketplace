@@ -27,6 +27,12 @@ class CreditCardView(APIView):
     """
 
     def post(self, request):
+        #TODO Handle promos dynamically
+        if request.data.get('promo', None) == 'raiseideas':
+            job = Job.objects.get(id=request.data['job'])
+            url = self.generate_contract(request, job)
+            order = self.handle_promo_order(job, 'raiseideas')
+            return Response(status=200, data={"message": "Success", "url": url})
         stripe.api_key = settings.STRIPE_KEY
         stripe_customer = None
         stripe_token = stripe.Token.create(
@@ -68,6 +74,12 @@ class CreditCardView(APIView):
         return Response(status=200, data={"message": message, "url": url})
 
     def patch(self, request):
+        #TODO don't hard code promos
+        if request.data.get('promo', None) == 'raiseideas':
+            job = Job.objects.get(id=request.data['job'])
+            order = self.handle_promo_order(job, 'raiseideas')
+            url = self.generate_contract(request, job)
+            return Response(status=200, data={"message": "Success", "url": url})
         stripe.api_key = settings.STRIPE_KEY
         stripe_customer = stripe.Customer.retrieve(request.user.stripe)
         if stripe_customer.id == request.data['customer']:
@@ -82,29 +94,42 @@ class CreditCardView(APIView):
             return ("Already Paid", "/profile/dashboard/")
 
         if request.user == order.job.project.project_manager:
-            #TODO don't hard code promos
-            if request.data.get('promo', None) == 'raiseideas':
-                order.price = 0
-            else:
-                stripe.Charge.create(
-                    amount=int(order.price*100),
-                    currency='usd',
-                    source=card,
-                    customer=customer,
-                    description='Loom fee for "{0}"'.format(order.job.project.title)
-                )
+            stripe.Charge.create(
+                amount=int(order.price*100),
+                currency='usd',
+                source=card,
+                customer=customer,
+                description='Loom fee for "{0}"'.format(order.job.project.title)
+            )
             order.date_charged = datetime.datetime.now()
             order.status = 'paid'
             order.save()
-            status = "Success"
-            terms = Terms.objects.get(job=order.job)
-            payload = build_payload(request.user, terms.job.contractor, terms)
-            serializer = DocumentSerializer(data=payload)
-            serializer.is_valid(raise_exception=True)
-            new_document = serializer.create(serializer.validated_data)
-            signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
+            signer_url = self.generate_contract(request, job)
             return ("Success", signer_url)
         return ("There was a problem processing your payment.", "/profile/dashboard/")
+
+    def handle_promo_order(self, job, promo_code):
+        #TODO We need to handle promos dynamically
+        order, created = Order.objects.get_or_create(job=job)
+        try:
+            promo = Promo.objects.get(code=promo_code)
+            order.promo = promo
+        except Promo.DoesNotExist:
+            #TODO Return and handle error
+            pass
+        order.price = 0
+        order.status = 'paid'
+        order.date_charged = datetime.datetime.now()
+        order.save()
+
+    def generate_contract(self, request, job):
+        terms = Terms.objects.get(job=job)
+        payload = build_payload(request.user, terms.job.contractor, terms)
+        serializer = DocumentSerializer(data=payload)
+        serializer.is_valid(raise_exception=True)
+        new_document = serializer.create(serializer.validated_data)
+        signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
+        return signer_url
 
     def get(self, request):
         stripe.api_key = settings.STRIPE_KEY

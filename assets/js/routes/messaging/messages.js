@@ -633,7 +633,7 @@ const Messages = React.createClass({
           <MessageComposer fileUpload={false} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
         </div>
         <div className="messages-tracker">
-          <div className="messages-topBar messages-topBar--dark">
+          <div className="messages-topBar agreement-topBar">
             agreement tracker
           </div>
           { job && terms && <MessageAgreement
