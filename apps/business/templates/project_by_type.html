@@ -2,34 +2,79 @@
 {% load staticfiles %}
 
 {% block content %}
-  <div id="discover-projects">
+  <div id="discover">
     <h1>Discover a project that inspires you.</h1>
     <div class="discover-nav">
       <h2>
         show me
         <div class="dropdown">
           <button onclick="dropdown()" class="dropbtn underline-text">
-            {{ type }}<i class="fa fa-angle-down"></i>
+            <span class="discover-underline">{{ type }}</span>
+            <i class="fa fa-angle-down"></i>
           </button>
           <div id="myDropdown" class="dropdown-content">
             {% for cat, name in project_types %}
-              <a class="dropdown-item" href="{% url 'project-gallery' cat %}">{{ name }}</a>
+              <a class="dropdown-item text-lowercase" href="{% url 'project-gallery' cat %}">
+                {{ name }}
+              </a>
             {% endfor %}
             <a class="dropdown-item" href="{% url 'project-gallery' 'all' %}">all</a>
           </div>
         </div>
       </h2>
+      <h2 id="disc-project-sub" class="hide-desktop">projects</h2>
     </div>
-  </div>
 
-  {% if featured %}
-    <div class="page-content page-content--alternate">
+    {% if featured %}
+      <div class="page-content page-content--alternate">
+        <div class="plates page-content--medium">
+          <div class="discover-plates-headcap">
+            <h3 class="plates-header brand-bold">Featured {{ type }} projects</h3>
+          </div>
+          <div class="plates-inner">
+            {% for project in featured %}
+              <a class="plate" href="{% url 'project' project.slug %}">
+                <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+                <div class="plate-info">
+                  <div class="plate-info-profile">
+                    <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+                    <div class="plate-info-profile-name">
+                      <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+                      {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+                    </div>
+                  </div>
+                  <div class="plate-info-project">
+                    <h4 class="plate-info-project-name">{{ project.title }}</h4>
+                    <p class="plate-info-project-description">{{ project.short_blurb }}</p>
+                  </div>
+                </div>
+                <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
+                  {% if project.estimated_equity_percentage %}
+                    <div class="plate-stat">
+                      <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
+                      <div class="plate-stat-type">Equity</div>
+                    </div>
+                  {% endif %}
+                  {% if project.estimated_cash %}
+                    <div class="plate-stat">
+                      <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
+                      <div class="plate-stat-type">Cash</div>
+                    </div>
+                  {% endif %}
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    {% if new %}
       <div class="plates page-content--medium">
-        <div class="plates-headcap">
-          <h3 class="plates-header brand-bold" style="text-transform:capitalize">Featured {{ type }} Projects</h3>
+        <div class="discover-plates-headcap">
+          <h3 class="plates-header brand-bold">Newest {{ type }} projects</h3>
         </div>
         <div class="plates-inner">
-          {% for project in featured %}
+          {% for project in new %}
             <a class="plate" href="{% url 'project' project.slug %}">
               <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
               <div class="plate-info">
@@ -63,91 +108,50 @@
           {% endfor %}
         </div>
       </div>
-    </div>
-  {% endif %}
-  {% if new %}
-    <div class="plates page-content--medium">
-      <div class="plates-headcap">
-        <h3 class="plates-header brand-bold" style="text-transform:capitalize">Newest {{ type }} Projects</h3>
-      </div>
-      <div class="plates-inner">
-        {% for project in new %}
-          <a class="plate" href="{% url 'project' project.slug %}">
-            <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
-            <div class="plate-info">
-              <div class="plate-info-profile">
-                <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
-                <div class="plate-info-profile-name">
-                  <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
-                  {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-                </div>
-              </div>
-              <div class="plate-info-project">
-                <h4 class="plate-info-project-name">{{ project.title }}</h4>
-                <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-              </div>
-            </div>
-            <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-              {% if project.estimated_equity_percentage %}
-                <div class="plate-stat">
-                  <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-                  <div class="plate-stat-type">Equity</div>
-                </div>
-              {% endif %}
-              {% if project.estimated_cash %}
-                <div class="plate-stat">
-                  <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-                  <div class="plate-stat-type">Cash</div>
-                </div>
-              {% endif %}
-            </div>
-          </a>
-        {% endfor %}
-      </div>
-    </div>
-  {% else %}
-    <div class="page-content page-content--alternate">
-      <div class="plates page-content--medium">
-        <div class="plates-headcap">
-          <h3 class="plates-header brand-bold">All Projects</h3>
-        </div>
-        <div class="plates-inner">
-          {% for project in all %}
-            <a class="plate" href="{% url 'project' project.slug %}">
-              <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
-              <div class="plate-info">
-                <div class="plate-info-profile">
-                  <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
-                  <div class="plate-info-profile-name">
-                    <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
-                    {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+    {% else %}
+      <div class="page-content page-content--alternate">
+        <div class="plates page-content--medium">
+          <div class="discover-plates-headcap">
+            <h3 class="plates-header brand-bold">All projects</h3>
+          </div>
+          <div class="plates-inner">
+            {% for project in all %}
+              <a class="plate" href="{% url 'project' project.slug %}">
+                <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+                <div class="plate-info">
+                  <div class="plate-info-profile">
+                    <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+                    <div class="plate-info-profile-name">
+                      <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+                      {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+                    </div>
+                  </div>
+                  <div class="plate-info-project">
+                    <h4 class="plate-info-project-name">{{ project.title }}</h4>
+                    <p class="plate-info-project-description">{{ project.short_blurb }}</p>
                   </div>
                 </div>
-                <div class="plate-info-project">
-                  <h4 class="plate-info-project-name">{{ project.title }}</h4>
-                  <p class="plate-info-project-description">{{ project.short_blurb }}</p>
+                <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
+                  {% if project.estimated_equity_percentage %}
+                    <div class="plate-stat">
+                      <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
+                      <div class="plate-stat-type">Equity</div>
+                    </div>
+                  {% endif %}
+                  {% if project.estimated_cash %}
+                    <div class="plate-stat">
+                      <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
+                      <div class="plate-stat-type">Cash</div>
+                    </div>
+                  {% endif %}
                 </div>
-              </div>
-              <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-                {% if project.estimated_equity_percentage %}
-                  <div class="plate-stat">
-                    <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-                    <div class="plate-stat-type">Equity</div>
-                  </div>
-                {% endif %}
-                {% if project.estimated_cash %}
-                  <div class="plate-stat">
-                    <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-                    <div class="plate-stat-type">Cash</div>
-                  </div>
-                {% endif %}
-              </div>
-            </a>
-          {% endfor %}
+              </a>
+            {% endfor %}
+          </div>
         </div>
       </div>
-    </div>
-  {% endif %}
+    {% endif %}
+  </div>
 {% endblock %}
 
 {% block scripts %}

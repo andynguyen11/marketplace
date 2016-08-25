@@ -85,13 +85,20 @@ def discover_projects(request, type=None):
         if Project.objects.filter(type=item[0]):
             project_types.append(item)
 
+    if type != 'all':
+        i = [y[0] for y in PROJECT_TYPES].index(type)
+        cat_name = PROJECT_TYPES[i][1]
+    else:
+        cat_name = 'all'
+
     all = Project.objects.all()
     new = all.filter(type=type).order_by('-date_created')
-    featured = all.filter(type=type, featured=1)
+    featured = all.filter(type=type, featured=1)[:3]
     return render(request, 'project_by_type.html', {
         'all': all,
         'featured': featured,
         'new': new,
+        'cat_name': cat_name,
         'type': type,
         'project_types': project_types,
     })

@@ -128,3 +128,25 @@ def profile(request, template='account-settings.html'):
             return redirect('profile')
         return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
     return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
+
+
+def discover_developers(request, role=None):
+    all = Profile.objects.all()
+    if role != 'all':
+        developers = all.filter(role=role)
+        featured = all.filter(role=role, featured=1)[:3]
+    else:
+        developers = all
+        featured = all.filter(featured=1)[:3]
+        role = 'all'
+    roles = []
+    for r in ('full-stack', 'front-end', 'back-end', 'mobile'):
+        if Profile.objects.filter(role=r):
+            roles.append(r)
+    return render(request, 'discover-developers.html', {
+        'developers': developers,
+        'all': all,
+        'featured': featured,
+        'role': role,
+        'roles': roles,
+    })

@@ -39,7 +39,7 @@
               <h2 class="brand">You don't have any pending bids.</h2>
               <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
               <div class="text-center">
-                <a href="{% url 'home' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
+                <a href="{% url 'project-gallery' 'all' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
               </div>
             </div>
             {% endif %}
@@ -105,7 +105,7 @@
                 {% endfor %}
                 </table>
               {% else %}
-                <h4>There are currently no bids on this project.   <a href="#">Start searching</a> for some developers!</h4>
+                <h4>There are currently no bids on this project.   <a href="{% url 'discover-developers' 'all' %}">Start searching</a> for some developers!</h4>
               {% endif %}
           </div>
         {% endfor %}
