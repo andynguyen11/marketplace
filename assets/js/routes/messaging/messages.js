@@ -83,7 +83,8 @@ const Messages = React.createClass({
       isLoading: true,
       messageError: false,
       attachment: false,
-      attachmentName: false
+      attachmentName: false,
+      formErrorsList: []
     }
   },
 
@@ -312,7 +313,7 @@ const Messages = React.createClass({
 
   convertFromMomentToStartDate(moment) {
     const { formElements } = this.state;
-    const newDate = moment.format('YYYY-MM-D');
+    const newDate = moment.format('YYYY-MM-DD');
 
     formElements.start_date.value = newDate;
     formElements.start_date.update(newDate);
@@ -322,7 +323,7 @@ const Messages = React.createClass({
 
   convertFromMomentToEndDate(moment) {
     const { formElements } = this.state;
-    const newDate = moment.format('YYYY-MM-D');
+    const newDate = moment.format('YYYY-MM-DD');
 
     formElements.end_date.value = newDate;
     formElements.end_date.update(newDate);
@@ -502,6 +503,99 @@ const Messages = React.createClass({
   //   reader.readAsDataURL(file);
   // },
 
+  handleChange(event) {
+    const { formElements } = this.state;
+    const { value } = event.target;
+    const fieldName = event.target.getAttribute('name');
+
+    formElements[fieldName].update(value);
+    formElements[fieldName].value = value;
+
+    this.setState({ formElements, formError: false });
+  },
+
+  agreeTerms() {
+    const { terms } = this.state;
+    $.ajax({
+      url: loom_api.termsAgree,
+      method: 'POST',
+      data: JSON.stringify({ terms_id: terms.id }),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: function (result) {
+        this.setState({
+          isLoading: false,
+          showPanel: false,
+          terms: result
+        });
+      }.bind(this)
+    });
+  },
+
+  saveTerms() {
+    const { formElements, terms } = this.state;
+
+    this.setState({ formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({ formElements, apiError: false });
+        terms.status = terms.status == 'agreed' ? terms.status : 'sent';
+        if (valid) {
+          this.setState({ formError: false, isLoading: true });
+          $.ajax({
+            url: loom_api.terms + terms.id + '/',
+            method: 'PATCH',
+            data: JSON.stringify(terms),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+              this.setState({
+                isLoading: false,
+                showPanel: false
+              });
+            }.bind(this),
+            error: (xhr, status, error) => {
+              this.setState({ apiError: 'Unknown Error: ' + xhr.responseText, isLoading: false });
+            }
+          });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.' });
+        }
+      });
+    });
+  },
+
+  updateNDA(e) {
+    const { nda, job, terms } = this.state;
+    this.setState({ ndaUpdating: true, showPanel: true });
+    nda.status = $(e.currentTarget).data('status');
+    $.ajax({
+      url: loom_api.documentDetails(terms.project.id, job.id, nda.id),
+      method: 'PATCH',
+      data: JSON.stringify(nda),
+      contentType: 'application/json; charset=utf-8',
+      dataType: 'json',
+      success: function (result) {
+        this.setState({
+          nda: result,
+          ndaUpdating: false,
+          showPanel: false
+        });
+      }.bind(this)
+    });
+  },
+
+  updateJob(job) {
+    this.setState({
+      job
+    })
+  },
+
+  togglePanel(show) {
+    this.setState({
+      showPanel: show
+    });
+  },
+
   scrollBottom() {
     const threadContainer = this.refs.thread;
     threadContainer.scrollTop = threadContainer.scrollHeight + threadContainer.offsetHeight;
@@ -512,7 +606,7 @@ const Messages = React.createClass({
   },
 
   render() {
-    const { message, interactions, currentUser, isLoading, messageError, otherUserData, isOwner, terms, nda, job, signing_url, formElements } = this.state;
+    const { message, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
     const messages = interactions.map((interaction, i) => {
       const { content, sender } = interaction;
       const isCurrentUser = currentUser === sender.id;
@@ -541,7 +635,18 @@ const Messages = React.createClass({
           <div className="messages-topBar messages-topBar--dark">
             agreement tracker
           </div>
-          { job && terms && <MessageAgreement convertFromMomentToStartDate={this.convertFromMomentToStartDate} convertFromMomentToEndDate={this.convertFromMomentToEndDate} current_user={currentUser} isOwner={isOwner} terms={terms} nda={nda} job={job} signing_url={signing_url} isLoading={isLoading} formElements={formElements}/> }
+          { job && terms && <MessageAgreement
+            convertFromMomentToStartDate={this.convertFromMomentToStartDate}
+            convertFromMomentToEndDate={this.convertFromMomentToEndDate}
+            {...this.state}
+            handleChange={this.handleChange}
+            agreeTerms={this.agreeTerms}
+            saveTerms={this.saveTerms}
+            updateNDA={this.updateNDA}
+            updateJob={this.updateJob}
+            showPanel={showPanel}
+            togglePanel={this.togglePanel}
+          /> }
         </div>
       </div>
     );

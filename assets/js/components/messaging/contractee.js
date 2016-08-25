@@ -38,11 +38,11 @@ const ContracteeTracker = React.createClass({
       switch (nda.status) {
         case "sent":
           return (
-              <button className="btn">Non-Disclosure Sent</button>
+              <button className="btn" disabled>Non-Disclosure Sent</button>
           );
         case "signed":
           return (
-            <button className="btn">Signed</button>
+            <button className="btn" disabled>Signed</button>
           );
         default:
           return (
@@ -76,9 +76,9 @@ const ContracteeTracker = React.createClass({
             <div>
               <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
             { job.hours ? (
-                <button className='btn'>Create New</button>
-              ) : (
                 <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Create New</button>
+              ) : (
+                <button className='btn'>Create New</button>
             )}
             </div>
           );

@@ -13,143 +13,69 @@ const MessageAgreement = React.createClass({
 
   getInitialState() {
     return {
-      isLoading: true,
-      ndaUpdating: false,
-      showPanel: false,
-      panel: '',
-      order: null,
-      terms: {
-        status: 'new',
-        schedule: '50% upfront and 50% upon completion'
-      },
-      nda: {
-        status: 'new'
-      },
-      job: {
-        compensationType: '',
-        cash: '',
-        equity: '',
-        hours: ''
-
-      },
-      formError: false,
-      formErrorsList: []
+      panel: ''
     };
   },
 
-  componentWillMount() {
-    const { current_user, isOwner, terms, nda, job, signing_url, isLoading, formElements } = this.props;
+  // componentWillMount() {
+  //   const { current_user, isOwner, terms, nda, job, signing_url, isLoading, formElements } = this.props;
+  //
+  //   this.setState({
+  //     current_user,
+  //     isOwner,
+  //     terms,
+  //     nda,
+  //     job,
+  //     signing_url,
+  //     isLoading,
+  //     formElements
+  //   })
+  // },
 
-    this.setState({
-      current_user,
-      isOwner,
-      terms,
-      nda,
-      job,
-      signing_url,
-      isLoading,
-      formElements
-    })
-  },
-
-  handleChange(event) {
-    const { formElements } = this.state;
-    const { value } = event.target;
-    const fieldName = event.target.getAttribute('name');
-
-    formElements[fieldName].update(value);
-    formElements[fieldName].value = value;
-
-    this.setState({ formElements, formError: false });
-  },
-
-  agreeTerms() {
-    const { terms } = this.state;
-    $.ajax({
-      url: loom_api.termsAgree,
-      method: 'POST',
-      data: JSON.stringify({ terms_id: terms.id }),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      success: function (result) {
-        this.setState({
-          isLoading: false,
-          showPanel: false,
-          terms: result
-        });
-      }.bind(this)
-    });
-  },
-
-  saveTerms() {
-    const { formElements, terms } = this.state;
-
-    this.setState({ formErrorsList: [] }, () => {
-      FormHelpers.validateForm(formElements, (valid, formElements) => {
-        this.setState({ formElements, apiError: false });
-        terms.status = terms.status == 'agreed' ? terms.status : 'sent';
-        if (valid) {
-          this.setState({ formError: false, isLoading: true });
-          $.ajax({
-            url: loom_api.terms + terms.id + '/',
-            method: 'PATCH',
-            data: JSON.stringify(terms),
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            success: function (result) {
-              this.setState({
-                isLoading: false,
-                showPanel: false
-              });
-            }.bind(this),
-            error: (xhr, status, error) => {
-              this.setState({ apiError: 'Unknown Error: ' + xhr.responseText, isLoading: false });
-            }
-          });
-        } else {
-          this.setState({ formError: 'Please fill out all fields.' });
-        }
-      });
-    });
-  },
-
-  updateNDA(e) {
-    console.log(e)
-    const { nda, job, terms } = this.state;
-    this.setState({ ndaUpdating: true });
-    nda.status = $(e.currentTarget).data('status');
-    $.ajax({
-      url: loom_api.documentDetails(terms.project.id, job.id, nda.id),
-      method: 'PATCH',
-      data: JSON.stringify(nda),
-      contentType: 'application/json; charset=utf-8',
-      dataType: 'json',
-      success: function (result) {
-        this.setState({
-          nda: result,
-          ndaUpdating: false,
-          showPanel: false
-        });
-      }.bind(this)
-    });
-  },
-
-  updateJob(job) {
-    this.setState({
-      job
-    })
-  },
+  // handleChange(event) {
+  //   const { formElements } = this.state;
+  //   const { value } = event.target;
+  //   const fieldName = event.target.getAttribute('name');
+  //
+  //   formElements[fieldName].update(value);
+  //   formElements[fieldName].value = value;
+  //
+  //   this.setState({ formElements, formError: false });
+  // },
 
   togglePanel(event=0) {
+    this.props.togglePanel(!this.props.showPanel);
+
     this.setState({
-      showPanel: !this.state.showPanel,
       panel: event ? $(event.currentTarget).data('panel') : ''
     });
   },
 
   render() {
     // TODO ummm this is a big ass list
-    const { panel, nda, current_user, terms, signing_url, formElements, formError, formErrorsList, isLoading, showPanel, order, job, isOwner, ndaUpdating } = this.state;
+    const { panel } = this.state;
+    const {
+      nda,
+      current_user,
+      terms,
+      signing_url,
+      formElements,
+      formError,
+      formErrorsList,
+      isLoading,
+      order,
+      job,
+      isOwner,
+      handleChange,
+      agreeTerms,
+      saveTerms,
+      convertFromMomentToStartDate,
+      convertFromMomentToEndDate,
+      updateNDA,
+      ndaUpdating,
+      updateJob,
+      showPanel
+    } = this.props;
 
     const builderPanel = isOwner && (
         <div className="panel panel-default">
@@ -161,10 +87,10 @@ const MessageAgreement = React.createClass({
             formElements={formElements}
             formError={formError}
             formErrorsList={formErrorsList}
-            handleChange={this.handleChange}
-            saveTerms={this.saveTerms}
-            convertFromMomentToStartDate={this.props.convertFromMomentToStartDate}
-            convertFromMomentToEndDate={this.props.convertFromMomentToEndDate}
+            handleChange={handleChange}
+            saveTerms={saveTerms}
+            convertFromMomentToStartDate={convertFromMomentToStartDate}
+            convertFromMomentToEndDate={convertFromMomentToEndDate}
           />
         </div>
       );
@@ -174,11 +100,11 @@ const MessageAgreement = React.createClass({
           <div className="messages-topBar messages-topBar--dark">
             <h4>Contract Preview <button onClick={this.togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
-          <Terms formElements={formElements} agreeTerms={this.agreeTerms} />
+          <Terms formElements={formElements} agreeTerms={agreeTerms} />
         </div>
       );
 
-    const NDAPanel = isOwner || <NDA togglePanel={this.togglePanel} updateNDA={this.updateNDA} ndaUpdating={ndaUpdating} />;
+    const NDAPanel = isOwner || <NDA togglePanel={this.togglePanel} updateNDA={updateNDA} ndaUpdating={ndaUpdating} />;
 
     const checkoutPanel = isOwner && (
         <div className="panel panel-default">
@@ -207,7 +133,7 @@ const MessageAgreement = React.createClass({
           current_user={current_user}
           job={job}
           project={terms.project}
-          updateJob={this.updateJob}
+          updateJob={updateJob}
           isModal={false}
           saveCallback={this.togglePanel}
         />
@@ -233,7 +159,7 @@ const MessageAgreement = React.createClass({
               signing_url={signing_url}
               panel={panel}
               job={job}
-              updateNDA={this.updateNDA}
+              updateNDA={updateNDA}
               ndaUpdating={ndaUpdating}
               togglePanel={this.togglePanel}
             /> :

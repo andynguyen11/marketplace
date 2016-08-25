@@ -71,7 +71,7 @@
                 {% for bid in project.job_set.all %}
                 <tr>
                   <td>
-                    <img src="{{ bid.contractor.get_photo }}" class="profile-photo img-circle" />
+                    <div class="profile-photo" style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ bid.contractor.get_photo }})"></div>
                   </td>
                   <td>
                     <strong>{{ bid.contractor.first_name }}</strong> <br/>

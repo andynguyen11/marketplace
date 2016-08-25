@@ -288,7 +288,8 @@ let Checkout = React.createClass({
     const { price, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message } = this.state;
 
     return(
-      <div className="checkout">
+      <div className="messages-tracker-content">
+        <div className="checkout messages-tracker-popup-content">
           <div className="col-md-10 col-md-offset-1">
             <h5>Almost done!</h5>
             <h5>
@@ -364,6 +365,7 @@ let Checkout = React.createClass({
               </div>
             )}
         <div className='clearfix'></div>
+      </div>
       </div>
     );
   }

@@ -518,7 +518,7 @@ const CreateProject = React.createClass({
 
   convertFromMomentToStartDate(moment) {
     const {data} = this.state;
-    const newDate = moment.format('YYYY-MM-D');
+    const newDate = moment.format('YYYY-MM-DD');
 
     data.start_date = newDate;
 
@@ -527,7 +527,7 @@ const CreateProject = React.createClass({
 
   convertFromMomentToEndDate(moment) {
     const {data} = this.state;
-    const newDate = moment.format('YYYY-MM-D');
+    const newDate = moment.format('YYYY-MM-DD');
 
     data.end_date = newDate;
 
