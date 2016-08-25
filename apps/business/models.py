@@ -102,7 +102,7 @@ class Job(models.Model):
 
     @property
     def conversation(self):
-        return Message.objects.get(job=self, project=self.project, sender=self.contractor)
+        return Message.objects.get(job=self, sender=self.contractor)
 
     @property
     def owner(self):

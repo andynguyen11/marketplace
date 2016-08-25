@@ -370,6 +370,7 @@ const Bid = React.createClass({
         </button>
         <p className="small text-muted">By clicking submit you agree to Loom's <a href="/terms-of-service/" target="_blank">Terms and Conditions</a></p>
       </div>
+    </div>
     )
   }
 });
