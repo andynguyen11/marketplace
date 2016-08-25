@@ -60,7 +60,7 @@ const ContractorTracker = React.createClass({
           );
         case "agreed":
           return (
-            <button className='btn'><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
+            <button className='btn' disabled><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
           );
         default:
           return (
@@ -79,7 +79,7 @@ const ContractorTracker = React.createClass({
           </p>
           <div>
           { terms.status == 'agreed' ? (
-            <button className="btn">
+            <button className="btn" disabled>
               Bid Accepted
             </button>
             ) : (

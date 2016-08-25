@@ -62,7 +62,7 @@ const ContracteeTracker = React.createClass({
       switch (terms.status) {
         case "agreed":
           return (
-            <button className="btn btn-collapse"><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
+            <button className="btn btn-collapse" disabled><span className="text-capitalize">{terms.status}</span> on {terms.update_date}</button>
           );
         case "sent":
           return (
