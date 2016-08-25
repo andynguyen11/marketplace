@@ -614,12 +614,13 @@ const Messages = React.createClass({
       return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} />
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
-    const otherUserName = otherUserData && 'Message with ' + otherUserData.first_name;
+    const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserData.first_name}</span></span>;
 
     return (
       <div id="messages">
         <div className="messages-thread">
           <div className="messages-topBar messages-topBar--align-center">
+            <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> back to messages</a>
             {otherUserName}
           </div>
           <div className="messages-thread-content-wrapper">

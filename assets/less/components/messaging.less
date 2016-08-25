@@ -1,5 +1,9 @@
-.messaging-page .wrapper {
-  min-height: auto;
+.messaging-page {
+  background: #f3f3f3;
+
+  .wrapper {
+    min-height: auto;
+  }
 }
 
 #messages-wrapper {
@@ -12,6 +16,7 @@
   margin: auto;
   display: flex;
   align-items: stretch;
+  background: #FFF;
 }
 
 #messages, #pm_messages {
@@ -47,13 +52,26 @@
       margin: auto;
       padding: @gutter--medium;
     }
+
+    .messages-back-to-list {
+      position: absolute;
+      left: @gutter--medium;
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: @page-font;
+      font-size: 14px;
+      color: @brand-neutral--2;
+
+      i {
+        padding-right: @gutter--small;
+      }
+    }
   }
 
   .messages-thread {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    border-left: 1px solid #ececee;
   }
 
   .messages-thread-content-wrapper {
@@ -177,7 +195,6 @@
     flex-direction: column;
     justify-content: flex-start;
     border-left: 1px solid #ececee;
-    border-right: 1px solid #ececee;
   }
   //}
   //
