@@ -40,9 +40,6 @@ const Terms = React.createClass({
     return (
       <div className="messages-tracker-content">
         <div className="messages-tracker-popup-content">
-          <div className="steps pull-right">
-            <strong>{step} of 2</strong>
-          </div>
           <div className={step == 1 ? 'sub-section' : 'hidden'}>
             <div className="col-sm-10">
               <div className="form-group">
@@ -275,17 +272,18 @@ const Terms = React.createClass({
 
           <div className="col-md-12 agreement-panel-footer">
             <div className="form-group">
-              <a onClick={this.previousStep} className={step > 1 ? '' : 'visible-hidden'}><i
-                className='fa fa-arrow-left'></i> Back</a>
+              <a onClick={this.previousStep} className={step > 1 ? 'prev-step' : 'prev-step visible-hidden'}><i className='fa fa-arrow-left'></i> Back</a>
               <div className={step == 2 ? '' : 'visible-hidden'}>
                 <button type='submit' className='btn btn-brand' onClick={this.handleAgreeTerms}>
                   <i className={ isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
                   Agree to Terms
                 </button>
               </div>
-              <a onClick={this.nextStep} className={step == 2 ? 'visible-hidden' : ''}>Next <i
-                className='fa fa-arrow-right'></i></a>
+              <a onClick={this.nextStep} className={step == 2 ? 'next-step visible-hidden' : 'next-step'}>Next <i className='fa fa-arrow-right'></i></a>
             </div>
+          </div>
+          <div className="steps">
+            <strong>{step} of 2</strong>
           </div>
           <div className='clearfix'></div>
         </div>

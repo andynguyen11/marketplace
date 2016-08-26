@@ -79,7 +79,7 @@ const MessageAgreement = React.createClass({
 
     const builderPanel = isOwner && (
         <div className="panel panel-default">
-          <div className="messages-topBar messages-topBar--dark">
+          <div className="messages-topBar messages-topBar--dark messages-topBar--align-center">
             <h4 >Contract Terms <button onClick={this.togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
           <ContractBuilder
@@ -97,7 +97,7 @@ const MessageAgreement = React.createClass({
 
     const termsPanel = isOwner || (
         <div className="panel panel-default">
-          <div className="messages-topBar messages-topBar--dark">
+          <div className="messages-topBar messages-topBar--dark messages-topBar--align-center">
             <h4>Contract Preview <button onClick={this.togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
           <Terms formElements={formElements} agreeTerms={agreeTerms} />
@@ -108,7 +108,7 @@ const MessageAgreement = React.createClass({
 
     const checkoutPanel = isOwner && (
         <div className="panel panel-default">
-          <div className="messages-topBar messages-topBar--dark">
+          <div className="messages-topBar messages-topBar--dark messages-topBar--align-center">
             <h4>Sign and Send Contract <button onClick={this.togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
           </div>
           <Checkout
@@ -124,7 +124,7 @@ const MessageAgreement = React.createClass({
 
     const bidPanel = isOwner || (
       <div className="panel panel-default">
-        <div className="messages-topBar messages-topBar--dark">
+        <div className="messages-topBar messages-topBar--dark messages-topBar--align-center">
           <h4>Bid
             <button onClick={this.togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </h4>

@@ -40,10 +40,9 @@ const NDA = React.createClass({
 
     return (
       <div className='panel panel-default'>
-        <div className="messages-topBar messages-topBar--dark">
+        <div className="messages-topBar messages-topBar--dark messages-topBar--align-center">
           <h4>Non-Disclosure Agreement
-            <button onClick={togglePanel} type="button" className="close pull-right" data-dismiss="alert"
-                    aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <button onClick={togglePanel} type="button" className="close pull-right" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </h4>
         </div>
         <div className="messages-tracker-content">
@@ -214,20 +213,22 @@ const NDA = React.createClass({
               <p>
                 IN WITNESS WHEREOF, the parties have entered into this Agreement as of the Effective Date.
               </p>
-
-              <div className="checkbox">
-                <label>
-                  <input type="checkbox" value={termsAgreed} onClick={this.termsAgreedToggle}/>
-                  By checking this box, I agree to the terms of the non-disclosure agreement.
-                </label>
-              </div>
-
-              <button onClick={this.updateNDA} data-status='signed' className="btn btn-brand" {...submitDisabled}>
-                <i className={ ndaUpdating ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-                Submit
-              </button>
             </div>
           </div>
+        </div>
+        <div className="messages-tracker-content-static-footer">
+
+          <div className="checkbox">
+            <label>
+              <input type="checkbox" value={termsAgreed} onClick={this.termsAgreedToggle}/>
+              I agree to the terms of the non-disclosure agreement.
+            </label>
+          </div>
+
+          <button onClick={this.updateNDA} data-status='signed' className="btn btn-brand" {...submitDisabled}>
+            <i className={ ndaUpdating ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+            Submit
+          </button>
         </div>
       </div>
     );

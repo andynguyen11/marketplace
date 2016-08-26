@@ -69,10 +69,6 @@ const ContractBuilder = React.createClass({
       <div className="messages-tracker-content">
         <div className="messages-tracker-popup-content">
 
-          <div className="steps pull-right">
-            <strong>{step} of 3</strong>
-          </div>
-
           { this.state.step == 1 && (
             <div className="sub-section">
               <div className="col-sm-10">
@@ -324,12 +320,15 @@ const ContractBuilder = React.createClass({
           <div className="col-md-12 agreement-panel-footer">
             {error}
             <div className="form-group">
-              <a onClick={this.previousStep} className={this.state.step > 1 ? '' : 'visible-hidden'} ><i className='fa fa-arrow-left'></i> Back</a>
+              <a onClick={this.previousStep} className={this.state.step > 1 ? 'prev-step' : 'prev-step visible-hidden'} ><i className='fa fa-arrow-left'></i> Back</a>
               <div className={this.state.step == 3 ? '' : 'visible-hidden'}>
                   <button type='submit' className='btn btn-brand' onClick={saveTerms}>Send Preview of Terms</button>
               </div>
-              <a onClick={this.nextStep} className={this.state.step == 3 ? 'visible-hidden' : ''} >Next <i className='fa fa-arrow-right'></i></a>
+              <a onClick={this.nextStep} className={this.state.step == 3 ? 'next-step visible-hidden' : 'next-step'} >Next <i className='fa fa-arrow-right'></i></a>
             </div>
+          </div>
+          <div className="steps">
+            <strong>{step} of 3</strong>
           </div>
           <div className='clearfix'></div>
         </div>
