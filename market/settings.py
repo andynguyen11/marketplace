@@ -224,7 +224,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-STATICFILES_LOCATION = 'static'
+STATICFILES_LOCATION = os.environ.get('STATIC_LOCATION', 'static-dev')
 STATICFILES_STORAGE = 'market.custom_storages.StaticStorage'
 STATIC_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', STATICFILES_LOCATION)
 
