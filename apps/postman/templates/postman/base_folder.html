@@ -3,6 +3,8 @@
 {% load pagination_tags %}
 {% load staticfiles %}
 
+{% block bodyclass %}messaging-page{% endblock %}
+
 {% comment %}
 WARNING: 'pagination_tags' is a name from the django-pagination application.
 For convenience, the design of this template is done with the use of that application.
@@ -17,7 +19,7 @@ in the INSTALLED_APPS setting.
   <div class="row">
     <div class="container">
       <div class="postman-header">
-        <h2 class="text-yellow pull-left">communication is key</h2>
+        <h2 class="text-yellow pull-left">Communicate. Share documents. Make work.</h2>
         {% autopaginate pm_messages 8 %}
         <div class="pull-right">{% paginate %}</div>
         <div class="clearfix"></div>
@@ -57,13 +59,12 @@ in the INSTALLED_APPS setting.
                    style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ message.sender.get_photo }})"></div>
             </div>
             <div class="messages-list-message-meta">
-              <div>{{ message.obfuscated_sender|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %}
-              </div>
-              <div class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
+              {{ message.obfuscated_sender|or_me:user }}
             </div>
             <div class="messages-list-message-summary">
               {% include "postman/inc_subject_ex.html" %}
             </div>
+            <div class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
           </a>
           <div class="messages-list-message-star">
             {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}

@@ -6,7 +6,9 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12">
-        <div class="sub-section">&nbsp;</div>
+        <div class="sub-section">
+          <h2>Manage Your Pending Projects and Bids</h2>
+        </div>
         {% if bids %}
           <div class="section">
             <div class="section-header">
@@ -62,11 +64,10 @@
                   <tr>
                     <th></th>
                     <th>Name</th>
-                    <th>Role</th>
-                    <th>Location</th>
-                    <th>Availability</th>
                     <th>Cash</th>
                     <th>Equity</th>
+                    <th>Est. Hours</th>
+                    <th>Submitted</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -76,19 +77,7 @@
                     <div class="profile-photo" style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ bid.contractor.get_photo }})"></div>
                   </td>
                   <td>
-                    <strong>{{ bid.contractor.first_name }}</strong> <br/>
-                    {{ bid.date_created }}
-                  </td>
-                  <td>
-                    <strong>{{ bid.contractor.role }}</strong><br/>
-                    Developer
-                  </td>
-                  <td>
-                    <strong>{{ bid.contractor.city }}</strong><br/>
-                    {{ bid.contractor.state }}
-                  </td>
-                  <td>
-                    <strong>{{ bid.contractor.capacity }} hours/wk</strong>
+                    <strong>{{ bid.contractor.first_name }}</strong>
                   </td>
                   <td>
                     <strong>{% if bid.cash %}${{ bid.cash }}{% endif %}</strong>
@@ -97,15 +86,29 @@
                     <strong>{% if bid.equity %}{{ bid.equity }}%{% endif %}</strong>
                   </td>
                   <td>
+                    <strong>{{ bid.contractor.capacity }} hours/wk</strong>
+                  </td>
+                  <td>
+                    {{ bid.date_created }}
+                  </td>
+                  <td>
                     {% if bid.conversation %}
-                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-dark pull-left">Message</a>
+                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Message</a>
                     {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
                 </table>
               {% else %}
-                <h4>There are currently no bids on this project.   <a href="{% url 'discover-developers' 'all' %}">Start searching</a> for some developers!</h4>
+                <table class="dashboard-table">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <h5 style="text-align: center;">There are currently no bids on this project.   <a href="{% url 'discover-developers' 'all' %}">Start searching</a> for some developers!</h5>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               {% endif %}
           </div>
         {% endfor %}

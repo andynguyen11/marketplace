@@ -634,7 +634,7 @@ const Messages = React.createClass({
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">
-            agreement tracker
+            Agreement Tracker
           </div>
           { job && terms && <MessageAgreement
             convertFromMomentToStartDate={this.convertFromMomentToStartDate}

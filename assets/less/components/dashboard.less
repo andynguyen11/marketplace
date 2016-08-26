@@ -2,7 +2,7 @@
   background: #fafafa;
   h2 {
     margin: 30px 0;
-    font-size: 36px;
+    font-size: 24px;
     font-family: @page-font;
     color: @brand--primary;
   }
@@ -15,7 +15,7 @@
     margin-bottom: 25px;
     background: #fff;
     border: 1px solid @brand-neutral--4;
-    min-height: 200px;
+
     .section-header {
       background: @brand-neutral--1;
       color: #fff;
@@ -61,12 +61,19 @@
       color: @brand-neutral--1;
     }
 
+    .notifications {
+      height: 250px;
+      padding: 0;
+      margin: 0;
+      overflow-y: scroll;
+    }
+
     table.dashboard-table {
       width: 100%;
 
       .profile-photo {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -76,20 +83,14 @@
 
       th {
         text-transform: uppercase;
-        padding: 10px;
-        background: @light-gray;
+        padding: 5px 15px;
+        background: #7b7785;
         color: #fff;
       }
 
       td {
-        padding: 10px;
+        padding: 10px 15px;
         border-bottom: 1px solid #ccc;
-      }
-
-      .btn {
-        margin: 0 5px;
-        width: auto;
-        color: #fff;
       }
     }
   }

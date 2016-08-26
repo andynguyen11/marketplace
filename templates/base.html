@@ -59,7 +59,7 @@
 
         <div class="header-icons">
           <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
-            <img src="{% static 'images/icon-message.png' %}" />
+            <img src="{% static 'images/Chat_icon.svg' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
           <a id="help" href="#" class="hide-mobile"><img src="{% static 'images/icon-notifications.png' %}" /></a>
@@ -74,7 +74,7 @@
             <li><a href="{% url 'profile' %}">Profile</a></li>
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             {% comment %} <li><a href="{% url 'postman:inbox' %}">Messages</a></li> {% endcomment %}
-            <li><a href="{% url 'view-bids' %}">Open Projects</a></li>
+            <li><a href="{% url 'view-bids' %}">Pending Projects</a></li>
             {% comment %} <li><a href="{% url 'view-projects' %}">Engaged Projects</a></li> {% endcomment %}
             {% comment %} <li><a href="{% url 'view-documents' %}">Your Documents</a></li> {% endcomment %}
             {% comment %} <li><a href="{% url 'view-skills' %}">Your Skills</a></li> {% endcomment %}

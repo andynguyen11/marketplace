@@ -39,11 +39,11 @@ const ContractorTracker = React.createClass({
           );
         case "signed":
           return (
-            <button className='btn'>Signed</button>
+            <button className='btn' disabled>Signed</button>
           );
         default:
           return (
-            <button className='btn'>Not Sent</button>
+            <button className='btn' disabled>Not Sent</button>
           );
       }
     };
@@ -123,7 +123,7 @@ const ContractorTracker = React.createClass({
           { signing_url ?
             <a href={ signing_url } className="btn btn-brand">Sign Contract</a>
             :
-            <button className='btn btn-secondary' >Waiting for Contract Delivery</button>
+            <button className='btn btn-secondary' disabled>Not Sent</button>
           }
           </div>
         </div>

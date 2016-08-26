@@ -1,8 +1,26 @@
 .messaging-page {
   background: #f3f3f3;
 
+  h2 {
+    font-size: 24px;
+  }
+
   .wrapper {
-    min-height: auto;
+    min-height: initial;
+  }
+
+  .account-nav {
+    ul li a {
+      &.active {
+        border-bottom: none;
+        padding-bottom: 0;
+
+        span.descriptor {
+          border-bottom: 7px solid #1eddb2;
+          padding-bottom: 6px;
+        }
+      }
+    }
   }
 }
 
@@ -448,7 +466,30 @@
   padding: 15px;
 }
 
+#postman {
+  .section-header {
+    background: @brand-neutral--1;
+    color: #fff;
+    padding: 10px;
+    margin-top: 10px;
+    h4 {
+      font-size: 16px;
+    }
+    h4 a {
+      color: #fff;
+      &:hover {
+        color: @brand--accent;
+      }
+    }
+  }
+}
+
 .messages-list {
+  margin-bottom: @gutter;
+  background: #FFF;
+  border-right: 1px solid #e7e7e7;
+  border-left: 1px solid #e7e7e7;
+
   .messages-list-message {
     display: flex;
     border-top: 1px solid #e7e7e7;
@@ -476,6 +517,7 @@
 
     &.unread {
       font-weight: bold;
+      background: @brand-neutral--6;
     }
   }
 
