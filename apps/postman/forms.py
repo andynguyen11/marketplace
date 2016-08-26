@@ -41,6 +41,18 @@ def build_payload(sender, recipient, terms):
     TODO This is a dirty dirty way to build the payload.  Will need to map template roles to profile fields,
     and dynamically build based on template
     """
+    compensation = ''
+    cash = ''
+    equity = ''
+    if int(terms.job.equity):
+        equity = "{0}% Equity".format(terms.job.equity)
+    if int(terms.job.cash):
+        cash = "${0} Cash".format(terms.job.cash)
+    if equity and cash:
+        compensation = "{0} and {1}".format(equity, cash)
+    else:
+        compensation = cash if cash else equity
+
     return {
         'template': '054c2981-9e38-42ac-8451-f8b43230ccea',
         'status': 'new',
@@ -65,7 +77,7 @@ def build_payload(sender, recipient, terms):
                     },
                     {
                         'label': 'Compensation',
-                        'value': '${0}'.format(terms.job.cash)
+                        'value': compensation
                     },
                     {
                         'label': 'CompensationSchedule',
@@ -94,6 +106,10 @@ def build_payload(sender, recipient, terms):
                     {
                         'label': 'ContractorTitle',
                         'value': '{0} Developer'.format(recipient.role)
+                    },
+                    {
+                        'label': 'ProjectEndDate',
+                        'value': terms.end_date
                     }
 
                 ]
