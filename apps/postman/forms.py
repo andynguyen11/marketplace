@@ -44,9 +44,9 @@ def build_payload(sender, recipient, terms):
     compensation = ''
     cash = ''
     equity = ''
-    if int(terms.job.equity):
+    if terms.job.equity:
         equity = "{0}% Equity".format(terms.job.equity)
-    if int(terms.job.cash):
+    if terms.job.cash:
         cash = "${0} Cash".format(terms.job.cash)
     if equity and cash:
         compensation = "{0} and {1}".format(equity, cash)
