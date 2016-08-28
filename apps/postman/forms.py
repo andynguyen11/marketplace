@@ -105,11 +105,15 @@ def build_payload(sender, recipient, terms):
                     },
                     {
                         'label': 'ContractorTitle',
-                        'value': '{0} Developer'.format(recipient.role)
+                        'value': '{0} Developer'.format(recipient.role.capitalize()) if recipient.role else ''
                     },
                     {
                         'label': 'ProjectEndDate',
                         'value': terms.end_date
+                    },
+                    {
+                        'label': 'ContractorEmail',
+                        'value': recipient.email
                     }
 
                 ]

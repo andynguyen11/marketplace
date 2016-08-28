@@ -12,6 +12,7 @@ from generics.serializers import ParentModelSerializer, RelationalModelSerialize
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.utils import update_instance, field_names
+from payment.models import Order
 from postman.helpers import pm_write
 from postman.models import Message
 
@@ -199,10 +200,13 @@ class DocumentSerializer(ParentModelSerializer):
             template = data.pop('template', self.default_template(data['type']))
             if template:
                 if not data['job'].owner.stripe:
-                    raise PermissionDenied({
-                        "message": "NO_PAYMENT_METHOD",
-                        "profile": data['job'].owner.id,
-                        "job": data['job'].id })
+                    order = Order.objects.get(job=data['job'].id)
+                    #TODO This check needs to be more dynamic when promos are variable
+                    if order.status != 'paid':
+                        raise PermissionDenied({
+                            "message": "NO_PAYMENT_METHOD",
+                            "profile": data['job'].owner.id,
+                            "job": data['job'].id })
                     
                 signers = data.pop('signers', [
                     self.signer(data, 'contractor'),

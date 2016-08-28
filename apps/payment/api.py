@@ -30,8 +30,8 @@ class CreditCardView(APIView):
         #TODO Handle promos dynamically
         if request.data.get('promo', None) == 'raiseideas':
             job = Job.objects.get(id=request.data['job'])
-            url = self.generate_contract(request, job)
             order = self.handle_promo_order(job, 'raiseideas')
+            url = self.generate_contract(request, job)
             return Response(status=200, data={"message": "Success", "url": url})
         stripe.api_key = settings.STRIPE_KEY
         stripe_customer = None
