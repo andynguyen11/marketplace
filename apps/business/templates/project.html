@@ -20,7 +20,7 @@
     </div>
       <div class="section">
         <div class="col-md-7 project-header-left">
-          <img class="project-image" src="{{ project.image.url }}" />
+          <div class="project-image" style="background-image: url({{ project.image.url }})"></div>
           <div class="sub-section">{{ project.short_blurb }}</div>
           <ul class="project-meta sub-section">
             <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
@@ -105,15 +105,15 @@
           <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit Project</a>
           {% else %}
             <ul>
-            <li>
               {% if not job %}
-                {% if user.is_authenticated %}
-                  <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
-                {% else %}
-                  <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'view-project' project.slug %}">Bid on Project</a>
-                {% endif %}
+                <li>
+                  {% if user.is_authenticated %}
+                    <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+                  {% else %}
+                    <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'view-project' project.slug %}">Bid on Project</a>
+                  {% endif %}
+                </li>
               {% endif %}
-            </li>
             <li>
               {% if job %}
                 <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>

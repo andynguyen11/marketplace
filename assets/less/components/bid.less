@@ -5,15 +5,17 @@
 }
 
 .bid-form {
+  .bid-form-wrapper {
+    max-width: 400px;
+    margin: auto;
+  }
   h3.text-brand {
     margin-top: 10px;
     margin-bottom: 20px;
   }
-  h4.bid-and {
-    margin-top: -15px;
-  }
   textarea {
-    height: 150px;
+    height: 100px;
+    resize: none;
   }
   .radio {
     margin: 0;
@@ -23,10 +25,13 @@
       margin-right: 5px;
     }
   }
-  .form-group {
+
+  .comp-selector {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0 0 @gutter;
+
     .control-label {
       margin-bottom: 0;
     }
@@ -45,6 +50,29 @@
     input[type="number"].form-control {
      display: inline;
      width: 100px;
+    }
+  }
+
+  .bid-terms {
+    margin-top: @gutter;
+  }
+
+  .comp-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .comp-inputs--cash {
+      width: 50%;
+    }
+
+    .comp-inputs--plus {
+      width: 10%;
+      text-align: center;
+    }
+
+    .comp-inputs--equity {
+      width: 40%;
     }
   }
 }

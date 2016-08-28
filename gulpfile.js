@@ -38,7 +38,7 @@ gulp.task('scripts:vendor', function(){
 			.pipe(source('vendor.js'))
 			.pipe(buffer())
 			.pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(uglify())
+			.pipe(uglify({compress: {drop_debugger: false}}))
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest('./static/js/'));
 	})
@@ -58,7 +58,7 @@ gulp.task('scripts:app', function(){
 			.pipe(source('main.js'))
 			.pipe(buffer())
 			.pipe(sourcemaps.init({loadMaps: true}))
-			.pipe(uglify())
+			.pipe(uglify({compress: {drop_debugger: false}}))
 			.pipe(sourcemaps.write('./'))
 			.pipe(gulp.dest('./static/js/'));
 	})
@@ -82,7 +82,7 @@ gulp.task('scripts:routes', function(){
 				.pipe(source(filename))
 				.pipe(buffer())
 				.pipe(sourcemaps.init({loadMaps: true}))
-				.pipe(uglify())
+				.pipe(uglify({compress: {drop_debugger: false}}))
 				.pipe(sourcemaps.write('./'))
                 .pipe(gulp.dest('./static/js/routes/'));
 		})

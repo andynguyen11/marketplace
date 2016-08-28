@@ -18,20 +18,23 @@ const Bid = React.createClass({
     return {
       wantsCash: cash ? true : false,
       wantsEquity: equity ? true : false,
-      newBid: job.hours ? false : true
+      newBid: job.hours ? false : true,
+      formErrorsList: [],
+      formError: false,
+      apiError: false
     };
   },
 
   componentWillMount() {
-    this.setState({formElements: this.formElements()});
+    this.setState({formElements: Object.assign({}, this.formElements())});
   },
 
   formElements() {
     const {job} = this.props;
-    const {wantsCash, wantsEquity} = this.state;
+    const {wantsCash, wantsEquity, formErrorsList} = this.state;
     const compensationType = wantsCash ? (wantsEquity ? 'mix' : 'cash') : (wantsEquity ? 'equity' : '')
 
-    // TODO Bad Andy. Passing props into state.  Figure out how not to do this.
+    // TODO Bad Andy. Passing props into state. Figure out how not to do this.
     return {
       compensationType: {
         name: 'compensationType',
@@ -54,13 +57,14 @@ const Bid = React.createClass({
         validator: (value) => {
           const {job} = this.props;
           const valid = job.compensationType ? true : FormHelpers.checks.isRequired(value);
-          const {formElements} = this.state;
+          const {formElements, formErrorsList} = this.state;
           if (!valid) {
             formElements.compensationType.errorClass = 'has-error';
+            formErrorsList.push('Choose a type of compensation for your bid.');
           } else {
             formElements.compensationType.errorClass = '';
           }
-          this.setState({formElements});
+          this.setState({formElements, formErrorsList});
           return valid;
         },
         update: (value) => {
@@ -82,21 +86,41 @@ const Bid = React.createClass({
         errorClass: '',
         validator: (value) => {
           const {wantsCash} = this.state;
-          const valid = wantsCash ? FormHelpers.checks.isRequired(value) : true;
-          const {formElements} = this.state;
+          const valueClean = typeof value === 'string' ? value.replace(/,/g, '') : value;
+          const cashValue = parseInt(valueClean);
+          const cleanValue = value.toString().match(/^\d*?\d*$/);
+          const valid = wantsCash ? (typeof cashValue === 'number' && cashValue > 0) && cleanValue : true;
+          const {formElements, formErrorsList} = this.state;
+
           if (!valid) {
             formElements.cash.errorClass = 'has-error';
+            let cashError = 'Please enter a cash offer for your bid.';
+
+            if(!!value.length) {
+              if(typeof cashValue === 'number' && cashValue <= 0) {
+                cashError = 'Cash offer must be more than $0.';
+              }
+              if(!cleanValue) {
+                cashError = 'Your cash offer must be a valid whole number (no commas or decimals)';
+              }
+            }
+
+            formErrorsList.push(cashError);
           } else {
             formElements.cash.errorClass = '';
           }
-          this.setState({formElements});
+          this.setState({formElements, formErrorsList});
           return valid;
         },
         update: (value) => {
           const {job, updateJob} = this.props;
+          const {formElements} = this.state;
+
+          formElements.cash.value = value;
           job.cash = value;
           job.equity = job.compensationType == 'mix' ? job.equity : 0;
           updateJob(job);
+          this.setState({formElements});
         }
       },
       equity: {
@@ -106,21 +130,40 @@ const Bid = React.createClass({
         errorClass: '',
         validator: (value) => {
           const {wantsEquity} = this.state;
-          const valid = wantsEquity ? FormHelpers.checks.isRequired(value) : true;
-          const {formElements} = this.state;
+          const equityValue = parseFloat(value);
+          const cleanValue = value.toString().match(/^\d*\.?\d*$/);
+          const valid = wantsEquity ? ((typeof equityValue === 'number' && equityValue > 0 && equityValue < 100) && cleanValue) : true;
+          const {formElements, formErrorsList} = this.state;
+
           if (!valid) {
             formElements.equity.errorClass = 'has-error';
+            let equityError = 'Please enter an equity offer for your bid.';
+
+            if(!!value.length) {
+              if(typeof equityValue === 'number' && (equityValue <= 0 || equityValue >= 100)) {
+                equityError = 'Equity offer must be more than 0% and less than 100%.';
+              }
+              if(!cleanValue) {
+                equityError = 'Your equity offer must be a valid number.';
+              }
+            }
+
+            formErrorsList.push(equityError);
           } else {
             formElements.equity.errorClass = '';
           }
-          this.setState({formElements});
+          this.setState({formElements, formErrorsList});
           return valid;
         },
         update: (value) => {
           const {job, updateJob} = this.props;
+          const {formElements} = this.state;
+
+          formElements.equity.value = value;
           job.equity = value;
           job.cash = job.compensationType == 'mix' ? job.cash : 0;
           updateJob(job);
+          this.setState({formElements});
         }
       },
       hours: {
@@ -129,20 +172,39 @@ const Bid = React.createClass({
         value: job.hours || '',
         errorClass: '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
-          const {formElements} = this.state;
+          const hoursValue = parseFloat(value);
+          const cleanValue = value.toString().match(/^\d*?\d*$/);
+          const valid = typeof hoursValue === 'number' && hoursValue > 0 && cleanValue;
+          const {formElements, formErrorsList} = this.state;
+
           if (!valid) {
             formElements.hours.errorClass = 'has-error';
+            let hoursError = 'Please enter a time estimate for your bid.';
+
+            if(!!value.length) {
+              if(typeof hoursValue === 'number' && hoursValue <= 0) {
+                hoursError = 'Your time estimate must be more than 0.';
+              }
+              if(!cleanValue) {
+                hoursError = 'Your time estimate must be a valid number.';
+              }
+            }
+
+            formErrorsList.push(hoursError);
           } else {
             formElements.hours.errorClass = '';
           }
-          this.setState({formElements});
+          this.setState({formElements, formErrorsList});
           return valid;
         },
         update: (value) => {
           const {job, updateJob} = this.props;
+          const {formElements} = this.state;
+
+          formElements.hours.value = value;
           job.hours = value;
           updateJob(job);
+          this.setState({formElements});
         }
       },
       message: {
@@ -153,19 +215,23 @@ const Bid = React.createClass({
         validator: (value) => {
           const {newBid} = this.state;
           const valid = (newBid && !job.id) ? FormHelpers.checks.isRequired(value) : true;
-          const {formElements} = this.state;
+          const {formElements, formErrorsList} = this.state;
           if (!valid) {
             formElements.message.errorClass = 'has-error';
+            formErrorsList.push('Please enter a message to submit with your bid.');
           } else {
             formElements.message.errorClass = '';
           }
-          this.setState({formElements});
+          this.setState({formElements, formErrorsList});
           return valid;
         },
         update: (value) => {
           const {job, updateJob} = this.props;
+          const {formElements} = this.state;
+          formElements.message.value = value;
           job.message = value;
           updateJob(job);
+          this.setState({formElements});
         }
       }
     }
@@ -176,88 +242,115 @@ const Bid = React.createClass({
     const {value} = event.target;
     const fieldName = event.target.getAttribute('name');
 
-    formElements[fieldName].update(value);
     formElements[fieldName].value = value;
+    formElements[fieldName].update(value);
 
     this.setState({formElements, formError: false});
   },
 
   saveBid() {
-    const {formElements} = this.state;
+    const {formElements, formErrorsList} = this.state;
     const {job, isModal, saveCallback} = this.props;
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements});
-      if (valid) {
-        this.setState({formError: false, isLoading: true});
-        $.ajax({
-          url: loom_api.job + job.id + '/',
-          method: 'PATCH',
-          data: JSON.stringify(job),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          success: function (result) {
-            if (isModal) {
-              window.location = '/profile/bids/';
+
+    this.setState({ formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements, apiError: false});
+
+        if (valid) {
+          this.setState({formError: false, isLoading: true});
+          $.ajax({
+            url: loom_api.job + job.id + '/',
+            method: 'PATCH',
+            data: JSON.stringify(job),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+              if (isModal) {
+                window.location = '/profile/bids/';
+              }
+              else {
+                saveCallback();
+              }
+            }.bind(this),
+            error: (xhr, status, error) => {
+              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
-            else {
-              saveCallback();
-            }
-          }.bind(this)
-        });
-      } else {
-        this.setState({formError: 'Please fill out all fields.'});
-      }
+          });
+        } else {
+          this.setState({formError: 'Please fill out all fields.'});
+        }
+      });
     });
   },
 
   createBid() {
-    const {formElements} = this.state;
+    const {formElements, formErrorsList} = this.state;
     const {current_user, project, isModal, saveCallback} = this.props;
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements});
-      if (valid) {
-        this.setState({formError: false, isLoading: true});
-        let new_job = _.reduce(formElements, function (result, value, key) {
-          result[key] = value['value'];
-          return result;
-        }, {});
-        new_job.contractor = current_user;
-        new_job.project = project.id;
-        $.ajax({
-          url: loom_api.job,
-          method: 'POST',
-          data: JSON.stringify(new_job),
-          contentType: 'application/json; charset=utf-8',
-          dataType: 'json',
-          success: function (result) {
-            if (isModal) {
-              window.location = '/profile/bids/';
+
+    this.setState({ formErrorsList: [] }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements, apiError: false});
+        if (valid) {
+          this.setState({formError: false, isLoading: true});
+          let new_job = _.reduce(formElements, function (result, value, key) {
+            result[key] = value['value'];
+            return result;
+          }, {});
+          new_job.contractor = current_user;
+          new_job.project = project.id;
+          $.ajax({
+            url: loom_api.job,
+            method: 'POST',
+            data: JSON.stringify(new_job),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: function (result) {
+              if (isModal) {
+                window.location = '/profile/bids/';
+              }
+              else {
+                saveCallback();
+              }
+            }.bind(this),
+            error: (xhr, status, error) => {
+              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
             }
-            else {
-              saveCallback();
-            }
-          }.bind(this)
-        });
-      } else {
-        this.setState({formError: 'Please fill out all fields.'});
-      }
+          });
+        } else {
+          this.setState({formError: 'Please fill out all fields.'});
+        }
+      });
     });
   },
 
   render() {
     const {job, project, current_user} = this.props;
-    const {formElements, newBid, wantsCash, wantsEquity, formError} = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const {formElements, newBid, wantsCash, wantsEquity, formError, formErrorsList, apiError} = this.state;
+    const error = (formError || apiError) && function() {
+        let errorsList = formErrorsList.map((thisError, i) => {
+          return <span key={i}>{thisError}<br/></span>;
+        });
+
+        if(!formErrorsList.length){
+          errorsList = formError;
+        }
+
+        if(apiError) {
+          errorsList = apiError;
+        }
+
+        return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+      }();
 
     const headerText = newBid ? (
       <div>
-        <h3 className="brand-bold">Place your bid to work on:</h3>
+        <h4 className="brand-bold">Place your bid to work on:</h4>
         <h3 className="brand-bold text-brand">{project.title}</h3>
         <h4 className="brand">What type of bid do you want to submit?</h4>
       </div>
     ) : (
       <div>
-        <h3 className="brand-bold">Adjust your bid for:</h3>
+        <h4 className="brand-bold">Adjust your bid for:</h4>
         <h3 className="brand-bold text-brand">{project.title}</h3>
       </div>
     );
@@ -276,38 +369,40 @@ const Bid = React.createClass({
     });
 
     const cashInput = wantsCash && (
-        <div className={"form-group " + formElements.cash.errorClass}>
-          <label className="control-label" htmlFor={formElements.cash.name}>{formElements.cash.label}</label>&nbsp;
-          <div className="input-group">
-            <span className="input-group-addon">$</span>
-            <input
-              className="form-control"
-              type='number'
-              name={formElements.cash.name}
-              id={formElements.cash.name}
-              placeholder={formElements.cash.placeholder}
-              value={formElements.cash.value}
-              onChange={this.handleChange}
-            />
-            <span className="input-group-addon">.00</span>
+        <div className="comp-inputs--cash">
+          <div className={"form-group " + formElements.cash.errorClass}>
+            <label className="control-label" htmlFor={formElements.cash.name}>{formElements.cash.label}</label>&nbsp;
+            <div className="input-group">
+              <span className="input-group-addon">$</span>
+              <input
+                className="form-control"
+                name={formElements.cash.name}
+                id={formElements.cash.name}
+                placeholder={formElements.cash.placeholder}
+                value={formElements.cash.value}
+                onChange={this.handleChange}
+              />
+              <span className="input-group-addon">.00</span>
+            </div>
           </div>
         </div>
       );
 
     const equityInput = wantsEquity && (
-        <div className={"form-group " + formElements.equity.errorClass}>
-          <label className="control-label" htmlFor={formElements.equity.name}>{formElements.equity.label}</label>&nbsp;
-          <div className="input-group">
-            <input
-              className="form-control"
-              type='number'
-              name={formElements.equity.name}
-              id={formElements.equity.name}
-              placeholder={formElements.equity.placeholder}
-              value={formElements.equity.value}
-              onChange={this.handleChange}
-            />
-            <span className="input-group-addon">%</span>
+        <div className="comp-inputs--equity">
+          <div className={"form-group " + formElements.equity.errorClass}>
+            <label className="control-label" htmlFor={formElements.equity.name}>{formElements.equity.label}</label>&nbsp;
+            <div className="input-group">
+              <input
+                className="form-control"
+                name={formElements.equity.name}
+                id={formElements.equity.name}
+                placeholder={formElements.equity.placeholder}
+                value={formElements.equity.value}
+                onChange={this.handleChange}
+              />
+              <span className="input-group-addon">%</span>
+            </div>
           </div>
         </div>
       );
@@ -315,62 +410,65 @@ const Bid = React.createClass({
 
     const messageInput = (newBid && !job.id) && (
         <div className={"form-group " + formElements.message.errorClass}>
-        <textarea
-          className="form-control"
-          name={formElements.message.name}
-          id={formElements.message.name}
-          placeholder={formElements.message.placeholder}
-          value={formElements.message.value}
-          onChange={this.handleChange}
-        >
-        </textarea>
+          <textarea
+            className="form-control"
+            name={formElements.message.name}
+            id={formElements.message.name}
+            placeholder={formElements.message.placeholder}
+            value={formElements.message.value}
+            onChange={this.handleChange}
+          >
+          </textarea>
         </div>
       );
 
     return (
       <div className="bid-form text-center messages-tracker-content">
         <div className="messages-tracker-popup-content">
+          <div className="bid-form-wrapper">
 
-          {headerText}
+            {headerText}
 
-          <div className={"form-group " + formElements.compensationType.errorClass}>
-            {compensationTypeSelector}
-          </div>
-          {cashInput}
-          { wantsCash && wantsEquity && <h4 className="bid-and">+</h4> }
-          {equityInput}
-
-          <div className={"form-group " + formElements.hours.errorClass}>
-            <label className="control-label" htmlFor={formElements.hours.name}>{formElements.hours.label}</label>&nbsp;
-            <div className="input-group">
-              <input
-                className="form-control"
-                type='number'
-                name={formElements.hours.name}
-                id={formElements.hours.name}
-                placeholder={formElements.hours.placeholder}
-                value={formElements.hours.value}
-                onChange={this.handleChange}
-              />
-              <span className="input-group-addon">hours</span>
+            <div className={"form-group comp-selector " + formElements.compensationType.errorClass}>
+              {compensationTypeSelector}
             </div>
+            <div className="comp-inputs">
+            {cashInput}
+            { wantsCash && wantsEquity && <div className="comp-inputs--plus"><h4 className="bid-and">+</h4></div> }
+            {equityInput}
+            </div>
+
+            <div className={"form-group " + formElements.hours.errorClass}>
+              <label className="control-label" htmlFor={formElements.hours.name}>{formElements.hours.label}</label>&nbsp;
+              <div className="input-group">
+                <input
+                  className="form-control"
+                  name={formElements.hours.name}
+                  id={formElements.hours.name}
+                  placeholder={formElements.hours.placeholder}
+                  value={formElements.hours.value}
+                  onChange={this.handleChange}
+                />
+                <span className="input-group-addon">hours</span>
+              </div>
+            </div>
+
+            <input type="hidden" name="contractor" value={current_user} />
+            <input type="hidden" name="project" value={project.id} />
+
+            <div className="message-container">
+              {messageInput}
+            </div>
+
+            {error}
+            <button onClick={newBid && !job.id ? this.createBid : this.saveBid} disabled={ this.state.isLoading ? 'true': ''} className="btn btn-brand">
+              <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+               Submit Bid
+            </button>
+            <p className="small text-muted bid-terms">By clicking submit you agree to Loom's <a href="/terms-of-service/" target="_blank">Terms and Conditions</a></p>
           </div>
-
-        <input type="hidden" name="contractor" value={current_user} />
-        <input type="hidden" name="project" value={project.id} />
-
-          <div className="message-container">
-            {messageInput}
-          </div>
-
-        {error}
-        <button onClick={newBid && !job.id ? this.createBid : this.saveBid} disabled={ this.state.isLoading ? 'true': ''} className="btn btn-brand">
-          <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-           Submit Bid
-        </button>
-        <p className="small text-muted">By clicking submit you agree to Loom's <a href="/terms-of-service/" target="_blank">Terms and Conditions</a></p>
+        </div>
       </div>
-    </div>
     )
   }
 });

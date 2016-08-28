@@ -64,7 +64,7 @@ const ContractorTracker = React.createClass({
           );
         default:
           return (
-            <button className='btn btn-secondary'>Not Sent</button>
+            <button className='btn btn-secondary' disabled>Not Sent</button>
           );
       }
    }
