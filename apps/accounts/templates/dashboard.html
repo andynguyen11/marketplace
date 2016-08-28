@@ -86,7 +86,7 @@
               {% for message in messages %}
               <tr>
                 <td class="photo-container">
-                  <img src="{{ message.sender.get_photo }}" class="profile-photo img-circle" />
+                  <div class="profile-photo" style="background-image: url({{ message.sender.get_photo }});"></div>
                 </td>
                 {% block pm_sender_cell %}
                 <td>
