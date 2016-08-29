@@ -151,7 +151,7 @@ class Document(models.Model):
     @property
     def signers(self):
         "Returns the list of Signers who need to sign the document"
-        return DocumentSigner.objects.filter(document=self).order_by('-role')
+        return DocumentSigner.objects.filter(document=self).order_by('role')
 
     @property
     def roles(self):

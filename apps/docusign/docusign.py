@@ -74,10 +74,10 @@ class Parser(pydocusign.DocuSignCallbackParser):
 
 def parse_webhook_update(xml):
     parser = Parser(xml)
-    signer_updates = [ {
-        'routing_order': int(signer['RoutingOrder']),
-        'status': signer['Status'].lower(),
-        } for signer in parser.recipients]
+    signer_updates = {
+            int(signer['ClientUserId']): { 'status': signer['Status'].lower() }
+            for signer in parser.recipients }
+    print signer_updates
     return {
         'envelope_id': parser.envelope_id,
         'status': parser.envelope_status.lower(),

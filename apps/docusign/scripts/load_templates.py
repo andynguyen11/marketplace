@@ -18,8 +18,9 @@ def normalize(template):
         'id': str(signer['recipientId']),
         'order': signer['routingOrder'],
         'role_name': signer['roleName'],
-        'tabs': normalize_tabs(signer['tabs'])
+        'tabs': normalize_tabs(signer['tabs']),
         } for signer in template.get('recipients', {'signers': []})['signers']]
+    normalized['status'] = 'valid'
     return normalized
 
 def load_template_definitions():

@@ -28,7 +28,7 @@ class TemplateSerializer(ParentModelSerializer):
 
     class Meta:
         model = Template
-        fields = ('template_id', 'description', 'name', 'roles')
+        fields = ('template_id', 'description', 'name', 'roles', 'status')
         parent_key = 'template'
         child_fields = ('roles',)
 

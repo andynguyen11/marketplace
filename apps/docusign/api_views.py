@@ -49,10 +49,9 @@ class Webhook(APIView):
         document.status = update['status']
         document.save()
         signers = document.signers
-        for signer, update in zip(signers, update['signers']):
-            if signer.role.order == update['routing_order']:
-                signer.status = update['status']
-                signer.save()
+        for signer in signers:
+            signer.status = update['signers'][signer.profile.id]['status'] or signer.status
+            signer.save()
         return Response(status=200, data={"message": "Success"})
 
 
