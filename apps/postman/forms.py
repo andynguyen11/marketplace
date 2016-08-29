@@ -21,6 +21,7 @@ try:
     from django.contrib.auth import get_user_model  # Django 1.5
 except ImportError:
     from postman.future_1_5 import get_user_model
+from django.conf import settings
 from django.db import transaction
 from django.utils.translation import ugettext, ugettext_lazy as _
 from multiupload.fields import MultiFileField
@@ -54,7 +55,7 @@ def build_payload(sender, recipient, terms):
         compensation = cash if cash else equity
 
     return {
-        'template': '054c2981-9e38-42ac-8451-f8b43230ccea',
+        'template': settings.DOCUSIGN_TEMPLATE_ID,
         'status': 'new',
         'job': terms.job.id,
         'type': 'MSA',

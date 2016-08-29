@@ -348,6 +348,8 @@ LOOM_FEE = 3
 
 SENDBIRD_API = 'EE7E8860-E9A8-49B2-9192-DBA542C8C07E'
 
+DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
+
 try:
     from local_settings import *
 except ImportError:
