@@ -179,6 +179,25 @@
       resize: none;
       outline: none;
       height: 100px;
+
+      &[disabled] {
+        border-radius: @border-radius 0 0 @border-radius;
+        color: #888;
+        background: #EFEFEF;
+      }
+    }
+
+    .text-field-loading {
+      border-radius: 0 @border-radius @border-radius 0;
+      border: 1px solid @brand-neutral--3;
+      border-left: 0;
+      flex-basis: 32px;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #999;
+      border-left: none;
     }
 
     .text-field-fileUpload {

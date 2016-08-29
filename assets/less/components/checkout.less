@@ -1,55 +1,111 @@
 .checkout {
   padding: @gutter;
+
+  .promo {
+    display: flex;
+    align-items: center;
+
+    input {
+      flex-grow: 1;
+    }
+    .btn {
+      margin-left: @gutter--medium;
+      margin-top: 0 !important;
+      height: 34px;
+      line-height: 34px;
+      padding: 0 10px !important;
+    }
+  }
+
+  .alert {
+    word-break: break-word;
+  }
 }
 
 .fee-container {
   display: flex;
+  flex-direction: column;
+  background: @brand-neutral--6;
+  padding: 15px;
+  margin: @gutter 0;
   align-items: center;
-  justify-content: space-between;
-  padding: 25px 20px;
-  .fee-details {
-    display: flex;
-    flex-direction: column;
-    background: @brand-neutral--6;
-    padding: 15px;
-    .fees {
-      h2 {
-        margin: 25px 10px 0;
-      }
-      display: flex;
-      align-items: flex-end;
-      span {
-        font-size: 16px;
-      }
-    }
-  }
-}
+  border-radius: @border-radius;
 
-.promo {
-  display: flex;
-  justify-content: space-between;
-  input {
-    margin: 0 15px;
+  .fees {
+    display: flex;
+    align-items: baseline;
+
+    h2 {
+      padding: 0 @gutter--medium;
+      margin: @gutter--medium 0 0;
+    }
   }
 }
 
 .card-list {
-  li {
+
+  .card-list-card {
     display: flex;
     align-items: center;
+    margin: @gutter--medium 0 0;
+
+    input {
+      font-size: 30px;
+      margin: 0;
+    }
+
     .card-details {
-      width: 100%;
+      flex-grow: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: #f1f1f1;
-      padding: 5px 10px;
+      padding: @gutter--medium;
+      margin-left: 15px;
+      border-radius: @border-radius;
+    }
+
+    .card-type {
+      font-size: 24px;
+    }
+
+    .card-number {
+      flex-grow: 1;
+      padding-left: @gutter--medium;
+    }
+
+    .card-expiration {
+
+    }
+  }
+
+  .card-list-nocard {
+    display: flex;
+    align-items: center;
+    margin: @gutter 0;
+
+    input {
+      font-size: 30px;
+      margin: 0;
+    }
+
+    div.card-list-nocard-label {
       margin-left: 15px;
     }
-    .new-card {
-      padding: 5px 0px;
-      margin-left: 15px;
-      width: 100%;
-    }
+  }
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+
+  .card-meta-exp-month {
+    flex-basis: 30%;
+  }
+  .card-meta-exp-year {
+    flex-basis: 30%;
+  }
+  .card-meta-exp-cvc {
+    flex-basis: 30%;
   }
 }

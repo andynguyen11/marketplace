@@ -25,35 +25,30 @@ const CreditCardList = React.createClass({
         card_class = card.brand.toLowerCase()
       }
 
-      return(
-        <li key={i}>
-          <input onClick={setCard} type="radio" name="card" value={card.id} />
+      return (
+        <label htmlFor={card.id} key={i} className="card-list-card">
+          <input onClick={setCard} type="radio" id={card.id} name="card" value={card.id} />
           <div className="card-details">
-            <h2><i className={'fa fa-cc-'+card_class}></i></h2>
-            <div>card ending in {card.last4}</div>
-            <div>
-              Expiration <br />
-              {card.exp_month}/{card.exp_year}
-            </div>
+            <i className={'card-type fa fa-cc-'+card_class}></i>
+            <div className="card-number">Card ending in {card.last4}</div>
+            <div className="card-expiration">Expires {card.exp_month}/{card.exp_year}</div>
           </div>
-        </li>
+        </label>
       )
     });
 
     return(
       <div>
-      <div className="col-md-10 col-md-offset-1">
-        <strong>How do you want to pay?</strong>
-      </div>
-      <div className="col-md-8 col-md-offset-2">
-        <ul className="card-list">
-          {cards}
-          <li>
-            <input name="card" type="radio" onClick={showCardForm} />
-            <div className="new-card">Use different card</div>
-          </li>
-        </ul>
-      </div>
+        <div className="col-md-10 col-md-offset-1 form-group">
+          <label>How do you want to pay?</label>
+          <div className="card-list">
+            {cards}
+            <label htmlFor="nocard" className="card-list-nocard">
+              <input name="card" id="nocard" type="radio" onClick={showCardForm} />
+              <div className="card-list-nocard-label">Use different card</div>
+            </label>
+          </div>
+        </div>
       </div>
     )
   }

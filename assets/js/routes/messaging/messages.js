@@ -35,7 +35,7 @@ const MessageComposer = React.createClass({
   },
 
   render() {
-    const { value, name, fileUpload, attachFile, fileUploadInProgress } = this.props;
+    const { value, name, fileUpload, attachFile, fileUploadInProgress, messageSending } = this.props;
 
     const fileButton = fileUpload && (
       <div className="text-field-fileUpload">
@@ -43,13 +43,17 @@ const MessageComposer = React.createClass({
       </div>
     );
     const disabled = {
-      disabled: fileUploadInProgress
+      disabled: messageSending
     };
+    const loadingIndicator = messageSending && (
+      <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>
+    );
 
     return (
       <div className="messages-thread-composer" {...disabled}>
         {fileButton}
-        <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea"></TextareaAutosize>
+        <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea" {...disabled}></TextareaAutosize>
+        {loadingIndicator}
       </div>
     );
   }
@@ -82,6 +86,7 @@ const Messages = React.createClass({
       interactions: [],
       isLoading: true,
       messageError: false,
+      messageSending: false,
       attachment: false,
       attachmentName: false,
       formErrorsList: []
@@ -445,7 +450,7 @@ const Messages = React.createClass({
       payload.attachment = attachment;
     };
 
-    this.setState({ isLoading: true });
+    this.setState({ messageSending: true });
 
     $.ajax({
       url: loom_api.message,
@@ -459,6 +464,7 @@ const Messages = React.createClass({
           isLoading: false,
           message: '',
           messageError: false,
+          messageSending: false,
           attachmentName: false,
           attachment: false
         }, () => {
@@ -468,7 +474,8 @@ const Messages = React.createClass({
       error: () => {
         this.setState({
           isLoading: false,
-          messageError: 'Something went wrong with sending your message. Please try again.'
+          messageError: 'Something went wrong with sending your message. Please try again.',
+          messageSending: false
         })
       }
     });
@@ -606,7 +613,7 @@ const Messages = React.createClass({
   },
 
   render() {
-    const { message, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
+    const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
     const messages = interactions.map((interaction, i) => {
       const { content, sender } = interaction;
       const isCurrentUser = currentUser === sender.id;
@@ -630,7 +637,7 @@ const Messages = React.createClass({
               {error}
             </div>
           </div>
-          <MessageComposer fileUpload={false} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
+          <MessageComposer messageSending={messageSending} fileUpload={false} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">
