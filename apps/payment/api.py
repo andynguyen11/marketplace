@@ -43,6 +43,7 @@ class CreditCardView(APIView):
                 "cvc": request.data['card']['cvc']
             },
         )
+        card=stripe_token
         if request.data['card']['save_card']:
             if request.user.stripe:
                 try:
@@ -63,6 +64,7 @@ class CreditCardView(APIView):
                             request.user.company
                         )
                     )
+                    card=stripe_customer.sources.data[0].id
                 except stripe.error.CardError, e:
                     body = e.json_body
                     error = body['error']['message']
@@ -70,7 +72,7 @@ class CreditCardView(APIView):
             user = request.user
             user.stripe = stripe_customer.id
             user.save()
-        message, url = self.send_payment(request, stripe_token, stripe_customer)
+        message, url = self.send_payment(request, card, stripe_customer)
         return Response(status=200, data={"message": message, "url": url})
 
     def patch(self, request):
