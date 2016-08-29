@@ -237,28 +237,28 @@ class Project(models.Model):
     @property
     def average_equity(self):
         average = None
-        bids = Job.objects.filter(project=self, ).exclude(cash__isnull=True)
+        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(equity=0).exclude(cash__isnull=False)
         equities = [bid.equity for bid in bids]
         if equities:
-            average = round((sum(equities) / float(len(equities))), 2)
+            average = round((sum(equities) / len(equities)), 2)
         return average
 
     @property
     def average_cash(self):
         average = None
-        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True)
-        equities = [bid.equity for bid in bids]
-        if equities:
-            average = round((sum(equities) / float(len(equities))), 2)
+        bids = Job.objects.filter(project=self, ).exclude(cash__isnull=True).exclude(cash=0).exclude(equity__isnull=False)
+        cash = [bid.cash for bid in bids]
+        if cash:
+            average = int(round((sum(cash) / float(len(cash)))))
         return average
 
     @property
     def average_combined(self):
-        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(cash__isnull=True)
+        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(cash__isnull=True).exclude(equity=0).exclude(cash=0)
         equities = [bid.equity for bid in bids]
         cash = [bid.cash for bid in bids]
-        average_equity = round((sum(equities) / float(len(equities))), 2)
-        average_cash = round((sum(cash) / float(len(cash))), 2)
+        average_equity = round((sum(equities) / len(equities)), 2)
+        average_cash = int(round((sum(cash) / float(len(cash)))))
         return { 'cash': average_cash, 'equity': average_equity }
 
     def active_jobs(self):

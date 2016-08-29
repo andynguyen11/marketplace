@@ -69,27 +69,27 @@
               <ul>
                   {% if project.average_equity %}
                   <li class="project-equity">
-                    <h2 class="brand-bold">2.2%</h2>
+                    <h2 class="brand-bold">{{ project.average_equity }}%</h2>
                     equity
                   </li>
                   {% endif %}
                   <li>&nbsp;</li>
                   {% if project.average_cash %}
                   <li class="project-cash">
-                    <h2 class="brand-bold">$1,200</h2>
+                    <h2 class="brand-bold">${{ project.average_cash }}</h2>
                     cash
                   </li>
                   {% endif %}
               </ul>
               {% endif %}
-              {% if project.average_combo %}
+              {% if project.average_combined %}
               <ul>
                   <li class="project-equity">
-                    <h2 class="brand-bold">{{ project.average_combo.equity }}%</h2>
+                    <h2 class="brand-bold">{{ project.average_combined.equity }}%</h2>
                   </li>
                   <li class="andor">+</li>
                   <li class="project-cash">
-                    <h2 class="brand-bold">${{ project.average_combo.cash }}</h2>
+                    <h2 class="brand-bold">${{ project.average_combined.cash }}</h2>
                   </li>
               </ul>
               {% endif %}
