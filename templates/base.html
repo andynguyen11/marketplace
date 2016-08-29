@@ -53,7 +53,7 @@
 
         <ul class="header-links hide-mobile">
           <li><a href="{% url 'how' %}">How it Works</a></li>
-          <!-- <li><a href="{% url 'home' %}">Browse a Project</a></li> -->
+          <li><a href="{% url 'project-gallery' type='all'%}">Discover Projects</a></li>
           <li><a href="{% url 'create-project' %}">Post a Project</a></li>
         </ul>
 
@@ -87,7 +87,7 @@
 
       <ul class="header-links">
         <li class="hide-mobile"><a href="{% url 'how' %}">How it Works</a></li>
-        <!-- <li class="hide-mobile"><a href="{% url 'home' %}">Browse a Project</a></li> -->
+        <li class="hide-mobile"><a href="{% url 'project-gallery' type='all'%}">Discover Projects</a></li>
         <li class="hide-mobile"><a href="/signup/prelaunch/">Post a Project</a></li>
         <li class="hide-mobile"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
