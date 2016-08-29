@@ -131,7 +131,7 @@ def profile(request, template='account-settings.html'):
 
 
 def discover_developers(request, role=None):
-    all = Profile.objects.all()
+    all = Profile.objects.all().exclude(capacity=None).exclude(role=None)
     if role != 'all':
         developers = all.filter(role=role)
         featured = all.filter(role=role, featured=1)[:3]

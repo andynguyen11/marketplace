@@ -48,7 +48,7 @@ class CreditCardView(APIView):
             if request.user.stripe:
                 try:
                     stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-                    stripe_customer.sources.create(source=stripe_token)
+                    card = stripe_customer.sources.create(source=stripe_token)
                 except stripe.error.CardError, e:
                     body = e.json_body
                     error = body['error']['message']
