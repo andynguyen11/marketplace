@@ -23,17 +23,24 @@
             {% for r in roles %}
               <a class="text-lowercase" href="{% url 'discover-developers' r %}">{{ r }}</a>
             {% endfor %}
+            <a class="text-lowercase" href="{% url 'discover-developers' 'all' %}">all</a>
           </div>
         </div>
+        <br class="visible-xs"/>
         <span class="after-caret">developers</span>
       </h2>
     </div>
+
     {% if featured %}
       <div class="page-content page-content--alternate">
         <div class="devs page-content--medium">
           <div class='plates page-content--medium'>
             <div class="discover-plates-headcap">
-              <h3 class="plates-header brand-bold">Featured {{ role }} developers</h3>
+              {% if role == 'all' %}
+                <h3 class="plates-header brand-bold">Featured developers</h3>
+              {% else %}
+                <h3 class="plates-header brand-bold">Featured {{ role }} developers</h3>
+              {% endif %}
             </div>
             <div class='plates-inner plates-inner--dev'>
               {% for developer in featured %}
