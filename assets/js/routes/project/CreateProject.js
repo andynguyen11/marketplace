@@ -88,6 +88,14 @@ function Basics({update, data, formErrors, ...props}) {
 
   return (
     <div className={props.className}>
+      <div className="col-md-8 col-md-offset-2 details-header">
+        <h3 className="brand text-center brand-bold">
+          Let’s bring your digital project to life.
+        </h3>
+        <h4 className="text-muted text-skinny text-center">
+          Posting projects is easy and free. Start here by adding the name and category of your project, a quick overview and some basic preferences.
+        </h4>
+      </div>
       <div className={'form-group col-md-8 col-md-offset-2 ' + formErrors.title}>
         <label className='control-label'>Project Name</label>
         <input className="form-control" type="text" value={data.title || ''} {...cursor({update, data, key: 'title'})}/>
@@ -560,8 +568,7 @@ const CreateProject = React.createClass({
     return (
       <div className={`sections ${currentSection} is active`}>
          { isLoading && <Loader /> }
-        <ProgressBar flow={sections} active={currentSection} isEditing={this.state.isEditing}
-                     onSelect={this.selectSection}/>
+        <ProgressBar flow={sections} active={currentSection} isEditing={this.state.isEditing} onSelect={this.selectSection}/>
         <form id="project-form" method="post" encType="multipart/form-data">
 
           { this.props.csrf_token }

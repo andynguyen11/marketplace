@@ -421,21 +421,24 @@ const Messages = React.createClass({
 
   updateMessages() {
     const { threadId } = this.props;
+    const { messageSending } = this.state;
 
-    $.ajax({
-      url: loom_api.messagePoller + threadId,
-      success: (result) => {
-        this.setState({
-          interactions: result.interactions,
-          messageError: false
-        });
-      },
-      error: () => {
-        this.setState({
-          messageError: 'Something went wrong with loading messages. Please reload this page.'
-        })
-      }
-    });
+    if(!messageSending) {
+      $.ajax({
+        url: loom_api.messagePoller + threadId,
+        success: (result) => {
+          this.setState({
+            interactions: result.interactions,
+            messageError: false
+          });
+        },
+        error: () => {
+          this.setState({
+            messageError: 'Something went wrong with loading messages. Please reload this page.'
+          })
+        }
+      });
+    }
   },
 
   sendMessage() {
