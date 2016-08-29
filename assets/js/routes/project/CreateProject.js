@@ -276,7 +276,7 @@ function Budget({update, data, company, formErrors, ...props, updateBudgetType, 
         <h3 className="brand text-center">What's your budget?</h3>
         <h4 className="text-muted text-skinny text-center">
           {headerPrefix}
-          This is just a starting point fot bidding. You'll confirm compensation once you accept a bid you like.<br/><br/>
+          This is just a starting point for bidding. You'll confirm compensation once you accept a bid you like.<br/><br/>
           <span>Note: The "Cash or Equity" option allows you to set your budget for cash and equity, but signals to the developer that you’ll pay in either cash or equity, not both.</span>
         </h4>
       </div>

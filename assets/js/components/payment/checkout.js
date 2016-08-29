@@ -361,7 +361,7 @@ let Checkout = React.createClass({
 
             { isLoading || (
               <div className="col-md-4 col-md-offset-4">
-                <button onClick={this.submitPayment} type="submit" className="btn btn-brand">
+                <button onClick={this.submitPayment} disabled={ sendingPayment ? 'true': ''} type="submit" className="btn btn-brand">
                   <i className={ sendingPayment ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
                   <span className={ promo ? 'hidden' : ''}>Pay ${price} and</span> Sign Contract
                 </button>
