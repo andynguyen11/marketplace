@@ -204,68 +204,52 @@
   </div>
 </div>
 
-<div id="past-projects" class="section light-section">
-  <div class="row">
-    <div class="container">
-      <h2 class="text-center brand-bold text-header-main sub-section">Past Projects</h2>
-      <div class="sub-section">
-      {% if not jobs %}
-      <h3 class="text-center">{{ user.first_name }} does not have any past projects on Loom.</h3>
-      {% endif %}
+{% if jobs %}
+<div class="section light-section">
+  <div class="plates page-content--medium">
+    <div class="plates-headcap">
+      <h3 class="plates-header brand-bold">Past Projects</h3>
+    </div>
+    <div class="plates-inner">
       {% for job in jobs %}
-      <div class="col-md-4">
-      <div class="panel panel-project">
-        <div class="project-image" style="background-image: url('{% static "" %}{{ job.project.image }}');"></div>
-        <div class="project-content">
-          <div class="project-copy">
-            <h4 class="project-title">{{ job.project.title }}</h4>
-            <div>
-              <img class="project-manager-photo pull-left" src="{{ job.project.project_manager.linkedin.extra_data.picture_url }}" />
-              <div class="project-byline pull-left">
-                <p>
-                  <span class="project-manager">{{ job.project.project_manager.first_name }} {{ job.project.project_manager.last_name }}</span> <br />
-                  {% if job.project.company %}<span class="project-company">{{ job.project.company.name }}</span>{% endif %}
-                </p>
-              </div>
-              <div class="clearfix"></div>
+      <div class="plate">
+        <div class="plate-image"{% if MEDIA_URL and job.project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ job.project.image.file }}');"{% endif %}></div>
+        <div class="plate-info">
+          <div class="plate-info-profile">
+            {% if job.project.project_manager.linkedin.extra_data.picture_url %}<div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ job.project.project_manager.linkedin.extra_data.picture_url }}');"></div>{% endif %}
+            <div class="plate-info-profile-name">
+              <div class="plate-info-profile-name--primary">{{ job.project.project_manager.name }}</div>
+              {% if job.project.company %}<div class="plate-info-profile-name--secondary">{{ job.project.company.name }}</div>{% endif %}
             </div>
-            <div class="project-description">
-              {{ job.project.description }}
-            </div>
-            <div class="project-skills"></div>
           </div>
-          <div class="project-specs text-center">
-            <ul>
-              <li class="project-hours">
-                <h5>{{ job.hours }}</h5>
-                hours
-              </li>
-              <li class="project-equity">
-                <h5>{{ job.equity }}%</h5>
-                equity
-              </li>
-              <li class="project-cash">
-                <h5>${{ job.cash }}</h5>
-                cash
-              </li>
-            </ul>
-            <div class="project-for">
-              for
-            </div>
-            <div class="project-or">
-              or
-            </div>
+          <div class="plate-info-project">
+            <h4 class="plate-info-project-name">{{ job.project_title }}</h4>
+            <p class="plate-info-project-description">{{ job.project.short_blurb }}</p>
           </div>
         </div>
-        <div class="clearfix"></div>
+        <div class="plate-stats{% if job.equity and job.cash %} plate-stats-dual {% endif %}">
+          {% if job.equity %}
+          <div class="plate-stat">
+            <div class="plate-stat-amount">{{ job.equity }}%</div>
+            <div class="plate-stat-type">Equity</div>
+          </div>
+          {% endif %}
+          {% if job.cash %}
+          <div class="plate-stat">
+            <div class="plate-stat-amount">${{ job.cash }}</div>
+            <div class="plate-stat-type">Cash</div>
+          </div>
+          {% endif %}
+        </div>
       </div>
-      </div>
-    {% endfor %}
-    </div>
+      {% endfor %}
     </div>
   </div>
 </div>
+{% endif %}
+
 {% comment %}
+
 <div id="experience" class="section">
   <div class="row">
     <div class="container">
