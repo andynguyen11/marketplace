@@ -8,7 +8,8 @@ import Messages from './messaging/messages';
   const messageDiv = document.getElementById('messages-wrapper');
 
   if(messageDiv) {
-    const threadId = parseInt(messageDiv.dataset.thread);
+    // This isn't ideal -- we'd be better off using Element.dataset, but IE10 doesn't support it :(
+    const threadId = parseInt(messageDiv.getAttribute('data-thread'));
 
     ReactDOM.render(<Messages threadId={threadId}/>, messageDiv);
   }

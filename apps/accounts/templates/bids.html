@@ -6,9 +6,11 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12">
+        {% if bids or projects %}
         <div class="sub-section">
           <h2>Manage Your Pending Projects and Bids</h2>
         </div>
+        {% endif %}
         {% if bids %}
           <div class="section">
             <div class="section-header">
@@ -104,7 +106,10 @@
                   <tbody>
                     <tr>
                       <td>
-                        <h5 style="text-align: center;">There are currently no bids on this project.   <a href="{% url 'discover-developers' 'all' %}">Start searching</a> for some developers!</h5>
+                        <h5 style="text-align: center;">There are currently no bids on this project.
+                        {% comment %}
+                        <a href="{% url 'discover-developers' 'all' %}">Start searching</a> for some developers!</h5>
+                        {% endcomment %}
                       </td>
                     </tr>
                   </tbody>

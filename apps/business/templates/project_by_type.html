@@ -6,7 +6,7 @@
     <h1>Discover a project that inspires you.</h1>
     <div class="discover-nav">
       <h2>
-        show me
+        <span>show me</span>
         <div class="dropdown">
           <button onclick="dropdown()" class="dropbtn underline-text">
             <span class="discover-underline">{{ type }}</span>
@@ -21,10 +21,12 @@
             <a class="dropdown-item" href="{% url 'project-gallery' 'all' %}">all</a>
           </div>
         </div>
+        <span id="disc-project-sub" class="hide-mobile">projects</span>
       </h2>
-      <h2 id="disc-project-sub" class="hide-desktop">projects</h2>
     </div>
 
+    <div class="page-content--alternate">
+    {% comment %}
     {% if featured %}
       <div class="page-content page-content--alternate">
         <div class="plates page-content--medium">
@@ -68,13 +70,16 @@
         </div>
       </div>
     {% endif %}
+    {% endcomment %}
+
     {% if new %}
       <div class="plates page-content--medium">
         <div class="discover-plates-headcap">
-          <h3 class="plates-header brand-bold">Newest {{ type }} projects</h3>
+          <h3 class="plates-header brand-bold">{{ type }} projects</h3>
         </div>
         <div class="plates-inner">
           {% for project in new %}
+            {% if project.image %}
             <a class="plate" href="{% url 'project' project.slug %}">
               <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
               <div class="plate-info">
@@ -105,58 +110,65 @@
                 {% endif %}
               </div>
             </a>
+            {% endif %}
           {% endfor %}
         </div>
       </div>
     {% else %}
-      <div class="page-content page-content--alternate">
+      <div class="page-content--medium">
         <div class="plates page-content--medium">
           <div class="discover-plates-headcap">
             <h3 class="plates-header brand-bold">All projects</h3>
           </div>
           <div class="plates-inner">
             {% for project in all %}
-              <a class="plate" href="{% url 'project' project.slug %}">
-                <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
-                <div class="plate-info">
-                  <div class="plate-info-profile">
-                    <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
-                    <div class="plate-info-profile-name">
-                      <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
-                      {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+              {% if MEDIA_URL and project.image %}
+                <a class="plate" href="{% url 'project' project.slug %}">
+                  <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+                  <div class="plate-info">
+                    <div class="plate-info-profile">
+                      <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+                      <div class="plate-info-profile-name">
+                        <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+                        {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+                      </div>
+                    </div>
+                    <div class="plate-info-project">
+                      <h4 class="plate-info-project-name">{{ project.title }}</h4>
+                      <p class="plate-info-project-description">{{ project.short_blurb }}</p>
                     </div>
                   </div>
-                  <div class="plate-info-project">
-                    <h4 class="plate-info-project-name">{{ project.title }}</h4>
-                    <p class="plate-info-project-description">{{ project.short_blurb }}</p>
+                  <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
+                    {% if project.estimated_equity_percentage %}
+                      <div class="plate-stat">
+                        <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
+                        <div class="plate-stat-type">Equity</div>
+                      </div>
+                    {% endif %}
+                    {% if project.estimated_cash %}
+                      <div class="plate-stat">
+                        <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
+                        <div class="plate-stat-type">Cash</div>
+                      </div>
+                    {% endif %}
                   </div>
-                </div>
-                <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-                  {% if project.estimated_equity_percentage %}
-                    <div class="plate-stat">
-                      <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-                      <div class="plate-stat-type">Equity</div>
-                    </div>
-                  {% endif %}
-                  {% if project.estimated_cash %}
-                    <div class="plate-stat">
-                      <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-                      <div class="plate-stat-type">Cash</div>
-                    </div>
-                  {% endif %}
-                </div>
-              </a>
+                </a>
+              {% endif %}
             {% endfor %}
           </div>
         </div>
       </div>
     {% endif %}
+    </div>
   </div>
 {% endblock %}
 
 {% block scripts %}
   <script type="text/javascript">
-    function dropdown() {document.getElementById("myDropdown").classList.toggle("show");}
+    function dropdown(event) {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
     window.onclick = function(event) {
       if (!event.target.matches('.dropbtn')) {
         var dropdowns = document.getElementsByClassName("dropdown-content");

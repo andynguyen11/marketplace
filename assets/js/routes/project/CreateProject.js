@@ -216,7 +216,8 @@ function Budget({update, data, company, formErrors, ...props, updateBudgetType, 
 
   const budgetTypeChange = function (event) {
     const type = event.target.value;
-    const mix = !!event.target.dataset.mix;
+    // This isn't ideal -- we'd be better off using Element.dataset, but IE10 doesn't support it :(
+    const mix = !!event.target.getAttribute('data-mix');
     updateBudgetType && updateBudgetType(type, mix);
   };
 

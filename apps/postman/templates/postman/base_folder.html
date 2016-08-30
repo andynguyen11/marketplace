@@ -93,7 +93,15 @@ in the INSTALLED_APPS setting.
         {% endfor %}
       </div>
       {% else %}
-      <p>{% trans "No messages." %}</p>
+      <div class="messages-list">
+       <div class="messages-list-message">
+         <div class="messages-list-message-meta">
+           <div class="sub-section">
+              {% trans "No messages." %}
+           </div>
+         </div>
+       </div>
+      </div>
       {% endif %}
       {% endif %}
       </form>

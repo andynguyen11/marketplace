@@ -133,8 +133,8 @@
 <div id="devs-home" class="devs page-content--medium">
   <div class='plates page-content--medium'>
     <div class="plates-headcap">
-      <h3 class="plates-header brand-bold">Meet your developers</h3>
-      <a href="{% url 'discover-developers' 'all' %}" class="btn btn--clear btn-lg">View all</a>
+      <h3 class="plates-header brand-bold">Featured developers</h3>
+      {% comment %}<a href="{% url 'discover-developers' 'all' %}" class="btn btn--clear btn-lg">View all</a>{% endcomment %}
     </div>
     <div class='plates-inner plates-inner--dev'>
       {% for developer in developers %}
