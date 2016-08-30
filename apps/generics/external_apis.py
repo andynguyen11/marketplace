@@ -28,7 +28,10 @@ def external_record_upserter(serializer, primary_key='id', partial=True):
 
         return record_serializer.save()
 
-    return upsert
+    def wrapper(option):
+        return map(upsert, option) if isinstance(option, list) else upsert(option)
+
+    return wrapper
 
 class LazyClient(object):
     """ Wraps a synchronous api factory in an async process, then acts as a pass through after the factory returns.

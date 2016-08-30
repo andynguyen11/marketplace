@@ -5,7 +5,6 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import generics
@@ -20,7 +19,6 @@ from generics.viewsets import NestedModelViewSet
 class SkillsList(generics.ListAPIView):
     queryset = Skills.objects.all()
     serializer_class = SkillsSerializer
-    renderer_classes = (JSONRenderer, )
 
 
 class ProfileViewSet(ModelViewSet):
@@ -80,7 +78,7 @@ class SkillTestViewSet(NestedModelViewSet):
     parent_key = 'profile'
 
     def new_ticket(self, request):
-        instance = SkillTest.objects.get(profile=request.data['profile'], expertratings_test=request.data['expertratings_test'])
+        instance = SkillTest.objects.get(profile=Profile.objects.get(id=request.data['profile']), expertratings_test=request.data['expertratings_test'])
         serializer = SkillTestSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
@@ -90,5 +88,6 @@ class SkillTestViewSet(NestedModelViewSet):
         try:
             return super(SkillTestViewSet, self).create(request, *args, **kwargs)
         except ValidationError, e:
+            raise e
             return Response(self.new_ticket(request))
 
