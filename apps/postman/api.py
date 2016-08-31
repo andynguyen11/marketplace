@@ -30,7 +30,7 @@ class MessageAPI(APIView):
         project = Project.objects.get(id=request.data['project'])
         job = Job.objects.create(project=project, contractor=request.user )
         terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA', project=job.project, )
+        nda = Document.objects.create(job=job, type='NDA', )
         new_message = Message.objects.create(
             sender=request.user,
             recipient=recipient,
