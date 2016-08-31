@@ -2,47 +2,18 @@ import React from 'react';
 
 const ContracteeTracker = React.createClass({
 
-  getInitialState() {
-    return {
-      statusMap: {
-        NDA: {
-          new:' Send Non-Disclosure Agreement',
-          sent: 'Sent! Awaiting Signature',
-          signed: 'Signed!'
-        }
-      },
-      step: 1
-    }
-  },
-
-  componentWillMount() {
-    let { step } = this.state;
-    const { terms, nda } = this.props;
-    if (terms.status == 'agreed') {
-      step = 4;
-    }
-    else if (terms.status == 'sent') {
-      step = 3;
-    }
-    else if (nda.status == 'sent') {
-      step = 2;
-    }
-    this.setState({step: step});
-  },
-
   render() {
     const { nda, job, ndaSending, terms, signing_url, togglePanel, updateNDA, panel } = this.props;
-    const { step, statusMap } = this.state;
 
     const ndaStatus = () => {
       switch (nda.status) {
         case "sent":
           return (
-              <button className="btn" disabled>Non-Disclosure Sent</button>
+              <button className="btn" disabled>NDA Sent</button>
           );
         case "signed":
           return (
-            <button className="btn" disabled>Signed</button>
+            <button className="btn" disabled>NDA Signed</button>
           );
         default:
           return (
@@ -52,11 +23,11 @@ const ContracteeTracker = React.createClass({
               data-status='sent'
             >
               <i className={ ndaSending ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-              Send Non-Disclosure Agreement
+              Send NDA
             </button>
           );
       }
-    }
+    };
 
     const termsStatus = () => {
       switch (terms.status) {
@@ -75,15 +46,29 @@ const ContracteeTracker = React.createClass({
           return (
             <div>
               <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
-            { job.hours ? (
+              { job.hours ? (
                 <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Create New</button>
               ) : (
                 <button className='btn'>Create New</button>
-            )}
+              )}
             </div>
           );
       }
-   }
+    };
+
+    const contractStatus = () => {
+      const { status } = terms;
+
+      if(status !== 'agreed') {
+        return <button className="btn btn-brand" disabled>Sign & Send</button>;
+      } else {
+        if(signing_url) {
+          return <a href={signing_url} className="btn btn-brand">View Contract</a>;
+        }else{
+          return <button onClick={togglePanel} data-panel='checkout' className="btn btn-brand">Sign & Send</button>;
+        }
+      }
+    };
 
     return (
       <div id="agreement-tracker">
@@ -106,20 +91,13 @@ const ContracteeTracker = React.createClass({
           { termsStatus() }
         </div>
 
-        <div className={step < 3 ? 'inactive step' : 'step'}>
+        <div className="step">
           <h5 className="step-number">3</h5>
-          <h5 className="title">Sign &amp; Send Work Contract</h5>
+          <h5 className="title">Sign &amp; Send Work Contract <i className={ terms.status === 'signed' ? 'fa fa-check-circle text-brand' : ''}></i></h5>
           <p className="small">
             Loom collects a service fee only when you sign and send your contract to this developer to engage them on your project.
           </p>
-          <div className={step == 4 ? '' : 'hidden'} >
-            <div className={signing_url ? 'hidden': ''}>
-              <button onClick={togglePanel} data-panel='checkout' className="btn btn-brand">Finish Up</button>
-            </div>
-            <div className={signing_url ? '' : 'hidden'}>
-              <a href={signing_url} className="btn btn-brand">Sign Contract</a>
-            </div>
-          </div>
+          { contractStatus() }
         </div>
       </div>
     );

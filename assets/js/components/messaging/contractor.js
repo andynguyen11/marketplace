@@ -3,30 +3,8 @@ import _ from 'lodash';
 
 const ContractorTracker = React.createClass({
 
-  getInitialState() {
-    return {
-      step: 2
-    }
-  },
-
-  componentWillMount() {
-    const { terms, nda, job } = this.props;
-    let { step } = this.state;
-    if (terms.status == 'agreed') {
-      step = 4;
-    }
-    else if (nda.status == 'signed' || terms.status == 'sent') {
-      step = 3;
-    }
-    else if (job.hours) {
-      step = 2;
-    }
-    this.setState({step: step});
-  },
-
   render() {
     const { nda, job, terms, signing_url, togglePanel, panel } = this.props;
-    const { step, statusMap } = this.state;
 
     const ndaStatus = () => {
       switch (nda.status) {
@@ -92,7 +70,7 @@ const ContractorTracker = React.createClass({
 
         </div>
 
-        <div className={step < 2 ? 'inactive step' : 'step'}>
+        <div className="step">
           <h5 className="step-number">2</h5>
           <h5 className="title">Non-disclosure Agreement  <i className={ nda.status == 'signed' ? 'fa fa-check-circle text-brand' : 'hidden' }></i></h5>
             <p className="small">
@@ -103,7 +81,7 @@ const ContractorTracker = React.createClass({
             { nda && ndaStatus() }
         </div>
 
-        <div className={step < 3 ? 'inactive step' : 'step'}>
+        <div className="step">
           <h5 className="step-number">3</h5>
           <h5 className="title">Contract Terms <i className={ terms.status == 'agreed' ? 'fa fa-check-circle text-brand' : 'hidden' }></i></h5>
           <p className="small">
@@ -112,7 +90,7 @@ const ContractorTracker = React.createClass({
           { terms && termsStatus() }
         </div>
 
-        <div className={step < 4 ? 'inactive step' : 'step'}>
+        <div className="step">
           <h5 className="step-number">4</h5>
           <h5 className="title">Sign Contract</h5>
           <p className="small">
