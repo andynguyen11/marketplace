@@ -340,7 +340,7 @@ const Messages = React.createClass({
     const { threadId } = this.props;
 
     $.ajax({
-      url: loom_api.messages + threadId,
+      url: loom_api.messages + threadId + '/',
       success: (result) => {
         const currentUserId = result.current_user;
         let currentUserData;
@@ -425,7 +425,7 @@ const Messages = React.createClass({
 
     if(!messageSending) {
       $.ajax({
-        url: loom_api.messagePoller + threadId,
+        url: loom_api.messagePoller + threadId + '/',
         success: (result) => {
           this.setState({
             interactions: result.interactions,
