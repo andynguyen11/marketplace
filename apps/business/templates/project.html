@@ -62,7 +62,7 @@
           </ul>
 
           <h2 class="brand">average bid placed</h2>
-          {% if project.active_jobs|length >= 2 %}
+          {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
               <label>Average Offer:</label>
 
               {% if project.average_equity or project.average_cash %}
@@ -82,7 +82,7 @@
                   {% endif %}
               </ul>
               {% endif %}
-              {% if project.average_combined %}
+              {% if project.average_combined.equity or project.average_combined.cash %}
               <ul>
                   <li class="project-equity">
                     <h2 class="brand-bold">{{ project.average_combined.equity }}%</h2>
