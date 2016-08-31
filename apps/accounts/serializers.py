@@ -45,6 +45,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
+    signup = serializers.BooleanField(write_only=True, required=False)
 
 
     class Meta:

@@ -32,8 +32,8 @@ FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = (('Server Errors', 'admin@lawncall.com'), )
-SERVER_EMAIL = 'info@devquity.com'
+ADMINS = (('Server Errors', 'andy@joinloom.com'), )
+SERVER_EMAIL = 'info@joinloom.com'
 
 AUTH_USER_MODEL = 'accounts.Profile'
 
