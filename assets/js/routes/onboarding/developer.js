@@ -324,6 +324,7 @@ const DeveloperOnboard = React.createClass({
           this.setState({ formError: false, isLoading: true });
           let profile = this.state.profile;
           profile.photo = this.state.photo_file;
+          profile.signup = true;
           $.ajax({
             url: loom_api.profile + profile.id + '/',
             method: 'PATCH',
