@@ -1,5 +1,6 @@
 from django.db import models
 import tagulous.models
+from generics.external_apis import SyncedRecordMixin
 from expertratings.api import expertratings_api
 
 
@@ -40,7 +41,7 @@ class SkillTestResult(models.Model):
             return None
 
 
-class SkillTest(models.Model):
+class SkillTest(SyncedRecordMixin, models.Model):
 
     test_id   = models.CharField(max_length=100, primary_key=True)
     test_name = models.CharField(max_length=100)
