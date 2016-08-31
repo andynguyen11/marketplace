@@ -425,7 +425,7 @@ const Messages = React.createClass({
 
     if(!messageSending) {
       $.ajax({
-        url: loom_api.messagePoller + threadId,
+        url: loom_api.messagePoller + threadId + '/',
         success: (result) => {
           this.setState({
             interactions: result.interactions,
