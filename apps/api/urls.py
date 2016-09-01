@@ -10,7 +10,7 @@ from payment.api import CreditCardView, PaymentView, OrderDetail, OrderListCreat
 from postman.api import ConversationDetail, MessageAPI
 from reviews.api import ReviewListCreate
 from business.models import Category
-from expertratings.views import ExpertRatingsXMLWebhook
+from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
 router = DeclarativeRouter({
     'jobs': JobViewSet,
@@ -24,6 +24,7 @@ router = DeclarativeRouter({
         }
     },
     'skills': SkillViewSet,
+    'skilltest': ERSkillTestViewSet,
     'project': {
         'view': ProjectViewSet,
         'nested': {
