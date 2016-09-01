@@ -4,6 +4,7 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills, SkillTest
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
+from expertratings.models import SkillTest as ERSkillTest
 from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer
 from generics.base_serializers import RelationalModelSerializer
@@ -24,7 +25,7 @@ class SocialSerializer(serializers.ModelSerializer):
 
 
 class SkillsSerializer(serializers.ModelSerializer):
-    verification_test = serializers.CharField(write_only=True, required=False)
+    verification_test  = serializers.PrimaryKeyRelatedField(required=False, queryset=ERSkillTest.objects.all())
 
     class Meta:
         model = Skills

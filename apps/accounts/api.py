@@ -1,24 +1,35 @@
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login, authenticate
 from rest_condition import Not
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, detail_route, list_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import generics
-
 from accounts.emails import account_confirmation
 from accounts.models import Profile, Skills, SkillTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
-from apps.api.permissions import IsCurrentUser
+from apps.api.permissions import IsCurrentUser, IsOwnerOrIsStaff
 from generics.viewsets import NestedModelViewSet
+from django.shortcuts import redirect
 
 
-class SkillsList(generics.ListAPIView):
+class SkillViewSet(ModelViewSet):
     queryset = Skills.objects.all()
     serializer_class = SkillsSerializer
+
+    @permission_classes((IsAdminUser, ))
+    def update(self, request, *args, **kwargs):
+        return super(SkillViewSet, self).update(request, *args, **kwargs)
+
+    @permission_classes((IsAdminUser, ))
+    def partial_update(self, request, *args, **kwargs):
+        return super(SkillViewSet, self).partial_update(request, *args, **kwargs)
+
+    @permission_classes((IsAdminUser, ))
+    def delete(self, request, *args, **kwargs):
+        return super(SkillViewSet, self).delete(request, *args, **kwargs)
 
 
 class ProfileViewSet(ModelViewSet):
@@ -74,7 +85,7 @@ class ProfileViewSet(ModelViewSet):
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
     serializer_class = SkillTestSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsOwnerOrIsStaff)
     parent_key = 'profile'
 
     def new_ticket(self, request):
@@ -87,7 +98,19 @@ class SkillTestViewSet(NestedModelViewSet):
     def create(self,  request, *args, **kwargs):
         try:
             return super(SkillTestViewSet, self).create(request, *args, **kwargs)
-        except ValidationError, e:
-            raise e
+        except ValidationError, e: # just need a new ticket in expertratings
+            #raise e
             return Response(self.new_ticket(request))
 
+    @list_route(methods=['get'], permission_classes=(IsAdminUser, IsOwnerOrIsStaff))
+    def testfor(self, request, *args, **kwargs):
+        skill_id = request.query_params.get('skill', None)
+        verification_test = Skills.objects.get(id=skill_id).verification_test
+        if verification_test is None:
+            msg = '<Skills id=%s> does not have a verification test assigned' % skill_id
+            raise SkillTest.DoesNotExist(msg)
+        else:
+            request.data._mutable = True
+            request.data['expertratings_test'] = verification_test.test_id
+            create_response = self.create(request, *args, **kwargs)
+            return redirect(create_response.data['ticket_url'])

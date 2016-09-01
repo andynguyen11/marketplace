@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from rest_framework_nested import routers
 from generics.routers import DeclarativeRouter
 
-from accounts.api import ProfileViewSet, SkillsList, SkillTestViewSet
+from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet
 from business.api import *
 from payment.api import CreditCardView, PaymentView, OrderDetail, OrderListCreate, PromoCheck
 from postman.api import ConversationDetail, MessageAPI
@@ -23,6 +23,7 @@ router = DeclarativeRouter({
             }
         }
     },
+    'skills': SkillViewSet,
     'project': {
         'view': ProjectViewSet,
         'nested': {
@@ -55,7 +56,6 @@ router = DeclarativeRouter({
 })
 
 urlpatterns = [
-    url(r'skills/$', view=SkillsList.as_view(), name='skills', ),
     url(r'creditcard/$', view=CreditCardView.as_view()),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
     url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
