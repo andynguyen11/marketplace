@@ -35,94 +35,95 @@
             <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
           </ul>
         </div>
-        <div class="specs col-md-5">
-          <h2 class="brand">project budget</h2>
-          <ul>
-            {% if project.estimated_equity_percentage %}
-            <li class="project-equity">
-              <h2 class="brand-bold text-brand">{{ project.estimated_equity_percentage }}%</h2>
-              equity
-            </li>
-            {% endif %}
-            {% if project.estimated_cash and project.estimated_equity_percentage %}
-              <li class="andor">
-              {% if project.mix %}
-                and
-              {% else %}
-                or
+        <div class="col-md-5 project-basics-stats">
+
+          <div class="project-basics-financials">
+            <h2>Project Budget</h2>
+            <div class="project-basics-financial-row">
+              {% if project.estimated_equity_percentage %}
+              <div class="project-basics-financial-stat">
+                <h2 class="brand-bold text-brand">{{ project.estimated_equity_percentage }}%</h2>
+                <div class="project-basics-financial-label">equity</div>
+              </div>
               {% endif %}
-              </li>
-            {% endif %}
-            {% if project.estimated_cash %}
-            <li class="project-cash">
-              <h2 class="brand-bold text-brand">${{ project.estimated_cash }}</h2>
-              cash
-            </li>
-            {% endif %}
-          </ul>
 
-          <h2 class="brand">average bid placed</h2>
-          {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
-              <label>Average Offer:</label>
+              {% if project.estimated_cash and project.estimated_equity_percentage %}
+              <span class="andor">
+                    {% if project.mix %}
+                    and
+                    {% else %}
+                    or
+                    {% endif %}
+                  </span>
+              {% endif %}
 
+              {% if project.estimated_cash %}
+              <div class="project-basics-financial-stat">
+                <h2 class="brand-bold text-brand">${{ project.estimated_cash }}</h2>
+                <div class="project-basics-financial-label">cash</div>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="project-basics-financials-bids">
+              <h2>Average Bid Placed</h2>
+              {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
               {% if project.average_equity or project.average_cash %}
-              <ul>
-                  {% if project.average_equity %}
-                  <li class="project-equity">
-                    <h2 class="brand-bold">{{ project.average_equity }}%</h2>
-                    equity
-                  </li>
-                  {% endif %}
-                  <li>&nbsp;</li>
-                  {% if project.average_cash %}
-                  <li class="project-cash">
-                    <h2 class="brand-bold">${{ project.average_cash }}</h2>
-                    cash
-                  </li>
-                  {% endif %}
-              </ul>
+
+              <div class="project-basics-financial-row">
+                {% if project.average_equity %}
+                <div class="project-basics-financial-stat">
+                  <h2 class="brand-bold text-brand">{{ project.average_equity }}%</h2>
+                  <div class="project-basics-financial-label">avg equity bid</div>
+                </div>
+                {% endif %}
+                {% if project.average_cash %}
+                <div class="project-basics-financial-stat">
+                  <h2 class="brand-bold text-brand">${{ project.average_cash }}</h2>
+                  <div class="project-basics-financial-label">avg cash bid</div>
+                </div>
+                {% endif %}
+              </div>
               {% endif %}
               {% if project.average_combined.equity or project.average_combined.cash %}
-              <ul>
-                  <li class="project-equity">
-                    <h2 class="brand-bold">{{ project.average_combined.equity }}%</h2>
-                  </li>
-                  <li class="andor">+</li>
-                  <li class="project-cash">
-                    <h2 class="brand-bold">${{ project.average_combined.cash }}</h2>
-                  </li>
-              </ul>
+              <div class="project-basics-financial-row">
+                <div class="project-basics-financial-stat">
+                  <h2 class="brand-bold text-brand">{{ project.average_combined.equity }}%</h2>
+                </div>
+                {% if project.average_combined.equity and project.average_combined.cash %}
+                <div class="andor">and</div>
+                {% endif %}
+                <div class="project-basics-financial-stat">
+                  <h2 class="brand-bold text-brand">${{ project.average_combined.cash }}</h2>
+                </div>
+              </div>
+              <div class="project-basics-financial-label">avg combined bid</div>
               {% endif %}
-            {% else %}
-               <ul><li>
-                 <h4 class="brand-bold text-spaced">Bids haven't been placed on this project yet.<br /><br />  Be the first!</h4>
-               </li></ul>
-            {% endif %}
-
-
-
-          {% if request.user == project.project_manager %}
-          <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit Project</a>
-          {% else %}
-            <ul>
-              {% if not job %}
-                <li>
-                  {% if user.is_authenticated %}
-                    <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
-                  {% else %}
-                    <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'project' project.slug %}">Bid on Project</a>
-                  {% endif %}
-                </li>
-              {% endif %}
-            <li>
-              {% if job %}
-                <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
               {% else %}
-                <button id="message-button" class="btn btn-brand" data-toggle="modal" data-target="#message-modal">Send Message</button>
+              <h4 class="brand-bold text-spaced">Bids haven't been placed on this project yet.</h4>
+              <h4 class="brand-bold text-spaced">Be the first!</h4>
               {% endif %}
-            </li>
-            </ul>
-          {% endif %}
+            </div>
+          </div>
+
+          <div class="project-basics-actions">
+            {% if request.user == project.project_manager %}
+            <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit Project</a>
+            {% else %}
+            {% if not job %}
+            {% if user.is_authenticated %}
+            <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+            {% else %}
+            <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'project' project.slug %}">Bid on Project</a>
+            {% endif %}
+            {% endif %}
+            {% if job %}
+            <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+            {% else %}
+            <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
+            {% endif %}
+            {% endif %}
+          </div>
 
           {% comment %}
           <p class="small text-muted">This company is accepting bids for work in forms of
