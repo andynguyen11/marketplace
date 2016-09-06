@@ -5,6 +5,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.defaultfilters import slugify
+from django.utils.encoding import smart_str
 
 from postman.models import Message
 from generics.models import Attachment
@@ -98,7 +99,7 @@ class Job(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
-        return '{0} - {1} {2}'.format(self.project, self.contractor.first_name, self.contractor.last_name)
+        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
 
     @property
     def conversation(self):
@@ -304,7 +305,7 @@ class Terms(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.contractee = self.job.project.company.name if self.job.project.company else self.job.project.project_manager.name
-            self.contractor = '{0} {1}'.format(self.job.contractor.first_name, self.job.contractor.last_name)
+            self.contractor = '{0} {1}'.format(smart_str(self.job.contractor.first_name), smart_str(self.job.contractor.last_name))
             self.update_date = datetime.now()
             self.cash = self.job.cash
             self.equity = self.job.equity
