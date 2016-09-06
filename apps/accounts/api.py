@@ -10,6 +10,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import generics
 
+from accounts.emails import account_confirmation
 from accounts.models import Profile, Skills, SkillTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
 from apps.api.permissions import IsCurrentUser
@@ -55,6 +56,12 @@ class ProfileViewSet(ModelViewSet):
 
     @permission_classes((IsAuthenticated, IsCurrentUser ))
     def update(self, request, *args, **kwargs):
+        if request.data.get('signup', None):
+            account_confirmation(
+                request.user,
+                request.data.get('first_name', None),
+                request.data.get('role', None)
+            )
         return super(ProfileViewSet, self).update(request, *args, **kwargs)
 
     @permission_classes((IsAuthenticated, IsCurrentUser ))

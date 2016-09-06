@@ -104,20 +104,28 @@
     height: 88px;
     border-radius: 50%;
     margin: -@gutter @gutter 0 0;
+    flex-shrink: 0;
   }
 
   .plate-info-profile-name {
     font-size: 16px;
     line-height: 26px;
+    overflow-x: hidden;
   }
 
   .plate-info-profile-name--primary {
     color: @brand-neutral--1;
     font-family: @brand-font;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .plate-info-profile-name--secondary {
     font-family: @brand-font;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .plate-info-project {

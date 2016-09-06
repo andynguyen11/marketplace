@@ -378,14 +378,78 @@ ul.project-meta {
     margin: 0;
     font-weight: normal;
   }
+
+  .project-basics {
+    display: flex;
+  }
+
+  .project-basics-image {
+    flex-shrink: 0;
+    flex-grow: 1;
+  }
+
+  .project-basics-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 400px;
+
+    @media (max-width: @screen-md) {
+      height: auto;
+    }
+  }
+
+  .project-basics-financials-bids {
+    margin-top: @gutter * 2;
+
+    h4 {
+      margin-top: 30px;
+      color: @brand-neutral--5;
+    }
+  }
+
+  .project-basics-financial-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: @gutter--medium;
+
+    .andor {
+      font-weight: bold;
+      font-family: @page-font;
+      color: @brand-neutral--4;
+      padding: 0 15px;
+    }
+
+    & + .project-basics-financial-row {
+      margin-top: @gutter;
+    }
+  }
+
+  .project-basics-financial-label {
+    color: @brand-neutral--4;
+    font-size: 16px;
+  }
+
+  .project-basics-actions {
+    padding-top: @gutter;
+
+    .btn + .btn {
+      margin-left: @gutter;
+    }
+  }
+
   .project-header-left {
     padding-right: 75px;
   }
   .project-image {
     width: 100%;
-    padding-bottom: 60%;
+    padding-bottom: 400px;
     border-radius: @border-radius;
+    background-position: center;
   }
+
   .tab-content {
     .tab-pane {
       .project-details {
@@ -412,33 +476,6 @@ ul.project-meta {
         .fa-lock {
           font-size: 75px;
           color: @brand-neutral--3;
-        }
-      }
-    }
-  }
-  .specs {
-    h4 {
-      letter-spacing: .5px;
-      color: @brand-neutral--5;
-    }
-    ul {
-      display: flex;
-      flex-direction: row;
-      list-style: none;
-      padding: 0;
-      li {
-        padding: 10px 0;
-        color: @brand-neutral--4;
-        margin-right: 15px;
-        font-size: 16px;
-        &.andor {
-          margin-top: 10px;
-          font-weight: bold;
-          font-family: @page-font;
-        }
-        h2 {
-          font-size: 36px;
-          margin: 0;
         }
       }
     }
