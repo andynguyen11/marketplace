@@ -2,8 +2,13 @@ from django.http import HttpResponse
 from rest_framework.parsers import BaseParser
 from rest_framework.views import APIView
 from expertratings.utils import xml2dict, xml_body
-from expertratings.serializers import SkillTestResultSerializer, SkillTestUserFeedbackSerializer
+from expertratings.serializers import SkillTestSerializer, SkillTestResultSerializer, SkillTestUserFeedbackSerializer
+from expertratings.models import SkillTest
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
+class SkillTestViewSet(ReadOnlyModelViewSet):
+    queryset = SkillTest.objects.all()
+    serializer_class = SkillTestSerializer
 
 
 class RawXMLParser(BaseParser):

@@ -9,8 +9,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
-import sys
+import os, sys, datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
@@ -321,6 +320,8 @@ def prefixed_env_var_getter(prefix):
     def get(subvar, default=''):
         return os.environ.get(prefix + '_' + subvar, default)
     return get
+
+SYNC_RECORD_DELTA = datetime.timedelta(1)
 
 docusign_ = prefixed_env_var_getter('DOCUSIGN') 
 DOCUSIGN = {

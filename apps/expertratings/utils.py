@@ -25,14 +25,21 @@ def buildxml(r, d):
     """
     if isinstance(d, dict):
         for k, v in d.iteritems():
-            if isinstance(v, tuple) or isinstance(v, list) or isinstance(v, dict):
+            if k == '_text':
+                r.text = v
+            elif isinstance(v, tuple) or isinstance(v, list) or isinstance(v, dict):
                 s = et.SubElement(r, k)
                 buildxml(s, v)
             else: r.set(k, unicode(v))
     elif isinstance(d, tuple) or isinstance(d, list):
         for v in d:
-            s = et.SubElement(r, 'i')
-            buildxml(s, v)
+            if isinstance(v, dict) and len(v.keys()) == 1:
+                key = v.keys()[0]
+                s = et.SubElement(r, key)
+                buildxml(s, v[key])
+            else:
+                s = et.SubElement(r, 'i')
+                buildxml(s, v)
     elif isinstance(d, basestring):
         r.text = d
     else:
