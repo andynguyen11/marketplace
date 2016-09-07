@@ -309,7 +309,7 @@ let Checkout = React.createClass({
 
   createToken() {
     const { creditCard } = this.state;
-    Stripe.setPublishableKey('pk_test_PhUrky9HrJfcAQvmstWpEna6');
+    Stripe.setPublishableKey(loomKeys.stripe);
     Stripe.card.createToken({
       number: creditCard.number,
       cvc: creditCard.cvc,
