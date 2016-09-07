@@ -4,6 +4,7 @@ import TextareaAutosize from 'react-textarea-autosize';
 import Loader from '../../components/loadScreen';
 import FormHelpers from '../../utils/formHelpers';
 import MessageAgreement from './tracker';
+import moment from 'moment';
 
 const MessageComposer = React.createClass({
   componentDidMount() {
@@ -61,15 +62,21 @@ const MessageComposer = React.createClass({
 
 const Message = React.createClass({
   render() {
-    const { currentUser, avatar, text } = this.props;
+    const { currentUser, avatar, text, senderName, timestamp } = this.props;
     const classNames = 'messages-thread-message' + (currentUser && ' messages-thread-message-currentUser' || '');
+    const formattedTime = moment(timestamp).format('MMM D, h:mm a')
 
     return (
       <div className={classNames}>
         <div className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></div>
-        <pre className="messages-thread-message-text">
-          {text}
-        </pre>
+        <div className="messages-thread-message-content">
+          <pre className="messages-thread-message-text">
+            {text}
+          </pre>
+          <div className="messages-thread-message-meta">
+            {senderName} - {formattedTime}
+          </div>
+        </div>
       </div>
     );
   }
@@ -618,10 +625,10 @@ const Messages = React.createClass({
   render() {
     const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
     const messages = interactions.map((interaction, i) => {
-      const { content, sender } = interaction;
+      const { content, sender, timestamp } = interaction;
       const isCurrentUser = currentUser === sender.id;
 
-      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} />
+      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} />
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
     const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserData.first_name}</span></span>;
@@ -633,6 +640,7 @@ const Messages = React.createClass({
             <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> back to messages</a>
             {otherUserName}
           </div>
+          <div className="messages-thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
           <div className="messages-thread-content-wrapper">
             { isLoading && <Loader/> }
             <div className="messages-thread-content" ref="thread">
