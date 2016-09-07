@@ -6,7 +6,7 @@ from generics.routers import DeclarativeRouter
 
 from accounts.api import ProfileViewSet, SkillsList, SkillTestViewSet
 from business.api import *
-from payment.api import CreditCardView, PaymentView, OrderDetail, OrderListCreate, PromoCheck
+from payment.api import CreditCardView, OrderDetail, OrderListCreate, PromoCheck
 from postman.api import ConversationDetail, MessageAPI
 from reviews.api import ReviewListCreate
 from business.models import Category

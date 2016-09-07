@@ -25,9 +25,10 @@ let Checkout = React.createClass({
         number: '',
         month: '',
         year: '',
-        cvc: '',
-        save_card: false,
+        cvc: ''
       },
+      stripeToken: '',
+      saveCard: false,
       enteredPromo: '',
       promo : '',
       promo_message: '',
@@ -60,7 +61,7 @@ let Checkout = React.createClass({
   },
 
   formElements() {
-    const { creditCard } = this.state;
+    const { creditCard, saveCard } = this.state;
 
     return {
       currentCard: {
@@ -211,14 +212,14 @@ let Checkout = React.createClass({
           this.setState({ creditCard });
         }
       },
-      save_card: {
-        name: 'save_card',
+      saveCard: {
+        name: 'saveCard',
         label: 'Save this information for future purchases on Loom.',
-        value: creditCard.save_card || false,
+        value: saveCard || false,
         update: (value) => {
-          const { creditCard } = this.state;
-          creditCard.save_card = value;
-          this.setState({ creditCard });
+          let { saveCard } = this.state;
+          saveCard = value;
+          this.setState({ saveCard });
         }
       }
     }
@@ -306,8 +307,31 @@ let Checkout = React.createClass({
     })
   },
 
+  createToken() {
+    const { creditCard } = this.state;
+    Stripe.setPublishableKey('pk_test_PhUrky9HrJfcAQvmstWpEna6');
+    Stripe.card.createToken({
+      number: creditCard.number,
+      cvc: creditCard.cvc,
+      exp_month: creditCard.month,
+      exp_year: creditCard.year
+    }, this.stripeResponseHandler);
+  },
+
+  stripeResponseHandler(status, response) {
+    const {formErrorsList, formErrors} = this.state;
+
+    if (response.error) { // Problem!
+      this.setState({ formError: response.error.message})
+    } else { // Token was created!
+      this.setState({ stripeToken: response.id })
+    }
+
+    this.submitPayment();
+  },
+
   submitPayment() {
-    const { formElements, currentCard, creditCard } = this.state;
+    const { formElements, currentCard, creditCard, stripeToken, saveCard } = this.state;
     const { job } = this.props;
 
     if (currentCard) {
@@ -343,7 +367,8 @@ let Checkout = React.createClass({
               url: loom_api.creditcard,
               method: 'POST',
               data: JSON.stringify({
-                card: creditCard,
+                stripeToken: stripeToken,
+                saveCard: saveCard,
                 job: job.id,
                 promo: this.state.promo
               }),
@@ -367,7 +392,7 @@ let Checkout = React.createClass({
 
   render() {
     const { job, terms } =  this.props;
-    const { price, enteredPromo, promo, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message, apiError } = this.state;
+    const { price, currentCard, enteredPromo, promo, isLoading, applyingPromo, formElements, formError, formErrorsList, showCreditCardForm, cards, sendingPayment, promo_error, promo_message, apiError } = this.state;
     const promoButtonSettings = !enteredPromo.length && { disabled: true };
     const error = (formError || apiError) && function() {
       let errorsList = formErrorsList.map((thisError, i) => {
@@ -440,7 +465,7 @@ let Checkout = React.createClass({
 
           { isLoading || (
             <div className="col-md-10 col-md-offset-1 text-center">
-              <button onClick={this.submitPayment} disabled={ sendingPayment ? 'true': ''} type="submit" className="btn btn-brand">
+              <button onClick={currentCard ? this.submitPayment: this.createToken} disabled={ sendingPayment ? 'true': ''} type="submit" className="btn btn-brand">
                 <i className={ sendingPayment ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
                 { !promo && <span>Pay ${price} and</span> } Sign Contract
               </button>
