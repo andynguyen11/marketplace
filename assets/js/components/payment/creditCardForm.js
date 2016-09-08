@@ -13,7 +13,7 @@ const CreditCardForm = React.createClass({
     const { formElements, handleChange, handleCheckboxChange } = this.props;
 
     const notificationsChecked = {};
-    if(formElements.save_card.value) {
+    if(formElements.saveCard.value) {
       notificationsChecked.checked = 'checked';
     }
 
@@ -80,16 +80,16 @@ const CreditCardForm = React.createClass({
 
           <div className="form-group">
             <div className='checkbox'>
-              <label htmlFor={formElements.save_card.name}>
+              <label htmlFor={formElements.saveCard.name}>
                 <input
                   type='checkbox'
-                  id={formElements.save_card.name}
-                  name={formElements.save_card.name}
-                  value={!formElements.save_card.value}
-                  checked={formElements.save_card.value}
+                  id={formElements.saveCard.name}
+                  name={formElements.saveCard.name}
+                  value={!formElements.saveCard.value}
+                  checked={formElements.saveCard.value}
                   onChange={handleCheckboxChange}
                 />
-                {formElements.save_card.label}
+                {formElements.saveCard.label}
               </label>
             </div>
           </div>

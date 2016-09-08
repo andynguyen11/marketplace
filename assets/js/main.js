@@ -21,6 +21,7 @@
 
     // import app files
     window.loom_api = require('./api');
+    window.loomKeys = require('./keys.js');
     const cookieUtils = require('./utils/csrf');
 
     // SETUP AJAX WITH CSRF

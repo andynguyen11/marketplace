@@ -36,7 +36,6 @@
           </ul>
         </div>
         <div class="col-md-5 project-basics-stats">
-
           <div class="project-basics-financials">
             <h2>Project Budget</h2>
             <div class="project-basics-financial-row">
@@ -108,20 +107,53 @@
 
           <div class="project-basics-actions">
             {% if request.user == project.project_manager %}
-            <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit Project</a>
+              <a class="btn btn-brand" href="/project/edit/{{project.id}}/">Edit Project</a>
             {% else %}
-            {% if not job %}
-            {% if user.is_authenticated %}
-            <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
-            {% else %}
-            <a class="btn btn-brand" href="{% url 'login' %}?next={% url 'project' project.slug %}">Bid on Project</a>
-            {% endif %}
-            {% endif %}
-            {% if job %}
-            <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
-            {% else %}
-            <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
-            {% endif %}
+              {% if not job %}
+
+                {% if user.is_authenticated %}
+                  <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+                {% else %}
+                  <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#noAuthBidModal">Bid on Project</button>
+
+                  <div class="modal fade modal-project-noauth" id="noAuthBidModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
+                    <div class="modal-dialog modal-sm" role="document">
+                      <div class="modal-content">
+                        <div class="modal-body">
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                          <h4>You'll need to create a Loom account to bid on projects.</h4>
+                          <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
+                          <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+
+              {% endif %}
+
+              {% if user.is_authenticated %}
+                {% if job %}
+                  <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+                {% else %}
+                  <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
+                {% endif %}
+              {% else %}
+                <button type="button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#noAuthMessageModal">Send Message</button>
+
+                <div class="modal fade modal-project-noauth" id="noAuthMessageModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
+                  <div class="modal-dialog modal-sm" role="document">
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4>You'll need to create a Loom account to send messages.</h4>
+                        <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
+                        <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              {% endif %}
             {% endif %}
           </div>
 

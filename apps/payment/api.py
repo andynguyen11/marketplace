@@ -35,20 +35,12 @@ class CreditCardView(APIView):
             return Response(status=200, data={"message": "Success", "url": url})
         stripe.api_key = settings.STRIPE_KEY
         stripe_customer = None
-        stripe_token = stripe.Token.create(
-            card={
-                "number": request.data['card']['number'],
-                "exp_month": request.data['card']['month'],
-                "exp_year": request.data['card']['year'],
-                "cvc": request.data['card']['cvc']
-            },
-        )
-        card=stripe_token
-        if request.data['card']['save_card']:
+        card=request.data['stripeToken']
+        if request.data['saveCard']:
             if request.user.stripe:
                 try:
                     stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-                    card = stripe_customer.sources.create(source=stripe_token)
+                    card = stripe_customer.sources.create(source=card)
                 except stripe.error.CardError, e:
                     body = e.json_body
                     error = body['error']['message']
@@ -57,7 +49,7 @@ class CreditCardView(APIView):
                 try:
                     # Create a Customer
                     stripe_customer = stripe.Customer.create(
-                        source=stripe_token,
+                        source=card,
                         description="{0}, {1} - {2}".format(
                             request.user.last_name,
                             request.user.first_name,
@@ -140,33 +132,6 @@ class CreditCardView(APIView):
             stripe_customer = stripe.Customer.retrieve(request.user.stripe)
             cards = stripe_customer.sources.data
         return Response(status=200, data=cards)
-
-
-
-
-class PaymentView(APIView):
-
-    def post(self, request):
-        order = Order.objects.get(id=request.POST['job_id'])
-        charge = float(request.POST['price'])
-        fee = float(request.POST['fee'])
-        stripe.api_key = settings.STRIPE_KEY
-        stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-        stripe_token = stripe.Token.create(
-            card=stripe_customer['sources']['data'][0]['id'],
-        )
-        stripe.Charge.create(
-            amount=int(charge*100),
-            currency='usd',
-            source=stripe_token,
-            application_fee=int(fee*100),
-            stripe_account=job.provider.stripe,
-            statement_descriptor='LawnCall'
-        )
-        job.date_charged = datetime.datetime.now()
-        job.charge = charge
-        job.fee = fee
-        job.save()
 
 
 class OrderListCreate(generics.ListCreateAPIView):
