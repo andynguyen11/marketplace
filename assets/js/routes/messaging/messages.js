@@ -62,19 +62,21 @@ const MessageComposer = React.createClass({
 
 const Message = React.createClass({
   render() {
-    const { currentUser, avatar, text, senderName, timestamp } = this.props;
+    const { currentUser, avatar, text, senderName, timestamp, userId } = this.props;
     const classNames = 'messages-thread-message' + (currentUser && ' messages-thread-message-currentUser' || '');
-    const formattedTime = moment(timestamp).format('MMM D, h:mm a')
+    const formattedTime = moment(timestamp).format('MMM D, h:mm a');
+    const profileUrl = '/profile/' + userId + '/';
+    const senderLink = <a href={profileUrl}>{senderName}</a>;
 
     return (
       <div className={classNames}>
-        <div className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></div>
+        <a href={profileUrl} className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></a>
         <div className="messages-thread-message-content">
           <pre className="messages-thread-message-text">
             {text}
           </pre>
           <div className="messages-thread-message-meta">
-            {senderName} - {formattedTime}
+            {senderLink} - {formattedTime}
           </div>
         </div>
       </div>
@@ -628,7 +630,7 @@ const Messages = React.createClass({
       const { content, sender, timestamp } = interaction;
       const isCurrentUser = currentUser === sender.id;
 
-      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} />
+      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} userId={sender.id} />
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
     const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserData.first_name}</span></span>;
