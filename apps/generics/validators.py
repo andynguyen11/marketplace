@@ -1,4 +1,4 @@
-# import magic
+import magic
 
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
@@ -21,7 +21,7 @@ def file_validator(value):
         }
         raise ValidationError(error_messages['max_size'], 'max_size', params)
 
-    content_type = magic.from_buffer(file.read(), mime=True)
+    content_type = magic.from_buffer(value.file.read(), mime=True)
     if content_type not in content_types:
         params = {'content_type': content_type}
         raise ValidationError(error_messages['content_type'], 'content_type', params)

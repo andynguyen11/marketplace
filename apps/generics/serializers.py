@@ -1,11 +1,13 @@
-from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
+from rest_framework import serializers
+
 from .models import Attachment
 from .base_serializers import RelationalModelSerializer, ParentModelSerializer
+from generics.validators import file_validator
 
 
 class AttachmentSerializer(RelationalModelSerializer):
-    file = serializers.FileField(max_length=None, allow_empty_file=False, required=False, write_only=True)
+    file = serializers.FileField(max_length=None, allow_empty_file=False, required=False, write_only=True, validators=[file_validator])
     url = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True)
 

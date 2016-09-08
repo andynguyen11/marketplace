@@ -355,39 +355,43 @@ const Messages = React.createClass({
         let otherUserData;
 
         result.interactions.map((interaction, i) => {
-          const { sender, recipient } = interaction;
-          const senderIsCurrentUser = currentUserId === sender.id;
-          const recipientIsCurrentUser = currentUserId === recipient.id;
+          const { sender, recipient, interactionType } = interaction;
 
-          if(senderIsCurrentUser && !currentUserData) {
-            currentUserData = {
-              id: sender.id,
-              photo_url: sender.photo_url,
-              first_name: sender.first_name
+          // TODO Will need to rethink how we handle different interaction types
+          if (interactionType === 'message') {
+            const senderIsCurrentUser = currentUserId === sender.id;
+            const recipientIsCurrentUser = currentUserId === recipient.id;
+
+            if(senderIsCurrentUser && !currentUserData) {
+              currentUserData = {
+                id: sender.id,
+                photo_url: sender.photo_url,
+                first_name: sender.first_name
+              }
             }
-          }
 
-          if(recipientIsCurrentUser && !currentUserData) {
-            currentUserData = {
-              id: recipient.id,
-              photo_url: recipient.photo_url,
-              first_name: recipient.first_name
+            if(recipientIsCurrentUser && !currentUserData) {
+              currentUserData = {
+                id: recipient.id,
+                photo_url: recipient.photo_url,
+                first_name: recipient.first_name
+              }
             }
-          }
 
-          if(!senderIsCurrentUser && !otherUserData) {
-            otherUserData = {
-              id: sender.id,
-              photo_url: sender.photo_url,
-              first_name: sender.first_name
+            if(!senderIsCurrentUser && !otherUserData) {
+              otherUserData = {
+                id: sender.id,
+                photo_url: sender.photo_url,
+                first_name: sender.first_name
+              }
             }
-          }
 
-          if(!recipientIsCurrentUser && !otherUserData) {
-            otherUserData = {
-              id: recipient.id,
-              photo_url: recipient.photo_url,
-              first_name: recipient.first_name
+            if(!recipientIsCurrentUser && !otherUserData) {
+              otherUserData = {
+                id: recipient.id,
+                photo_url: recipient.photo_url,
+                first_name: recipient.first_name
+              }
             }
           }
         });
@@ -635,11 +639,12 @@ const Messages = React.createClass({
   render() {
     const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
     const messages = interactions.map((interaction, i) => {
-      const { content, sender, timestamp } = interaction;
-      const isCurrentUser = currentUser === sender.id;
-      const profileUrl = this.getProfileUrl(sender.id);
-
-      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
+      const { content, sender, timestamp, interactionType } = interaction;
+      if (interactionType === 'message') {
+        const isCurrentUser = currentUser === sender.id;
+        const profileUrl = this.getProfileUrl(sender.id);
+        return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
+      }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);

@@ -8,9 +8,10 @@ from rest_framework.decorators import permission_classes, api_view
 
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
+from generics.models import Attachment
 from postman.models import Message, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
-from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction
+from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction
 
 
 class ConversationDetail(generics.RetrieveAPIView):
@@ -68,9 +69,16 @@ class MessageAPI(APIView):
         return Response(status=403)
 
     def get(self, request, thread_id):
+        thread = Message.objects.get(id=thread_id)
         messages = Message.objects.filter(thread=thread_id).order_by('sent_at')
         if request.user == messages[0].sender or request.user == messages[0].recipient:
             interactions = []
+            for file in thread.attachments.filter(deleted=False):
+                interaction = FileInteraction(
+                    timestamp=file.upload_date,
+                    content=file.url
+                )
+                interactions.append(interaction)
             for message in messages:
                 interaction = MessageInteraction(
                     sender=message.sender,
@@ -79,6 +87,7 @@ class MessageAPI(APIView):
                     content=message.body
                 )
                 interactions.append(interaction)
-            serializer = InteractionSerializer(interactions, many=True)
+            ordered_interactions = sorted(interactions, key=lambda k: k.timestamp)
+            serializer = InteractionSerializer(ordered_interactions, many=True)
             return Response({'current_user': request.user.id, 'interactions':serializer.data})
         return Response(status=403)
