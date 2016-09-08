@@ -21,6 +21,68 @@ from payment.serializers import OrderSerializer
 from postman.forms import build_payload
 
 
+stripe.api_key = settings.STRIPE_KEY
+
+def connect_customer(user, stripe_token):
+    stripe_customer = stripe.Customer.create(
+        source=stripe_token,
+        email=user.email,
+        description="{0}, {1} - {2}".format(
+            user.last_name,
+            user.first_name,
+            user.company
+        )
+    )
+    user.stripe = stripe_customer.id
+    user.save()
+    return stripe_customer
+
+def add_source(user, stripe_token):
+    stripe_customer = stripe.Customer.retrieve(user.stripe)
+    return stripe_customer.sources.create(source=stripe_token)
+
+def get_source(user, source_id):
+    stripe_customer = stripe.Customer.retrieve(user.stripe)
+    return stripe_customer.sources.retrieve(source_id)
+
+
+class StripePaymentSourceView(APIView):
+    """
+    API view handling create, update, and delete on stripe payment sources
+
+    """
+    permission_classes = (IsAuthenticated, )
+    update_fields = ( 'address_city', 'address_country', 'address_line1', 'address_line2',
+        'address_state', 'address_zip', 'exp_month', 'exp_year', 'metadata', 'name')
+
+    def add_card(self, request):
+        user = request.user
+        stripe_token = request.data['stripe_token']
+        data = add_source(user, stripe_token) if user.stripe else connect_customer(user, stripe_token)
+        return Response(status=201, data=data)
+
+    def post(self, request):
+        return self.add_card(request)
+
+    def put(self, request):
+        return self.add_card(request)
+
+    def patch(self, request):
+        card = get_source(request.user, request.data.pop('source_id'))
+        for k, v in request.data.items():
+            if k in self.update_fields:
+                setattr(card, k, v)
+        return Response(status=200, data=card.save())
+
+    def delete(self, request):
+        data = get_source(request.user, request.data.pop('source_id')).delete()
+        return Response(status=202, data=data)
+
+    def get(self, request):
+        cards = stripe.Customer.retrieve(request.user.stripe).sources.data if request.user.stripe else []
+        return Response(status=200, data=cards)
+
+
 class CreditCardView(APIView):
     """
     API view handling creating and updating credit cards
