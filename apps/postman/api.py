@@ -62,6 +62,8 @@ class MessageAPI(APIView):
                 for file in attachments:
                     new_attachement = Attachment.objects.create(content_object=message, file=file)
             serializer = ConversationSerializer(message, context={'request': request})
+            # TODO Fill in email templates
+            # send_mail('', [recipient], {})
             return Response(serializer.data)
         return Response(status=403)
 

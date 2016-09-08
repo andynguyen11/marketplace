@@ -72,6 +72,7 @@ requests==2.10.0
 requests-oauthlib==0.6.1
 rest-condition==1.0.2
 rsa==3.2.3
+simplejson==3.8.2
 semantic-version==2.5.0
 six==1.10.0
 stripe==1.23.0
