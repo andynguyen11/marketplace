@@ -20,6 +20,6 @@ class SkillTestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SkillTest
-        fields = field_names(SkillTest) + ('coverage',)
+        fields = field_names(SkillTest, exclude=('sync_created', 'sync_updated', 'sync_deleted')) + ('coverage',)
 
 

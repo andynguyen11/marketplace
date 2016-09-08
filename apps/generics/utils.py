@@ -47,11 +47,19 @@ def update_instance(instance, data):
 def field_names(model, exclude=tuple()):
     return tuple(field.name for field in model._meta.fields if field.name not in exclude)
 
+
 def merge(*dicts):
     res = {}
     for d in dicts:
         res.update(d)
     return res
+
+
+def normalize_key_suffixes(kwargs):
+    return {
+        re.sub('(_pk|_id)$', '', key): value
+        for key, value in kwargs.items() }
+
 
 def camel_to_underscored(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)

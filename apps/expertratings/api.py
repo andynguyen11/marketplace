@@ -44,17 +44,20 @@ class ExpertRatings(object):
     def post(self, endpoint, *args, **kwargs):
         return requests.post(self.endpoint(endpoint), *args, **kwargs)
 
-    def extract_records(self, xml_response_string):
-        records = xml2dict(xml_response_string)['response']['result']['records']['record']
+    def extract_records(self, response_dict):
+        records = response_dict['response']['result']['records']['record']
         if isinstance(records, list):
             return map(normalize_record, records)
         else: return normalize_record(records)
             
 
-    def request( self, method, parameters=None ):
+    def request( self, method, **parameters ):
         method_body = {'name': method}
-        if parameters:
-            method_body['parameters'] = parameters
+        if len(parameters.keys()):
+            method_body['parameters'] = [{ 'parameter': {
+                'name': key,
+                '_text': val
+                } } for key, val in parameters.items()]
         data = xml_body({
             'request': {
                 'authentication': self.auth,
@@ -62,7 +65,11 @@ class ExpertRatings(object):
             }
         })
         response = self.post('/', data=data, headers={'Content-Type': 'application/x-www-form-urlencoded'}) 
-        return self.extract_records(response.text)
+        response_dict = xml2dict(response.text)
+        try:
+            return self.extract_records(response_dict)
+        except KeyError, e:
+            raise Exception(response_dict)
 
     def get( self, method, **kwargs ):
         return self.request('Get%s' % upper_camel_case(method), **kwargs)
