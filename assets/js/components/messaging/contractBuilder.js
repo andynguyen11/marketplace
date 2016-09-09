@@ -71,7 +71,7 @@ const ContractBuilder = React.createClass({
 
           { this.state.step == 1 && (
             <div className="sub-section">
-              <div className="col-sm-10">
+              <div className="col-md-12">
                 <div className="form-group">
                   <strong>Creating your contract with Loom is easy.</strong>
                   <br />

@@ -47,8 +47,8 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.6",
-    "bootstrap-datepicker": "^1.6.1",
     "bootstrap-select": "^1.10.0",
+    "downloadjs": "^1.4.6",
     "history": "^2.1.2",
     "jquery": "^2.2.4",
     "lodash": "^4.13.1",

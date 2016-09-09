@@ -5,8 +5,18 @@ import Loader from '../../components/loadScreen';
 import FormHelpers from '../../utils/formHelpers';
 import MessageAgreement from './tracker';
 import moment from 'moment';
+import Modal from '../../components/modal';
+import downloadjs from 'downloadjs';
 
 const MessageComposer = React.createClass({
+  getInitialState() {
+    return {
+      attachmentModalIsOpen: false,
+      messageSending: false,
+      fileSending: false
+    }
+  },
+
   componentDidMount() {
     window.addEventListener('keydown', this.sendListener);
   },
@@ -35,26 +45,100 @@ const MessageComposer = React.createClass({
     }
   },
 
+  onFileSelection(event) {
+    event.preventDefault();
+    let file = event.target.files[0];
+
+    this.setState({
+      attachmentName: file.name,
+      attachmentTitle: ''
+    }, () => {
+      this.openAttachmentModal();
+    });
+  },
+
+  updateFileName(event) {
+    const { target } = event;
+    const attachmentTitle = target.value;
+
+    this.setState({ attachmentTitle });
+  },
+
+  uploadFile() {
+    const { attachmentName, attachmentTitle } = this.state;
+    const fileInput = this.refs.fileInput;
+    const reader = new FileReader();
+    const file = fileInput.files[0];
+
+    console.log(file, attachmentName, attachmentTitle);
+  },
+
+  openAttachmentModal() {
+    this.setState({ attachmentModalIsOpen: true });
+  },
+
+  closeAttachmentModal() {
+    const { fileSending } = this.state;
+    const fileInput = this.refs.fileInput;
+
+    if(!fileSending) {
+      fileInput.value = '';
+
+      this.setState({
+        attachmentModalIsOpen: false,
+        attachmentName: '',
+        attachmentTitle: ''
+      });
+    }
+  },
+
   render() {
-    const { value, name, fileUpload, attachFile, fileUploadInProgress, messageSending } = this.props;
+    const { value, name, fileUpload, attachFile, fileSending, messageSending } = this.props;
+    const { attachmentModalIsOpen, attachmentName, attachmentTitle } = this.state;
 
     const fileButton = fileUpload && (
       <div className="text-field-fileUpload">
-        <input type="file" ref="fileInput" onChange={attachFile} />
+        <input type="file" ref="fileInput" onChange={this.onFileSelection} {...disabled} />
       </div>
     );
     const disabled = {
-      disabled: messageSending
+      disabled: messageSending || fileSending
     };
-    const loadingIndicator = messageSending && (
-      <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>
+    const loadingIndicator = (messageSending || fileSending) && <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>;
+    const modalContent = attachmentName && (
+      <div className="messaging-upload-modal">
+        <div className="form-group">
+          <label className="control-label">file name:</label>
+          <div className="messages-upload-modal-attachmentName"> {attachmentName}</div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="attachmentTitle">Include title for this file? (optional)</label>
+          <input
+            className="form-control"
+            type="text"
+            name="attachmentTitle"
+            id="attachmentTitle"
+            value={attachmentTitle}
+            onChange={this.updateFileName}
+          />
+          <div className="clearfix"></div>
+        </div>
+        <div className="messages-upload-modal-actions">
+          <button className="btn btn-brand btn-brand--clear" onClick={this.closeAttachmentModal} {...disabled}>Cancel</button>
+          <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>Upload</button>
+        </div>
+      </div>
     );
 
     return (
-      <div className="messages-thread-composer" {...disabled}>
+      <div className="thread-composer" {...disabled}>
         {fileButton}
         <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea" {...disabled}></TextareaAutosize>
         {loadingIndicator}
+
+        <Modal open={attachmentModalIsOpen} onClose={this.closeAttachmentModal} header="Upload a File">
+          {modalContent}
+        </Modal>
       </div>
     );
   }
@@ -63,19 +147,56 @@ const MessageComposer = React.createClass({
 const Message = React.createClass({
   render() {
     const { currentUser, avatar, text, senderName, timestamp, profileUrl } = this.props;
-    const classNames = 'messages-thread-message' + (currentUser && ' messages-thread-message-currentUser' || '');
+    const classNames = 'thread-item' + (currentUser && ' thread-item-currentUser' || '');
     const formattedTime = moment(timestamp).format('MMM D, h:mm a');
     const senderLink = <a href={profileUrl}>{senderName}</a>;
+    const senderAvatar = {
+      backgroundImage: 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')'
+    };
 
     return (
       <div className={classNames}>
-        <a href={profileUrl} className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></a>
-        <div className="messages-thread-message-content">
-          <pre className="messages-thread-message-text">
+        <a href={profileUrl} className="thread-item-avatar" style={senderAvatar}></a>
+        <div className="thread-item-content">
+          <pre className="thread-item-message">
             {text}
           </pre>
-          <div className="messages-thread-message-meta">
+          <div className="thread-item-meta">
             {senderLink} - {formattedTime}
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
+const Attachment = React.createClass({
+  triggerDownload(event) {
+    event.preventDefault();
+    downloadjs('/static/images/Loom_Logo.svg');
+  },
+
+  render() {
+    const { currentUser, avatar, content, senderName, timestamp, profileUrl } = this.props;
+    const classNames = 'thread-item' + (currentUser && ' thread-item-currentUser' || '');
+    const formattedTime = moment(timestamp).format('MMM D, h:mm a');
+    const senderLink = <a href={profileUrl}>{senderName}</a>;
+    const senderAvatar = {
+      backgroundImage: 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')'
+    };
+
+    return (
+      <div className={classNames}>
+        <a href={profileUrl} className="thread-item-avatar" style={senderAvatar}></a>
+        <div className="thread-item-content">
+          <div className="thread-item-attachment">
+            <div className="thread-item-attachment-icon"></div>
+            <div className="thread-item-attachment-title">{content.fileTitle}</div>
+            <a onClick={this.triggerDownload} className="thread-item-attachment-filename" alt={content.fileName}>{content.fileName}</a>
+            <a onClick={this.triggerDownload} className="thread-item-attachment-download" alt={content.fileName}>download {content.fileName}</a>
+          </div>
+          <div className="thread-item-meta">
+            Uploaded by {senderLink} - {formattedTime}
           </div>
         </div>
       </div>
@@ -345,6 +466,15 @@ const Messages = React.createClass({
   },
 
   componentWillMount() {
+    this.fetchThread();
+  },
+
+  componentDidMount() {
+    this.startPoller();
+    this.scrollBottom();
+  },
+
+  fetchThread() {
     const { threadId } = this.props;
 
     $.ajax({
@@ -353,6 +483,20 @@ const Messages = React.createClass({
         const currentUserId = result.current_user;
         let currentUserData;
         let otherUserData;
+        result.interactions.push({
+          interactionType: 'attachment',
+          timestamp: '2016-08-22T17:23:01.365177Z',
+          content: {
+            fileName: 'filename.pdf',
+            fileTitle: 'This is that thing I told you about'
+          },
+          sender: {
+            first_name: 'Rick',
+            id: 51,
+            photo_url: 'https://devquity.s3.amazonaws.com/media/profile-photos/rick.jpg'
+          },
+          recipient: {}
+        });
 
         result.interactions.map((interaction, i) => {
           const { sender, recipient, interactionType } = interaction;
@@ -422,13 +566,8 @@ const Messages = React.createClass({
     });
   },
 
-  componentDidMount() {
-    this.startPoller();
-    this.scrollBottom();
-  },
-
   startPoller() {
-    setInterval(this.updateMessages, 10000);
+    setInterval(this.fetchThread, 10000);
   },
 
   updateMessages() {
@@ -440,6 +579,22 @@ const Messages = React.createClass({
       $.ajax({
         url: loom_api.messagePoller + threadId + '/',
         success: (result) => {
+
+          result.interactions.push({
+            interactionType: 'attachment',
+            timestamp: '2016-08-22T17:23:01.365177Z',
+            content: {
+              fileName: 'filename.pdf',
+              fileTitle: 'This is that thing I told you about'
+            },
+            sender: {
+              first_name: 'Rick',
+              id: 51,
+              photo_url: 'https://devquity.s3.amazonaws.com/media/profile-photos/rick.jpg'
+            },
+            recipient: {}
+          });
+
           this.setState({
             interactions: result.interactions,
             messageError: false
@@ -513,23 +668,23 @@ const Messages = React.createClass({
     return interactions;
   },
 
-  // attachFile(e) {
-  //   e.preventDefault();
-  //   let reader = new FileReader();
-  //   let file = e.target.files[0];
-  //
-  //   reader.onloadend = () => {
-  //     console.log(reader.result, file)
-  //     this.setState({
-  //       attachment: reader.result,
-  //       attachmentName: file.name
-  //     }, () => {
-  //       this.scrollBottom();
-  //       this.sendMessage();
-  //     });
-  //   };
-  //   reader.readAsDataURL(file);
-  // },
+  attachFile(e) {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      console.log(reader.result, file);
+      this.setState({
+        attachment: reader.result,
+        attachmentName: file.name
+      }, () => {
+        this.scrollBottom();
+        this.sendMessage();
+      });
+    };
+    reader.readAsDataURL(file);
+  },
 
   handleChange(event) {
     const { formElements } = this.state;
@@ -646,6 +801,12 @@ const Messages = React.createClass({
         const profileUrl = this.getProfileUrl(sender.id);
         return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
       }
+
+      if(interactionType === 'attachment') {
+        const isCurrentUser = currentUser === sender.id;
+        const profileUrl = this.getProfileUrl(sender.id);
+        return <Attachment key={i} avatar={sender.photo_url} currentUser={isCurrentUser} content={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
+      }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
@@ -659,15 +820,15 @@ const Messages = React.createClass({
             <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> back to messages</a>
             {otherUserName}
           </div>
-          <div className="messages-thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
-          <div className="messages-thread-content-wrapper">
+          <div className="thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
+          <div className="thread-content-wrapper">
             { isLoading && <Loader/> }
-            <div className="messages-thread-content" ref="thread">
+            <div className="thread-content" ref="thread">
               {messages}
               {error}
             </div>
           </div>
-          <MessageComposer messageSending={messageSending} fileUpload={false} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
+          <MessageComposer messageSending={messageSending} fileUpload={true} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">

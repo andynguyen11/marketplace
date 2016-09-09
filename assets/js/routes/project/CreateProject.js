@@ -1,7 +1,6 @@
 import React from 'react';
 import {Button, FormGroup, FormControl, ControlLabel, Nav, NavItem} from 'react-bootstrap';
 import {BigFormGroup} from './FormUtils';;
-import Select2 from 'react-select2-wrapper';
 import {SkillWidget} from '../../components/skill';
 import {objectToFormData} from './utils';
 import AttachmentField, {MultipleAttachmentsField, mergeAttachments} from './AttachmentField';
