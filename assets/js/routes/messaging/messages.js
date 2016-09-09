@@ -506,6 +506,7 @@ const Messages = React.createClass({
 
     payload.sender = currentUserData;
     payload.content = payload.body;
+    payload.interactionType = 'message';
 
     interactions.push(payload);
 
