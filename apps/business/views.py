@@ -15,7 +15,10 @@ from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user
 
 
 def view_project(request, project_slug):
-    project = Project.objects.get(slug=project_slug)
+    try:
+        project = Project.objects.get(slug=project_slug)
+    except Project.DoesNotExist:
+        return redirect('project-gallery')
     job = None
     try:
         if request.user.is_authenticated():
@@ -74,11 +77,11 @@ def serialized_project_groups(**kwargs):
         groups[key] = [ProjectSerializer(project).data for project in groups[key]]
     return groups
 
-def projects_by_type(request, type=None):
+def projects_by_type(request, type='all'):
     kwargs = {'type': type} if type in [category[0] for category in PROJECT_TYPES] else {}
     return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
 
-def discover_projects(request, type=None):
+def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []
     for item in PROJECT_TYPES:

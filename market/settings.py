@@ -285,6 +285,7 @@ SOCIAL_AUTH_LINKEDIN_OAUTH2_EXTRA_DATA = [('id', 'id'),
                                    ('industry', 'industry'),
                                    ('name', 'name'),]
 
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', ]
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/profile/dashboard/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/signup/type/'
