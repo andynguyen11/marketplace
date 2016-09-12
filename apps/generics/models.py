@@ -10,7 +10,6 @@ from generics.validators import file_validator
 def upload_to(instance, filename):
     return instance.path
 
-
 class Attachment(models.Model):
     file = models.FileField(upload_to=upload_to,  max_length=255, validators=[file_validator])
     upload_date = models.DateTimeField(auto_now=True)

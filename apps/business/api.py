@@ -12,7 +12,7 @@ from rest_framework.renderers import JSONRenderer
 from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission
 from business.models import Job
 from business.serializers import *
-from generics.viewsets import NestedModelViewSet
+from generics.viewsets import NestedModelViewSet, OwnedModelViewSet
 from generics.utils import send_mail
 
 
@@ -143,7 +143,7 @@ class InfoViewSet(NestedModelViewSet):
     parent_key = 'project'
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(OwnedModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
