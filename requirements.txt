@@ -23,6 +23,7 @@ contextlib2==0.5.3
 cryptography==1.4
 dicttoxml==1.7.4
 django-crispy-forms==1.6.0
+django-easy-timezones==0.7.0
 django-extensions==1.6.7
 django-flatpages-x==0.1.2
 django-ipware==1.1.1
@@ -72,6 +73,7 @@ requests==2.10.0
 requests-oauthlib==0.6.1
 rest-condition==1.0.2
 rsa==3.2.3
+simplejson==3.8.2
 semantic-version==2.5.0
 six==1.10.0
 stripe==1.23.0

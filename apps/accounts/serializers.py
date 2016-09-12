@@ -4,8 +4,10 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills, SkillTest
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
+from expertratings.models import SkillTest as ERSkillTest
 from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer
+from generics.base_serializers import RelationalModelSerializer
 
 
 class PaymentSerializer(serializers.Serializer):
@@ -23,6 +25,7 @@ class SocialSerializer(serializers.ModelSerializer):
 
 
 class SkillsSerializer(serializers.ModelSerializer):
+    verification_test  = serializers.PrimaryKeyRelatedField(required=False, queryset=ERSkillTest.objects.all())
 
     class Meta:
         model = Skills
@@ -44,6 +47,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()
+    skills_data = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
     signup = serializers.BooleanField(write_only=True, required=False)
 
@@ -68,6 +72,14 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         serializer = SkillsSerializer(Skills.objects.all(), many=True)
         return serializer.data
 
+    def get_skills_data(self, obj):
+        return [{
+            'verified': skill.is_verified(obj),
+            'verification_test': skill.verification_test and  skill.verification_test.test_id,
+            'id': skill.id,
+            'name': skill.name,
+            } for skill in obj.get_skills()]
+
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
@@ -81,7 +93,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
 class SkillTestSerializer(serializers.ModelSerializer):
 
-    skills = serializers.CharField()
+    skills = serializers.CharField(required=False)
     test_details = ERSkillTestSerializer(read_only=True)
     results = SkillTestResultSerializer(many=True, read_only=True)
 

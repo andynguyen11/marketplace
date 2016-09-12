@@ -1,3 +1,5 @@
+import simplejson
+
 from notifications.signals import notify
 
 from rest_framework import serializers
@@ -8,10 +10,10 @@ from html_json_forms.serializers import JSONFormSerializer
 from accounts.models import Profile
 from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
-from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
-from generics.utils import update_instance, field_names
+from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
+from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
 from postman.models import Message
@@ -109,14 +111,19 @@ class JobSerializer(serializers.ModelSerializer):
         nda = Document.objects.create(job=job, type='NDA', project=job.project, )
         cash = ''
         equity = ''
+        email_template = None
         if job.equity:
             equity = "{0}% Equity".format(job.equity)
+            email_template = 'bid-recieved-equity'
         if job.cash:
             cash = "${0} Cash".format(job.cash)
+            email_template = 'bid-recieved-cash'
         if equity and cash:
             compensation = "{0} and {1}".format(equity, cash)
+            email_template = 'bid-recieved-cash-equity'
         else:
             compensation = cash if cash else equity
+            email_template = 'bid-recieved-cash' if cash else 'bid-recieved-equity'
         message = "Hi, I'm interested in working on your project and just submitted a bid. \n\n" \
                   "The bid terms are: \n\n" \
                   "{0} for an estimated {1} hours of work. \n\n" \
@@ -135,6 +142,18 @@ class JobSerializer(serializers.ModelSerializer):
         message.thread = message
         message.save()
         notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)
+        # Send email notification
+        if email_template:
+            send_mail(email_template, [message.recipient], {
+                'developername': job.contractor.first_name,
+                'projectname': job.project.title,
+                'developertype': job.contractor.role.capitalize(),
+                'cash': job.cash,
+                'equity': simplejson.dumps(job.equity),
+                'hours': job.hours,
+                'message': msg,
+                'email': message.recipient.email
+            })
         return job
 
     def update(self, instance, validated_data):
@@ -155,7 +174,7 @@ class JobSerializer(serializers.ModelSerializer):
         message = Message.objects.create(
             sender=instance.contractor,
             recipient=instance.project.project_manager,
-            subject='re:{0}'.format(thread.subject),
+            subject='{0}'.format(thread.subject),
             body=message,
             thread=thread
         )

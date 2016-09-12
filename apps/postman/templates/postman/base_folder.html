@@ -2,6 +2,7 @@
 {% load i18n postman_tags %}
 {% load pagination_tags %}
 {% load staticfiles %}
+{% load tz %}
 
 {% block bodyclass %}messaging-page{% endblock %}
 
@@ -64,7 +65,9 @@ in the INSTALLED_APPS setting.
             <div class="messages-list-message-summary">
               {% include "postman/inc_subject_ex.html" %}
             </div>
-            <div class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
+            {% localtime on %}
+              <div class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
+            {% endlocaltime %}
           </a>
           <div class="messages-list-message-star">
             {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}

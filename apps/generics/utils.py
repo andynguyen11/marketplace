@@ -1,4 +1,8 @@
 import re
+import mandrill
+import logging
+
+from django.conf import settings
 
 def to_nice_string(num):
     return {
@@ -47,11 +51,19 @@ def update_instance(instance, data):
 def field_names(model, exclude=tuple()):
     return tuple(field.name for field in model._meta.fields if field.name not in exclude)
 
+
 def merge(*dicts):
     res = {}
     for d in dicts:
         res.update(d)
     return res
+
+
+def normalize_key_suffixes(kwargs):
+    return {
+        re.sub('(_pk|_id)$', '', key): value
+        for key, value in kwargs.items() }
+
 
 def camel_to_underscored(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
@@ -59,4 +71,25 @@ def camel_to_underscored(name):
 
 def normalized_subdict(d, keys):
     return { camel_to_underscored(k): d.get(k, None) for k in keys }
+
+API_KEY = settings.MANDRILL_API_KEY
+
+def send_mail(template_name, users, context):
+    mandrill_client = mandrill.Mandrill(API_KEY)
+    message = {
+        'to': [],
+        'global_merge_vars': []
+    }
+    for user in users:
+        if user.email_notifications:
+            message['to'].append({'email': user.email})
+
+    for k, v in context.iteritems():
+        message['global_merge_vars'].append(
+            {'name': k, 'content': v}
+        )
+    try:
+        mandrill_client.messages.send_template(template_name, [], message)
+    except mandrill.Error, e:
+        logger.error('Mandrill Error | %s - %s' % (e.__class__, e))
 

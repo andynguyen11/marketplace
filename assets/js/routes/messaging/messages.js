@@ -62,19 +62,20 @@ const MessageComposer = React.createClass({
 
 const Message = React.createClass({
   render() {
-    const { currentUser, avatar, text, senderName, timestamp } = this.props;
+    const { currentUser, avatar, text, senderName, timestamp, profileUrl } = this.props;
     const classNames = 'messages-thread-message' + (currentUser && ' messages-thread-message-currentUser' || '');
-    const formattedTime = moment(timestamp).format('MMM D, h:mm a')
+    const formattedTime = moment(timestamp).format('MMM D, h:mm a');
+    const senderLink = <a href={profileUrl}>{senderName}</a>;
 
     return (
       <div className={classNames}>
-        <div className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></div>
+        <a href={profileUrl} className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></a>
         <div className="messages-thread-message-content">
           <pre className="messages-thread-message-text">
             {text}
           </pre>
           <div className="messages-thread-message-meta">
-            {senderName} - {formattedTime}
+            {senderLink} - {formattedTime}
           </div>
         </div>
       </div>
@@ -354,39 +355,43 @@ const Messages = React.createClass({
         let otherUserData;
 
         result.interactions.map((interaction, i) => {
-          const { sender, recipient } = interaction;
-          const senderIsCurrentUser = currentUserId === sender.id;
-          const recipientIsCurrentUser = currentUserId === recipient.id;
+          const { sender, recipient, interactionType } = interaction;
 
-          if(senderIsCurrentUser && !currentUserData) {
-            currentUserData = {
-              id: currentUserId,
-              photo_url: sender.photo_url,
-              first_name: sender.first_name
+          // TODO Will need to rethink how we handle different interaction types
+          if (interactionType === 'message') {
+            const senderIsCurrentUser = currentUserId === sender.id;
+            const recipientIsCurrentUser = currentUserId === recipient.id;
+
+            if(senderIsCurrentUser && !currentUserData) {
+              currentUserData = {
+                id: sender.id,
+                photo_url: sender.photo_url,
+                first_name: sender.first_name
+              }
             }
-          }
 
-          if(recipientIsCurrentUser && !currentUserData) {
-            currentUserData = {
-              id: currentUserId,
-              photo_url: recipient.photo_url,
-              first_name: recipient.first_name
+            if(recipientIsCurrentUser && !currentUserData) {
+              currentUserData = {
+                id: recipient.id,
+                photo_url: recipient.photo_url,
+                first_name: recipient.first_name
+              }
             }
-          }
 
-          if(!senderIsCurrentUser && !otherUserData) {
-            otherUserData = {
-              id: currentUserId,
-              photo_url: sender.photo_url,
-              first_name: sender.first_name
+            if(!senderIsCurrentUser && !otherUserData) {
+              otherUserData = {
+                id: sender.id,
+                photo_url: sender.photo_url,
+                first_name: sender.first_name
+              }
             }
-          }
 
-          if(!recipientIsCurrentUser && !otherUserData) {
-            otherUserData = {
-              id: currentUserId,
-              photo_url: recipient.photo_url,
-              first_name: recipient.first_name
+            if(!recipientIsCurrentUser && !otherUserData) {
+              otherUserData = {
+                id: recipient.id,
+                photo_url: recipient.photo_url,
+                first_name: recipient.first_name
+              }
             }
           }
         });
@@ -428,7 +433,8 @@ const Messages = React.createClass({
 
   updateMessages() {
     const { threadId } = this.props;
-    const { messageSending } = this.state;
+    const { messageSending, interactions } = this.state;
+    const interactionCount = interactions.length;
 
     if(!messageSending) {
       $.ajax({
@@ -437,6 +443,10 @@ const Messages = React.createClass({
           this.setState({
             interactions: result.interactions,
             messageError: false
+          }, () => {
+            if(interactionCount !== result.interactions.length){
+              this.scrollBottom();
+            }
           });
         },
         error: () => {
@@ -496,6 +506,7 @@ const Messages = React.createClass({
 
     payload.sender = currentUserData;
     payload.content = payload.body;
+    payload.interactionType = 'message';
 
     interactions.push(payload);
 
@@ -622,16 +633,24 @@ const Messages = React.createClass({
     this.setState({ message: value });
   },
 
+  getProfileUrl(userId) {
+    return '/profile/' + userId + '/';
+  },
+
   render() {
     const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
     const messages = interactions.map((interaction, i) => {
-      const { content, sender, timestamp } = interaction;
-      const isCurrentUser = currentUser === sender.id;
-
-      return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} />
+      const { content, sender, timestamp, interactionType } = interaction;
+      if (interactionType === 'message') {
+        const isCurrentUser = currentUser === sender.id;
+        const profileUrl = this.getProfileUrl(sender.id);
+        return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
+      }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
-    const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserData.first_name}</span></span>;
+    const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
+    const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
+    const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserProfileLink}</span></span>;
 
     return (
       <div id="messages">

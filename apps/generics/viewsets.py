@@ -3,12 +3,7 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import re
-
-
-def normalize(kwargs):
-    return {
-        re.sub('(_pk|_id)$', '', key): value
-        for key, value in kwargs.items() }
+from generics.utils import normalize_key_suffixes as normalize
 
 
 class NestedModelViewSet(viewsets.ModelViewSet):

@@ -12,10 +12,12 @@ def upload_to(instance, filename):
 
 
 class Attachment(models.Model):
-    file = models.FileField(upload_to=upload_to,  max_length=255, )
+    file = models.FileField(upload_to=upload_to,  max_length=255, validators=[file_validator])
+    upload_date = models.DateTimeField(auto_now=True)
     tag = models.CharField(max_length=255, null=True)
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
+    deleted = models.BooleanField(default=False)
     content_object = GenericForeignKey('content_type', 'object_id')
 
     @property

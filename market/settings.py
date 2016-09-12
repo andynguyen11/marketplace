@@ -9,8 +9,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-import os
-import sys
+import os, sys, datetime
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
@@ -49,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'easy_timezones',
     'haystack',
     'generics',
     'notifications',
@@ -94,6 +94,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'easy_timezones.middleware.EasyTimezoneMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -207,15 +208,15 @@ AWS_QUERYSTRING_AUTH = False
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
+GEOIP_DATABASE = os.path.join(BASE_DIR, 'market/GeoLiteCity.dat')
+GEOIPV6_DATABASE = os.path.join(BASE_DIR, 'market/GeoLiteCityv6.dat')
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%b %d, %Y (%a)',
 }
 
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
@@ -323,6 +324,8 @@ def prefixed_env_var_getter(prefix):
         return os.environ.get(prefix + '_' + subvar, default)
     return get
 
+SYNC_RECORD_DELTA = datetime.timedelta(1)
+
 docusign_ = prefixed_env_var_getter('DOCUSIGN') 
 DOCUSIGN = {
     'root_url': docusign_('ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
@@ -342,12 +345,20 @@ EXPERT_RATING = {
 }
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 
-MAX_FILE_SIZE = 5242880
-FILE_CONTENT_TYPES = ['application/xml', 'image/jpeg', ]
+MAX_FILE_SIZE = 15728640
+FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
+                     'image/pjpeg', 'image/png', 'application/x-excel',
+                     'application/excel', 'application/x-msexcel', 'application/vnd.ms-excel',
+                     'application/mspowerpoint', 'application/vnd.ms-powerpoint', 'application/powerpoint',
+                     'application/x-mspowerpoint', 'application/msword', 'text/plain', 'text/richtext',
+                     'application/x-rtf', 'text/vnd.rn-realtext', 'text/csv', 'application/x-iwork-keynote-sffkey',
+                     'application/x-iwork-numbers-sffnumbers', 'application/x-iwork-pages-sffpages',
+                     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                     'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
+                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', ]
 
 LOOM_FEE = 3
-
-SENDBIRD_API = 'EE7E8860-E9A8-49B2-9192-DBA542C8C07E'
 
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
 

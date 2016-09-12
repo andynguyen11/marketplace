@@ -10,6 +10,7 @@ from django.utils.deconstruct import deconstructible
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
 from social.apps.django_app.default.models import UserSocialAuth
+from expertratings.models import SkillTestResult
 
 from business.models import Employee
 
@@ -32,6 +33,41 @@ class Skills(tagulous.models.TagModel):
         ]
         autocomplete_view = 'skills_autocomplete'
 
+    verification_test = models.ForeignKey('expertratings.SkillTest', null=True)
+
+    def is_verified(self, user):
+        return SkillTestResult.objects.filter(
+                user=user, test=self.verification_test, test_result='PASS').exists()
+
+
+
+class SkillTest(models.Model):
+
+    class Meta:
+        unique_together = ("profile", "expertratings_test")
+
+    profile = models.ForeignKey('accounts.Profile')
+    expertratings_test = models.ForeignKey('expertratings.SkillTest')
+    skills = tagulous.models.TagField(to=Skills)
+    ticket_url = models.CharField(max_length=255, blank=True, null=True)
+
+
+    @property
+    def developer(self):
+        return self.profile
+
+    def create_ticket(self):
+        self.ticket_url = self.expertratings_test.create_ticket(user_id = self.developer.id)
+        self.save()
+        return self.ticket_url
+
+    @property
+    def results(self):
+        return self.expertratings_test.results(user=self.developer)
+
+    @property
+    def test_details(self):
+        return self.expertratings_test
 
 class Profile(AbstractUser):
 
@@ -130,30 +166,3 @@ class Profile(AbstractUser):
 Profile._meta.get_field('username').max_length = 75
 
 
-class SkillTest(models.Model):
-
-    class Meta:
-        unique_together = ("profile", "expertratings_test")
-
-    profile = models.ForeignKey(Profile)
-    expertratings_test = models.ForeignKey('expertratings.SkillTest')
-    skills = tagulous.models.TagField(to=Skills)
-    ticket_url = models.CharField(max_length=255, blank=True, null=True)
-
-
-    @property
-    def developer(self):
-        return self.profile
-
-    def create_ticket(self):
-        self.ticket_url = self.expertratings_test.create_ticket(user_id = self.developer.id)
-        self.save()
-        return self.ticket_url
-
-    @property
-    def results(self):
-        return self.expertratings_test.results(user=self.developer)
-
-    @property
-    def test_details(self):
-        return self.expertratings_test

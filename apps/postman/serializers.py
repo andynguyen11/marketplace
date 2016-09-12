@@ -15,6 +15,15 @@ class MessageInteraction(object):
         self.content = content
         self.timestamp = timestamp
 
+
+class FileInteraction(object):
+    def __init__(self, content, timestamp):
+        self.interactionType = 'file'
+        self.sender = None
+        self.recipient = None
+        self.content = content
+        self.timestamp = timestamp
+
 class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -23,8 +32,8 @@ class MessageSerializer(serializers.ModelSerializer):
 
 class InteractionSerializer(serializers.Serializer):
     interactionType = serializers.CharField(max_length=100)
-    sender = ObfuscatedProfileSerializer()
-    recipient = ObfuscatedProfileSerializer()
+    sender = ObfuscatedProfileSerializer(required=False, allow_null=True)
+    recipient = ObfuscatedProfileSerializer(required=False, allow_null=True)
     content = serializers.CharField(max_length=None)
     timestamp = serializers.DateTimeField(format='iso-8601')
 
@@ -38,6 +47,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     current_user = serializers.SerializerMethodField()
     attachments = AttachmentSerializer(many=True)
     interactions = serializers.SerializerMethodField()
+    sender = ObfuscatedProfileSerializer()
+    recipient = ObfuscatedProfileSerializer()
 
     class Meta:
         model = Message
@@ -61,6 +72,12 @@ class ConversationSerializer(serializers.ModelSerializer):
     def get_interactions(self, obj):
         messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
         interactions = []
+        for file in obj.attachments.filter(deleted=False):
+            interaction = FileInteraction(
+                timestamp=file.upload_date,
+                content=file.url
+            )
+            interactions.append(interaction)
         for message in messages:
             interaction = MessageInteraction(
                 sender=message.sender,
@@ -69,5 +86,6 @@ class ConversationSerializer(serializers.ModelSerializer):
                 content=message.body
             )
             interactions.append(interaction)
-        serializer = InteractionSerializer(interactions, many=True)
+        ordered_interactions = sorted(interactions, key=lambda k: k.timestamp)
+        serializer = InteractionSerializer(ordered_interactions, many=True)
         return serializer.data
