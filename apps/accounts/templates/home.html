@@ -129,14 +129,14 @@
 </div>
 {% endif %}
 
-{% if recent %}
+{% if new %}
   <div class="plates page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header brand-bold">Recent Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
   </div>
   <div class="plates-inner plates-inner--dev">
-    {% for project in recent %}
+    {% for project in new %}
     <a class="plate" href="{% url 'project' project.slug %}">
       <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
       <div class="plate-info">
