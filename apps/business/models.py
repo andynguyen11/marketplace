@@ -128,10 +128,10 @@ class ProjectInfo(models.Model):
     project = models.ForeignKey('business.Project')
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    attachments = GenericRelation(Attachment, related_query_name='business_projectinfo')
+    attachments = GenericRelation(Attachment, related_query_name='projectinfo')
 
     def tagged(self, tag):
-        return Attachment.objects.get(business_projectinfo=self, tag=tag)
+        return Attachment.objects.get(projectinfo=self, tag=tag)
 
     def safe_tagged(self, tag):
         try:
