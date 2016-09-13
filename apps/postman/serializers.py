@@ -71,6 +71,8 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_interactions(self, obj):
         messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
+        filter = Q(thread=obj.id)
+        Message.objects.set_read(self.context['request'].user, filter)
         interactions = []
         for file in obj.attachments.filter(deleted=False):
             interaction = FileInteraction(

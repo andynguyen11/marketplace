@@ -205,6 +205,12 @@ class Project(models.Model):
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     mix = models.BooleanField(default=False)
+    background = models.TextField(blank=True)
+    progress = models.TextField(blank=True)
+    scope = models.TextField(blank=True)
+    milestones = models.TextField(blank=True)
+    specs = models.TextField(blank=True)
+    private_info = models.TextField(blank=True)
 
     def __str__(self):
         return self.title

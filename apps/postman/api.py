@@ -1,3 +1,5 @@
+from datetime import timedelta, datetime
+
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -51,6 +53,10 @@ class MessageAPI(APIView):
         attachments = request.data.get('attachments', [])
         message = Message.objects.get(id=thread)
         if request.user == message.sender or request.user == message.recipient:
+            unread = Message.objects.filter(
+                thread=message,
+                read_at__isnull=True
+            ).order_by('-read_at')
             recipient = message.sender if request.user == message.recipient else message.recipient
             new_message = Message.objects.create(
                 sender=request.user,
@@ -63,14 +69,16 @@ class MessageAPI(APIView):
                 for file in attachments:
                     new_attachement = Attachment.objects.create(content_object=message, file=file)
             serializer = ConversationSerializer(message, context={'request': request})
-            # TODO Fill in email templates
-            # send_mail('', [recipient], {})
+            #if not unread:
+            #    send_mail('new-message', [recipient], {})
             return Response(serializer.data)
         return Response(status=403)
 
     def get(self, request, thread_id):
         thread = Message.objects.get(id=thread_id)
         messages = Message.objects.filter(thread=thread_id).order_by('sent_at')
+        filter = Q(thread=thread_id)
+        Message.objects.set_read(request.user, filter)
         if request.user == messages[0].sender or request.user == messages[0].recipient:
             interactions = []
             for file in thread.attachments.filter(deleted=False):

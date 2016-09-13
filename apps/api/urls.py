@@ -30,10 +30,6 @@ router = DeclarativeRouter({
         'nested': {
             'lookup': 'project',
             'routes': {
-                'info': {
-                    'view': InfoViewSet,
-                    'base_name': 'project-info'
-                },
                 'job': {
                     'view': NestedJobViewSet,
                     'base_name': 'project-job',

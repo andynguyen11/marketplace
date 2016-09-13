@@ -69,7 +69,7 @@ def view_profile(request, user_id=None):
     else:
         user = request.user
     projects = Project.objects.filter(project_manager=user)
-    jobs = Job.objects.filter(contractor=user)
+    jobs = Terms.objects.filter(job__contractor=user, status='agreed')
     return render_to_response('profile.html', {'user': user, 'social': user.linkedin, 'jobs': jobs, 'projects': projects }, context_instance=RequestContext(request))
 
 

@@ -59,39 +59,13 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
 
 
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
-    info = InfoSerializer(many=True, required=False)
-    details = InfoSerializer(required=False)
     slug = serializers.CharField(read_only=True)
     #category = serializers.CharField(required=False) # TODO - custom tag serializer needed
 
     class Meta:
         model = Project
-        fields = field_names(Project) + ('info', 'details', 'skills')
+        fields = field_names(Project) + ('skills', )
         parent_key = 'project'
-        child_fields = ('info',)
-
-    def handle_details(self, data, instance=None):
-        data = data.copy()
-        details = dict(**data.pop('details', {}))
-
-        if instance:
-            details['id'] = ProjectInfo.objects.get(project=instance, type='primary').id
-        data['info'] = [ i for i in data.pop('info', []) if i['type'] != 'primary']
-        for i, tab in enumerate(data['info']):
-            if tab['description'] == 'undefined':
-                del data['info'][i]
-        data['info'].append(details)
-        return data
-
-    def create(self, data, action='create'):
-        data = self.handle_details(data)
-        project = super(ProjectSerializer, self).create(data, action)
-        return project
-
-    def update(self, instance, data):
-        data = self.handle_details(data, instance)
-        project = super(ProjectSerializer, self).update(instance, data)
-        return project
 
 
 class JobSerializer(serializers.ModelSerializer):
