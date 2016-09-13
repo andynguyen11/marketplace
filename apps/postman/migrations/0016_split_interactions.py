@@ -7,9 +7,9 @@ from django.db import migrations, models
 import django.db.models.deletion
 import django.utils.timezone
 
-fields = ('id', 'email', 'sent_at', 'read_at', 'replied_at', 'sender_bookmarked', 'recipient_bookmarked',
+fields = ('email', 'sent_at', 'read_at', 'replied_at', 'sender_bookmarked', 'recipient_bookmarked',
           'sender_archived', 'recipient_archived', 'sender_deleted_at', 'recipient_deleted_at',
-          'moderation_status', 'moderation_date', 'moderation_reason', 'moderation_by', 'parent', 'recipient', 'sender', 'thread')
+          'moderation_status', 'moderation_date', 'moderation_reason', 'moderation_by', 'parent_id', 'recipient_id', 'sender_id', 'thread_id')
 
 def to_dict(message):
     return { k: getattr(message, k) for k in fields }
