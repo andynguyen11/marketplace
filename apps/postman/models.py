@@ -279,56 +279,34 @@ class MessageManager(models.Manager):
         ).update(read_at=now())
 
 
-@python_2_unicode_compatible
-class Message(models.Model):
-    """
-    A message between a User and another User or an AnonymousUser.
-    """
+class Interaction(models.Model):
 
-    SUBJECT_MAX_LENGTH = 120
+    objects = MessageManager()
 
-    subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
-    body = models.TextField(_("body"), blank=True)
-    sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_messages', null=True, blank=True, verbose_name=_("sender"))
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_messages', null=True, blank=True, verbose_name=_("recipient"))
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_interaction', null=True, blank=True, verbose_name=_("sender"))
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='received_interaction', null=True, blank=True, verbose_name=_("recipient"))
     email = models.EmailField(_("visitor"), blank=True)  # instead of either sender or recipient, for an AnonymousUser
-    parent = models.ForeignKey('self', related_name='next_messages', null=True, blank=True, verbose_name=_("parent message"))
-    thread = models.ForeignKey('self', related_name='child_messages', null=True, blank=True, verbose_name=_("root message"))
+
+    parent = models.ForeignKey('self', related_name='next_interaction', null=True, blank=True, verbose_name=_("parent interaction"))
+    thread = models.ForeignKey('self', related_name='child_interaction', null=True, blank=True, verbose_name=_("root interaction"))
+
     sent_at = models.DateTimeField(_("sent at"), default=now)
     read_at = models.DateTimeField(_("read at"), null=True, blank=True)
     replied_at = models.DateTimeField(_("replied at"), null=True, blank=True)
+
     sender_bookmarked = models.BooleanField(_("bookmarked by sender"), default=False)
     recipient_bookmarked = models.BooleanField(_("bookmarked by recipient"), default=False)
     sender_archived = models.BooleanField(_("archived by sender"), default=False)
     recipient_archived = models.BooleanField(_("archived by recipient"), default=False)
     sender_deleted_at = models.DateTimeField(_("deleted by sender at"), null=True, blank=True)
     recipient_deleted_at = models.DateTimeField(_("deleted by recipient at"), null=True, blank=True)
+
     # moderation fields
     moderation_status = models.CharField(_("status"), max_length=1, choices=STATUS_CHOICES, default=STATUS_ACCEPTED)
-    moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='moderated_messages',
+    moderation_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='moderated_%(class)ss',
         null=True, blank=True, verbose_name=_("moderator"))
     moderation_date = models.DateTimeField(_("moderated at"), null=True, blank=True)
     moderation_reason = models.CharField(_("rejection reason"), max_length=120, blank=True)
-    job = models.ForeignKey('business.Job', blank=True, null=True)
-    project = models.ForeignKey('business.Project', blank=True, null=True)
-    msa = models.ForeignKey('business.Document', blank=True, null=True)
-    attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
-    nda = models.ForeignKey('business.Document', blank=True, null=True, related_name='nda')
-    terms = models.ForeignKey('business.Terms', blank=True, null=True)
-
-    objects = MessageManager()
-
-    class Meta:
-        verbose_name = _("message")
-        verbose_name_plural = _("messages")
-        ordering = ['-sent_at']
-
-    def __str__(self):
-        return "{0}>{1}:{2}".format(self.obfuscated_sender, self.obfuscated_recipient, Truncator(self.subject).words(5))
-
-    def get_absolute_url(self):
-        "Usage is deprecated since v3.3.0, because it doesn't integrate well with the addition of namespaces."
-        return reverse('postman:view', args=[self.pk])
 
     def is_pending(self):
         """Tell if the message is in the pending state."""
@@ -421,13 +399,6 @@ class Message(models.Model):
     def get_replies_count(self):
         """Return the number of accepted responses."""
         return self.next_messages.filter(moderation_status=STATUS_ACCEPTED).count()
-
-    def quote(self, format_subject, format_body=None):
-        """Return a dictionary of quote values to initiate a reply."""
-        values = {'subject': format_subject(self.subject)[:self.SUBJECT_MAX_LENGTH]}
-        if format_body:
-            values['body'] = format_body(self.obfuscated_sender, self.body)
-        return values
 
     def clean(self):
         """Check some validity constraints."""
@@ -559,6 +530,68 @@ class Message(models.Model):
         elif auto is False:
             self.moderation_status = STATUS_REJECTED
             self.moderation_reason = final_reason
+
+
+@python_2_unicode_compatible
+class AttachmentInteraction(Interaction):
+    """
+    An attachment sent in a thread between a User and another User or an AnonymousUser.
+    """
+
+    _attachment = GenericRelation('generics.Attachment', related_query_name='generics_attachment')
+    objects = MessageManager()
+
+    @property
+    def attachment(self):
+        return self._attachment.all()[0]
+
+    class Meta:
+        verbose_name = _("attachment interaction")
+        verbose_name_plural = _("attachment interactions")
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return "{0}>{1}:{2}".format(self.obfuscated_sender, self.obfuscated_recipient, self.attachment)
+
+
+
+@python_2_unicode_compatible
+class Message(Interaction):
+    """
+    A message between a User and another User or an AnonymousUser.
+    """
+
+    SUBJECT_MAX_LENGTH = 120
+
+    subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
+    body = models.TextField(_("body"), blank=True)
+    job = models.ForeignKey('business.Job', blank=True, null=True)
+    project = models.ForeignKey('business.Project', blank=True, null=True)
+    msa = models.ForeignKey('business.Document', blank=True, null=True)
+    attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
+    nda = models.ForeignKey('business.Document', blank=True, null=True, related_name='nda')
+    terms = models.ForeignKey('business.Terms', blank=True, null=True)
+
+    objects = MessageManager()
+
+    class Meta:
+        verbose_name = _("message")
+        verbose_name_plural = _("messages")
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return "{0}>{1}:{2}".format(self.obfuscated_sender, self.obfuscated_recipient, Truncator(self.subject).words(5))
+
+    def get_absolute_url(self):
+        "Usage is deprecated since v3.3.0, because it doesn't integrate well with the addition of namespaces."
+        return reverse('postman:view', args=[self.pk])
+
+    def quote(self, format_subject, format_body=None):
+        """Return a dictionary of quote values to initiate a reply."""
+        values = {'subject': format_subject(self.subject)[:self.SUBJECT_MAX_LENGTH]}
+        if format_body:
+            values['body'] = format_body(self.obfuscated_sender, self.body)
+        return values
 
 
 class PendingMessageManager(models.Manager):

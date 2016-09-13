@@ -7,22 +7,24 @@ from docusign.models import DocumentSigner
 from generics.serializers import AttachmentSerializer
 from postman.models import Message
 
-class MessageInteraction(object):
+class Interaction(object):
     def __init__(self, sender, recipient, content, timestamp):
-        self.interactionType = 'message'
         self.sender = sender
         self.recipient = recipient
         self.content = content
         self.timestamp = timestamp
 
+class MessageInteraction(Interaction):
+    def __init__(self, *args, **kwargs):
+        self.interactionType = 'message'
+        super(MessageInteraction, self).__init__(*args, **kwargs)
 
-class FileInteraction(object):
-    def __init__(self, content, timestamp):
+
+class FileInteraction(Interaction):
+    def __init__(self, attachment, *args, **kwargs):
         self.interactionType = 'file'
-        self.sender = None
-        self.recipient = None
-        self.content = content
-        self.timestamp = timestamp
+        self.attachment_id = attachment.id
+        super(FileInteraction, self).__init__(*args, **kwargs)
 
 class MessageSerializer(serializers.ModelSerializer):
 
@@ -36,6 +38,8 @@ class InteractionSerializer(serializers.Serializer):
     recipient = ObfuscatedProfileSerializer(required=False, allow_null=True)
     content = serializers.CharField(max_length=None)
     timestamp = serializers.DateTimeField(format='iso-8601')
+
+    attachment_id = serializers.IntegerField(required=False, allow_null=True)
 
 
 class ConversationSerializer(serializers.ModelSerializer):

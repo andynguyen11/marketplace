@@ -4,15 +4,17 @@ from generics.models import Attachment
 from rest_framework import viewsets, authentication, permissions
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 
+from guardian.shortcuts import get_perms
 
-class OwnerPermission(permissions.BasePermission):
-    """ User owns attachmnet"""
+class ContentObjectPermission(permissions.BasePermission):
+    """ User owns related object"""
 
     def has_object_permission(self, request, view, obj):
-        return True #request.user.id == obj.content_object
+        perm = 'change_%s' % obj.content_object._meta.model_name 
+        return perm in get_perms(request.user, obj.content_object)
 
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, OwnerPermission)
+    permission_classes = (IsAuthenticated, ContentObjectPermission)
 

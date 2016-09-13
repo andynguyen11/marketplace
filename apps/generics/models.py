@@ -55,6 +55,6 @@ class Attachment(models.Model):
         return self.file.read()
 
     def __str__(self):
-        return '%s' % self.name
+        return self.name
 
 

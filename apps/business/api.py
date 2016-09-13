@@ -143,7 +143,7 @@ class InfoViewSet(NestedModelViewSet):
     parent_key = 'project'
 
 
-class ProjectViewSet(OwnedModelViewSet):
+class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer

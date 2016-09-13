@@ -1,5 +1,3 @@
-from datetime import timedelta, datetime
-
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -11,16 +9,30 @@ from rest_framework.decorators import permission_classes, api_view
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
 from generics.models import Attachment
-from postman.models import Message, STATUS_PENDING, STATUS_ACCEPTED
+from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction
+
+from itertools import chain
+from operator import attrgetter
+
+def all_interactions(thread_id):
+    return sorted(chain(*[
+            BaseModel.objects.filter(thread=thread_id).order_by('sent_at') for BaseModel
+            in [Message, AttachmentInteraction]
+        ]), key=attrgetter('sent_at'))
+
+def mark_read(user, thread):
+    filter = Q(thread=thread)
+    for BaseModel in [Message, AttachmentInteraction]:
+        BaseModel.objects.set_read(user, filter)
 
 
 class ConversationDetail(generics.RetrieveAPIView):
     queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
     permission_classes = (IsAuthenticated, IsPartOfConversation)
-    renderer_classes = (JSONRenderer, )
+    #renderer_classes = (JSONRenderer, )
 
 
 class MessageAPI(APIView):
@@ -47,55 +59,67 @@ class MessageAPI(APIView):
         new_message.save()
         return Response(status=200)
 
-    def patch(self, request):
-        thread = request.data['thread']
-        body = request.data['body']
-        attachments = request.data.get('attachments', [])
-        message = Message.objects.get(id=thread)
-        if request.user == message.sender or request.user == message.recipient:
-            unread = Message.objects.filter(
-                thread=message,
-                read_at__isnull=True
-            ).order_by('-read_at')
-            recipient = message.sender if request.user == message.recipient else message.recipient
-            new_message = Message.objects.create(
-                sender=request.user,
-                recipient=recipient,
-                thread=message,
-                body=body,
-                subject=message.subject
-            )
-            if attachments:
-                for file in attachments:
-                    new_attachement = Attachment.objects.create(content_object=message, file=file)
-            serializer = ConversationSerializer(message, context={'request': request})
+    def new_message(self, thread, user, body):
+        recipient = thread.sender if user == thread.recipient else thread.recipient
+        new_message = Message.objects.create(
+            sender=user,
+            recipient=recipient,
+            thread=thread,
+            body=body,
+            subject=thread.subject
+        )
+
+    def new_attachment(self, thread, user, attachment):
+        recipient = thread.sender if user == thread.recipient else thread.recipient
+        new_interaction = AttachmentInteraction.objects.create(
+            sender=user,
+            recipient=recipient,
+            thread=thread
+        )
+        Attachment.objects.create(content_object=new_interaction, file=attachment, tag='message')
+
+    def patch(self, request, thread_id=None):
+        thread = Message.objects.get(id = thread_id or request.data['thread'])
+        if request.user == thread.sender or request.user == thread.recipient:
+            if request.data.has_key('attachment'):
+                self.new_attachment(thread, request.user, request.data['attachment'])
+            else:
+                self.new_message(thread, request.user, request.data['body'])
+            serializer = ConversationSerializer(thread, context={'request': request})
+
+            #unread = Message.objects.filter(
+            #    thread=thread,
+            #    read_at__isnull=True
+            #).order_by('-read_at')
+
             #if not unread:
             #    send_mail('new-message', [recipient], {})
-            return Response(serializer.data)
-        return Response(status=403)
 
-    def get(self, request, thread_id):
-        thread = Message.objects.get(id=thread_id)
-        messages = Message.objects.filter(thread=thread_id).order_by('sent_at')
-        filter = Q(thread=thread_id)
-        Message.objects.set_read(request.user, filter)
-        if request.user == messages[0].sender or request.user == messages[0].recipient:
-            interactions = []
-            for file in thread.attachments.filter(deleted=False):
-                interaction = FileInteraction(
-                    timestamp=file.upload_date,
-                    content=file.url
-                )
-                interactions.append(interaction)
-            for message in messages:
-                interaction = MessageInteraction(
+            return Response(serializer.data)
+        else:
+            return Response(status=403)
+
+    def serialize_interaction(self, message):
+        if hasattr(message, 'attachment'):
+            return FileInteraction(
                     sender=message.sender,
                     recipient=message.recipient,
                     timestamp=message.sent_at,
-                    content=message.body
-                )
-                interactions.append(interaction)
-            ordered_interactions = sorted(interactions, key=lambda k: k.timestamp)
-            serializer = InteractionSerializer(ordered_interactions, many=True)
+                    content=message.attachment.url,
+                    attachment=message.attachment)
+        else:
+            return MessageInteraction(
+                    sender=message.sender,
+                    recipient=message.recipient,
+                    timestamp=message.sent_at,
+                    content=message.body)
+
+    def get(self, request, thread_id):
+        thread = Message.objects.get(id=thread_id)
+        messages = all_interactions(thread)
+        mark_read(request.user, thread)
+        if request.user == messages[0].sender or request.user == messages[0].recipient:
+            interactions = map(self.serialize_interaction, messages)
+            serializer = InteractionSerializer(interactions, many=True)
             return Response({'current_user': request.user.id, 'interactions':serializer.data})
         return Response(status=403)
