@@ -3,6 +3,7 @@ from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
 
 from postman.models import Message
@@ -52,6 +53,7 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
+@cache_page(60*60*12)
 def home(request):
     context = project_groups()
     context['developers'] = Profile.objects.filter(featured=1).exclude(role__isnull=True)[:4]
