@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load cache %}
 
 {% block content %}
+  {% cache 21600 projects type %}
   <div id="discover">
     <h1>Discover a project that inspires you.</h1>
     <div class="discover-nav">
@@ -161,6 +163,7 @@
     {% endif %}
     </div>
   </div>
+  {% endcache %}
 {% endblock %}
 
 {% block scripts %}

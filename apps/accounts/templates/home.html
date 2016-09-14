@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load cache %}
 
 {% block content %}
+{% cache 21600 home %}
 <div class="hero">
   <div id="hero-carousel--home" class="carousel slide">
 
@@ -254,7 +256,7 @@
 
 
 {% endcomment %}
-
+{% endcache %}
 {% endblock %}
 
 {% block scripts %}

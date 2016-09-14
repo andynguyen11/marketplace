@@ -53,7 +53,6 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-@cache_page(60*60*12)
 def home(request):
     context = project_groups()
     context['developers'] = Profile.objects.filter(featured=1).exclude(role__isnull=True)[:4]

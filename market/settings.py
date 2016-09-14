@@ -48,7 +48,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
-    'kombu.transport.django',
     'easy_timezones',
     'haystack',
     'generics',
