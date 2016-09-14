@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, api_view
+from django.db.models import Q
 
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
@@ -115,10 +116,10 @@ class MessageAPI(APIView):
                     content=message.body)
 
     def get(self, request, thread_id):
-        thread = Message.objects.get(id=thread_id)
-        messages = all_interactions(thread)
-        mark_read(request.user, thread)
-        if request.user == messages[0].sender or request.user == messages[0].recipient:
+        #thread_id = Message.objects.get(id=thread_id).thread
+        messages = all_interactions(thread_id)
+        mark_read(request.user, thread_id)
+        if len(messages) and (request.user == messages[0].sender or request.user == messages[0].recipient):
             interactions = map(self.serialize_interaction, messages)
             serializer = InteractionSerializer(interactions, many=True)
             return Response({'current_user': request.user.id, 'interactions':serializer.data})

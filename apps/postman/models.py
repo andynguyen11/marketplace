@@ -537,7 +537,7 @@ class AttachmentInteraction(Interaction):
     """
     An attachment sent in a thread between a User and another User or an AnonymousUser.
     """
-
+    interaction_ptr = models.OneToOneField(Interaction, parent_link=True, db_column='id')
     _attachment = GenericRelation('generics.Attachment', related_query_name='generics_attachment')
     objects = MessageManager()
 
@@ -560,6 +560,8 @@ class Message(Interaction):
     """
     A message between a User and another User or an AnonymousUser.
     """
+
+    interaction_ptr = models.OneToOneField(Interaction, parent_link=True, db_column='id')
 
     SUBJECT_MAX_LENGTH = 120
 

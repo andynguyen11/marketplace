@@ -5,7 +5,8 @@ from business.serializers import DocumentSerializer, TermsSerializer, JobSeriali
 from business.models import Document
 from docusign.models import DocumentSigner
 from generics.serializers import AttachmentSerializer
-from postman.models import Message
+from postman.models import Message, AttachmentInteraction
+from django.db.models import Q
 
 class Interaction(object):
     def __init__(self, sender, recipient, content, timestamp):
@@ -42,6 +43,12 @@ class InteractionSerializer(serializers.Serializer):
     attachment_id = serializers.IntegerField(required=False, allow_null=True)
 
 
+def mark_read(user, thread):
+    filter = Q(thread=thread)
+    for BaseModel in [Message, AttachmentInteraction]:
+        BaseModel.objects.set_read(user, filter)
+
+
 class ConversationSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     nda = DocumentSerializer()
@@ -75,8 +82,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_interactions(self, obj):
         messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
-        filter = Q(thread=obj.id)
-        Message.objects.set_read(self.context['request'].user, filter)
+        mark_read(self.context['request'].user, obj.id)
         interactions = []
         for file in obj.attachments.filter(deleted=False):
             interaction = FileInteraction(
