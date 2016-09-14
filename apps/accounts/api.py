@@ -68,7 +68,7 @@ class ProfileViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         if request.data.get('signup', None):
             account_confirmation.delay(
-                request.user,
+                request.user.id,
                 request.data.get('role', None)
             )
         return super(ProfileViewSet, self).update(request, *args, **kwargs)
