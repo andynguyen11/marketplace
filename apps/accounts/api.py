@@ -7,10 +7,11 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import permission_classes, list_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from accounts.emails import account_confirmation
+
 from accounts.models import Profile, Skills, SkillTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer
 from apps.api.permissions import IsCurrentUser, IsOwnerOrIsStaff
+from generics.tasks import account_confirmation
 from generics.viewsets import NestedModelViewSet
 from django.shortcuts import redirect
 
@@ -66,9 +67,8 @@ class ProfileViewSet(ModelViewSet):
     @permission_classes((IsAuthenticated, IsCurrentUser ))
     def update(self, request, *args, **kwargs):
         if request.data.get('signup', None):
-            account_confirmation(
+            account_confirmation.delay(
                 request.user,
-                request.data.get('first_name', None),
                 request.data.get('role', None)
             )
         return super(ProfileViewSet, self).update(request, *args, **kwargs)
