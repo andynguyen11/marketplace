@@ -3,7 +3,7 @@
 {% load cache %}
 
 {% block content %}
-  {% cache 21600 projects type %}
+  {% cache 21600 projects ENVIRONMENT type %}
   <div id="discover">
     <h1>Discover a project that inspires you.</h1>
     <div class="discover-nav">
