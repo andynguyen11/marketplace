@@ -2,10 +2,7 @@
 {% load staticfiles %}
 {% load cache %}
 
-{% ENVIRONMENT as env %}
-
 {% block content %}
-  {{ env }}
 {% cache 21600 home ENVIRONMENT %}
 <div class="hero">
   <div id="hero-carousel--home" class="carousel slide">
