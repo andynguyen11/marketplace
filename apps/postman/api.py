@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime
 
+from django.db.models import Q
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -11,6 +12,7 @@ from rest_framework.decorators import permission_classes, api_view
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
 from generics.models import Attachment
+from generics.tasks import new_message_notification
 from postman.models import Message, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction
@@ -45,6 +47,7 @@ class MessageAPI(APIView):
         )
         new_message.thread = new_message
         new_message.save()
+        new_message_notification.delay(recipient.id, new_message.id)
         return Response(status=200)
 
     def patch(self, request):
@@ -69,8 +72,7 @@ class MessageAPI(APIView):
                 for file in attachments:
                     new_attachement = Attachment.objects.create(content_object=message, file=file)
             serializer = ConversationSerializer(message, context={'request': request})
-            #if not unread:
-            #    send_mail('new-message', [recipient], {})
+            new_message_notification.delay(recipient.id, message.id)
             return Response(serializer.data)
         return Response(status=403)
 

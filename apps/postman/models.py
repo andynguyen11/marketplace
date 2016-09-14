@@ -315,6 +315,8 @@ class Message(models.Model):
     attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
     nda = models.ForeignKey('business.Document', blank=True, null=True, related_name='nda')
     terms = models.ForeignKey('business.Terms', blank=True, null=True)
+    last_emailed_owner = models.DateTimeField(null=True, blank=True)
+    last_emailed_bidder = models.DateTimeField(null=True, blank=True)
 
     objects = MessageManager()
 

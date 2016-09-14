@@ -83,7 +83,6 @@ def projects_by_type(request, type='all'):
     return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
 
 
-@cache_page(60*60*12)
 def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []

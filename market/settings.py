@@ -31,7 +31,7 @@ FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = (('Server Errors', 'andy@joinloom.com'), )
+ADMINS = ()
 SERVER_EMAIL = 'info@joinloom.com'
 
 AUTH_USER_MODEL = 'accounts.Profile'
@@ -58,7 +58,6 @@ INSTALLED_APPS = (
     'storages',
     'rest_framework',
     'rest_framework.authtoken',
-    #'webpack_loader',
     'jsonify',
     'tagulous',
     'crispy_forms',
@@ -74,15 +73,6 @@ INSTALLED_APPS = (
     'fixture_magic',
     'django_extensions'
 )
-
-WEBPACK_LOADER = {
-    'DEFAULT': {
-        'BUNDLE_DIR_NAME': 'js/',
-    }
-}
-
-if DEBUG:
-    WEBPACK_LOADER['DEFAULT']['STATS_FILE'] = os.path.join(BASE_DIR, 'webpack-stats.json')
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -112,6 +102,12 @@ CACHES = {
         }
     }
 }
+
+# CELERY SETTINGS
+BROKER_URL = 'redis://loom-redis-001.kkhbg2.0001.usw2.cache.amazonaws.com:6379/1'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 ROOT_URLCONF = 'market.urls'
 
