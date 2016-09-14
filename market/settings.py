@@ -104,7 +104,7 @@ CACHES = {
 }
 
 # CELERY SETTINGS
-BROKER_URL = 'redis://loom-redis-001.kkhbg2.0001.usw2.cache.amazonaws.com:6379/0'
+BROKER_URL = 'redis://loom-redis-001.kkhbg2.0001.usw2.cache.amazonaws.com:6379/1'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
