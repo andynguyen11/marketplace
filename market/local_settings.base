@@ -5,33 +5,40 @@ LOCAL_DB = False
 if LOCAL_DB:
     database = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': '',
+        'NAME': 'devquity',
         'USER': '',
         'PASSWORD': '',
         'HOST': ''
     }
+    MEDIAFILES_LOCATION = 'media'
+    MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)
+    DEFAULT_FILE_STORAGE = 'market.custom_storages.MediaStorage'
 else:
     database = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ebdb',
         'USER': 'unicron',
-        'PASSWORD': os.environ['DB_PASSWORD'],
-        'HOST': 'aa1n7mjjsbuw2gn.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
+        'PASSWORD': '',
+        'HOST': 'aa4vxuy7zcrys7.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
     }
+    MEDIAFILES_LOCATION = 'media'
+    MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)
+    DEFAULT_FILE_STORAGE = 'market.custom_storages.MediaStorage'
+
+
 
 DATABASES = {
     'default': database
 }
 
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'assets/')
-
+STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
-STATIC_URL = '/static/'
 
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
@@ -39,3 +46,20 @@ CSRF_COOKIE_SECURE = False
 LOCAL_DEV = True
 
 BASE_URL = 'localhost:8000'
+
+DOCUSIGN = {
+    'root_url': 'https://demo.docusign.net/restapi/v2',
+    'integrator_key': 'e5f0c77b-9ead-412f-9522-3783aea679a5',
+    'username': '5871a1ca-6d94-47c9-92c4-7f0c652fd93f',
+    'password': 'R41s31d34s512'
+}
+
+WEBHOOK_BASE_URL = ''
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
+
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = False

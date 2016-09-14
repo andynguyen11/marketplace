@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
 from django.http import HttpResponse
 
 from postman.helpers import pm_write
@@ -80,6 +81,7 @@ def serialized_project_groups(**kwargs):
 def projects_by_type(request, type='all'):
     kwargs = {'type': type} if type in [category[0] for category in PROJECT_TYPES] else {}
     return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
+
 
 def discover_projects(request, type='all'):
     # create list of projects types that exist.

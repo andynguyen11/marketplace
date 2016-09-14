@@ -3,6 +3,7 @@ from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.template.context import RequestContext
+from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
 
 from postman.models import Message
