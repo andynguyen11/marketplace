@@ -2144,7 +2144,8 @@ const ProjectBudget = withRouter(React.createClass({
         dataToSend.published = true;
 
         submitProjectData(dataToSend, (result) => {
-          // this.goToBudget(result);
+          window.location = `/project/${result.slug}/`;
+
         }, () => {
           this.setState({
             isSending: false,
