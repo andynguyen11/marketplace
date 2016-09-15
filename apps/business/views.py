@@ -65,9 +65,9 @@ def attach_docs(request):
     return NotImplemented
 
 def project_groups(**kwargs):
-    new = Project.objects.filter(deleted=False, **kwargs).order_by('-date_created')[:3]
+    new = Project.objects.filter(published=True, **kwargs).order_by('-date_created')[:3]
     try:
-        featured = Project.objects.filter(featured=1, deleted=False, **kwargs)[:3]
+        featured = Project.objects.filter(featured=1, published=True, **kwargs)[:3]
     except Project.DoesNotExist, e:
         featured = new[0]
     return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
@@ -87,7 +87,7 @@ def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []
     for item in PROJECT_TYPES:
-        if Project.objects.filter(type=item[0], deleted=False):
+        if Project.objects.filter(type=item[0], published=True):
             project_types.append(item)
 
     if type != 'all':
@@ -96,7 +96,7 @@ def discover_projects(request, type='all'):
     else:
         cat_name = 'all'
 
-    all = Project.objects.filter(deleted=False)
+    all = Project.objects.filter(published=True)
     new = all.filter(type=type).order_by('-date_created')
     featured = all.filter(type=type, featured=1)[:3]
     return render(request, 'project_by_type.html', {

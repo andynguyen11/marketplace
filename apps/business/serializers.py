@@ -60,7 +60,7 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
-    #category = serializers.CharField(required=False) # TODO - custom tag serializer needed
+    published = serializers.BooleanField(default=False)
 
     class Meta:
         model = Project

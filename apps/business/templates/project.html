@@ -169,27 +169,64 @@
 
       <div class="sub-section">
         <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Information</a></li>
-          {% for tab in project.info %}
+          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Info</a></li>
+          {% if project.private_info %}
           <li role="presentation">
-            <a href="#{{ tab.title|slugify }}" aria-controls="{{ tab.title|slugify }}" role="tab" data-toggle="tab">
-              {{ tab.title }}
-              {% if tab.type == 'private' %}
-                <i class="fa fa-lock"></i>
-              {% endif %}
+            <a href="#private" aria-controls="private" role="tab" data-toggle="tab">
+              Private Details <i class="fa fa-lock"></i>
             </a>
           </li>
-          {% endfor %}
+          {% endif %}
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" role="tab-panel" id="overview">
+
             <div class="col-md-7 project-details">
               <h2 class="brand-bold sub-section">Project Details</h2>
-              <p>{{ project.details.description | safe }}</p>
+
+              {% if project.skills %}
+              <div class="sub-section">
+                <h3 class="brand-bold sub-section">Preferred Technology Stack</h3>
+                  <div class="technology-panel">
+                  {% for skill in project.skills.all %}
+                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                  {% endfor %}
+                  </div>
+              </div>
+              {% endif %}
+
+              {% if project.background %}
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Background</h3>
+                <p>{{ project.background | safe }}</p>
+              </div>
+              {% endif %}
+
+              {% if project.progress %}
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Where we are today</h3>
+                <p>{{ project.progress | safe }}</p>
+              </div>
+              {% endif %}
+
+              {% if project.scope %}
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Scope of Work</h3>
+                <p>{{ project.scope | safe }}</p>
+              </div>
+              {% endif %}
+
+              {% if project.specs %}
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Deliverables and Specs</h3>
+                <p>{{ project.specs | safe }}</p>
+              </div>
+              {% endif %}
             </div>
+
             <div class="col-md-5 project-details-rail">
-              <div class="section">
-                <h2 class="brand sub-section brand-bold">Project Manager</h2>
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Project Manager</h3>
                 <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
                 <div class="project-byline pull-left">
                   <p>
@@ -199,22 +236,32 @@
                 </div>
                  <div class="clearfix"></div>
               </div>
-              {% if project.skills %}
-              <div>
-                <h2 class="brand-bold sub-section">Preferred Technology Stack</h2>
-                  <div class="technology-panel">
-                  {% for skill in project.skills.all %}
-                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
-                  {% endfor %}
-                  </div>
+
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Project Timing</h3>
+                <p>
+                  Start Date: <strong>{{ project.start_date }}</strong>
+                </p>
+                <p>
+                  End Date: <strong>{{ project.end_date }}</strong>
+                </p>
+              </div>
+
+              {% if project.milestones %}
+              <div class="sub-section">
+                <h3 class="brand sub-section brand-bold">Milestones</h3>
+                <p>
+                  {{ project.milestones | safe }}
+                </p>
               </div>
               {% endif %}
+
               <div class="clearfix"></div>
             </div>
           </div>
 
-          {% for tab in project.info %}
-          <div class="tab-pane" role="tab-panel" id="{{ tab.title|slugify }}">
+          {% if project.private_info %}
+          <div class="tab-pane" role="tab-panel" id="private">
             {% if tab.type == 'private' and request.user.id not in project.nda_list %}
               <div class="text-center nda-content col-md-8 col-md-offset-2 section">
                 <h2><i class="fa fa-lock"></i></h2>
@@ -226,34 +273,47 @@
               </div>
             {% else %}
             <div class="col-md-7 project-details">
-              <h2 class="sub-section brand-bold">{{ tab.title }}</h2>
-              <p>{{ tab.description | safe }}</p>
+              <h2 class="sub-section brand-bold">Private Details</h2>
+              <p>{{ project.private_info | safe }}</p>
             </div>
             <div class="col-md-5 section project-details-rail">
-              <h2 class="brand-bold">Project Manager</h2>
-              <img class="project-manager-photo pull-left" src="{{ project.project_manager.get_photo }}" />
+              <div class="section">
+                <h2 class="brand sub-section brand-bold">Project Manager</h2>
+                <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
                 <div class="project-byline pull-left">
                   <p>
-                    <span class="project-manager">{{ project.project_manager.first_name }} {{ project.project_manager.last_name }}</span> <br />
+                    <span class="project-manager">{{ project.project_manager.name }}</span> <br />
                     {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                   </p>
                 </div>
-              {% if project.skills %}
+                 <div class="clearfix"></div>
+              </div>
+
               <div class="section">
-                <h2 class="brand-bold sub-section">Preferred Technology Stack</h2>
-                  <div class="technology-panel">
-                  {% for skill in project.skills.all %}
-                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
-                  {% endfor %}
-                  </div>
+                <h3 class="brand sub-section brand-bold">Project Timing</h3>
+                <p>
+                  Start Date: <strong>{{ project.start_date }}</strong>
+                </p>
+                <p>
+                  End Date: <strong>{{ project.end_date }}</strong>
+                </p>
+              </div>
+
+              {% if project.milestones %}
+              <div class="section">
+                <h3 class="brand sub-section brand-bold">Milestones</h3>
+                <p>
+                  {{ project.milestones | safe }}
+                </p>
               </div>
               {% endif %}
-                <div class="clearfix"></div>
-              </div>
+
               <div class="clearfix"></div>
+            </div>
+            <div class="clearfix"></div>
             {% endif %}
           </div>
-          {% endfor %}
+          {% endif %}
         </div>
       </div>
     </div>
