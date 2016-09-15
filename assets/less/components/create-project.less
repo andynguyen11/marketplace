@@ -5,13 +5,31 @@
   justify-content: center;
 
   .progressBar-item {
-    display: flex;
     border: 2px solid @brand--primary;
-    height: 40px;
-    align-items: center;
-    padding: 25px;
-    text-transform: uppercase;
     font-weight: 700;
+
+    a, .progressBar-item-noLink {
+      display: flex;
+      align-items: center;
+      padding: 0 25px;
+      height: 50px;
+    }
+
+    .progressBar-item-dot {
+      width: 20px;
+      height: 20px;
+      text-align: center;
+      border: 1px solid @brand--primary;
+      border-radius: 50%;
+      color: @brand--primary;
+      background: #ffe5df;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-right: 7px;
+    }
 
     & + .progressBar-item {
       border-left: none;
@@ -25,16 +43,38 @@
       border-radius: 0 @border-radius @border-radius 0;
     }
 
+    &.progressBar-item--complete {
+      background: #f4dbd5;
+      color: @brand--primary;
+
+      .progressBar-item-dot {
+        background: @brand--primary;
+        color: #FFF;
+      }
+    }
+
     &.progressBar-item--active {
       background: @brand--primary;
-      color: #fff;
+      color: #f3f3f3;
+
+      .progressBar-item-dot {
+        border-color: #FFF;
+      }
+    }
+
+    &.progressBar-item--disabled {
+      background: #f3f3f3;
+      color: @brand--primary;
     }
   }
 }
 
+#newProject {
+  min-height: 600px;
+}
+
 .newProject {
   padding: 0 10px;
-  min-height: 400px;
 
   .newProject-headCap {
     margin: 50px 0;

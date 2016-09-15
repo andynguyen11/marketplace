@@ -149,6 +149,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, )
 
+    def update(self, request, *args, **kwargs):
+        # TODO Investigate why DRF doesn't update if None is passed, hack to explicitly set fields to 0
+        cash = request.data['estimated_cash']
+        equity = request.data['estimated_equity_percentage']
+        request.data['estimated_cash'] = cash if cash else 0
+        request.data['estimated_equity_percentage'] = equity if equity else 0
+        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+
 
 class ProjectSearchView(HaystackViewSet):
     """

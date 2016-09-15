@@ -97,7 +97,7 @@ def discover_projects(request, type='all'):
         cat_name = 'all'
 
     all = Project.objects.filter(published=True)
-    new = all.filter(type=type).order_by('-date_created')
+    new = all.filter(type=type, published=True).order_by('-date_created')
     featured = all.filter(type=type, featured=1)[:3]
     return render(request, 'project_by_type.html', {
         'all': all,
