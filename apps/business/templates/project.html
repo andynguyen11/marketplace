@@ -184,16 +184,6 @@
               <h2 class="brand-bold sub-section">Project Details</h2>
             </div>
             <div class="col-md-7 project-details">
-              {% if project.skills %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Preferred Technology Stack</h3>
-                  <div class="technology-panel">
-                  {% for skill in project.skills.all %}
-                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
-                  {% endfor %}
-                  </div>
-              </div>
-              {% endif %}
 
               {% if project.background %}
               <div class="sub-section">
@@ -236,6 +226,17 @@
                 </div>
                  <div class="clearfix"></div>
               </div>
+
+              {% if project.skills %}
+              <div class="sub-section">
+                <h3 class="brand-bold">Preferred Technology Stack</h3>
+                  <div class="technology-panel">
+                  {% for skill in project.skills.all %}
+                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                  {% endfor %}
+                  </div>
+              </div>
+              {% endif %}
 
               <div class="sub-section">
                 <h3 class="brand-bold">Project Timing</h3>
@@ -312,6 +313,17 @@
                 </div>
                  <div class="clearfix"></div>
               </div>
+
+              {% if project.skills %}
+              <div class="sub-section">
+                <h3 class="brand-bold">Preferred Technology Stack</h3>
+                  <div class="technology-panel">
+                  {% for skill in project.skills.all %}
+                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                  {% endfor %}
+                  </div>
+              </div>
+              {% endif %}
 
               <div class="sub-section">
                 <h3 class="brand-bold">Project Timing</h3>
