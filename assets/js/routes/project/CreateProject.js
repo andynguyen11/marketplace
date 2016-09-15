@@ -1189,7 +1189,8 @@ const defaultProjectState = {
   apiError: false,
   formError: false,
   isSending: false,
-  isLoading: true
+  isLoading: true,
+  project_image_file: ''
 };
 
 const getProjectData = (projectId, successCallback, errorCallback) => {
@@ -1542,7 +1543,12 @@ const ProjectBasics = withRouter(React.createClass({
         this.setState({ isSending: true });
 
         const dataToSend = Object.assign({}, data);
-        dataToSend.project_image = project_image_file;
+        if (project_image_file) {
+          dataToSend.project_image = project_image_file;
+        } else {
+          delete dataToSend.project_image;
+        }
+
 
         submitProjectData(dataToSend, (result) => {
           this.goToDetails(result);

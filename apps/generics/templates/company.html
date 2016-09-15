@@ -116,7 +116,7 @@
         <div class="plates-inner sub-section">
           {% for project in projects %}
           <a class="plate" href="{% url 'project' project.slug %}">
-            <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('{{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+            <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('{{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
             <div class="plate-info">
               <div class="plate-info-profile">
                 <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>

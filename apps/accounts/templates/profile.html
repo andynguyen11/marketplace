@@ -213,7 +213,7 @@
     <div class="plates-inner">
       {% for term in terms %}
       <div class="plate">
-        <div class="plate-image"{% if MEDIA_URL and term.job.project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ term.job.project.image.file }}');"{% endif %}></div>
+        <div class="plate-image"{% if MEDIA_URL and term.job.project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ term.job.project.project_image.file }}');"{% endif %}></div>
         <div class="plate-info">
           <div class="plate-info-profile">
             {% if term.job.project.project_manager.linkedin.extra_data.picture_url %}<div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ term.job.project.project_manager.linkedin.extra_data.picture_url }}');"></div>{% endif %}

@@ -37,7 +37,7 @@ def delete_project(request, project_id):
     project = Project.objects.get(id=project_id)
     if project.project_manager != request.user:
         return HttpResponse(status=403)
-    project.delete = True
+    project.deleted = True
     project.save()
     return redirect('view-bids')
 
