@@ -9,7 +9,7 @@ from django.utils.datastructures import MultiValueDictKeyError
 from postman.models import Message
 from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm, SignupForm
 from accounts.models import Profile
-from business.models import Project, Job, PROJECT_TYPES
+from business.models import Project, Job, Terms, PROJECT_TYPES
 from business.views import project_groups
 
 
