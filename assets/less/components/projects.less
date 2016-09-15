@@ -412,7 +412,7 @@ ul.project-meta {
   .project-basics-financial-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding-top: @gutter--medium;
 
     .andor {
@@ -452,12 +452,12 @@ ul.project-meta {
 
   .tab-content {
     .tab-pane {
+      h2 {
+        font-size: 48px;
+      }
       .project-details {
         padding-right: 75px;
         padding-bottom: 100px;
-        h2 {
-          font-size: 48px;
-        }
         img {
           width: 100%;
         }
