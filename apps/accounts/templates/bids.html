@@ -55,7 +55,7 @@
             <div class="section-header">
               <h4 class="pull-left"><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h4>
               <div class="action-buttons pull-right">
-                <a href="{% url 'edit-project' project.id %}" class="btn btn-brand">Edit</a>
+                <a href="{% url 'edit-project' %}#/{{ project.id }}/basics" class="btn btn-brand">Edit</a>
                 <a href="{% url 'delete-project' project.id %}" onclick="return confirm('Are you sure ?')" class="btn btn-brand">Remove</a>
               </div>
               <div class="clearfix"></div>

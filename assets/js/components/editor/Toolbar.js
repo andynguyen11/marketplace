@@ -2,18 +2,18 @@ import React from 'react'
 export default function Toolbar({id}){
     return (
         <div id={id} className="toolbar" dangerouslySetInnerHTML={{__html: `
-            <span class="ql-formats">
-                <select class="ql-header">
-                    <option value="1">Heading</option>
-                    <option value="2">Subheading</option>
-                    <option selected>Normal</option>
-                </select>
+            <!--<span class="ql-formats">-->
+                <!--<select class="ql-header">-->
+                    <!--<option value="1">Heading</option>-->
+                    <!--<option value="2">Subheading</option>-->
+                    <!--<option selected>Normal</option>-->
+                <!--</select>-->
                 <!--<select class="ql-font">-->
                     <!--<option selected>Sans Serif</option>-->
                     <!--<option value="serif">Serif</option>-->
                     <!--<option value="monospace">Monospace</option>-->
                 <!--</select>-->
-            </span>
+            <!--</span>-->
             <span class="ql-formats">
                 <button class="ql-bold"></button>
                 <button class="ql-italic"></button>
@@ -38,9 +38,9 @@ export default function Toolbar({id}){
                 <button class="ql-formula"></button>
                 <button class="ql-code-block"></button>
             </span-->
-            <span class="ql-formats">
-                <button class="ql-clean"></button>
-            </span>
+            <!--<span class="ql-formats">-->
+                <!--<button class="ql-clean"></button>-->
+            <!--</span>-->
         `}}/>
     )
 }

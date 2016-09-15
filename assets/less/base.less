@@ -79,6 +79,12 @@ ul {
   }
 }
 
+.hide-xs {
+  @media (max-width: @screen-xs) {
+    display: none !important;
+  }
+}
+
 .hide-medium {
   @media (max-width: @screen-md) {
     display: none !important;
@@ -103,6 +109,16 @@ ul {
 
 .page-content--medium {
   max-width: @content-width;
+  width: 100%;
+  margin: auto;
+
+  @media (max-width: @screen-sm) {
+    min-width: 320px !important;
+  }
+}
+
+.page-content--small {
+  max-width: @content-width--small;
   width: 100%;
   margin: auto;
 
@@ -398,3 +414,4 @@ a.project-link {
 
 @import "components/mobile.less";
 @import "components/discover.less";
+@import "components/create-project.less";
