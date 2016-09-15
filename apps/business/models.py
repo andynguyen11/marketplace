@@ -182,6 +182,11 @@ class Document(models.Model):
         return self.docusign_document.status
 
 
+class ProjectManager(models.Manager):
+    def get_queryset(self):
+        return super(ProjectManager, self).get_queryset().filter(deleted=False)
+
+
 class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
@@ -213,6 +218,9 @@ class Project(models.Model):
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
     project_image = models.ImageField(blank=True, null=True, upload_to='project-images')
+    published = models.BooleanField(default=False)
+
+    objects = ProjectManager()
 
     def __str__(self):
         return self.title
