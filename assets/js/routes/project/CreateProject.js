@@ -494,7 +494,7 @@ const HelperBubble = React.createClass({
 });
 
 const getProjectCreationLink = function(path, projectId) {
-  return projectId ? '/' + projectId + '/' + path : path;
+  return projectId ? '/' + projectId + '/' + path : '/' + path;
 };
 
 const ProgressBar = React.createClass({
@@ -942,13 +942,23 @@ const ProjectBasics = withRouter(React.createClass({
         this.setState({ isSending: true });
 
         const dataToSend = Object.assign({}, data);
+        const isNewProject = !dataToSend.id;
         if (project_image_file) {
           dataToSend.project_image = project_image_file;
         } else {
           delete dataToSend.project_image;
         }
 
+        if(window.sessionStorage.loomNewProjectId && isNewProject) {
+          dataToSend.id = window.sessionStorage.loomNewProjectId;
+        }
+
         submitProjectData(dataToSend, (result) => {
+
+          if(isNewProject) {
+            window.sessionStorage.loomNewProjectId = result.id;
+          }
+
           this.goToDetails(result);
         }, () => {
           this.setState({
@@ -1580,6 +1590,7 @@ const ProjectBudget = withRouter(React.createClass({
   },
 
   goToProjectPage(projectId) {
+    delete window.sessionStorage.loomNewProjectId;
     window.location = `/project/${projectId}/`;
   },
 
@@ -1630,6 +1641,10 @@ const ProjectBudget = withRouter(React.createClass({
 }));
 
 const NewProjectContainer = React.createClass({
+  componentWilllMount() {
+    delete window.sessionStorage.loomNewProjectId;
+  },
+
   render() {
     const { routes, route: { childRoutes }, params: { projectId } } = this.props;
 
