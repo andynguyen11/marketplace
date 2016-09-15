@@ -10,6 +10,23 @@ import momentPropTypes from 'react-moment-proptypes';
 import Quill from '../../components/editor/Quill';
 import FormHelpers from '../../utils/formHelpers';
 
+const processApiError = (apiError) => {
+  const { title } = apiError;
+  let errorText = 'Something went wrong! Please try again.';
+
+  if(title) {
+    if(Array.isArray(title)){
+      const thisError = title[0]
+      if(thisError === 'Project with this title already exists.') {
+        errorText = 'A project with this name already exists!'
+      }
+    }
+  }
+
+  console.warn(errorText);
+  return errorText;
+};
+
 const SkillsSelector = React.createClass({
   getInitialState() {
     return {
@@ -84,6 +101,27 @@ const InputError = React.createClass({
     const { children } = this.props;
 
     return <div className="form-error"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> {children}</div>;
+  }
+});
+
+const ApiError = React.createClass({
+  getInitialState() {
+    return {
+      errorMessage: ''
+    };
+  },
+
+  componentWillMount() {
+    const { error } = this.props;
+    const errorMessage = processApiError(error);
+
+    this.setState({ errorMessage });
+  },
+
+  render() {
+    const { errorMessage } = this.state;
+
+    return <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> {errorMessage}</div>;
   }
 });
 
@@ -563,7 +601,6 @@ const newProjectContainer = document.getElementById('newProject');
 let newProjectInfo = {};
 if(newProjectContainer){
   newProjectInfo = newProjectContainer.dataset;
-  console.log(newProjectInfo)
 }
 
 const defaultProjectState = {
@@ -613,7 +650,7 @@ const getProjectData = (projectId, successCallback, errorCallback) => {
         successCallback(result);
       },
       error: (xhr, status, error) => {
-        errorCallback(xhr, status, error);
+        errorCallback(xhr.responseJSON || xhr.responseText);
       }
     });
   } else {
@@ -636,7 +673,7 @@ const submitProjectData = (data, successCallback, errorCallback) => {
         successCallback(result);
       },
       error: (xhr, status, error) => {
-        errorCallback(xhr, status, error);
+        errorCallback(xhr.responseJSON || xhr.responseText);
       }
     });
   } else {
@@ -915,7 +952,12 @@ const ProjectBasics = withRouter(React.createClass({
           formFields,
           isLoading: false
         });
-      }, () => {});
+      }, (error) => {
+        this.setState({
+          isSending: false,
+          apiError: error
+        });
+      });
     }else{
       const cleanState = Object.assign({}, defaultProjectState);
       const formFields = this.formFields();
@@ -960,12 +1002,11 @@ const ProjectBasics = withRouter(React.createClass({
           }
 
           this.goToDetails(result);
-        }, () => {
+        }, (error) => {
           this.setState({
             isSending: false,
-            apiError: true
+            apiError: error
           });
-          console.warn(arguments);
         });
       }
     })
@@ -1015,7 +1056,7 @@ const ProjectBasics = withRouter(React.createClass({
       </span>
     );
     const formErrorMessage = formError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Please fix the errors above and try again.</div>;
-    const apiErrorMessage = apiError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Something went wrong! Please try again.</div>;
+    const apiErrorMessage = apiError && <ApiError error={apiError} />;
 
     return (
       <div className="newProject-basics">
@@ -1234,7 +1275,12 @@ const ProjectDetails = withRouter(React.createClass({
           formFields,
           isLoading: false
         });
-      }, () => {});
+      }, (error) => {
+        this.setState({
+          isSending: false,
+          apiError: error
+        });
+      });
     }else{
       if (state && state.data) {
         const formFields = this.formFields();
@@ -1269,12 +1315,11 @@ const ProjectDetails = withRouter(React.createClass({
 
         submitProjectData(dataToSend, (result) => {
           this.goToBudget(result);
-        }, () => {
+        }, (error) => {
           this.setState({
             isSending: false,
-            apiError: true
+            apiError: error
           });
-          console.warn(arguments);
         });
       }
     })
@@ -1294,7 +1339,7 @@ const ProjectDetails = withRouter(React.createClass({
     const { route: { path } } = this.props;
     const { data, formFields, isSending, isLoading, formError, apiError } = this.state;
     const formErrorMessage = formError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Please fix the errors above and try again.</div>;
-    const apiErrorMessage = apiError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Something went wrong! Please try again.</div>;
+    const apiErrorMessage = apiError && <ApiError error={apiError} />;
 
     if(isLoading) {
       return <Loader/>;
@@ -1517,7 +1562,12 @@ const ProjectBudget = withRouter(React.createClass({
           formFields,
           isLoading: false
         });
-      }, () => {});
+      }, (error) => {
+        this.setState({
+          isSending: false,
+          apiError: error
+        });
+      });
     }else{
       if (state && state.data) {
         const formFields = this.formFields();
@@ -1578,12 +1628,11 @@ const ProjectBudget = withRouter(React.createClass({
 
         submitProjectData(dataToSend, (result) => {
           this.goToProjectPage(result.slug);
-        }, () => {
+        }, (error) => {
           this.setState({
             isSending: false,
-            apiError: true
+            apiError: error
           });
-          console.warn(arguments);
         });
       }
     })
@@ -1608,7 +1657,7 @@ const ProjectBudget = withRouter(React.createClass({
     const or = (!and && cashInput && equityInput) && 'or';
     const andOr = (and || or) && <div className="newProject-compensation-andOr">{and}{or}</div>;
     const formErrorMessage = formError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Please fix the errors above and try again.</div>;
-    const apiErrorMessage = apiError && <div className="alert alert-danger"><i className="fa fa-exclamation-circle" aria-hidden="true"></i> Something went wrong! Please try again.</div>;
+    const apiErrorMessage = apiError && <ApiError error={apiError} />;
 
     return (
       <div className="newProject-details">

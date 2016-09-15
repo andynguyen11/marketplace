@@ -7,6 +7,7 @@
   .progressBar-item {
     border: 2px solid @brand--primary;
     font-weight: 700;
+    text-transform: capitalize;
 
     a, .progressBar-item-noLink {
       display: flex;
@@ -132,7 +133,7 @@
       }
 
       .newProject-attachImage-preview-filename {
-        padding: @gutter--medium 0;
+        padding: 13px 0 7px;
         text-align: center;
       }
 
@@ -273,6 +274,10 @@
   .alert-danger {
     background: #fff0f0;
     margin-top: 20px;
+
+    .fa {
+      margin-right: 5px;
+    }
   }
 
   .quill-disabled {
