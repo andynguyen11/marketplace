@@ -58,14 +58,13 @@ class ProjectSummarySerializer(serializers.ModelSerializer):
          fields = ('id', 'title', 'slug' , 'type', 'date_created', 'short_blurb', 'company', 'project_manager')
 
 
-class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
 
     class Meta:
         model = Project
         fields = field_names(Project) + ('skills', )
-        parent_key = 'project'
 
 
 class JobSerializer(serializers.ModelSerializer):
