@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'guardian',
     'easy_timezones',
     'haystack',
     'generics',
@@ -91,6 +92,7 @@ AUTHENTICATION_BACKENDS = (
     'social.backends.linkedin.LinkedinOAuth2',
     'accounts.auth.CaseInsensitiveModelBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 CACHES = {

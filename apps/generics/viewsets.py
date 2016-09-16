@@ -1,9 +1,23 @@
-from rest_framework import viewsets
-from rest_framework import generics
+from rest_framework import viewsets, generics, permissions
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import re
 from generics.utils import normalize_key_suffixes as normalize
+from guardian.shortcuts import assign_perm
+
+
+def assign_crud_permissions(user, object):
+    model_name = object._meta.model_name
+    for permission in ['change', 'delete']:
+        assign_perm('%s_%s' % (permission, model_name), user, object)
+
+class OwnedModelViewSet(viewsets.ModelViewSet):
+
+    permission_classes = (permissions.DjangoObjectPermissions, )
+
+    def perform_create(self, serializer):
+        object = serializer.save()
+        assign_crud_permissions(self.request.user, object)
 
 
 class NestedModelViewSet(viewsets.ModelViewSet):

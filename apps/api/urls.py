@@ -7,12 +7,14 @@ from generics.routers import DeclarativeRouter
 from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
+from generics.api import AttachmentViewSet
 from postman.api import ConversationDetail, MessageAPI
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
 router = DeclarativeRouter({
+    'attachment': AttachmentViewSet,
     'jobs': JobViewSet,
     'profile': {
         'view': ProfileViewSet,

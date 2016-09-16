@@ -6,24 +6,27 @@ from business.serializers import DocumentSerializer, TermsSerializer, JobSeriali
 from business.models import Document
 from docusign.models import DocumentSigner
 from generics.serializers import AttachmentSerializer
-from postman.models import Message
+from postman.models import Message, AttachmentInteraction
+from django.db.models import Q
 
-class MessageInteraction(object):
+class Interaction(object):
     def __init__(self, sender, recipient, content, timestamp):
-        self.interactionType = 'message'
         self.sender = sender
         self.recipient = recipient
         self.content = content
         self.timestamp = timestamp
 
+class MessageInteraction(Interaction):
+    def __init__(self, *args, **kwargs):
+        self.interactionType = 'message'
+        super(MessageInteraction, self).__init__(*args, **kwargs)
 
-class FileInteraction(object):
-    def __init__(self, content, timestamp):
+
+class FileInteraction(Interaction):
+    def __init__(self, attachment, *args, **kwargs):
         self.interactionType = 'file'
-        self.sender = None
-        self.recipient = None
-        self.content = content
-        self.timestamp = timestamp
+        self.attachment_id = attachment.id
+        super(FileInteraction, self).__init__(*args, **kwargs)
 
 class MessageSerializer(serializers.ModelSerializer):
 
@@ -37,6 +40,14 @@ class InteractionSerializer(serializers.Serializer):
     recipient = ObfuscatedProfileSerializer(required=False, allow_null=True)
     content = serializers.CharField(max_length=None)
     timestamp = serializers.DateTimeField(format='iso-8601')
+
+    attachment_id = serializers.IntegerField(required=False, allow_null=True)
+
+
+def mark_read(user, thread):
+    filter = Q(thread=thread)
+    for BaseModel in [Message, AttachmentInteraction]:
+        BaseModel.objects.set_read(user, filter)
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -72,8 +83,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_interactions(self, obj):
         messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
-        filter = Q(thread=obj.id)
-        Message.objects.set_read(self.context['request'].user, filter)
+        mark_read(self.context['request'].user, obj.id)
         interactions = []
         for file in obj.attachments.filter(deleted=False):
             interaction = FileInteraction(
