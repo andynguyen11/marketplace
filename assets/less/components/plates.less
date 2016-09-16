@@ -7,13 +7,14 @@
     justify-content: space-between;
     padding-top: @gutter * 4;
     padding-bottom: @gutter;
+    padding: 0 @gutter--medium;
 
     @media (max-width: @screen-md) {
       padding: 0 @gutter--medium;
     }
 
     @media (max-width: @screen-sm) {
-      padding: (@gutter * 2) @gutter 0;
+      padding: (@gutter * 2) @gutter--medium 0;
 
       .btn {
         padding: 6px 12px;
@@ -42,10 +43,7 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-
-    @media (max-width: @screen-md) {
-      padding: 0 @gutter--medium;
-    }
+    padding: 0 @gutter--medium;
   }
 
   .plate {
@@ -66,7 +64,7 @@
     }
 
     @media (max-width: @screen-md) {
-      flex-basis: 100%;
+      flex-basis: 49%;
       margin-right: 0;
       flex-shrink: 0;
 
@@ -76,6 +74,10 @@
     }
 
     @media (max-width: @screen-xs) {
+      flex-basis: 100%;
+    }
+
+    @media (max-width: @screen-sm) {
       flex-basis: 100%;
     }
   }
@@ -320,5 +322,15 @@
 
   .plate--dev-info-hire-button {
     font-family: @brand-font;
+  }
+}
+
+.plates--home {
+  .plate {
+    @media (max-width: @screen-md) {
+      &:nth-child(n+3) {
+        display: none;
+      }
+    }
   }
 }

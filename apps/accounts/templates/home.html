@@ -89,7 +89,7 @@
 </div>
 
 {% if featured %}
-<div class="plates page-content--medium">
+<div class="plates plates--home page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header brand-bold">Featured Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
@@ -132,7 +132,7 @@
 {% endif %}
 
 {% if new %}
-  <div class="plates page-content--medium">
+<div class="plates plates--home page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header brand-bold">Recent Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
@@ -172,13 +172,13 @@
     {% endfor %}
   </div>
 </div>
-  {% endif %}
+{% endif %}
 
 {% if developers %}
 <div id="devs-home" class="devs page-content--medium">
   <div class='plates page-content--medium'>
     <div class="plates-headcap">
-      <h3 class="plates-header brand-bold">Featured developers</h3>
+      <h3 class="plates-header brand-bold">Featured Developers</h3>
       {% comment %}<a href="{% url 'discover-developers' 'all' %}" class="btn btn--clear btn-lg">View all</a>{% endcomment %}
     </div>
     <div class='plates-inner plates-inner--dev'>

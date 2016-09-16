@@ -348,6 +348,8 @@
 ul.project-meta {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+
   li {
     display: flex;
     flex-direction: row;
@@ -363,7 +365,7 @@ ul.project-meta {
 
 #project {
   .project-header {
-    padding-top: @gutter * 2;
+    padding: @gutter * 2 0;
 
     h1 {
       font-size: 48px;
@@ -377,6 +379,10 @@ ul.project-meta {
   h2 {
     margin: 0;
     font-weight: normal;
+
+    @media (max-width: @screen-sm) {
+      font-size: 32px;
+    }
   }
 
   .project-basics {
@@ -397,6 +403,9 @@ ul.project-meta {
 
     @media (max-width: @screen-md) {
       height: auto;
+      padding-right: 20px;
+      padding-left: 20px;
+      padding-bottom: 30px;
     }
   }
 
@@ -433,21 +442,33 @@ ul.project-meta {
   }
 
   .project-basics-actions {
-    padding-top: @gutter;
 
-    .btn + .btn {
-      margin-left: @gutter;
+    .btn {
+      margin-top: @gutter--medium;
+
+      &:first-of-type {
+        margin-right: @gutter;
+      }
     }
   }
 
   .project-header-left {
     padding-right: 75px;
+
+    @media (max-width: @screen-md) {
+      padding-right: 20px;
+      padding-left: 20px;
+    }
   }
   .project-image {
     width: 100%;
     padding-bottom: 400px;
     border-radius: @border-radius;
     background-position: center;
+
+    @media (max-width: @screen-sm) {
+      padding-bottom: 100%;
+    }
   }
 
   .tab-content {
@@ -458,11 +479,19 @@ ul.project-meta {
       .project-details {
         padding-right: 75px;
         padding-bottom: 100px;
+
         .sub-section {
           overflow: hidden;
+          padding: 0;
         }
         img {
           width: 100%;
+        }
+
+        @media (max-width: @screen-md) {
+          padding-right: 20px;
+          padding-bottom: 40px;
+          padding-left: 20px;
         }
       }
       .project-details-rail {
@@ -477,6 +506,11 @@ ul.project-meta {
             margin-right: 10px;
           }
         }
+
+        @media (max-width: @screen-md) {
+          padding-right: 20px;
+          padding-left: 20px;
+        }
       }
       .nda-content {
         .fa-lock {
@@ -484,16 +518,22 @@ ul.project-meta {
           color: @brand-neutral--3;
         }
       }
+      .sub-section {
+        margin: @gutter 0 0 !important;
+      }
     }
   }
   .nav-tabs {
+    padding: 0 20px;
+
     li {
       display: flex;
       text-transform: uppercase;
       font-size: 10px;
       font-weight: bold;
+
       a {
-        padding: 10px 50px;
+        padding: 10px 30px;
       }
       .fa-lock {
         position: absolute;
