@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('postman', '0016_split_interactions'),
+        ('postman', '0018_split_interactions'),
     ]
 
     operations = [

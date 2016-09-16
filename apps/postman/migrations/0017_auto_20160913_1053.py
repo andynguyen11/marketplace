@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('postman', '0014_auto_20160830_1334'),
+        ('postman', '0016_auto_20160914_2021'),
     ]
 
     operations = [
