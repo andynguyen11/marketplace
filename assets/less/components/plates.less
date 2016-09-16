@@ -8,6 +8,10 @@
     padding-top: @gutter * 4;
     padding-bottom: @gutter;
 
+    @media (max-width: @screen-md) {
+      padding: 0 @gutter--medium;
+    }
+
     @media (max-width: @screen-sm) {
       padding: (@gutter * 2) @gutter 0;
 
@@ -39,11 +43,8 @@
     flex-wrap: wrap;
     justify-content: space-between;
 
-    @media (max-width: @screen-sm) {
-      padding: @gutter;
-      flex-wrap: nowrap;
-      overflow-x: scroll;
-      -webkit-overflow-scrolling: touch;
+    @media (max-width: @screen-md) {
+      padding: 0 @gutter--medium;
     }
   }
 
@@ -64,10 +65,18 @@
       text-decoration: none;
     }
 
-    @media (max-width: @screen-sm) {
-      flex-basis: 95%;
-      margin-right: @gutter;
+    @media (max-width: @screen-md) {
+      flex-basis: 100%;
+      margin-right: 0;
       flex-shrink: 0;
+
+      &:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: @screen-xs) {
+      flex-basis: 100%;
     }
   }
 
@@ -227,8 +236,14 @@
     display: flex;
     font-family: @brand-font-bold;
 
+    @media (max-width: @screen-md) {
+      &:nth-child(2) {
+        display: flex;
+      }
+    }
+
     @media (max-width: @screen-sm) {
-      flex-basis: 95%;
+      flex-basis: 100%;
     }
   }
 
@@ -300,6 +315,7 @@
   .plate--dev-info-availability {
     font-size: 18px;
     font-weight: bold;
+    text-align: center;
   }
 
   .plate--dev-info-hire-button {
