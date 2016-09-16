@@ -332,7 +332,7 @@ const DeveloperOnboard = React.createClass({
             contentType: false,
             processData: false,
             success: function (result) {
-              window.location = '/profile/dashboard/';
+              window.location = '/profile/dashboard/?signup=developer';
             }.bind(this),
             error: (xhr, status, error) => {
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
