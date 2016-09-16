@@ -442,10 +442,13 @@ ul.project-meta {
   }
 
   .project-basics-actions {
-    padding-top: @gutter;
 
-    &.first-of-type {
-      margin-right: @gutter;
+    .btn {
+      margin-top: @gutter--medium;
+
+      &:first-of-type {
+        margin-right: @gutter;
+      }
     }
   }
 
@@ -515,7 +518,7 @@ ul.project-meta {
           color: @brand-neutral--3;
         }
       }
-      .sub-Section {
+      .sub-section {
         margin: @gutter 0 0 !important;
       }
     }
