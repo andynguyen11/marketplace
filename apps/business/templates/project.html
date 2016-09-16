@@ -18,128 +18,264 @@
         {% endif %}
       </h4>
     </div>
-      <div class="section">
-        <div class="col-md-7 project-header-left">
-          <div class="project-image" style="background-image: url({{ MEDIA_URL }}{{ project.project_image.file }})"></div>
-          <div class="sub-section">{{ project.short_blurb }}</div>
-          <ul class="project-meta sub-section">
-            <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
-              <h4>
-              {% if project.company %}
-                {{ project.company.city }}, {{ project.company.state }}
-              {% else %}
-                {{ project.project_manager.city }}, {{ project.project_manager.state }}
-              {% endif %}
-              </h4>
-            </li>
-            <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
-          </ul>
+    <div class="col-md-7 project-header-left">
+      <div class="project-image" style="background-image: url({{ MEDIA_URL }}{{ project.project_image.file }})"></div>
+      <div class="sub-section">{{ project.short_blurb }}</div>
+      <ul class="project-meta sub-section">
+        <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
+          <h4>
+          {% if project.company %}
+            {{ project.company.city }}, {{ project.company.state }}
+          {% else %}
+            {{ project.project_manager.city }}, {{ project.project_manager.state }}
+          {% endif %}
+          </h4>
+        </li>
+        <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
+      </ul>
+    </div>
+    <div class="col-md-5 project-basics-stats">
+      <div class="project-basics-financials">
+        <h2>Project Budget</h2>
+        <div class="project-basics-financial-row">
+          {% if project.estimated_equity_percentage %}
+          <div class="project-basics-financial-stat">
+            <h2 class="brand-bold text-brand">{{ project.estimated_equity_percentage }}%</h2>
+            <div class="project-basics-financial-label">equity</div>
+          </div>
+          {% endif %}
+
+          {% if project.estimated_cash and project.estimated_equity_percentage %}
+          <span class="andor">
+                {% if project.mix %}
+                and
+                {% else %}
+                or
+                {% endif %}
+              </span>
+          {% endif %}
+
+          {% if project.estimated_cash %}
+          <div class="project-basics-financial-stat">
+            <h2 class="brand-bold text-brand">${{ project.estimated_cash }}</h2>
+            <div class="project-basics-financial-label">cash</div>
+          </div>
+          {% endif %}
         </div>
-        <div class="col-md-5 project-basics-stats">
-          <div class="project-basics-financials">
-            <h2>Project Budget</h2>
-            <div class="project-basics-financial-row">
-              {% if project.estimated_equity_percentage %}
-              <div class="project-basics-financial-stat">
-                <h2 class="brand-bold text-brand">{{ project.estimated_equity_percentage }}%</h2>
-                <div class="project-basics-financial-label">equity</div>
-              </div>
-              {% endif %}
 
-              {% if project.estimated_cash and project.estimated_equity_percentage %}
-              <span class="andor">
-                    {% if project.mix %}
-                    and
-                    {% else %}
-                    or
-                    {% endif %}
-                  </span>
-              {% endif %}
+        <div class="project-basics-financials-bids">
+          <h2>Average Bid Placed</h2>
+          {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
+          {% if project.average_equity or project.average_cash %}
 
-              {% if project.estimated_cash %}
-              <div class="project-basics-financial-stat">
-                <h2 class="brand-bold text-brand">${{ project.estimated_cash }}</h2>
-                <div class="project-basics-financial-label">cash</div>
-              </div>
-              {% endif %}
+          <div class="project-basics-financial-row">
+            {% if project.average_equity %}
+            <div class="project-basics-financial-stat">
+              <h2 class="brand-bold text-brand">{{ project.average_equity }}%</h2>
+              <div class="project-basics-financial-label">avg equity bid</div>
             </div>
-
-            <div class="project-basics-financials-bids">
-              <h2>Average Bid Placed</h2>
-              {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
-              {% if project.average_equity or project.average_cash %}
-
-              <div class="project-basics-financial-row">
-                {% if project.average_equity %}
-                <div class="project-basics-financial-stat">
-                  <h2 class="brand-bold text-brand">{{ project.average_equity }}%</h2>
-                  <div class="project-basics-financial-label">avg equity bid</div>
-                </div>
-                {% endif %}
-                {% if project.average_cash %}
-                <div class="project-basics-financial-stat">
-                  <h2 class="brand-bold text-brand">${{ project.average_cash }}</h2>
-                  <div class="project-basics-financial-label">avg cash bid</div>
-                </div>
-                {% endif %}
-              </div>
-              {% endif %}
-              {% if project.average_combined.equity or project.average_combined.cash %}
-              <div class="project-basics-financial-row">
-                <div class="project-basics-financial-stat">
-                  <h2 class="brand-bold text-brand">{{ project.average_combined.equity }}%</h2>
-                </div>
-                {% if project.average_combined.equity and project.average_combined.cash %}
-                <div class="andor">and</div>
-                {% endif %}
-                <div class="project-basics-financial-stat">
-                  <h2 class="brand-bold text-brand">${{ project.average_combined.cash }}</h2>
-                </div>
-              </div>
-              <div class="project-basics-financial-label">avg combined bid</div>
-              {% endif %}
-              {% else %}
-              <h4 class="brand-bold text-spaced">Bids haven't been placed on this project yet.</h4>
-              <h4 class="brand-bold text-spaced">Be the first!</h4>
-              {% endif %}
+            {% endif %}
+            {% if project.average_cash %}
+            <div class="project-basics-financial-stat">
+              <h2 class="brand-bold text-brand">${{ project.average_cash }}</h2>
+              <div class="project-basics-financial-label">avg cash bid</div>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+          {% if project.average_combined.equity or project.average_combined.cash %}
+          <div class="project-basics-financial-row">
+            <div class="project-basics-financial-stat">
+              <h2 class="brand-bold text-brand">{{ project.average_combined.equity }}%</h2>
+            </div>
+            {% if project.average_combined.equity and project.average_combined.cash %}
+            <div class="andor">and</div>
+            {% endif %}
+            <div class="project-basics-financial-stat">
+              <h2 class="brand-bold text-brand">${{ project.average_combined.cash }}</h2>
             </div>
           </div>
+          <div class="project-basics-financial-label">avg combined bid</div>
+          {% endif %}
+          {% else %}
+          <h4 class="brand-bold text-spaced">Be the first to bid!</h4>
+          {% endif %}
+        </div>
+      </div>
 
-          <div class="project-basics-actions">
-            {% if request.user == project.project_manager %}
-              <a class="btn btn-brand" href="{% url 'edit-project' %}#/{{ project.id }}/basics">Edit Project</a>
+      <div class="project-basics-actions">
+        {% if request.user == project.project_manager %}
+          <a class="btn btn-brand" href="{% url 'edit-project' %}#/{{ project.id }}/basics">Edit Project</a>
+        {% else %}
+          {% if not job %}
+
+            {% if user.is_authenticated %}
+              <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
             {% else %}
-              {% if not job %}
+              <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#noAuthBidModal">Bid on Project</button>
 
-                {% if user.is_authenticated %}
-                  <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
-                {% else %}
-                  <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#noAuthBidModal">Bid on Project</button>
-
-                  <div class="modal fade modal-project-noauth" id="noAuthBidModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
-                    <div class="modal-dialog modal-sm" role="document">
-                      <div class="modal-content">
-                        <div class="modal-body">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                          <h4>You'll need to create a Loom account to bid on projects.</h4>
-                          <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
-                          <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
-                        </div>
-                      </div>
+              <div class="modal fade modal-project-noauth" id="noAuthBidModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
+                <div class="modal-dialog modal-sm" role="document">
+                  <div class="modal-content">
+                    <div class="modal-body">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                      <h4>You'll need to create a Loom account to bid on projects.</h4>
+                      <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
+                      <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
                     </div>
                   </div>
-                {% endif %}
+                </div>
+              </div>
+            {% endif %}
 
-              {% endif %}
+          {% endif %}
 
+          {% if user.is_authenticated %}
+            {% if job %}
+              <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+            {% else %}
+              <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
+            {% endif %}
+          {% else %}
+            <button type="button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#noAuthMessageModal">Send Message</button>
+
+            <div class="modal fade modal-project-noauth" id="noAuthMessageModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
+              <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                  <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4>You'll need to create a Loom account to send messages.</h4>
+                    <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
+                    <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {% comment %}
+      <p class="small text-muted">This company is accepting bids for work in forms of
+        {% if project.estimated_equity_percentage %}equity {% endif %}
+        {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}
+        {% if project.estimated_cash %} cash payment {% endif %}
+        for services rendered.</p>
+        {% endcomment %}
+    </div>
+    <div class="clearfix"></div>
+
+    <div class="sub-section">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Info</a></li>
+        {% if project.private_info %}
+        <li role="presentation">
+          <a href="#private" aria-controls="private" role="tab" data-toggle="tab">
+            Private Details <i class="fa fa-lock"></i>
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" role="tab-panel" id="overview">
+          <div class="col-md-12">
+            <h2 class="brand-bold sub-section">Project Details</h2>
+          </div>
+          <div class="col-md-7 project-details">
+
+            {% if project.background %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Background</h3>
+              <p>{{ project.background | safe }}</p>
+            </div>
+            {% endif %}
+
+            {% if project.progress %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Where we are today</h3>
+              <p>{{ project.progress | safe }}</p>
+            </div>
+            {% endif %}
+
+            {% if project.scope %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Scope of Work</h3>
+              <p>{{ project.scope | safe }}</p>
+            </div>
+            {% endif %}
+
+            {% if project.specs %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Deliverables and Specs</h3>
+              <p>{{ project.specs | safe }}</p>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="col-md-5 project-details-rail">
+            <div class="sub-section">
+              <h3 class="brand-bold">Project Manager</h3>
+              <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">{{ project.project_manager.name }}</span> <br />
+                  {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
+                </p>
+              </div>
+               <div class="clearfix"></div>
+            </div>
+
+            {% if project.skills %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Preferred Technology Stack</h3>
+                <div class="technology-panel">
+                {% for skill in project.skills.all %}
+                <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="sub-section">
+              <h3 class="brand-bold">Project Timing</h3>
+              <p>
+                Start Date: <strong>{{ project.start_date }}</strong>
+              </p>
+              <p>
+                End Date: <strong>{{ project.end_date }}</strong>
+              </p>
+            </div>
+
+            {% if project.milestones %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Milestones</h3>
+              <p>
+                {{ project.milestones | safe }}
+              </p>
+            </div>
+            {% endif %}
+
+            <div class="clearfix"></div>
+          </div>
+        </div>
+
+        {% if project.private_info %}
+        <div class="tab-pane" role="tab-panel" id="private">
+          {% if request.user.id not in project.nda_list %}
+            <div class="text-center nda-content col-md-9 col-md-offset-1 section">
+              <h2><i class="fa fa-lock"></i></h2>
+              <div class="sub-section">
+                <h3 class="brand-bold">You’ll need to sign a Non-disclosure Agreement to view private details.</h3>
+                <h4 class="text-skinny">Send a message to the project manager to let them know you’re interested to learn more!</h4>
+              </div>
               {% if user.is_authenticated %}
                 {% if job %}
-                  <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+                  <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
                 {% else %}
-                  <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
+                  <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Request NDA Access</button>
                 {% endif %}
               {% else %}
-                <button type="button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#noAuthMessageModal">Send Message</button>
+                <button type="button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#noAuthMessageModal">Request NDA Access</button>
 
                 <div class="modal fade modal-project-noauth" id="noAuthMessageModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
                   <div class="modal-dialog modal-sm" role="document">
@@ -154,203 +290,64 @@
                   </div>
                 </div>
               {% endif %}
+            </div>
+          {% else %}
+          <div class="col-md-12">
+            <h2 class="sub-section brand-bold">Private Details</h2>
+          </div>
+          <div class="col-md-7 project-details sub-section">
+            <h3 class="brand-bold">Private Information</h3>
+            <p>{{ project.private_info | safe }}</p>
+          </div>
+          <div class="col-md-5 project-details-rail">
+            <div class="sub-section">
+              <h3 class="brand-bold">Project Manager</h3>
+              <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
+              <div class="project-byline pull-left">
+                <p>
+                  <span class="project-manager">{{ project.project_manager.name }}</span> <br />
+                  {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
+                </p>
+              </div>
+               <div class="clearfix"></div>
+            </div>
+
+            {% if project.skills %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Preferred Technology Stack</h3>
+                <div class="technology-panel">
+                {% for skill in project.skills.all %}
+                <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
+                {% endfor %}
+                </div>
+            </div>
             {% endif %}
-          </div>
 
-          {% comment %}
-          <p class="small text-muted">This company is accepting bids for work in forms of
-            {% if project.estimated_equity_percentage %}equity {% endif %}
-            {% if project.estimated_cash and project.estimated_equity_percentage %} and {% endif %}
-            {% if project.estimated_cash %} cash payment {% endif %}
-            for services rendered.</p>
-            {% endcomment %}
-        </div>
-        <div class="clearfix"></div>
-
-      <div class="sub-section">
-        <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Public Info</a></li>
-          {% if project.private_info %}
-          <li role="presentation">
-            <a href="#private" aria-controls="private" role="tab" data-toggle="tab">
-              Private Details <i class="fa fa-lock"></i>
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-        <div class="tab-content">
-          <div class="tab-pane active" role="tab-panel" id="overview">
-            <div class="col-md-12">
-              <h2 class="brand-bold sub-section">Project Details</h2>
-            </div>
-            <div class="col-md-7 project-details">
-
-              {% if project.background %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Background</h3>
-                <p>{{ project.background | safe }}</p>
-              </div>
-              {% endif %}
-
-              {% if project.progress %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Where we are today</h3>
-                <p>{{ project.progress | safe }}</p>
-              </div>
-              {% endif %}
-
-              {% if project.scope %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Scope of Work</h3>
-                <p>{{ project.scope | safe }}</p>
-              </div>
-              {% endif %}
-
-              {% if project.specs %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Deliverables and Specs</h3>
-                <p>{{ project.specs | safe }}</p>
-              </div>
-              {% endif %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Project Timing</h3>
+              <p>
+                Start Date: <strong>{{ project.start_date }}</strong>
+              </p>
+              <p>
+                End Date: <strong>{{ project.end_date }}</strong>
+              </p>
             </div>
 
-            <div class="col-md-5 project-details-rail">
-              <div class="sub-section">
-                <h3 class="brand-bold">Project Manager</h3>
-                <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
-                <div class="project-byline pull-left">
-                  <p>
-                    <span class="project-manager">{{ project.project_manager.name }}</span> <br />
-                    {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
-                  </p>
-                </div>
-                 <div class="clearfix"></div>
-              </div>
-
-              {% if project.skills %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Preferred Technology Stack</h3>
-                  <div class="technology-panel">
-                  {% for skill in project.skills.all %}
-                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
-                  {% endfor %}
-                  </div>
-              </div>
-              {% endif %}
-
-              <div class="sub-section">
-                <h3 class="brand-bold">Project Timing</h3>
-                <p>
-                  Start Date: <strong>{{ project.start_date }}</strong>
-                </p>
-                <p>
-                  End Date: <strong>{{ project.end_date }}</strong>
-                </p>
-              </div>
-
-              {% if project.milestones %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Milestones</h3>
-                <p>
-                  {{ project.milestones | safe }}
-                </p>
-              </div>
-              {% endif %}
-
-              <div class="clearfix"></div>
+            {% if project.milestones %}
+            <div class="sub-section">
+              <h3 class="brand-bold">Milestones</h3>
+              <p>
+                {{ project.milestones | safe }}
+              </p>
             </div>
-          </div>
+            {% endif %}
 
-          {% if project.private_info %}
-          <div class="tab-pane" role="tab-panel" id="private">
-            {% if request.user.id not in project.nda_list %}
-              <div class="text-center nda-content col-md-9 col-md-offset-1 section">
-                <h2><i class="fa fa-lock"></i></h2>
-                <div class="sub-section">
-                  <h3 class="brand-bold">You’ll need to sign a Non-disclosure Agreement to view private details.</h3>
-                  <h4 class="text-skinny">Send a message to the project manager to let them know you’re interested to learn more!</h4>
-                </div>
-                {% if user.is_authenticated %}
-                  {% if job %}
-                    <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
-                  {% else %}
-                    <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Request NDA Access</button>
-                  {% endif %}
-                {% else %}
-                  <button type="button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#noAuthMessageModal">Request NDA Access</button>
-
-                  <div class="modal fade modal-project-noauth" id="noAuthMessageModal" tabindex="-1" role="dialog" aria-labelledby="Not Logged In">
-                    <div class="modal-dialog modal-sm" role="document">
-                      <div class="modal-content">
-                        <div class="modal-body">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                          <h4>You'll need to create a Loom account to send messages.</h4>
-                          <a class="btn btn-brand" href="/signup/prelaunch/?next={% url 'project' project.slug %}">Sign Me Up</a>
-                          <p>Already have an account? <a href="{% url 'login' %}?next={% url 'project' project.slug %}">Sign in</a>.</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                {% endif %}
-              </div>
-            {% else %}
-            <div class="col-md-12">
-              <h2 class="sub-section brand-bold">Private Details</h2>
-            </div>
-            <div class="col-md-7 project-details sub-section">
-              <h3 class="brand-bold">Private Information</h3>
-              <p>{{ project.private_info | safe }}</p>
-            </div>
-            <div class="col-md-5 project-details-rail">
-              <div class="sub-section">
-                <h3 class="brand-bold">Project Manager</h3>
-                <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
-                <div class="project-byline pull-left">
-                  <p>
-                    <span class="project-manager">{{ project.project_manager.name }}</span> <br />
-                    {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
-                  </p>
-                </div>
-                 <div class="clearfix"></div>
-              </div>
-
-              {% if project.skills %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Preferred Technology Stack</h3>
-                  <div class="technology-panel">
-                  {% for skill in project.skills.all %}
-                  <h5 class="btn btn-dark--clear">{{ skill.name }}</h5><br />
-                  {% endfor %}
-                  </div>
-              </div>
-              {% endif %}
-
-              <div class="sub-section">
-                <h3 class="brand-bold">Project Timing</h3>
-                <p>
-                  Start Date: <strong>{{ project.start_date }}</strong>
-                </p>
-                <p>
-                  End Date: <strong>{{ project.end_date }}</strong>
-                </p>
-              </div>
-
-              {% if project.milestones %}
-              <div class="sub-section">
-                <h3 class="brand-bold">Milestones</h3>
-                <p>
-                  {{ project.milestones | safe }}
-                </p>
-              </div>
-              {% endif %}
-
-              <div class="clearfix"></div>
-            </div>
             <div class="clearfix"></div>
-            {% endif %}
           </div>
+          <div class="clearfix"></div>
           {% endif %}
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
