@@ -51,12 +51,12 @@
 
     li {
       margin: 0;
-      padding-left: 60px;
+      padding-left: 25px;
       list-style: none;
       text-align: center;
 
       @media (max-width: @screen-md) {
-        padding-left: @gutter--medium;
+        padding-left: @gutter;
         flex-shrink: 0;
       }
     }
@@ -74,6 +74,7 @@
     }
 
     .header-link--auth {
+      padding-left: 40px;
       a {
         color: @brand--accent;
 
@@ -186,6 +187,14 @@
     & > a, & > .profile-image {
       display: inline-block;
       margin: 0 0 0 @gutter;
+
+      @media (max-width: @screen-md) {
+        margin-left: @gutter--medium;
+      }
+    }
+
+    @media (max-width: @screen-md) {
+      padding-left: @gutter;
     }
   }
 }
