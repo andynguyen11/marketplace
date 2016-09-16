@@ -18,8 +18,12 @@ class AttachmentSerializer(RelationalModelSerializer):
     def resolve_relations(self, obj):
         new_obj = { k: obj.pop(k) for k in ['id', 'file', 'tag'] if obj.has_key(k) }
         values = [v for k, v in obj.items() if k not in self.Meta.fields]
-        assert len(values) == 1
-        new_obj['content_object'] = values[0]
+        if self.instance and self.instance.id is not None:
+            if len(values) == 1:
+                new_obj['content_object'] = values[0]
+        else:
+            assert len(values) == 1
+            new_obj['content_object'] = values[0]
         return new_obj
 
     def create_self(self, data, action='create'):
