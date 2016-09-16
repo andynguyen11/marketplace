@@ -79,3 +79,5 @@ staticfiles/
 fixtures/
 .dependencies.txt
 webpack-stats.json
+
+dump.rdb

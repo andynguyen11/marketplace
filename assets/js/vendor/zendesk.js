@@ -3,7 +3,7 @@ $(document).ready(function() {
     zE(function() {
         zE.hide();
     });
-    $('#help').click(function() {
+    $('#help, #help-mobile').click(function() {
         if ($active) {
             zE.hide();
             $active = false;
