@@ -18,7 +18,7 @@ in the INSTALLED_APPS setting.
 {% block account_content %}
 <div id="postman">
   <div class="row">
-    <div class="container">
+    <div class="dashboard-tables">
       <div class="postman-header">
         <h2 class="text-yellow pull-left">Communicate. Share documents. Make work.</h2>
         {% autopaginate pm_messages 8 %}
@@ -56,19 +56,22 @@ in the INSTALLED_APPS setting.
         <div class="messages-list-message{% if message.is_new %} unread{% endif %}">
           <a href="{% url 'postman:view_conversation' message.thread_id %}">
             <div class="messages-list-message-profile">
-              <div class="messages-list-message-profile-photo"
-                   style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ message.sender.get_photo }})"></div>
+              <div class="messages-list-message-profile-photo" style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ message.sender.get_photo }})"></div>
+              <div class="messages-list-message-meta show-mobile">
+                {{ message.obfuscated_sender|or_me:user }}
+              </div>
             </div>
-            <div class="messages-list-message-meta">
+            <div class="messages-list-message-meta hide-mobile">
               {{ message.obfuscated_sender|or_me:user }}
             </div>
             <div class="messages-list-message-summary">
               {% include "postman/inc_subject_ex.html" %}
             </div>
             {% localtime on %}
-              <div class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
+              <div class="messages-list-message-timestamp text-muted hide-mobile">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</div>
             {% endlocaltime %}
           </a>
+          {% comment %}
           <div class="messages-list-message-star">
             {% if message.sender == user and message.sender_bookmarked or message.recipient == user and message.recipient_bookmarked %}
               {% if message.thread_id %}
@@ -92,6 +95,7 @@ in the INSTALLED_APPS setting.
               {% endif %}
             {% endif %}
           </div>
+          {% endcomment %}
         </div>
         {% endfor %}
       </div>

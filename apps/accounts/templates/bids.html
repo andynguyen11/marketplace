@@ -5,7 +5,7 @@
 <div id="dashboard">
   <div class="row">
     <div class="container">
-      <div class="col-md-12">
+      <div class="dashboard-tables">
         {% if bids or projects %}
         <div class="sub-section">
           <h2>Manage Your Pending Projects and Bids</h2>
@@ -16,8 +16,8 @@
             <div class="section-header">
               <h4>My Bids</h4>
             </div>
-            <table class="dashboard-table">
-              <thead>
+            <table class="dashboard-table dashboard-table-flex">
+              <thead class="hide-mobile">
                 <tr>
                   <th>Project</th>
                   <th>Cash</th>
@@ -28,10 +28,10 @@
               </thead>
               {% for bid in bids %}
                 <tr>
-                  <td>{{ bid.project.title }}</td>
-                  <td>{% if bid.cash %}${{ bid.cash }}{% endif %}</td>
-                  <td>{% if bid.equity %}{{ bid.equity }}%{% endif %}</td>
-                  <td>{{ bid.hours }} hours</td>
+                  <td class="dashboard-table-flex-expand">{{ bid.project.title }}</td>
+                  <td class="hide-mobile">{% if bid.cash %}${{ bid.cash }}{% endif %}</td>
+                  <td class="hide-mobile">{% if bid.equity %}{{ bid.equity }}%{% endif %}</td>
+                  <td class="hide-mobile">{{ bid.hours }} hours</td>
                   <td>{{ bid.date_created }}</td>
                 </tr>
               {% endfor %}
@@ -39,13 +39,15 @@
           </div>
           {% else %}
             {% if user.role %}
-            <div class="col-md-12">
+            <div class="section section-padding">
               <h2 class="brand">You don't have any pending bids.</h2>
               <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
               <div class="text-center">
                 <a href="{% url 'project-gallery' 'all' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
               </div>
+              <div class="clearfix"></div>
             </div>
+            <br/>
             {% endif %}
           {% endif %}
 
@@ -61,8 +63,8 @@
               <div class="clearfix"></div>
             </div>
             {% if project.job_set.all %}
-              <table class="dashboard-table">
-                <thead>
+              <table class="dashboard-table dashboard-table-flex">
+                <thead class="hide-mobile">
                   <tr>
                     <th></th>
                     <th>Name</th>
@@ -81,16 +83,16 @@
                   <td>
                     <strong>{{ bid.contractor.first_name }}</strong>
                   </td>
-                  <td>
+                  <td class="hide-mobile">
                     <strong>{% if bid.cash %}${{ bid.cash }}{% endif %}</strong>
                   </td>
-                  <td>
+                  <td class="hide-mobile">
                     <strong>{% if bid.equity %}{{ bid.equity }}%{% endif %}</strong>
                   </td>
-                  <td>
+                  <td class="hide-mobile">
                     <strong>{{ bid.contractor.capacity }} hours/wk</strong>
                   </td>
-                  <td>
+                  <td class="dashboard-table-flex-expand">
                     {{ bid.date_created }}
                   </td>
                   <td>

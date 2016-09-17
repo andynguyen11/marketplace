@@ -8,17 +8,13 @@
 {% block content %}
   <div id="password-recover-form">
     <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div class="text-center">
-          <h1 class="brand">Password Recovery</h1>
-          <h4 class="brand">Enter your email to recieve a link to reset your password.</h4>
-        </div>
+      <div class="text-center">
+        <h1 class="brand">Password Recovery</h1>
+        <h4 class="brand">Enter your email to recieve a link to reset your password.</h4>
         <form method="post" action="{{ url }}">
           {% csrf_token %}
           {{ form|crispy }}
-          <p>
-            <input class="btn btn-brand btn-lg center-block" type="submit" value="{% trans "Recover my password" %}">
-          </p>
+          <input class="btn btn-brand" type="submit" value="{% trans "Recover" %}">
         </form>
       </div>
     </div>

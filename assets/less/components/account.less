@@ -5,27 +5,35 @@
   ul {
     padding: 0;
     margin: 0;
+    display: flex;
+    overflow-x: scroll;
   }
   ul li {
     display: inline-block;
     padding: 15px 20px;
     text-transform: uppercase;
+    flex-shrink: 0;
+
     &.active {
       background: #2b3237;
     }
+
     a {
       color: #fff;
       font-weight: bold;
       font-size: 12px;
+
       &.active {
         color: @brand--accent;
         border-bottom: 7px solid @brand--accent;
         padding-bottom: 6px;
       }
+
       &:hover {
         color: @brand--accent;
       }
     }
+
     .badge {
       background: #d9534f;
       margin-left: 5px;
