@@ -446,6 +446,8 @@ const DeveloperOnboard = React.createClass({
 
         <div>
         <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
+
+          <div className="hours-selector">
           <div className="col-sm-offset-2 col-sm-2 text-center">
           <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
             <h3>
@@ -481,9 +483,11 @@ const DeveloperOnboard = React.createClass({
             </h3>
           </button>
           </div>
+          </div>
           <div className="clearfix"></div>
         </div>
-        <div className={ 'form-group form-inline text-center mid-section col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
+        <div className={ 'form-group form-inline text-center col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
+          <br/>
           <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
           <input
             className={ 'form-control ' + formElements.capacity.errorClass }
