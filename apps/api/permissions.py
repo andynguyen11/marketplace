@@ -43,3 +43,12 @@ class IsJobOwnerPermission(permissions.BasePermission):
     def has_permission(self, request, view, **kwargs):
         return view.action not in ['create'] or request.user.id == view.parent.owner.id
 
+
+class IsProjectOwnerPermission(permissions.BasePermission):
+    """
+    Custom permission for project managers to edit project.
+    """
+    def has_object_permission(self, request, view, obj):
+        return request.user.id == obj.project_manager.id
+
+

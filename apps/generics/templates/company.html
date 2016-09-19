@@ -3,51 +3,52 @@
 
 {% block content %}
 <div id="profile" data-id="{{ company.id }}" class="section">
-  <div class="row">
-    <div class="container">
-      <div class="col-md-4">
-        <div class="profile-photo" style="background-image:url('{{ company.get_logo }}');"></div>
+  <div class="profile-header container">
+    <div class="profile-header-left">
+      <div class="profile-photo" style="background-image:url('{{ company.get_logo }}');"></div>
+    </div>
+    <div class="profile-header-right">
+      <h2 class="brand-bold text-brand text-header-main">
+        {{ company.name }}
+      </h2>
+      <div class="short-description">
+        {% if company.description %}
+        {{ company.description }}
+        {% else %}
+        More info about {{ company.name }} is coming soon...
+        {% endif %}
       </div>
-      <div class="col-md-8">
-        <h2 class="brand-bold text-brand text-header-main">
-          {{ company.name }}
-        </h2>
-        <div class="short-description">
-          {% if company.description %}
-            {{ company.description }}
-          {% else %}
-            More info about {{ company.name }} is coming soon...
-          {% endif %}
-        </div>
-        <div class="sub-section">
-          <ul class="project-meta">
-            <li>
-              <img class="icon" src="{% static 'images/icon-location.png' %}" />
-              <h4>{{ company.city }}, {{ company.state }}</h4>
-            </li>
-            <li>
-              <img class="icon" src="{% static 'images/icon-category.png' %}" />
-              <h4 class="text-capitalize">
-                {% for tag in company.tags %}
-                  {{ tag }}{% if not forloop.last %}, {% endif %}
-                {% endfor %}
-              </h4>
-            </li>
-          </ul>
-        </div>
+      <div class="sub-section">
+        <ul class="project-meta">
+          <li>
+            <img class="icon" src="{% static 'images/icon-location.png' %}"/>
+            <h4>{{ company.city }}, {{ company.state }}</h4>
+          </li>
+          <li>
+            <img class="icon" src="{% static 'images/icon-category.png' %}"/>
+            <h4 class="text-capitalize">
+              {% for tag in company.tags %}
+              {{ tag }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </h4>
+          </li>
+        </ul>
+      </div>
 
-        <div class="button-actions">
-          <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and messaging will be available soon." disabled>Message Us</button>
-          <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon." disabled>Leave Review</button>
-          <!--<a class="btn btn-dark" id="writeReview">Review Us</a>-->
-        </div>
+      <div class="button-actions">
+        <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom"
+                title="Loom is currently in Beta, and messaging will be available soon." disabled>Message Us
+        </button>
+        <button class="btn btn-brand--fade" data-toggle="tooltip" data-placement="bottom"
+                title="Loom is currently in Beta, and reviews will be available soon." disabled>Leave Review
+        </button>
+        <!--<a class="btn btn-dark" id="writeReview">Review Us</a>-->
       </div>
-      <div class="clearfix"></div>
     </div>
   </div>
 </div>
 
-<div id="company-info" class="section light-section">
+<div id="company-info" class="light-section">
   <div class="row">
     <div class="container">
       <div class="col-md-7 long-description">
@@ -58,94 +59,101 @@
 
         <div class="sub-section">
           {% if company.long_description %}
-            {{ company.long_description|safe }}
+          {{ company.long_description|safe }}
           {% else %}
-            More info about {{ company.name }} is coming soon...
+          More info about {{ company.name }} is coming soon...
           {% endif %}
         </div>
       </div>
       <div class="col-md-5 sub-section">
         <h3 class="brand-bold sub-section">Team Members</h3>
         {% for employee in company.employees.all %}
-          <div class="profile-snapshot">
-            <div class="profile-photo" style="background-image:url('{{ employee.profile.get_photo }}');"></div>
-            <div class="project-byline">
-              <strong>{{ employee.profile.name }}</strong> <br />
-               {% if employee.profile.title %}{{ employee.profile.title }}{% else %}{{ employee.profile.role }} developer{% endif %}
-            </div>
-           <div class="clearfix"></div>
+        <div class="profile-snapshot">
+          <div class="profile-photo" style="background-image:url('{{ employee.profile.get_photo }}');"></div>
+          <div class="project-byline">
+            <strong>{{ employee.profile.name }}</strong> <br/>
+            {% if employee.profile.title %}{{ employee.profile.title }}{% else %}{{ employee.profile.role }} developer{% endif %}
           </div>
+          <div class="clearfix"></div>
+        </div>
         {% endfor %}
       </div>
     </div>
-  </div>
-</div>
 
-<div id="reviews" class="section">
-  <div class="row">
-    <div class="container">
-      <h2 class="brand-bold text-header-main">Reviews</h2>
-      <div class="review-stars text-brand">
-        <i class="fa fa-star-o"></i>
-        <i class="fa fa-star-o"></i>
-        <i class="fa fa-star-o"></i>
-        <i class="fa fa-star-o"></i>
-        <i class="fa fa-star-o"></i>
-        <span class="text-dark">Overall Rating</span>
-      </div>
-      <hr />
-       <div class="text-center">
-        <h4 class="text-skinny sub-section ">Have you worked with {{ company.name }}?  Be the first to give them a review.</h4>
-        <a class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom" title="Loom is currently in Beta, and reviews will be available soon." disabled>Review {{ company.name }}</a>
+    <div id="reviews" class="section">
+      <div class="row">
+        <div class="container">
+          <h2 class="brand-bold text-header-main">Reviews</h2>
+          <div class="review-stars text-brand">
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <i class="fa fa-star-o"></i>
+            <span class="text-dark">Overall Rating</span>
+          </div>
+          <hr/>
+          <div class="text-center">
+            <h4 class="text-skinny sub-section ">Have you worked with {{ company.name }}? Be the first to give them a
+              review.</h4>
+            <a class="btn btn-lg btn-brand btn-brand--attn" data-toggle="tooltip" data-placement="bottom"
+               title="Loom is currently in Beta, and reviews will be available soon." disabled>Review {{ company.name
+              }}</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div id="past-projects" class="section light-section">
-  <div class="row">
-    <div class="container">
-      <div class="plates page-content--medium">
-        <div class="text-center">
-          <h2 class="brand-bold text-header-main sub-section">{{ company.name }}'s Open Projects</h2>
-          <!-- <a href="" class="btn btn--clear btn-lg">View all</a> -->
-        </div>
-      {% if not projects %}
-      <h3 class="brand sub-section text-center">No open projects</h3>
-      {% endif %}
-        <div class="plates-inner sub-section">
-          {% for project in projects %}
-          <a class="plate" href="{% url 'project' project.slug %}">
-            <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('{{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
-            <div class="plate-info">
-              <div class="plate-info-profile">
-                <div class="plate-info-profile-photo" style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
-                <div class="plate-info-profile-name">
-                  <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
-                  {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
+    <div id="past-projects" class="section light-section">
+      <div class="row">
+        <div class="container">
+          <div class="plates page-content--medium">
+            <div class="text-center">
+              <h2 class="brand-bold text-header-main sub-section">{{ company.name }}'s Open Projects</h2>
+              <!-- <a href="" class="btn btn--clear btn-lg">View all</a> -->
+            </div>
+            {% if not projects %}
+            <h3 class="brand sub-section text-center">No open projects</h3>
+            {% endif %}
+            <div class="plates-inner sub-section">
+              {% for project in projects %}
+              <a class="plate" href="{% url 'project' project.slug %}">
+                <div class="plate-image" {% if MEDIA_URL and project.project_image %} style="background-image: url('{{ MEDIA_URL }}{{ project.project_image.file }}');" {% endif %}></div>
+                <div class="plate-info">
+                  <div class="plate-info-profile">
+                    <div class="plate-info-profile-photo"
+                         style="background-image: url('{{ project.project_manager.get_photo }}');"></div>
+                    <div class="plate-info-profile-name">
+                      <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+                      {% if project.company %}
+                      <div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="plate-info-project">
+                    <h4 class="plate-info-project-name">{{ project.title }}</h4>
+                    <p class="plate-info-project-description">{{ project.short_blurb }}</p>
+                  </div>
                 </div>
-              </div>
-              <div class="plate-info-project">
-                <h4 class="plate-info-project-name">{{ project.title }}</h4>
-                <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-              </div>
+                <div
+                  class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
+                  {% if project.estimated_equity_percentage %}
+                  <div class="plate-stat">
+                    <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
+                    <div class="plate-stat-type">Equity</div>
+                  </div>
+                  {% endif %}
+                  {% if project.estimated_cash %}
+                  <div class="plate-stat">
+                    <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
+                    <div class="plate-stat-type">Cash</div>
+                  </div>
+                  {% endif %}
+                </div>
+              </a>
+              {% endfor %}
             </div>
-            <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-              {% if project.estimated_equity_percentage %}
-              <div class="plate-stat">
-                <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-                <div class="plate-stat-type">Equity</div>
-              </div>
-              {% endif %}
-              {% if project.estimated_cash %}
-              <div class="plate-stat">
-                <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-                <div class="plate-stat-type">Cash</div>
-              </div>
-              {% endif %}
-            </div>
-          </a>
-          {% endfor %}
+          </div>
         </div>
       </div>
     </div>
@@ -156,7 +164,8 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+          aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">
           <span class="text-skinny">Message with</span>
           <span class="text-yellow">{{ user.first_name }}</span>
@@ -166,21 +175,22 @@
       <div class="modal-body">
         {% if projects %}
         <form id="message-form">
-          <input type="hidden" name="recipient" value="{{ user.id }}" />
+          <input type="hidden" name="recipient" value="{{ user.id }}"/>
           <div class="form-group">
-          <label>Which project are you hiring {{ user.first_name }} for?</label>
-          <select class="form-control" name="project" >
-          {% for project in projects %}
-            <option value="{{ project.id }}">{{ project.title }}</option>
-          {% endfor %}
-          </select>
+            <label>Which project are you hiring {{ user.first_name }} for?</label>
+            <select class="form-control" name="project">
+              {% for project in projects %}
+              <option value="{{ project.id }}">{{ project.title }}</option>
+              {% endfor %}
+            </select>
           </div>
-          <textarea cols="40" class="required-input" id="id_message" name="message" placeholder="Write your message..." rows="7"></textarea>
-          <input type="submit" class="btn btn-yellow pull-right" value="Send Message" />
+          <textarea cols="40" class="required-input" id="id_message" name="message"
+                    placeholder="Write your message..." rows="7"></textarea>
+          <input type="submit" class="btn btn-yellow pull-right" value="Send Message"/>
           <div class="clearfix"></div>
         </form>
         {% else %}
-          <h4>You need to <a href="{% url 'create-project' %}">post a project</a> before hiring a developer.</h4>
+        <h4>You need to <a href="{% url 'create-project' %}">post a project</a> before hiring a developer.</h4>
         {% endif %}
       </div>
 

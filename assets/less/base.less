@@ -79,6 +79,12 @@ ul {
   }
 }
 
+.show-mobile {
+  @media (min-width: @screen-sm) {
+    display: none !important;
+  }
+}
+
 .hide-xs {
   @media (max-width: @screen-xs) {
     display: none !important;
