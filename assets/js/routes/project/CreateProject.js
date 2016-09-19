@@ -1397,14 +1397,15 @@ const ProjectBudget = withRouter(React.createClass({
         value: (() => {
           const { estimated_cash, estimated_equity_percentage, mix } = initialState;
           let compensationType = '';
+          let equity = estimated_equity_percentage ? estimated_equity_percentage : '';
 
-          if(estimated_cash && estimated_equity_percentage.length) {
+          if(estimated_cash && equity.length) {
             compensationType = mix ? 'cash-and-equity' : 'cash-or-equity';
           }else{
             if(estimated_cash) {
               compensationType = 'cash';
             }
-            if(estimated_equity_percentage.length) {
+            if(equity.length) {
               compensationType = 'equity';
             }
           }
