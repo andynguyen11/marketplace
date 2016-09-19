@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, 
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
-from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission
+from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission
 from business.models import Job
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet
@@ -147,7 +147,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, IsProjectOwnerPermission, )
 
 
 class ProjectSearchView(HaystackViewSet):
