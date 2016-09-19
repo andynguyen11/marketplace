@@ -1460,12 +1460,12 @@ const ProjectBudget = withRouter(React.createClass({
             case 'cash':
               type = 'cash';
               data.mix = false;
-              formFields.equity.onChange('');
+              formFields.equity.onChange(0);
               break;
             case 'equity':
               type = 'equity';
               data.mix = false;
-              formFields.cash.onChange('');
+              formFields.cash.onChange(0);
               break;
           }
 
@@ -1518,7 +1518,7 @@ const ProjectBudget = withRouter(React.createClass({
         validator: (value) => {
           const { budgetType, budgetMix, formFields } = this.state;
           const equityValue = parseFloat(value);
-          const cleanValue = value.toString().match(/^\d*\.?\d*$/);
+          const cleanValue = value ? value.toString().match(/^\d*\.?\d*$/) : '';
           const isValid = (budgetType === 'equity' || budgetType === 'cash-equity') ? ((typeof equityValue === 'number' && equityValue > 0 && equityValue < 100) && cleanValue) : true;
 
           if(!isValid) {
