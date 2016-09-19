@@ -26,7 +26,7 @@
           <div class="section-header">
             <h4>Quick Links</h4>
           </div>
-          <div class="section-body flex-column text-center">
+          <div class="section-body flex-column text-center quick-links">
             {% comment %}
             <p>
               <a class="btn btn-linkedin" href="{% url 'social:begin' backend='linkedin-oauth2' %}">
@@ -43,7 +43,7 @@
             <a class="btn btn-brand btn-wide" href="{% url 'create-project' %}">
               Post a Project
             </a>
-            <a class="btn btn-brand btn-wide sub-section" href="{% url 'project-gallery' type='all'%}">
+            <a class="btn btn-brand btn-wide" href="{% url 'project-gallery' type='all'%}">
               Browse Projects
             </a>
             <!--<div class="form-group">-->
@@ -83,10 +83,14 @@
               <tr>
                 <td class="photo-container">
                   <div class="profile-photo" style="background-image: url({{ message.sender.get_photo }});"></div>
+                  <div class="show-mobile">
+                    {{ message.obfuscated_sender|or_me:user }}<br/>
+                    <span class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</span>
+                  </div>
                 </td>
                 {% block pm_sender_cell %}
-                <td>
-                  {{ message.obfuscated_sender|or_me:user }}{% if message.count %} ({{ message.count }}){% endif %} <br/>
+                <td class="hide-mobile">
+                  {{ message.obfuscated_sender|or_me:user }}<br/>
                   <span class="text-muted">{{ message.sent_at|compact_date:_("g:i A,M j,n/j/y") }}</span>
                 </td>
                 {% endblock %}
@@ -115,7 +119,7 @@
           <div class="section-header">
             <h4>Connected Company <!--<span class="text-skinny">({% notifications_unread %} New)</span>--></h4>
           </div>
-          <div class="section-body">
+          <div class="connected-company">
             {% if request.user.company %}
               <div class="company-logo-small" style="background-image:url('{{ request.user.company.get_logo }}');"></div>
               <div class="flex-align-center">

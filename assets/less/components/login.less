@@ -11,8 +11,20 @@
   .login-panel {
     width: 45%;
     padding: 0 @gutter*3;
+
     #welcomeback {
-      background: url('../images/smiley.svg') no-repeat 325px 20px;
+      display: flex;
+      font-size: 28px;
+
+      .smiley {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        flex-shrink: 0;
+        margin-left: @gutter--medium;
+        background: url('../images/smiley.svg') no-repeat center;
+        background-size: contain;
+      }
     }
     p.text-blue {
       margin-top: 10px;

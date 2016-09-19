@@ -16,6 +16,10 @@
     background: #fff;
     border: 1px solid @brand-neutral--4;
 
+    &.section-padding {
+      padding: 20px;
+    }
+
     .section-header {
       background: @brand-neutral--1;
       color: #fff;
@@ -49,6 +53,7 @@
         background-size: cover;
         background-repeat: no-repeat;
         margin-right: 15px;
+        flex-shrink: 0;
       }
     }
     ul li {
@@ -111,6 +116,45 @@
     }
   }
 
+  .section .section-body.quick-links {
+    padding: @gutter--medium;
+
+    .btn {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+
+  .connected-company {
+    display: flex;
+    padding: @gutter;
+
+    @media (max-width: @screen-sm) {
+      flex-wrap: wrap;
+    }
+
+    h5 {
+      margin: 0;
+    }
+
+    .company-logo-small {
+      height: 50px;
+      width: 50px;
+      background-size: cover;
+      background-repeat: no-repeat;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .flex-right {
+      @media (max-width: @screen-sm) {
+        margin-top: @gutter;
+        flex-basis: 100%;
+        flex-shrink: 0;
+      }
+    }
+  }
+
 
 
   #pm_messages tr td {
@@ -127,5 +171,32 @@
 .security {
   img {
     width: 100px;
+  }
+}
+
+.dashboard-tables {
+  padding: 0 20px;
+}
+
+.dashboard-table-flex {
+  tr {
+    border-bottom: 1px solid #ccc;
+    align-items: center;
+    flex-wrap: wrap;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
+
+    @media (max-width: @screen-sm) {
+      display: flex;
+    }
+  }
+  td {
+    border-bottom: 0 !important;
+  }
+
+  .dashboard-table-flex-expand {
+    flex-grow: 1;
   }
 }
