@@ -79,6 +79,7 @@ class MessageAPI(APIView):
             body=body,
             subject=thread.subject
         )
+        return new_message
 
     def new_attachment(self, thread, user, attachment):
         recipient = thread.sender if user == thread.recipient else thread.recipient
@@ -88,16 +89,17 @@ class MessageAPI(APIView):
             thread=thread
         )
         Attachment.objects.create(content_object=new_interaction, file=attachment, tag='message')
+        return new_interaction
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
         if request.user == thread.sender or request.user == thread.recipient:
             if request.data.has_key('attachment'):
-                self.new_attachment(thread, request.user, request.data['attachment'])
+                interaction = self.new_attachment(thread, request.user, request.data['attachment'])
             else:
-                self.new_message(thread, request.user, request.data['body'])
+                interaction = self.new_message(thread, request.user, request.data['body'])
             serializer = ConversationSerializer(thread, context={'request': request})
-            new_message_notification.delay(recipient.id, message.id)
+            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
             return Response(serializer.data)
         else:
             return Response(status=403)
