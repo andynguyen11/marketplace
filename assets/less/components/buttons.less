@@ -80,6 +80,16 @@
       background-color: @brand--accent;
       color: #ffffff;
     }
+
+    &[disabled] {
+      color: @brand--accent;
+      border: 2px solid @brand--accent;
+
+      &:hover {
+        color: @brand--accent;
+        border: 2px solid @brand--accent;
+      }
+    }
   }
 
   &.btn-dark--clear {

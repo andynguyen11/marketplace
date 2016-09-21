@@ -215,13 +215,14 @@
     padding: @gutter--medium @gutter--medium @gutter--medium 45px;
     border-radius: @border-radius;
     font-size: 12px;
-    background: #f1f0f2;
+    background: #FFF;
     line-height: 1.2;
     font-family: @page-font;
     color: @brand-neutral--1;
     position: relative;
     max-width: 400px;
     overflow-x: hidden;
+    border: 1px solid #CCC;
   }
 
   .thread-item-attachment-icon {
@@ -234,6 +235,13 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-image: url('/static/images/file-icon.svg');
+    outline: none;
+    cursor: pointer;
+    z-index: 1;
+
+    &:hover {
+      opacity: 0.6;
+    }
   }
 
   .thread-item-attachment-title {
@@ -242,6 +250,7 @@
     word-break: break-word;
     font-size: 14px;
     font-weight: 600;
+    margin-bottom: @gutter--small;
   }
 
   .thread-item-attachment-filename {
@@ -250,8 +259,6 @@
     text-overflow: ellipsis;
     cursor: pointer;
     width: 100%;
-    margin-top: @gutter--small;
-    color: @brand-neutral--3;
 
     @media (max-width: @screen-xs) {
       white-space: pre-wrap;
@@ -259,8 +266,36 @@
     }
   }
 
-  .thread-item-attachment-download {
+  .thread-item-attachment-actions {
     align-self: flex-end;
+    margin-top: @gutter--medium;
+    z-index: 1;
+    display: flex;
+  }
+
+  .thread-item-attachment-delete {
+    flex-grow: 0;
+    width: 24px;
+    height: 24px;
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-image: url('/static/images/icon-delete.svg');
+    overflow: hidden;
+    text-indent: -999em;
+    outline: none;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
+
+  .messages-attachment-delete-filename {
+    color: @brand--primary;
+  }
+
+  .thread-item-attachment-download {
     flex-grow: 0;
     width: 24px;
     height: 24px;
@@ -272,8 +307,7 @@
     text-indent: -999em;
     outline: none;
     cursor: pointer;
-    margin-top: @gutter--small;
-    z-index: 1;
+    margin-left: 10px;
 
     &:hover {
       opacity: 0.6;
@@ -350,23 +384,23 @@
         }
       }
     }
+  }
 
-    .messages-upload-modal-attachmentName {
-      font-weight: 700;
-      color: #7b7786;
-      font-size: 12px;
-      letter-spacing: 1.5px;
-      white-space: nowrap;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-    }
+  .messages-upload-modal-attachmentName {
+    font-weight: 700;
+    color: #7b7786;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+  }
 
-    .messages-upload-modal-actions {
-      text-align: center;
+  .messages-upload-modal-actions {
+    text-align: center;
 
-      .btn + .btn {
-        margin-left: @gutter--medium;
-      }
+    .btn + .btn {
+      margin-left: @gutter--medium;
     }
   }
 

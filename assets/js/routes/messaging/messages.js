@@ -10,14 +10,6 @@ import { objectToFormData } from '../project/utils';
 import downloadjs from 'downloadjs';
 
 const MessageComposer = React.createClass({
-  getInitialState() {
-    return {
-      attachmentModalIsOpen: false,
-      messageSending: false,
-      fileSending: false
-    }
-  },
-
   componentDidMount() {
     window.addEventListener('keydown', this.sendListener);
   },
@@ -46,128 +38,29 @@ const MessageComposer = React.createClass({
     }
   },
 
-  onFileSelection(event) {
-    event.preventDefault();
-    let file = event.target.files[0];
-    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
-    if(re.exec(file.name)) {
-      this.setState({
-        attachmentName: file.name,
-        attachmentTitle: '',
-        attachment: file
-      }, () => {
-        this.openAttachmentModal();
-      });
-    }
-  },
-
-  updateFileName(event) {
-    const { target } = event;
-    const attachmentTitle = target.value;
-
-    this.setState({ attachmentTitle });
-  },
-
-  uploadFile() {
-    const { attachmentName, attachmentTitle } = this.state;
-    const { threadId, updateInteractions } = this.props;
-    const fileInput = this.refs.fileInput;
-    const reader = new FileReader();
-    const file = fileInput.files[0];
-
-    const payload = {
-      thread: threadId,
-      attachment: file,
-      tag: attachmentTitle
-    };
-
-    $.ajax({
-      url: loom_api.message,
-      data: objectToFormData(payload),
-      type: 'PATCH',
-      contentType: false,
-      processData: false,
-      success: (result) => {
-        updateInteractions(result.interactions);
-        this.closeAttachmentModal();
-      },
-      error: () => {
-        this.setState({
-          isLoading: false,
-          messageError: 'Something went wrong with uploading your attachment. Please try again.',
-          messageSending: false
-        })
-      }
-    });
-
-  },
-
-  openAttachmentModal() {
-    this.setState({ attachmentModalIsOpen: true });
-  },
-
-  closeAttachmentModal() {
-    const { fileSending } = this.state;
-    const fileInput = this.refs.fileInput;
-
-    if(!fileSending) {
-      fileInput.value = '';
-
-      this.setState({
-        attachmentModalIsOpen: false,
-        attachmentName: '',
-        attachmentTitle: ''
-      });
-    }
-  },
-
   render() {
-    const { value, name, fileUpload, fileSending, messageSending } = this.props;
-    const { attachmentModalIsOpen, attachmentName, attachmentTitle } = this.state;
+    const { value, name, fileUpload, fileSending, fileToUpload, messageSending, onFileSelection } = this.props;
 
-    const fileButton = fileUpload && (
-      <div className="text-field-fileUpload">
-        <input type="file" ref="fileInput" onChange={this.onFileSelection} {...disabled} />
-      </div>
-    );
     const disabled = {
       disabled: messageSending || fileSending
     };
+    const fileButton = fileUpload && (() => {
+      const input = !fileToUpload && <input type="file" onChange={onFileSelection} {...disabled} />;
+
+      return (
+        <div className="text-field-fileUpload">
+          {input}
+        </div>
+      );
+    })();
+
     const loadingIndicator = (messageSending || fileSending) && <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>;
-    const modalContent = attachmentName && (
-      <div className="messaging-upload-modal">
-        <div className="form-group">
-          <label className="control-label">file name:</label>
-          <div className="messages-upload-modal-attachmentName"> {attachmentName}</div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="attachmentTitle">Include title for this file? (optional)</label>
-          <input
-            className="form-control"
-            type="text"
-            name="attachmentTitle"
-            id="attachmentTitle"
-            value={attachmentTitle}
-            onChange={this.updateFileName}
-          />
-          <div className="clearfix"></div>
-        </div>
-        <div className="messages-upload-modal-actions">
-          <button className="btn btn-brand btn-brand--clear" onClick={this.closeAttachmentModal} {...disabled}>Cancel</button>
-          <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>Upload</button>
-        </div>
-      </div>
-    );
 
     return (
-      <div className="thread-composer" {...disabled}>
+      <div className="thread-composer">
         {fileButton}
         <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea" {...disabled}></TextareaAutosize>
         {loadingIndicator}
-
-        <Modal open={attachmentModalIsOpen} onClose={this.closeAttachmentModal} header="Upload a File">
-          {modalContent}
-        </Modal>
       </div>
     );
   }
@@ -207,6 +100,12 @@ const Attachment = React.createClass({
     downloadjs(attachment.url);
   },
 
+  deleteClicked() {
+    const { confirmAttachmentDeletion, attachment } = this.props;
+
+    confirmAttachmentDeletion(attachment);
+  },
+
   render() {
     const { currentUser, avatar, attachment, senderName, timestamp, profileUrl } = this.props;
     const classNames = 'thread-item' + (currentUser && ' thread-item-currentUser' || '');
@@ -221,10 +120,13 @@ const Attachment = React.createClass({
         <a href={profileUrl} className="thread-item-avatar" style={senderAvatar}></a>
         <div className="thread-item-content">
           <div className="thread-item-attachment">
-            <div className="thread-item-attachment-icon"></div>
+            <a className="thread-item-attachment-icon" onClick={this.triggerDownload}></a>
             <div className="thread-item-attachment-title">{attachment.tag}</div>
             <a onClick={this.triggerDownload} className="thread-item-attachment-filename" alt={attachment.original_name}>{attachment.original_name}</a>
-            <a onClick={this.triggerDownload} className="thread-item-attachment-download" alt={attachment.original_name}>download {attachment.original_name}</a>
+            <div className="thread-item-attachment-actions">
+              {/*<a onClick={this.deleteClicked} className="thread-item-attachment-delete" alt={attachment.original_name}>delete {attachment.original_name}</a>*/}
+              <a onClick={this.triggerDownload} className="thread-item-attachment-download" alt={attachment.original_name}>download {attachment.original_name}</a>
+            </div>
           </div>
           <div className="thread-item-meta">
             Uploaded by {senderLink} - {formattedTime}
@@ -247,6 +149,11 @@ const Messages = React.createClass({
       isLoading: true,
       messageError: false,
       messageSending: false,
+      attachmentModalIsOpen: false,
+      attachmentDeleteModalIsOpen: false,
+      fileToUpload: null,
+      fileToUploadTitle: null,
+      fileSending: false,
       showPanel: false,
       attachment: false,
       attachmentName: false,
@@ -785,8 +692,152 @@ const Messages = React.createClass({
     return '/profile/' + userId + '/';
   },
 
+  onFileSelection(event) {
+    event.preventDefault();
+    let file = event.target.files[0];
+    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
+    if(re.exec(file.name)) {
+      this.setState({
+        fileToUpload: file,
+        fileToUploadTitle: ''
+      }, () => {
+        this.openAttachmentModal();
+      });
+    }
+  },
+
+  updateFileName(event) {
+    const { target } = event;
+    const fileToUploadTitle = target.value;
+
+    this.setState({ fileToUploadTitle });
+  },
+
+  uploadFile() {
+    const { fileToUpload, fileToUploadTitle } = this.state;
+    const { threadId } = this.props;
+
+    const payload = {
+      thread: threadId,
+      attachment: fileToUpload,
+      tag: fileToUploadTitle
+    };
+
+    this.setState({
+      fileError: false,
+      fileSending: true
+    });
+
+    $.ajax({
+      url: loom_api.message,
+      data: objectToFormData(payload),
+      type: 'PATCH',
+      contentType: false,
+      processData: false,
+      success: (result) => {
+        this.setState({
+          fileSending: false,
+          fileToUpload: null,
+          fileToUploadTitle: ''
+        }, () => {
+          this.updateInteractions(result.interactions);
+          this.closeAttachmentModal();
+        });
+      },
+      error: () => {
+        this.setState({
+          fileError: 'Something went wrong with uploading your attachment. Please try again.',
+          file: false
+        })
+      }
+    });
+
+  },
+
+  openAttachmentModal() {
+    this.setState({ attachmentModalIsOpen: true });
+  },
+
+  closeAttachmentModal() {
+    const { fileSending } = this.state;
+
+    if(!fileSending) {
+      this.setState({
+        attachmentModalIsOpen: false
+      });
+    }
+  },
+
+  confirmAttachmentDeletion(attachment) {
+    // ajax
+    console.warn('delete', attachment);
+    this.openDeleteModal(attachment);
+  },
+
+  cancelFileDeletion() {
+    this.closeDeleteModal();
+  },
+
+  deleteAttachment(id) {
+    this.setState({
+      isLoading: true,
+      deleteError: null
+    });
+
+    $.ajax({
+      url: loom_api.message,
+      data: objectToFormData(id),
+      type: 'DELETE',
+      contentType: false,
+      processData: false,
+      success: (result) => {
+        this.closeDeleteModal();
+      },
+      error: () => {
+        this.setState({
+          isLoading: false,
+          deleteError: 'Something went wrong with deleting your attachment. Please try again.'
+        })
+      }
+    });
+    this.closeDeleteModal();
+  },
+
+  openDeleteModal(file) {
+    this.setState({
+      attachmentDeleteModalIsOpen: true,
+      fileToDelete: file,
+      fileToDeleteName: file.original_name,
+    });
+  },
+
+  closeDeleteModal() {
+    this.setState({
+      attachmentDeleteModalIsOpen: false,
+      fileToDelete: null,
+      fileToDeleteName: null
+    });
+  },
+
   render() {
-    const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
+    const {
+      message,
+      messageSending,
+      interactions,
+      currentUser,
+      isLoading,
+      messageError,
+      otherUserData,
+      terms,
+      job,
+      showPanel,
+      attachmentDeleteModalIsOpen,
+      attachmentModalIsOpen,
+      fileSending,
+      fileToUpload,
+      fileToUploadTitle,
+      fileToDeleteName
+    } = this.state;
     const { threadId } = this.props;
     const messages = interactions.map((interaction, i) => {
       const { content, sender, timestamp, attachment, interactionType } = interaction;
@@ -799,13 +850,57 @@ const Messages = React.createClass({
       if(interactionType === 'attachment') {
         const isCurrentUser = currentUser === sender.id;
         const profileUrl = this.getProfileUrl(sender.id);
-        return <Attachment key={i} avatar={sender.photo_url} currentUser={isCurrentUser} attachment={attachment} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} updateInteractions={this.updateInteractions} />
+        return <Attachment key={i} avatar={sender.photo_url} currentUser={isCurrentUser} attachment={attachment} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} updateInteractions={this.updateInteractions} confirmAttachmentDeletion={this.confirmAttachmentDeletion} />
       }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
     const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
     const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserProfileLink}</span></span>;
+
+    const fileUploadModal = fileToUpload && (() => {
+      const disabled = fileSending && { disabled: true };
+
+      return (
+        <Modal open={attachmentModalIsOpen} onClose={this.closeAttachmentModal} header="Upload a File">
+          <div>
+            <div className="form-group">
+              <label className="control-label">file name:</label>
+              <div className="messages-upload-modal-attachmentName"> {fileToUpload.name}</div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="fileToUploadTitle">Include title for this file? (optional)</label>
+              <input
+                className="form-control"
+                type="text"
+                name="fileToUploadTitle"
+                id="fileToUploadTitle"
+                value={fileToUploadTitle}
+                onChange={this.updateFileName}
+                {...disabled}
+              />
+              <div className="clearfix"></div>
+            </div>
+            <div className="messages-upload-modal-actions">
+              <button className="btn btn-brand btn-brand--clear" onClick={this.closeAttachmentModal} {...disabled}>
+                Cancel
+              </button>
+              <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>Upload</button>
+            </div>
+          </div>
+        </Modal>
+      );
+    })();
+
+    const fileDeleteModal = (
+      <Modal open={attachmentDeleteModalIsOpen} onClose={this.cancelFileDeletion} header="Delete a File">
+        <p>Are you sure you want to delete <span className="messages-attachment-delete-filename">{fileToDeleteName}</span> from this discussion?</p>
+        <div className="messages-upload-modal-actions">
+          <button className="btn btn-brand btn-brand--clear" onClick={this.cancelFileDeletion}>Cancel</button>
+          <button className="btn btn-brand" onClick={this.deleteAttachment}>Delete</button>
+        </div>
+      </Modal>
+    );
 
     return (
       <div id="messages">
@@ -822,7 +917,7 @@ const Messages = React.createClass({
               {error}
             </div>
           </div>
-          <MessageComposer messageSending={messageSending} threadId={threadId} fileUpload={true} updateInteractions={this.updateInteractions} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
+          <MessageComposer messageSending={messageSending} threadId={threadId} fileUpload={true} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} onFileSelection={this.onFileSelection} fileToUpload={fileToUpload} />
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">
@@ -841,6 +936,9 @@ const Messages = React.createClass({
             togglePanel={this.togglePanel}
           /> }
         </div>
+
+        {fileUploadModal}
+        {/*{fileDeleteModal}*/}
       </div>
     );
 
