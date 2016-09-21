@@ -1,3 +1,6 @@
+from itertools import chain
+from operator import attrgetter
+
 from django.db.models import Q
 from rest_framework import serializers
 
@@ -7,7 +10,7 @@ from business.models import Document
 from docusign.models import DocumentSigner
 from generics.serializers import AttachmentSerializer
 from postman.models import Message, AttachmentInteraction
-from django.db.models import Q
+
 
 class Interaction(object):
     def __init__(self, sender, recipient, content, timestamp):
@@ -24,9 +27,10 @@ class MessageInteraction(Interaction):
 
 class FileInteraction(Interaction):
     def __init__(self, attachment, *args, **kwargs):
-        self.interactionType = 'file'
-        self.attachment_id = attachment.id
+        self.interactionType = 'attachment'
+        self.attachment = attachment
         super(FileInteraction, self).__init__(*args, **kwargs)
+
 
 class MessageSerializer(serializers.ModelSerializer):
 
@@ -40,8 +44,7 @@ class InteractionSerializer(serializers.Serializer):
     recipient = ObfuscatedProfileSerializer(required=False, allow_null=True)
     content = serializers.CharField(max_length=None)
     timestamp = serializers.DateTimeField(format='iso-8601')
-
-    attachment_id = serializers.IntegerField(required=False, allow_null=True)
+    attachment = AttachmentSerializer(required=False, allow_null=True)
 
 
 def mark_read(user, thread):
@@ -81,24 +84,27 @@ class ConversationSerializer(serializers.ModelSerializer):
         except Document.DoesNotExist:
             return None
 
+    def serialize_interaction(self, message):
+        if hasattr(message, 'attachment'):
+            return FileInteraction(
+                    sender=message.sender,
+                    recipient=message.recipient,
+                    timestamp=message.sent_at,
+                    content=message.attachment.url,
+                    attachment=message.attachment)
+        else:
+            return MessageInteraction(
+                    sender=message.sender,
+                    recipient=message.recipient,
+                    timestamp=message.sent_at,
+                    content=message.body)
+
     def get_interactions(self, obj):
-        messages = Message.objects.filter(thread=obj.id).order_by('sent_at')
         mark_read(self.context['request'].user, obj.id)
-        interactions = []
-        for file in obj.attachments.filter(deleted=False):
-            interaction = FileInteraction(
-                timestamp=file.upload_date,
-                content=file.url
-            )
-            interactions.append(interaction)
-        for message in messages:
-            interaction = MessageInteraction(
-                sender=message.sender,
-                recipient=message.recipient,
-                timestamp=message.sent_at,
-                content=message.body
-            )
-            interactions.append(interaction)
-        ordered_interactions = sorted(interactions, key=lambda k: k.timestamp)
-        serializer = InteractionSerializer(ordered_interactions, many=True)
+        interactions = sorted(chain(*[
+            BaseModel.objects.filter(thread=obj.id).order_by('sent_at') for BaseModel
+            in [Message, AttachmentInteraction]
+        ]), key=attrgetter('sent_at'))
+        mapped_interactions = map(self.serialize_interaction, interactions)
+        serializer = InteractionSerializer(mapped_interactions, many=True)
         return serializer.data

@@ -81,10 +81,12 @@ class JobSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         msg = data.pop('message')
+        project_id = data.pop('project')
+        contractor_id = data.pop('contractor')
         # TODO Lazy creating these may not be the most optimal solution
-        job = Job.objects.create(**data)
-        terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA', project=job.project, )
+        job, created = Job.objects.get_or_create(project=project_id, contractor=contractor_id)
+        job = Job(id=job.id, date_created=job.date_created, project=job.project, contractor=job.contractor, **data)
+        job.save()
         cash = ''
         equity = ''
         email_template = None
@@ -110,12 +112,17 @@ class JobSerializer(serializers.ModelSerializer):
             subject='New bid on {0}'.format(job.project.title),
             body=message
         )
-        # TODO Rethink saving these on the message
-        message.job = job
-        message.nda = nda
-        message.project = job.project
-        message.terms = terms
-        message.thread = message
+        if created:
+            terms = Terms.objects.create(job=job)
+            nda = Document.objects.create(job=job, type='NDA', project=job.project, )
+            message.job = job
+            message.nda = nda
+            message.project = job.project
+            message.terms = terms
+            thread = message
+        else:
+            thread = Message.objects.get(job=job)
+        message.thread = thread
         message.save()
         notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)
         # Send email notification

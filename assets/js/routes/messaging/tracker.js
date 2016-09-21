@@ -6,8 +6,6 @@ import ContractorTracker from '../../components/messaging/contractor';
 import Checkout from '../../components/payment/checkout';
 import NDA from '../../components/nda';
 import Terms from '../../components/messaging/terms';
-import FormHelpers from '../../utils/formHelpers';
-import Loader from '../../components/loadScreen';
 
 const MessageAgreement = React.createClass({
 
@@ -16,32 +14,6 @@ const MessageAgreement = React.createClass({
       panel: ''
     };
   },
-
-  // componentWillMount() {
-  //   const { current_user, isOwner, terms, nda, job, signing_url, isLoading, formElements } = this.props;
-  //
-  //   this.setState({
-  //     current_user,
-  //     isOwner,
-  //     terms,
-  //     nda,
-  //     job,
-  //     signing_url,
-  //     isLoading,
-  //     formElements
-  //   })
-  // },
-
-  // handleChange(event) {
-  //   const { formElements } = this.state;
-  //   const { value } = event.target;
-  //   const fieldName = event.target.getAttribute('name');
-  //
-  //   formElements[fieldName].update(value);
-  //   formElements[fieldName].value = value;
-  //
-  //   this.setState({ formElements, formError: false });
-  // },
 
   togglePanel(event=0) {
     this.props.togglePanel(!this.props.showPanel);

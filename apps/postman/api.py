@@ -48,19 +48,24 @@ class MessageAPI(APIView):
         recipient = Profile.objects.get(id=request.data['recipient'])
         title = 'New message about {0}'.format(request.data['title'])
         project = Project.objects.get(id=request.data['project'])
-        job = Job.objects.create(project=project, contractor=request.user )
-        terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA', )
+        job, created = Job.objects.get_or_create(project=project, contractor=request.user )
         new_message = Message.objects.create(
             sender=request.user,
             recipient=recipient,
             body=body,
             subject=title,
-            job=job,
-            nda=nda,
-            terms=terms
         )
-        new_message.thread = new_message
+        if created:
+            terms = Terms.objects.create(job=job)
+            nda = Document.objects.create(job=job, type='NDA', )
+            new_message.job = job
+            new_message.nda = nda
+            new_message.project = project
+            new_message.terms = terms
+            thread = new_message
+        else:
+            thread = Message.objects.get(job=job)
+        new_message.thread = thread
         new_message.save()
         new_message_notification.delay(recipient.id, new_message.id)
         return Response(status=200)
@@ -74,25 +79,28 @@ class MessageAPI(APIView):
             body=body,
             subject=thread.subject
         )
+        return new_message
 
-    def new_attachment(self, thread, user, attachment):
+    def new_attachment(self, thread, user, attachment, tag):
         recipient = thread.sender if user == thread.recipient else thread.recipient
         new_interaction = AttachmentInteraction.objects.create(
             sender=user,
             recipient=recipient,
             thread=thread
         )
-        return Attachment.objects.create(content_object=new_interaction, file=attachment, tag='message')
+        Attachment.objects.create(content_object=new_interaction, file=attachment, tag=tag)
+        return new_interaction
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
         if request.user == thread.sender or request.user == thread.recipient:
             if request.data.has_key('attachment'):
-                interaction = self.new_attachment(thread, request.user, request.data['attachment'])
+                tag = request.data.get('tag', 'Attachment')
+                interaction = self.new_attachment(thread, request.user, request.data['attachment'], tag)
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
             serializer = ConversationSerializer(thread, context={'request': request})
-            new_message_notification.delay(interaction.recipient.id, interaction.id)
+            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
             return Response(serializer.data)
         else:
             return Response(status=403)

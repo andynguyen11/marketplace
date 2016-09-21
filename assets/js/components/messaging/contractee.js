@@ -46,10 +46,10 @@ const ContracteeTracker = React.createClass({
           return (
             <div>
               <button disabled className={panel == 'builder' ? 'btn btn-secondary' : 'hidden'}>In Progress</button>
-              { job.hours ? (
+              { job.hours && nda.status === 'signed' ? (
                 <button onClick={togglePanel} data-panel='builder' className={panel == 'builder' ? 'hidden' : 'btn btn-brand'}>Create New</button>
               ) : (
-                <button className='btn'>Create New</button>
+                <button disabled className='btn btn-brand'>Create New</button>
               )}
             </div>
           );
