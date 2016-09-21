@@ -30,6 +30,7 @@ from accounts.models import Skills
 import business.views as business_views
 import accounts.views as accounts_views
 
+import business.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [

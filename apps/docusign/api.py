@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from generics.viewsets import NestedModelViewSet
 
+from notifications.signals import notify
+
 from .docusign import parse_webhook_update
 from .models import Template, Document, DocumentSigner
 from .serializers import TemplateSerializer, DocumentSerializer, SignerSerializer
@@ -39,6 +41,10 @@ class RawXMLParser(BaseParser):
         return stream.read()
 
 
+def signal_change(document, signer, new_status):
+    if new_status.lower() in tuple('signed'):
+        notify.send(signer, recipient=document.manager, verb=u'Document signed', action_object=document)
+
 class Webhook(APIView):
 
     parser_classes = (RawXMLParser, )
@@ -50,8 +56,10 @@ class Webhook(APIView):
         document.save()
         signers = document.signers
         for signer in signers:
-            signer.status = update['signers'][signer.profile.id]['status'] or signer.status
+            new_status = update['signers'][signer.profile.id]['status']
+            signer.status = new_status or signer.status
             signer.save()
+            signal_changes(document, signer, new_status)
         return Response(status=200, data={"message": "Success"})
 
 

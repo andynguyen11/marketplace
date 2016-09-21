@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from rest_framework import generics
 
-from .api_views import TemplateAPI, DocumentViewSet, SignerViewSet, Webhook, signing_url_redirect
+from .api import TemplateAPI, DocumentViewSet, SignerViewSet, Webhook, signing_url_redirect
 from generics.routers import DeclarativeRouter
 
 router = DeclarativeRouter({
