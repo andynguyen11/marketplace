@@ -40,7 +40,7 @@ class Attachment(models.Model):
 
     @property
     def name(self):
-        return self.join(self.parent_prefix, self.tag_prefix.replace (" ", "_"), 'name', self.original_name)
+        return self.join(self.parent_prefix, self.tag_prefix, 'name', self.original_name)
 
     @property
     def path(self):
@@ -48,7 +48,7 @@ class Attachment(models.Model):
 
     @property
     def url(self):
-        return settings.MEDIA_URL + self.name
+        return settings.MEDIA_URL + self.file.name
 
     @property
     def data(self):
