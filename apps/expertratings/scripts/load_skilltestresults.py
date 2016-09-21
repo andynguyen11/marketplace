@@ -3,13 +3,17 @@ from expertratings.serializers import SkillTestResultSerializer
 from expertratings.api import expertratings_api
 from datetime import datetime
 from generics.utils import normalize_key_suffixes
+from accounts.models import Profile
 
 def normalizer(record):
     transcript_id = record.pop('transcript_id')
     record = normalize_key_suffixes(record)
     record['transcript_id'] = transcript_id
     user = record.pop('user')
-    record['user'] = 1 if user == 'devquitytestuser' else int(user) 
+    try:
+        record['user'] = int(user) 
+    except ValueError, e: 
+        record['user'] = Profile.objects.get(username='admin').id
     return record
 
 upsert = external_record_upserter(SkillTestResultSerializer, primary_key='transcript_id', normalizers={normalizer})
