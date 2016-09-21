@@ -201,8 +201,10 @@ const Message = React.createClass({
 
 const Attachment = React.createClass({
   triggerDownload(event) {
+    const { attachment } = this.props;
     event.preventDefault();
-    downloadjs('/static/images/Loom_Logo.svg');
+
+    downloadjs(attachment.url);
   },
 
   render() {
@@ -245,6 +247,7 @@ const Messages = React.createClass({
       isLoading: true,
       messageError: false,
       messageSending: false,
+      showPanel: false,
       attachment: false,
       attachmentName: false,
       formErrorsList: []
@@ -505,80 +508,86 @@ const Messages = React.createClass({
 
   fetchThread() {
     const { threadId } = this.props;
+    const { messageSending, showPanel } = this.state;
 
-    $.ajax({
-      url: loom_api.messages + threadId + '/',
-      success: (result) => {
-        const currentUserId = result.current_user;
-        let currentUserData;
-        let otherUserData;
+    if(!messageSending && !showPanel) {
+      $.ajax({
+        url: loom_api.messages + threadId + '/',
+        success: (result) => {
+          const { messageSending, showPanel } = this.state;
+          const currentUserId = result.current_user;
+          let currentUserData;
+          let otherUserData;
 
-        result.interactions.map((interaction, i) => {
-          const { sender, recipient, interactionType } = interaction;
+          result.interactions.map((interaction, i) => {
+            const {sender, recipient, interactionType} = interaction;
 
-          // TODO Will need to rethink how we handle different interaction types
-          if (interactionType === 'message') {
-            const senderIsCurrentUser = currentUserId === sender.id;
-            const recipientIsCurrentUser = currentUserId === recipient.id;
+            // TODO Will need to rethink how we handle different interaction types
+            if (interactionType === 'message') {
+              const senderIsCurrentUser = currentUserId === sender.id;
+              const recipientIsCurrentUser = currentUserId === recipient.id;
 
-            if(senderIsCurrentUser && !currentUserData) {
-              currentUserData = {
-                id: sender.id,
-                photo_url: sender.photo_url,
-                first_name: sender.first_name
+              if (senderIsCurrentUser && !currentUserData) {
+                currentUserData = {
+                  id: sender.id,
+                  photo_url: sender.photo_url,
+                  first_name: sender.first_name
+                }
+              }
+
+              if (recipientIsCurrentUser && !currentUserData) {
+                currentUserData = {
+                  id: recipient.id,
+                  photo_url: recipient.photo_url,
+                  first_name: recipient.first_name
+                }
+              }
+
+              if (!senderIsCurrentUser && !otherUserData) {
+                otherUserData = {
+                  id: sender.id,
+                  photo_url: sender.photo_url,
+                  first_name: sender.first_name
+                }
+              }
+
+              if (!recipientIsCurrentUser && !otherUserData) {
+                otherUserData = {
+                  id: recipient.id,
+                  photo_url: recipient.photo_url,
+                  first_name: recipient.first_name
+                }
               }
             }
+          });
 
-            if(recipientIsCurrentUser && !currentUserData) {
-              currentUserData = {
-                id: recipient.id,
-                photo_url: recipient.photo_url,
-                first_name: recipient.first_name
-              }
-            }
-
-            if(!senderIsCurrentUser && !otherUserData) {
-              otherUserData = {
-                id: sender.id,
-                photo_url: sender.photo_url,
-                first_name: sender.first_name
-              }
-            }
-
-            if(!recipientIsCurrentUser && !otherUserData) {
-              otherUserData = {
-                id: recipient.id,
-                photo_url: recipient.photo_url,
-                first_name: recipient.first_name
-              }
-            }
+          if(!messageSending && !showPanel) {
+            this.setState({
+              currentUserData,
+              otherUserData,
+              currentUser: result.current_user,
+              isOwner: result.is_owner,
+              interactions: result.interactions || [],
+              terms: result.terms,
+              nda: result.nda,
+              job: result.job,
+              signing_url: result.signing_url,
+              isLoading: false,
+              messageError: false,
+              formElements: this.formElements(result.terms)
+            }, () => {
+              this.scrollBottom();
+            });
           }
-        });
-
-        this.setState({
-          currentUserData,
-          otherUserData,
-          currentUser: result.current_user,
-          isOwner: result.is_owner,
-          interactions: result.interactions || [],
-          terms: result.terms,
-          nda: result.nda,
-          job: result.job,
-          signing_url: result.signing_url,
-          isLoading: false,
-          messageError: false,
-          formElements: this.formElements(result.terms)
-        }, () => {
-          this.scrollBottom();
-        });
-      },
-      error: () => {
-        this.setState({
-          isLoading: false,
-          messageError: 'Something went wrong with loading messages. Please reload this page.'
-        })
-      }
-    });
+        },
+        error: () => {
+          this.setState({
+            isLoading: false,
+            messageError: 'Something went wrong with loading messages. Please reload this page.'
+          })
+        }
+      });
+    }
   },
 
   startPoller() {
@@ -587,10 +596,10 @@ const Messages = React.createClass({
 
   updateMessages() {
     const { threadId } = this.props;
-    const { messageSending, interactions } = this.state;
+    const { messageSending, showPanel, interactions } = this.state;
     const interactionCount = interactions.length;
 
-    if(!messageSending) {
+    if(!messageSending && !showPanel) {
       $.ajax({
         url: loom_api.messagePoller + threadId + '/',
         success: (result) => {
