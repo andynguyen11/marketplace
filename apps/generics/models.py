@@ -40,7 +40,7 @@ class Attachment(models.Model):
 
     @property
     def name(self):
-        return self.join(self.parent_prefix, self.tag_prefix, 'name', self.original_name)
+        return self.join(self.parent_prefix, self.tag_prefix.replace (" ", "_"), 'name', self.original_name)
 
     @property
     def path(self):

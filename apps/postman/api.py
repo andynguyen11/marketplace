@@ -95,7 +95,8 @@ class MessageAPI(APIView):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
         if request.user == thread.sender or request.user == thread.recipient:
             if request.data.has_key('attachment'):
-                interaction = self.new_attachment(thread, request.user, request.data['attachment'], request.data['tag'])
+                tag = request.data.get('tag', 'Attachment')
+                interaction = self.new_attachment(thread, request.user, request.data['attachment'], tag)
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
             serializer = ConversationSerializer(thread, context={'request': request})
