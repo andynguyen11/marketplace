@@ -8,12 +8,13 @@ from generics.validators import file_validator
 
 class AttachmentSerializer(RelationalModelSerializer):
     file = serializers.FileField(max_length=None, allow_empty_file=False, required=False, write_only=True, validators=[file_validator])
+    original_name = serializers.CharField(read_only=True)
     url = serializers.CharField(read_only=True)
     id = serializers.CharField(read_only=True)
 
     class Meta:
         model = Attachment
-        fields = ('id', 'file', 'tag', 'url')
+        fields = ('id', 'file', 'tag', 'url', 'original_name')
 
     def resolve_relations(self, obj):
         new_obj = { k: obj.pop(k) for k in ['id', 'file', 'tag'] if obj.has_key(k) }

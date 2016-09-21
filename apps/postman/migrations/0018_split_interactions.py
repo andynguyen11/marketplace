@@ -19,13 +19,15 @@ def split_interactions(apps, schema_editor):
     AttachmentInteraction = apps.get_model("postman", "attachmentinteraction")
     Interaction = apps.get_model("postman", "interaction")
 
-    for message in Message.objects.all():
-        interaction = Interaction.objects.create(**to_dict(message))
+    for message in Message.objects.all().order_by('id'):
+        attributes = to_dict(message)
+        interaction = Interaction.objects.create(id=message.id, **attributes)
         message.interaction_ptr = interaction
         message.save()
 
     for message in AttachmentInteraction.objects.all():
-        interaction = Interaction.objects.create(**to_dict(message))
+        attributes = to_dict(message)
+        interaction = Interaction.objects.create(**attributes)
         message.interaction_ptr = interaction
         message.save()
 

@@ -1,19 +1,16 @@
 import React from 'react'
 import ReactCSSTransitionGroup from 'react/lib/ReactCSSTransitionGroup'
+import classNames from 'classnames';
 
 const ModalInner = React.createClass({
   body: document.body,
 
-  propTypes: {
-    open: React.PropTypes.bool,
-    onClose: React.PropTypes.func
-  },
-
   closeListener(e) {
+    const { onClose } = this.props;
     // close modal when user hits escape
     if (e.which === 27) {
       e.preventDefault();
-      this.props.onClose();
+      onClose();
     }
   },
 
@@ -37,13 +34,21 @@ const ModalInner = React.createClass({
   },
 
   render() {
+    const { onClose, children, header, footer } = this.props;
+    const headerClass = classNames('modal-top', { 'modal-top-hasHeader': !!header });
+    const messageClass = classNames('modal-message', { 'modal-message-hasFooter': !!footer });
+    const modalFooter = footer && <div className="modal-bottom">{footer}</div>;
+
     return (
       <div key="modal" className="modal-container">
-        <div className="modal-overlay" onClick={this.props.onClose}>
-          <div className="modal-close"></div>
-        </div>
+        <div className="modal-overlay" onClick={onClose}></div>
         <div className="modal" ref="modal">
-          <span className="modal-message">{this.props.children}</span>
+          <div className={headerClass}>
+            {header}
+            <div className="modal-close" onClick={onClose}></div>
+          </div>
+          <div className={messageClass}>{children}</div>
+          {modalFooter}
         </div>
       </div>
     );
@@ -51,6 +56,15 @@ const ModalInner = React.createClass({
 });
 
 let Modal = React.createClass({
+  propTypes: {
+    open: React.PropTypes.bool.isRequired,
+    onClose: React.PropTypes.func.isRequired,
+    header: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.node
+    ])
+  },
+
   render() {
     let modal = this.props.open && <ModalInner {...this.props}/>;
 

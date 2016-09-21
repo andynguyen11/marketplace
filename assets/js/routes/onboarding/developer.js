@@ -3,7 +3,6 @@ import _ from 'lodash';
 import SkillButton from '../../components/skill';
 import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
-import BigSelect from '../../components/bigSelect';
 import { objectToFormData } from '../project/utils';
 import Loader from '../../components/loadScreen';
 

@@ -10,7 +10,6 @@
     window.jQuery = window.$ = $;
 
     require('bootstrap');
-    require('bootstrap-datepicker');
     require('bootstrap-select');
 
     // import non-npm vendor files
