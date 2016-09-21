@@ -81,21 +81,21 @@ class MessageAPI(APIView):
         )
         return new_message
 
-    def new_attachment(self, thread, user, attachment):
+    def new_attachment(self, thread, user, attachment, tag):
         recipient = thread.sender if user == thread.recipient else thread.recipient
         new_interaction = AttachmentInteraction.objects.create(
             sender=user,
             recipient=recipient,
             thread=thread
         )
-        Attachment.objects.create(content_object=new_interaction, file=attachment, tag='message')
+        Attachment.objects.create(content_object=new_interaction, file=attachment, tag=tag)
         return new_interaction
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
         if request.user == thread.sender or request.user == thread.recipient:
             if request.data.has_key('attachment'):
-                interaction = self.new_attachment(thread, request.user, request.data['attachment'])
+                interaction = self.new_attachment(thread, request.user, request.data['attachment'], request.data['tag'])
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
             serializer = ConversationSerializer(thread, context={'request': request})

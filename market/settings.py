@@ -345,9 +345,9 @@ expert_rating_ = prefixed_env_var_getter('EXPERT_RATING')
 EXPERT_RATING = {
     'root_url': expert_rating_('ROOT_URL', 'http://www.expertrating.com/devquity/webservices'),
     'auth': {
-        'partnerid': expert_rating_('PARTNERID'),
-        'password': expert_rating_('PASSWORD'),
-        'partneruserid': expert_rating_('PARTNERUSERID'),
+        'partnerid': expert_rating_('PARTNERID', '1218278'),
+        'password': expert_rating_('PASSWORD', 'd1e2v1q8u2i7t8y'),
+        'partneruserid': expert_rating_('PARTNERUSERID', 'devquitytestuser321'),
     }
 }
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
