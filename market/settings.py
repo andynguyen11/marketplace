@@ -347,7 +347,7 @@ EXPERT_RATING = {
     'auth': {
         'partnerid': expert_rating_('PARTNERID', '1218278'),
         'password': expert_rating_('PASSWORD', 'd1e2v1q8u2i7t8y'),
-        'partneruserid': expert_rating_('PARTNERUSERID', 'devquitytestuser321'),
+        'partneruserid': expert_rating_('PARTNERUSERID'),
     }
 }
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
