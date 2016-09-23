@@ -33,19 +33,24 @@ class MessageAPI(APIView):
         recipient = Profile.objects.get(id=request.data['recipient'])
         title = 'New message about {0}'.format(request.data['title'])
         project = Project.objects.get(id=request.data['project'])
-        job = Job.objects.create(project=project, contractor=request.user )
-        terms = Terms.objects.create(job=job)
-        nda = Document.objects.create(job=job, type='NDA', )
+        job, created = Job.objects.get_or_create(project=project, contractor=request.user )
         new_message = Message.objects.create(
             sender=request.user,
             recipient=recipient,
             body=body,
             subject=title,
-            job=job,
-            nda=nda,
-            terms=terms
         )
-        new_message.thread = new_message
+        if created:
+            terms = Terms.objects.create(job=job)
+            nda = Document.objects.create(job=job, type='NDA', )
+            new_message.job = job
+            new_message.nda = nda
+            new_message.project = project
+            new_message.terms = terms
+            thread = new_message
+        else:
+            thread = Message.objects.get(job=job)
+        new_message.thread = thread
         new_message.save()
         new_message_notification.delay(recipient.id, new_message.id)
         return Response(status=200)

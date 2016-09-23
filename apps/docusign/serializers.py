@@ -49,7 +49,10 @@ class SignerTabSerializer(RelationalModelSerializer):
             if obj.has_key('type'):
                 kwargs['type'] = obj.get('type', None)
             if len(kwargs.keys()) > 1:
-                obj['template_role_tab'] = TemplateRoleTab.objects.get(**kwargs)
+                try:
+                    obj['template_role_tab'] = TemplateRoleTab.objects.get(**kwargs)
+                except TemplateRoleTab.DoesNotExist:
+                    return None
         return obj
 
 

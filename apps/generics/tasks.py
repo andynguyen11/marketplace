@@ -44,3 +44,13 @@ def new_message_notification(recipient_id, thread_id):
         else:
             thread.last_emailed_owner = datetime.now()
         thread.save()
+
+@shared_task
+def contact_card_email(job, d):
+    users = [job.project.project_manager, job.contractor]
+    context = {
+        'fname': job.contractor.first_name,
+        'lname': job.contractor.last_name,
+        'email': job.contractor.email,
+    }
+    send_mail('new_contact', users, context)

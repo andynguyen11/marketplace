@@ -13,6 +13,7 @@ from rest_framework import authentication, permissions, viewsets
 from django.conf import settings
 
 from accounts.models import Profile
+from generics.tasks import contact_card_email
 from business.models import Job, Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
@@ -161,6 +162,7 @@ class CreditCardView(APIView):
             order.status = 'paid'
             order.save()
             signer_url = self.generate_contract(request, job)
+            #contact_card_email.delay(job)
             return ("Success", signer_url)
         return ("There was a problem processing your payment.", "/profile/dashboard/")
 

@@ -41,7 +41,8 @@ class RelationalModelSerializer(serializers.ModelSerializer):
         if action == 'update_or_create' and data.has_key('id'):
             id = data.pop('id')
             data = {'defaults': data, 'id': id }
-        return normalize_persistence(getattr(self.Meta.model.objects, action)(**data))
+        if data:
+            return normalize_persistence(getattr(self.Meta.model.objects, action)(**data))
 
     def create(self, validated_data, action='create'):
         return self.create_self( validated_data, action=action )
