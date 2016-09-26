@@ -1,12 +1,17 @@
 from django.conf import settings
-import requests
+import requests, re
 from expertratings.utils import xml2dict, xml_body, upper_camel_case
+from expertratings.exceptions import ExpertRatingsAPIException
 
 #settings.WEBHOOK_BASE_URL + '/api/skilltests/webhook'
 def quote(s): return '"%s"' % s
 
 def coverage_format(c):
     return ', '.join(map(quote, str(c).split(' ;')))
+
+def is_url(string):
+    url_pattern = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+    return re.match(url_pattern, string) and True or False
 
 record_schema = {
   '@category': str,
@@ -69,7 +74,7 @@ class ExpertRatings(object):
         try:
             return self.extract_records(response_dict)
         except KeyError, e:
-            raise Exception(response_dict)
+            raise ExpertRatingsAPIException(response_dict)
 
     def get( self, method, **kwargs ):
         return self.request('Get%s' % upper_camel_case(method), **kwargs)
@@ -86,6 +91,8 @@ class ExpertRatings(object):
         data.update(options)
         response = self.post('/GenerateTicket.aspx', data=data)
         ticket_url = response.text
+        if not is_url(ticket_url):
+            raise ExpertRatingsAPIException(detail='failed to create url: expertRatings API misconfigured or temporarily unavailable')
         if(ticket_url == 'SOMETHING MISSING IN URL'): # expert rating return 200 on errors
             raise AssertionError('incorrect parameters for expertrating call')
         return ticket_url

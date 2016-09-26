@@ -2,7 +2,7 @@ from generics.serializers import AttachmentSerializer
 from django.contrib.contenttypes.models import ContentType
 from generics.models import Attachment
 from rest_framework import viewsets, authentication, permissions
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
+from rest_framework.permissions import IsAuthenticated
 
 from guardian.shortcuts import get_perms
 

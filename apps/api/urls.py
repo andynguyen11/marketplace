@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from rest_framework_nested import routers
 from generics.routers import DeclarativeRouter
 
-from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet
+from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
 from generics.api import AttachmentViewSet
@@ -25,7 +25,15 @@ router = DeclarativeRouter({
             }
         }
     },
-    'skills': SkillViewSet,
+    'skills': {
+        'view': SkillViewSet,
+        'nested': {
+            'lookup': 'skill',
+            'routes': {
+                'verificationtest': VerificationTestViewSet
+            }
+        }
+    },
     'skilltest': ERSkillTestViewSet,
     'project': {
         'view': ProjectViewSet,

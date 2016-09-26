@@ -12,7 +12,7 @@ from rest_framework.renderers import JSONRenderer
 from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission
 from business.models import Job
 from business.serializers import *
-from generics.viewsets import NestedModelViewSet, OwnedModelViewSet
+from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
 
 

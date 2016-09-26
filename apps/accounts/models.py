@@ -33,12 +33,33 @@ class Skills(tagulous.models.TagModel):
         ]
         autocomplete_view = 'skills_autocomplete'
 
-    verification_test = models.ForeignKey('expertratings.SkillTest', null=True)
+    verification_tests = models.ManyToManyField('expertratings.SkillTest', through='VerificationTest')
 
     def is_verified(self, user):
         return SkillTestResult.objects.filter(
-                user=user, test=self.verification_test, test_result='PASS').exists()
+                user=user, test__in=self.verification_tests.all(), test_result='PASS').exists()
 
+
+class VerificationTestManager(models.Manager):
+    def taken(self, user):
+        return self.filter(skilltest__in = user.taken_tests)
+
+    def not_taken(self, user):
+        return self.exclude(skilltest__in = user.taken_tests)
+
+    def recommended(self, user):
+        return self.not_taken(user).filter(skill__in = user.get_skills())
+
+
+class VerificationTest(models.Model):
+    objects = VerificationTestManager()
+
+    skill = models.ForeignKey(Skills, on_delete=models.CASCADE)
+    skilltest = models.ForeignKey('expertratings.SkillTest', on_delete=models.CASCADE)
+    relevance = models.FloatField()
+
+    class Meta:
+        ordering = ('-relevance',)
 
 
 class SkillTest(models.Model):
@@ -122,6 +143,13 @@ class Profile(AbstractUser):
 
     def get_skills(self):
         return self.skills.tag_model.objects.all()
+
+    @property
+    def skilltests(self):
+        return SkillTest.objects.filter(profile=self)
+    @property
+    def taken_tests(self):
+        return [t.expertratings_test for t in self.skilltests]
 
     def get_default_payment(self):
         if self.stripe:

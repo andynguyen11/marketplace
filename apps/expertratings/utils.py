@@ -63,4 +63,3 @@ def xml2dict(string):
 def xml_body(d):
     return xml_to_body_str(dict2xml(d))
 
-
