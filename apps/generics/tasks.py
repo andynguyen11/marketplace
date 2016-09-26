@@ -5,6 +5,7 @@ import pytz
 from celery import shared_task
 
 from accounts.models import Profile
+from business.models import Job
 from postman.models import Message
 from generics.utils import send_mail
 
@@ -46,11 +47,23 @@ def new_message_notification(recipient_id, thread_id):
         thread.save()
 
 @shared_task
-def contact_card_email(job, d):
-    users = [job.project.project_manager, job.contractor]
-    context = {
+def contact_card_email(job_id):
+    job = Job.objects.get(id=job_id)
+
+    dev_context = {
+        'fname': job.project.project_manager.first_name,
+        'lname': job.project.project_manager.last_name,
+        'email': job.project.project_manager.email,
+    }
+    dev_context['phone'] = job.project.project_manager.phone if job.project.project_manager.phone else ''
+    dev_context['title'] = job.project.project_manager.title if job.project.project_manager.title else ''
+    send_mail('new-contract', [job.contractor], dev_context)
+
+    pm_context = {
         'fname': job.contractor.first_name,
         'lname': job.contractor.last_name,
         'email': job.contractor.email,
     }
-    send_mail('new_contact', users, context)
+    pm_context['phone'] = job.contractor.phone if job.contractor.phone else ''
+    pm_context['role'] = job.contractor.role if job.contractor.role else ''
+    send_mail('new-contract', [job.project.project_manager], pm_context)

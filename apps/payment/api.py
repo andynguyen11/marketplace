@@ -162,7 +162,7 @@ class CreditCardView(APIView):
             order.status = 'paid'
             order.save()
             signer_url = self.generate_contract(request, job)
-            #contact_card_email.delay(job)
+            contact_card_email.delay(job.id)
             return ("Success", signer_url)
         return ("There was a problem processing your payment.", "/profile/dashboard/")
 
