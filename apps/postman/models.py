@@ -544,7 +544,10 @@ class AttachmentInteraction(Interaction):
 
     @property
     def attachment(self):
-        return self._attachment.all()[0]
+        try:
+            return self._attachment.all()[0]
+        except IndexError, e:
+            pass
 
     class Meta:
         verbose_name = _("attachment interaction")

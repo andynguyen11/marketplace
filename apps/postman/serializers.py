@@ -13,7 +13,8 @@ from postman.models import Message, AttachmentInteraction
 
 
 class Interaction(object):
-    def __init__(self, sender, recipient, content, timestamp):
+    def __init__(self, id, sender, recipient, content, timestamp):
+        self.id = id
         self.sender = sender
         self.recipient = recipient
         self.content = content
@@ -39,6 +40,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class InteractionSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     interactionType = serializers.CharField(max_length=100)
     sender = ObfuscatedProfileSerializer(required=False, allow_null=True)
     recipient = ObfuscatedProfileSerializer(required=False, allow_null=True)
@@ -51,6 +53,24 @@ def mark_read(user, thread):
     filter = Q(thread=thread)
     for BaseModel in [Message, AttachmentInteraction]:
         BaseModel.objects.set_read(user, filter)
+
+
+def serialize_interaction(message):
+    if isinstance(message, AttachmentInteraction):
+        return FileInteraction(
+                id=message.id,
+                sender=message.sender,
+                recipient=message.recipient,
+                timestamp=message.sent_at,
+                content=message.attachment and message.attachment.url,
+                attachment=message.attachment)
+    else:
+        return MessageInteraction(
+                id=message.id,
+                sender=message.sender,
+                recipient=message.recipient,
+                timestamp=message.sent_at,
+                content=message.body)
 
 
 class ConversationSerializer(serializers.ModelSerializer):
@@ -84,27 +104,12 @@ class ConversationSerializer(serializers.ModelSerializer):
         except Document.DoesNotExist:
             return None
 
-    def serialize_interaction(self, message):
-        if hasattr(message, 'attachment'):
-            return FileInteraction(
-                    sender=message.sender,
-                    recipient=message.recipient,
-                    timestamp=message.sent_at,
-                    content=message.attachment.url,
-                    attachment=message.attachment)
-        else:
-            return MessageInteraction(
-                    sender=message.sender,
-                    recipient=message.recipient,
-                    timestamp=message.sent_at,
-                    content=message.body)
-
     def get_interactions(self, obj):
         mark_read(self.context['request'].user, obj.id)
         interactions = sorted(chain(*[
             BaseModel.objects.filter(thread=obj.id).order_by('sent_at') for BaseModel
             in [Message, AttachmentInteraction]
         ]), key=attrgetter('sent_at'))
-        mapped_interactions = map(self.serialize_interaction, interactions)
+        mapped_interactions = map(serialize_interaction, interactions)
         serializer = InteractionSerializer(mapped_interactions, many=True)
         return serializer.data

@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes, api_view
+from rest_framework.decorators import permission_classes
 from django.db.models import Q
 
 from accounts.models import Profile
@@ -16,14 +16,14 @@ from generics.models import Attachment
 from generics.tasks import new_message_notification
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
-from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction
+from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
 
 from itertools import chain
 from operator import attrgetter
 
 def all_interactions(thread_id):
     return sorted(chain(*[
-            BaseModel.objects.filter(thread=thread_id).order_by('sent_at') for BaseModel
+            BaseModel.objects.filter(thread=thread_id, sender_deleted_at__isnull=True, recipient_deleted_at__isnull=True).order_by('sent_at') for BaseModel
             in [Message, AttachmentInteraction]
         ]), key=attrgetter('sent_at'))
 
@@ -31,6 +31,12 @@ def mark_read(user, thread):
     filter = Q(thread=thread)
     for BaseModel in [Message, AttachmentInteraction]:
         BaseModel.objects.set_read(user, filter)
+
+def get_interaction(interaction_id):
+    try:
+        return AttachmentInteraction.objects.get(id=interaction_id)
+    except AttachmentInteraction.DoesNotExist, e:
+        return Message.objects.get(id=interaction_id)
 
 
 class ConversationDetail(generics.RetrieveAPIView):
@@ -105,27 +111,41 @@ class MessageAPI(APIView):
         else:
             return Response(status=403)
 
-    def serialize_interaction(self, message):
-        if hasattr(message, 'attachment'):
-            return FileInteraction(
-                    sender=message.sender,
-                    recipient=message.recipient,
-                    timestamp=message.sent_at,
-                    content=message.attachment.url,
-                    attachment=message.attachment)
-        else:
-            return MessageInteraction(
-                    sender=message.sender,
-                    recipient=message.recipient,
-                    timestamp=message.sent_at,
-                    content=message.body)
-
     def get(self, request, thread_id):
-        #thread_id = Message.objects.get(id=thread_id).thread
         messages = all_interactions(thread_id)
-        mark_read(request.user, thread_id)
-        if len(messages) and (request.user == messages[0].sender or request.user == messages[0].recipient):
-            interactions = map(self.serialize_interaction, messages)
-            serializer = InteractionSerializer(interactions, many=True)
-            return Response({'current_user': request.user.id, 'interactions':serializer.data})
+        if(len(messages)):
+            mark_read(request.user, thread_id)
+            if len(messages) and (request.user == messages[0].sender or request.user == messages[0].recipient):
+                interactions = map(serialize_interaction, messages)
+                serializer = InteractionSerializer(interactions, many=True)
+                return Response({'current_user': request.user.id, 'interactions':serializer.data})
+        else: # single message
+            try:
+                serializer = InteractionSerializer(serialize_interaction(get_interaction(thread_id)))
+                return Response(serializer.data)
+            except Message.DoesNotExist, e:
+                return Response(status=404)
         return Response(status=403)
+
+
+
+    def delete(self, request, thread_id):
+        try:
+            interaction = get_interaction(thread_id)
+        except Message.DoesNotExist:
+            return Response(status=404)
+
+        if (interaction.recipient == request.user):
+            interaction.attachment.delete()
+            interaction.recipient_deleted_at = datetime.now()
+        elif (interaction.sender == request.user):
+            if hasattr(interaction, 'attachment'):
+                interaction.attachment.delete()
+            interaction.sender_deleted_at = datetime.now()
+        else:
+            return Response(status=403)
+
+        interaction.save()
+        return self.get(request, interaction.thread.id)
+
+
