@@ -695,15 +695,12 @@ const Messages = React.createClass({
   onFileSelection(event) {
     event.preventDefault();
     let file = event.target.files[0];
-    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
-    if(re.exec(file.name)) {
-      this.setState({
-        fileToUpload: file,
-        fileToUploadTitle: ''
-      }, () => {
-        this.openAttachmentModal();
-      });
-    }
+    this.setState({
+      fileToUpload: file,
+      fileToUploadTitle: ''
+    }, () => {
+      this.openAttachmentModal();
+    });
   },
 
   updateFileName(event) {
@@ -744,11 +741,12 @@ const Messages = React.createClass({
           this.closeAttachmentModal();
         });
       },
-      error: () => {
+      error: (result) => {
         this.setState({
-          fileError: 'Something went wrong with uploading your attachment. Please try again.',
-          file: false
-        })
+          fileError: result.responseText ? result.responseText : 'Something went wrong with uploading your attachment. Please try again.',
+          file: false,
+          fileSending: false,
+        });
       }
     });
 
@@ -763,7 +761,9 @@ const Messages = React.createClass({
 
     if(!fileSending) {
       this.setState({
-        attachmentModalIsOpen: false
+        attachmentModalIsOpen: false,
+        fileToUpload: null,
+        fileError: false
       });
     }
   },
@@ -833,6 +833,7 @@ const Messages = React.createClass({
       showPanel,
       attachmentDeleteModalIsOpen,
       attachmentModalIsOpen,
+      fileError,
       fileSending,
       fileToUpload,
       fileToUploadTitle,
@@ -854,6 +855,7 @@ const Messages = React.createClass({
       }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
+    const attachmentError = fileError && <div className="alert alert-danger" role="alert">{fileError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
     const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
     const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserProfileLink}</span></span>;
@@ -881,12 +883,16 @@ const Messages = React.createClass({
               />
               <div className="clearfix"></div>
             </div>
-            <div className="messages-upload-modal-actions">
+            <div className="messages-upload-modal-actions form-group">
               <button className="btn btn-brand btn-brand--clear" onClick={this.closeAttachmentModal} {...disabled}>
                 Cancel
               </button>
-              <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>Upload</button>
+              <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>
+                <i className={ fileSending ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+                Upload
+              </button>
             </div>
+            {attachmentError}
           </div>
         </Modal>
       );

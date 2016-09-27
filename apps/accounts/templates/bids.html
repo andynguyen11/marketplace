@@ -24,6 +24,7 @@
                   <th>Equity</th>
                   <th>Hours</th>
                   <th>Date Submitted</th>
+                  <th></th>
                 </tr>
               </thead>
               {% for bid in bids %}
@@ -33,6 +34,11 @@
                   <td class="hide-mobile">{% if bid.equity %}{{ bid.equity }}%{% endif %}</td>
                   <td class="hide-mobile">{{ bid.hours }} hours</td>
                   <td>{{ bid.date_created }}</td>
+                  <td>
+                    {% if bid.conversation %}
+                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
+                    {% endif %}
+                  </td>
                 </tr>
               {% endfor %}
             </table>
@@ -97,7 +103,7 @@
                   </td>
                   <td>
                     {% if bid.conversation %}
-                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Message</a>
+                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
                     {% endif %}
                   </td>
                 </tr>

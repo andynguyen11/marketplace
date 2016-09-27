@@ -62,7 +62,7 @@
           <ul class="notifications">
             {% if notifications %}
               {% for notification in notifications|slice:":50" %}
-              <li>You {{ notification.verb }} on a project: <a href="{% url 'view-bids' %}">{{ notification.action_object.project.title }}</a></li>
+              <li>{{ notification.verb }} on a project: <a href="{% url 'postman:view_conversation' notification.actor.id %}">{{ notification.action_object.project.title }}</a></li>
               {% endfor %}
             {% else %}
               <li class="text-brand-bold">You have successfully created your account. Welcome to Loom!</li>

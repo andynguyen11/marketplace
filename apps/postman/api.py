@@ -14,6 +14,7 @@ from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
 from generics.models import Attachment
 from generics.tasks import new_message_notification
+from generics.validators import file_validator
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
@@ -89,20 +90,33 @@ class MessageAPI(APIView):
 
     def new_attachment(self, thread, user, attachment, tag):
         recipient = thread.sender if user == thread.recipient else thread.recipient
+        file_error = file_validator(attachment)
+        if file_error:
+            return {
+                'error': file_error,
+                'interaction': None
+            }
         new_interaction = AttachmentInteraction.objects.create(
             sender=user,
             recipient=recipient,
             thread=thread
         )
         Attachment.objects.create(content_object=new_interaction, file=attachment, tag=tag)
-        return new_interaction
+        return {
+            'error': False,
+            'interaction': new_interaction
+        }
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
         if request.user == thread.sender or request.user == thread.recipient:
             if request.data.has_key('attachment'):
                 tag = request.data.get('tag', 'Attachment')
-                interaction = self.new_attachment(thread, request.user, request.data['attachment'], tag)
+                attachment = self.new_attachment(thread, request.user, request.data['attachment'], tag)
+                if attachment['error']:
+                    return Response(status=415, data=attachment['error'])
+                else:
+                    interaction = attachment['interaction']
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
             serializer = ConversationSerializer(thread, context={'request': request})

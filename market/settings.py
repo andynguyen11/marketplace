@@ -352,9 +352,9 @@ EXPERT_RATING = {
 }
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 
-MAX_FILE_SIZE = 15728640
+MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
-                     'image/pjpeg', 'image/png', 'application/x-excel',
+                     'image/pjpeg', 'image/png', 'application/x-excel', 'text/html',
                      'application/excel', 'application/x-msexcel', 'application/vnd.ms-excel',
                      'application/mspowerpoint', 'application/vnd.ms-powerpoint', 'application/powerpoint',
                      'application/x-mspowerpoint', 'application/msword', 'text/plain', 'text/richtext',

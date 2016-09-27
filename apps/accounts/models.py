@@ -1,6 +1,8 @@
 import tagulous.models
 import stripe
 import StringIO
+import os
+from uuid import uuid4
 from PIL import Image
 
 from django.db import models
@@ -90,6 +92,20 @@ class SkillTest(models.Model):
     def test_details(self):
         return self.expertratings_test
 
+
+def path_and_rename(instance, filename):
+    upload_to = 'profile-photos'
+    ext = filename.split('.')[-1]
+    # get filename
+    if instance.pk:
+        filename = '{}{}.{}'.format(uuid4().hex, instance.pk, ext)
+    else:
+        # set filename as random string
+        filename = '{}.{}'.format(uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -102,7 +118,7 @@ class Profile(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='profile-photos')
+    photo = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     skills = tagulous.models.TagField(to=Skills, blank=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
