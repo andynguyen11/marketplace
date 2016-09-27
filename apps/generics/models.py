@@ -10,7 +10,6 @@ from generics.validators import file_validator
 def upload_to(instance, filename):
     return instance.path
 
-
 class Attachment(models.Model):
     file = models.FileField(upload_to=upload_to,  max_length=255, validators=[file_validator])
     upload_date = models.DateTimeField(auto_now=True)
@@ -49,12 +48,13 @@ class Attachment(models.Model):
 
     @property
     def url(self):
-        return settings.MEDIA_URL + self.name
+        return settings.MEDIA_URL + self.file.name
 
     @property
     def data(self):
         return self.file.read()
 
     def __str__(self):
-        return '%s' % self.name
+        return self.name
+
 

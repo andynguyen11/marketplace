@@ -5,6 +5,9 @@ import Loader from '../../components/loadScreen';
 import FormHelpers from '../../utils/formHelpers';
 import MessageAgreement from './tracker';
 import moment from 'moment';
+import Modal from '../../components/modal';
+import { objectToFormData } from '../project/utils';
+import downloadjs from 'downloadjs';
 
 const MessageComposer = React.createClass({
   componentDidMount() {
@@ -36,22 +39,25 @@ const MessageComposer = React.createClass({
   },
 
   render() {
-    const { value, name, fileUpload, attachFile, fileUploadInProgress, messageSending } = this.props;
+    const { value, name, fileUpload, fileSending, fileToUpload, messageSending, onFileSelection } = this.props;
 
-    const fileButton = fileUpload && (
-      <div className="text-field-fileUpload">
-        <input type="file" ref="fileInput" onChange={attachFile} />
-      </div>
-    );
     const disabled = {
-      disabled: messageSending
+      disabled: messageSending || fileSending
     };
-    const loadingIndicator = messageSending && (
-      <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>
-    );
+    const fileButton = fileUpload && (() => {
+      const input = !fileToUpload && <input type="file" onChange={onFileSelection} {...disabled} />;
+
+      return (
+        <div className="text-field-fileUpload">
+          {input}
+        </div>
+      );
+    })();
+
+    const loadingIndicator = (messageSending || fileSending) && <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>;
 
     return (
-      <div className="messages-thread-composer" {...disabled}>
+      <div className="thread-composer">
         {fileButton}
         <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea" {...disabled}></TextareaAutosize>
         {loadingIndicator}
@@ -63,19 +69,67 @@ const MessageComposer = React.createClass({
 const Message = React.createClass({
   render() {
     const { currentUser, avatar, text, senderName, timestamp, profileUrl } = this.props;
-    const classNames = 'messages-thread-message' + (currentUser && ' messages-thread-message-currentUser' || '');
+    const classNames = 'thread-item' + (currentUser && ' thread-item-currentUser' || '');
     const formattedTime = moment(timestamp).format('MMM D, h:mm a');
     const senderLink = <a href={profileUrl}>{senderName}</a>;
+    const senderAvatar = {
+      backgroundImage: 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')'
+    };
 
     return (
       <div className={classNames}>
-        <a href={profileUrl} className="messages-thread-message-avatar" style={ { 'backgroundImage': 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')' } }></a>
-        <div className="messages-thread-message-content">
-          <pre className="messages-thread-message-text">
+        <a href={profileUrl} className="thread-item-avatar" style={senderAvatar}></a>
+        <div className="thread-item-content">
+          <pre className="thread-item-message">
             {text}
           </pre>
-          <div className="messages-thread-message-meta">
+          <div className="thread-item-meta">
             {senderLink} - {formattedTime}
+          </div>
+        </div>
+      </div>
+    );
+  }
+});
+
+const Attachment = React.createClass({
+  triggerDownload(event) {
+    const { attachment } = this.props;
+    event.preventDefault();
+
+    downloadjs(attachment.url);
+  },
+
+  deleteClicked() {
+    const { confirmAttachmentDeletion, attachment } = this.props;
+
+    confirmAttachmentDeletion(attachment);
+  },
+
+  render() {
+    const { currentUser, avatar, attachment, senderName, timestamp, profileUrl } = this.props;
+    const classNames = 'thread-item' + (currentUser && ' thread-item-currentUser' || '');
+    const formattedTime = moment(timestamp).format('MMM D, h:mm a');
+    const senderLink = <a href={profileUrl}>{senderName}</a>;
+    const senderAvatar = {
+      backgroundImage: 'url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url=' + avatar + ')'
+    };
+
+    return (
+      <div className={classNames}>
+        <a href={profileUrl} className="thread-item-avatar" style={senderAvatar}></a>
+        <div className="thread-item-content">
+          <div className="thread-item-attachment">
+            <a className="thread-item-attachment-icon" onClick={this.triggerDownload}></a>
+            <div className="thread-item-attachment-title">{attachment.tag}</div>
+            <a onClick={this.triggerDownload} className="thread-item-attachment-filename" alt={attachment.original_name}>{attachment.original_name}</a>
+            <div className="thread-item-attachment-actions">
+              {/*<a onClick={this.deleteClicked} className="thread-item-attachment-delete" alt={attachment.original_name}>delete {attachment.original_name}</a>*/}
+              <a onClick={this.triggerDownload} className="thread-item-attachment-download" alt={attachment.original_name}>download {attachment.original_name}</a>
+            </div>
+          </div>
+          <div className="thread-item-meta">
+            Uploaded by {senderLink} - {formattedTime}
           </div>
         </div>
       </div>
@@ -95,6 +149,12 @@ const Messages = React.createClass({
       isLoading: true,
       messageError: false,
       messageSending: false,
+      attachmentModalIsOpen: false,
+      attachmentDeleteModalIsOpen: false,
+      fileToUpload: null,
+      fileToUploadTitle: null,
+      fileSending: false,
+      showPanel: false,
       attachment: false,
       attachmentName: false,
       formErrorsList: []
@@ -345,81 +405,7 @@ const Messages = React.createClass({
   },
 
   componentWillMount() {
-    const { threadId } = this.props;
-
-    $.ajax({
-      url: loom_api.messages + threadId + '/',
-      success: (result) => {
-        const currentUserId = result.current_user;
-        let currentUserData;
-        let otherUserData;
-
-        result.interactions.map((interaction, i) => {
-          const { sender, recipient, interactionType } = interaction;
-
-          // TODO Will need to rethink how we handle different interaction types
-          if (interactionType === 'message') {
-            const senderIsCurrentUser = currentUserId === sender.id;
-            const recipientIsCurrentUser = currentUserId === recipient.id;
-
-            if(senderIsCurrentUser && !currentUserData) {
-              currentUserData = {
-                id: sender.id,
-                photo_url: sender.photo_url,
-                first_name: sender.first_name
-              }
-            }
-
-            if(recipientIsCurrentUser && !currentUserData) {
-              currentUserData = {
-                id: recipient.id,
-                photo_url: recipient.photo_url,
-                first_name: recipient.first_name
-              }
-            }
-
-            if(!senderIsCurrentUser && !otherUserData) {
-              otherUserData = {
-                id: sender.id,
-                photo_url: sender.photo_url,
-                first_name: sender.first_name
-              }
-            }
-
-            if(!recipientIsCurrentUser && !otherUserData) {
-              otherUserData = {
-                id: recipient.id,
-                photo_url: recipient.photo_url,
-                first_name: recipient.first_name
-              }
-            }
-          }
-        });
-
-        this.setState({
-          currentUserData,
-          otherUserData,
-          currentUser: result.current_user,
-          isOwner: result.is_owner,
-          interactions: result.interactions || [],
-          terms: result.terms,
-          nda: result.nda,
-          job: result.job,
-          signing_url: result.signing_url,
-          isLoading: false,
-          messageError: false,
-          formElements: this.formElements(result.terms)
-        }, () => {
-          this.scrollBottom();
-        });
-      },
-      error: () => {
-        this.setState({
-          isLoading: false,
-          messageError: 'Something went wrong with loading messages. Please reload this page.'
-        })
-      }
-    });
+    this.fetchThread();
   },
 
   componentDidMount() {
@@ -427,16 +413,100 @@ const Messages = React.createClass({
     this.scrollBottom();
   },
 
+  fetchThread() {
+    const { threadId } = this.props;
+    const { messageSending, showPanel } = this.state;
+
+    if(!messageSending && !showPanel) {
+      $.ajax({
+        url: loom_api.messages + threadId + '/',
+        success: (result) => {
+          const { messageSending, showPanel } = this.state;
+          const currentUserId = result.current_user;
+          let currentUserData;
+          let otherUserData;
+
+          result.interactions.map((interaction, i) => {
+            const {sender, recipient, interactionType} = interaction;
+
+            // TODO Will need to rethink how we handle different interaction types
+            if (interactionType === 'message') {
+              const senderIsCurrentUser = currentUserId === sender.id;
+              const recipientIsCurrentUser = currentUserId === recipient.id;
+
+              if (senderIsCurrentUser && !currentUserData) {
+                currentUserData = {
+                  id: sender.id,
+                  photo_url: sender.photo_url,
+                  first_name: sender.first_name
+                }
+              }
+
+              if (recipientIsCurrentUser && !currentUserData) {
+                currentUserData = {
+                  id: recipient.id,
+                  photo_url: recipient.photo_url,
+                  first_name: recipient.first_name
+                }
+              }
+
+              if (!senderIsCurrentUser && !otherUserData) {
+                otherUserData = {
+                  id: sender.id,
+                  photo_url: sender.photo_url,
+                  first_name: sender.first_name
+                }
+              }
+
+              if (!recipientIsCurrentUser && !otherUserData) {
+                otherUserData = {
+                  id: recipient.id,
+                  photo_url: recipient.photo_url,
+                  first_name: recipient.first_name
+                }
+              }
+            }
+          });
+
+          if(!messageSending && !showPanel) {
+            this.setState({
+              currentUserData,
+              otherUserData,
+              currentUser: result.current_user,
+              isOwner: result.is_owner,
+              interactions: result.interactions || [],
+              terms: result.terms,
+              nda: result.nda,
+              job: result.job,
+              signing_url: result.signing_url,
+              isLoading: false,
+              messageError: false,
+              formElements: this.formElements(result.terms)
+            }, () => {
+              this.scrollBottom();
+            });
+          }
+        },
+        error: () => {
+          this.setState({
+            isLoading: false,
+            messageError: 'Something went wrong with loading messages. Please reload this page.'
+          })
+        }
+      });
+    }
+  },
+
   startPoller() {
-    setInterval(this.updateMessages, 10000);
+    setInterval(this.fetchThread, 10000);
   },
 
   updateMessages() {
     const { threadId } = this.props;
-    const { messageSending, interactions } = this.state;
+    const { messageSending, showPanel, interactions } = this.state;
     const interactionCount = interactions.length;
 
-    if(!messageSending) {
+    if(!messageSending && !showPanel) {
       $.ajax({
         url: loom_api.messagePoller + threadId + '/',
         success: (result) => {
@@ -466,9 +536,9 @@ const Messages = React.createClass({
       body: message
     };
 
-    if(attachment) {
-      payload.attachment = attachment;
-    };
+    //if(attachment) {
+    //  payload.attachment = attachment;
+    //};
 
     this.setState({ messageSending: true });
 
@@ -478,18 +548,7 @@ const Messages = React.createClass({
       type: 'PATCH',
       success: () => {
         const interactions = this.addMessage(payload);
-
-        this.setState({
-          interactions,
-          isLoading: false,
-          message: '',
-          messageError: false,
-          messageSending: false,
-          attachmentName: false,
-          attachment: false
-        }, () => {
-          this.scrollBottom();
-        });
+        this.updateInteractions(interactions);
       },
       error: () => {
         this.setState({
@@ -513,23 +572,19 @@ const Messages = React.createClass({
     return interactions;
   },
 
-  // attachFile(e) {
-  //   e.preventDefault();
-  //   let reader = new FileReader();
-  //   let file = e.target.files[0];
-  //
-  //   reader.onloadend = () => {
-  //     console.log(reader.result, file)
-  //     this.setState({
-  //       attachment: reader.result,
-  //       attachmentName: file.name
-  //     }, () => {
-  //       this.scrollBottom();
-  //       this.sendMessage();
-  //     });
-  //   };
-  //   reader.readAsDataURL(file);
-  // },
+  updateInteractions(interactions) {
+    this.setState({
+      interactions,
+      isLoading: false,
+      message: '',
+      messageError: false,
+      messageSending: false,
+      attachmentName: false,
+      attachment: false
+    }, () => {
+      this.scrollBottom();
+    });
+  },
 
   handleChange(event) {
     const { formElements } = this.state;
@@ -637,20 +692,221 @@ const Messages = React.createClass({
     return '/profile/' + userId + '/';
   },
 
+  onFileSelection(event) {
+    event.preventDefault();
+    let file = event.target.files[0];
+    this.setState({
+      fileToUpload: file,
+      fileToUploadTitle: ''
+    }, () => {
+      this.openAttachmentModal();
+    });
+  },
+
+  updateFileName(event) {
+    const { target } = event;
+    const fileToUploadTitle = target.value;
+
+    this.setState({ fileToUploadTitle });
+  },
+
+  uploadFile() {
+    const { fileToUpload, fileToUploadTitle } = this.state;
+    const { threadId } = this.props;
+
+    const payload = {
+      thread: threadId,
+      attachment: fileToUpload,
+      tag: fileToUploadTitle
+    };
+
+    this.setState({
+      fileError: false,
+      fileSending: true
+    });
+
+    $.ajax({
+      url: loom_api.message,
+      data: objectToFormData(payload),
+      type: 'PATCH',
+      contentType: false,
+      processData: false,
+      success: (result) => {
+        this.setState({
+          fileSending: false,
+          fileToUpload: null,
+          fileToUploadTitle: ''
+        }, () => {
+          this.updateInteractions(result.interactions);
+          this.closeAttachmentModal();
+        });
+      },
+      error: (result) => {
+        this.setState({
+          fileError: result.responseText ? result.responseText : 'Something went wrong with uploading your attachment. Please try again.',
+          file: false,
+          fileSending: false,
+        });
+      }
+    });
+
+  },
+
+  openAttachmentModal() {
+    this.setState({ attachmentModalIsOpen: true });
+  },
+
+  closeAttachmentModal() {
+    const { fileSending } = this.state;
+
+    if(!fileSending) {
+      this.setState({
+        attachmentModalIsOpen: false,
+        fileToUpload: null,
+        fileError: false
+      });
+    }
+  },
+
+  confirmAttachmentDeletion(attachment) {
+    // ajax
+    console.warn('delete', attachment);
+    this.openDeleteModal(attachment);
+  },
+
+  cancelFileDeletion() {
+    this.closeDeleteModal();
+  },
+
+  deleteAttachment(id) {
+    this.setState({
+      isLoading: true,
+      deleteError: null
+    });
+
+    $.ajax({
+      url: loom_api.message,
+      data: objectToFormData(id),
+      type: 'DELETE',
+      contentType: false,
+      processData: false,
+      success: (result) => {
+        this.closeDeleteModal();
+      },
+      error: () => {
+        this.setState({
+          isLoading: false,
+          deleteError: 'Something went wrong with deleting your attachment. Please try again.'
+        })
+      }
+    });
+    this.closeDeleteModal();
+  },
+
+  openDeleteModal(file) {
+    this.setState({
+      attachmentDeleteModalIsOpen: true,
+      fileToDelete: file,
+      fileToDeleteName: file.original_name,
+    });
+  },
+
+  closeDeleteModal() {
+    this.setState({
+      attachmentDeleteModalIsOpen: false,
+      fileToDelete: null,
+      fileToDeleteName: null
+    });
+  },
+
   render() {
-    const { message, messageSending, interactions, currentUser, isLoading, messageError, formErrorsList, otherUserData, isOwner, terms, nda, job, signing_url, formElements, showPanel } = this.state;
+    const {
+      message,
+      messageSending,
+      interactions,
+      currentUser,
+      isLoading,
+      messageError,
+      otherUserData,
+      terms,
+      job,
+      showPanel,
+      attachmentDeleteModalIsOpen,
+      attachmentModalIsOpen,
+      fileError,
+      fileSending,
+      fileToUpload,
+      fileToUploadTitle,
+      fileToDeleteName
+    } = this.state;
+    const { threadId } = this.props;
     const messages = interactions.map((interaction, i) => {
-      const { content, sender, timestamp, interactionType } = interaction;
+      const { content, sender, timestamp, attachment, interactionType } = interaction;
       if (interactionType === 'message') {
         const isCurrentUser = currentUser === sender.id;
         const profileUrl = this.getProfileUrl(sender.id);
         return <Message key={i} avatar={sender.photo_url} currentUser={isCurrentUser} text={content} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} />
       }
+
+      if(interactionType === 'attachment') {
+        const isCurrentUser = currentUser === sender.id;
+        const profileUrl = this.getProfileUrl(sender.id);
+        return <Attachment key={i} avatar={sender.photo_url} currentUser={isCurrentUser} attachment={attachment} senderName={sender.first_name} timestamp={timestamp} profileUrl={profileUrl} updateInteractions={this.updateInteractions} confirmAttachmentDeletion={this.confirmAttachmentDeletion} />
+      }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
+    const attachmentError = fileError && <div className="alert alert-danger" role="alert">{fileError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
     const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
     const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserProfileLink}</span></span>;
+
+    const fileUploadModal = fileToUpload && (() => {
+      const disabled = fileSending && { disabled: true };
+
+      return (
+        <Modal open={attachmentModalIsOpen} onClose={this.closeAttachmentModal} header="Upload a File">
+          <div>
+            <div className="form-group">
+              <label className="control-label">file name:</label>
+              <div className="messages-upload-modal-attachmentName"> {fileToUpload.name}</div>
+            </div>
+            <div className="form-group">
+              <label htmlFor="fileToUploadTitle">Include title for this file? (optional)</label>
+              <input
+                className="form-control"
+                type="text"
+                name="fileToUploadTitle"
+                id="fileToUploadTitle"
+                value={fileToUploadTitle}
+                onChange={this.updateFileName}
+                {...disabled}
+              />
+              <div className="clearfix"></div>
+            </div>
+            <div className="messages-upload-modal-actions form-group">
+              <button className="btn btn-brand btn-brand--clear" onClick={this.closeAttachmentModal} {...disabled}>
+                Cancel
+              </button>
+              <button className="btn btn-brand" onClick={this.uploadFile} {...disabled}>
+                <i className={ fileSending ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+                Upload
+              </button>
+            </div>
+            {attachmentError}
+          </div>
+        </Modal>
+      );
+    })();
+
+    const fileDeleteModal = (
+      <Modal open={attachmentDeleteModalIsOpen} onClose={this.cancelFileDeletion} header="Delete a File">
+        <p>Are you sure you want to delete <span className="messages-attachment-delete-filename">{fileToDeleteName}</span> from this discussion?</p>
+        <div className="messages-upload-modal-actions">
+          <button className="btn btn-brand btn-brand--clear" onClick={this.cancelFileDeletion}>Cancel</button>
+          <button className="btn btn-brand" onClick={this.deleteAttachment}>Delete</button>
+        </div>
+      </Modal>
+    );
 
     return (
       <div id="messages">
@@ -659,15 +915,15 @@ const Messages = React.createClass({
             <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> back to messages</a>
             {otherUserName}
           </div>
-          <div className="messages-thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
-          <div className="messages-thread-content-wrapper">
+          <div className="thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
+          <div className="thread-content-wrapper">
             { isLoading && <Loader/> }
-            <div className="messages-thread-content" ref="thread">
+            <div className="thread-content" ref="thread">
               {messages}
               {error}
             </div>
           </div>
-          <MessageComposer messageSending={messageSending} fileUpload={false} attachFile={this.attachFile} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} />
+          <MessageComposer messageSending={messageSending} threadId={threadId} fileUpload={true} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} onFileSelection={this.onFileSelection} fileToUpload={fileToUpload} />
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">
@@ -686,6 +942,9 @@ const Messages = React.createClass({
             togglePanel={this.togglePanel}
           /> }
         </div>
+
+        {fileUploadModal}
+        {/*{fileDeleteModal}*/}
       </div>
     );
 

@@ -13,7 +13,7 @@ from rest_framework import authentication, permissions, viewsets
 from django.conf import settings
 
 from accounts.models import Profile
-from generics.tasks import contact_card_email
+from generics.tasks import pm_contact_card_email
 from business.models import Job, Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
@@ -187,6 +187,7 @@ class CreditCardView(APIView):
         serializer.is_valid(raise_exception=True)
         new_document = serializer.create(serializer.validated_data)
         signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
+        pm_contact_card_email.delay(job.id)
         return signer_url
 
     def get(self, request):

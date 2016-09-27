@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'guardian',
     'easy_timezones',
     'haystack',
     'generics',
@@ -91,6 +92,7 @@ AUTHENTICATION_BACKENDS = (
     'social.backends.linkedin.LinkedinOAuth2',
     'accounts.auth.CaseInsensitiveModelBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
 )
 
 CACHES = {
@@ -341,18 +343,18 @@ DOCUSIGN = {
 
 expert_rating_ = prefixed_env_var_getter('EXPERT_RATING') 
 EXPERT_RATING = {
-    'root_url': expert_rating_('ROOT_URL', 'http://www.expertrating.com/devquity/webservices'),
+    'root_url': expert_rating_('ROOT_URL', 'http://www.expertrating.com/loom/webservices'),
     'auth': {
-        'partnerid': expert_rating_('PARTNERID'),
-        'password': expert_rating_('PASSWORD'),
+        'partnerid': expert_rating_('PARTNERID', '1218278'),
+        'password': expert_rating_('PASSWORD', 'd1e2v1q8u2i7t8y'),
         'partneruserid': expert_rating_('PARTNERUSERID'),
     }
 }
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 
-MAX_FILE_SIZE = 15728640
+MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
-                     'image/pjpeg', 'image/png', 'application/x-excel',
+                     'image/pjpeg', 'image/png', 'application/x-excel', 'text/html',
                      'application/excel', 'application/x-msexcel', 'application/vnd.ms-excel',
                      'application/mspowerpoint', 'application/vnd.ms-powerpoint', 'application/powerpoint',
                      'application/x-mspowerpoint', 'application/msword', 'text/plain', 'text/richtext',

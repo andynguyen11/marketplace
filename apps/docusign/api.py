@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from rest_framework import generics, viewsets
 from rest_framework.decorators import api_view
@@ -7,9 +8,13 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from generics.viewsets import NestedModelViewSet
 
+from notifications.signals import notify
+
 from .docusign import parse_webhook_update
 from .models import Template, Document, DocumentSigner
 from .serializers import TemplateSerializer, DocumentSerializer, SignerSerializer
+from business.models import Document as JobDocument
+from generics.tasks import dev_contact_card_email
 
 
 class TemplateAPI(generics.ListCreateAPIView):
@@ -39,6 +44,11 @@ class RawXMLParser(BaseParser):
         return stream.read()
 
 
+def signal_change(document, signer, new_status):
+    if new_status.lower() in tuple('signed'):
+        notify.send(signer, recipient=document.manager, verb=u'Contract signed', action_object=document)
+
+
 class Webhook(APIView):
 
     parser_classes = (RawXMLParser, )
@@ -46,15 +56,22 @@ class Webhook(APIView):
     def post(self, request, format=None):
         update = parse_webhook_update(request.data)
         document = Document.objects.get(envelope_id=update['envelope_id'])
+        job_document = JobDocument.objects.get(docusign_document=document)
         document.status = update['status']
         document.save()
         signers = document.signers
         for signer in signers:
-            signer.status = update['signers'][signer.profile.id]['status'] or signer.status
+            new_status = update['signers'][signer.profile.id]['status']
+            print(signer.status, new_status)
+            signer.status = new_status or signer.status
+            if signer.status == 'sent' and signer.profile.id == job_document.job.contractor.id:
+                dev_contact_card_email.delay(job_document.job.id)
             signer.save()
+            #signal_change(document, signer, new_status)
         return Response(status=200, data={"message": "Success"})
 
 
+@login_required
 @api_view(['GET', ])
 def signing_url_redirect(request, document):
     signer_url = Document.objects.get(id=document).get_signer_url(request.user)

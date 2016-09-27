@@ -3,7 +3,6 @@ import _ from 'lodash';
 import SkillButton from '../../components/skill';
 import AccountForm from './account';
 import FormHelpers from '../../utils/formHelpers';
-import BigSelect from '../../components/bigSelect';
 import { objectToFormData } from '../project/utils';
 import Loader from '../../components/loadScreen';
 
@@ -332,7 +331,7 @@ const DeveloperOnboard = React.createClass({
             contentType: false,
             processData: false,
             success: function (result) {
-              window.location = '/profile/dashboard/';
+              window.location = '/profile/dashboard/?signup=developer';
             }.bind(this),
             error: (xhr, status, error) => {
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });

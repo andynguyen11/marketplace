@@ -61,5 +61,6 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
+CELERY_ALWAYS_EAGER = True
 
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False

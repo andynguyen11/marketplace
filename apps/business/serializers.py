@@ -31,6 +31,9 @@ class CompanySerializer(serializers.ModelSerializer):
         user = Profile.objects.get(id=user_id)
         company = Company.objects.create(**data)
         Employee.objects.create(profile=user, company=company, primary=True)
+        for project in Project.objects.filter(project_manager=user):
+            project.company = company
+            project.save()
         return company
 
     def update(self, instance, data):
@@ -121,7 +124,7 @@ class JobSerializer(serializers.ModelSerializer):
             thread = Message.objects.get(job=job)
         message.thread = thread
         message.save()
-        notify.send(message.recipient, recipient=message.recipient, verb=u'received a new bid', action_object=job)
+        notify.send(message.recipient, recipient=message.recipient, verb=u'A new bid received', action_object=job)
         # Send email notification
         if email_template:
             send_mail(email_template, [message.recipient], {

@@ -1,6 +1,8 @@
 import tagulous.models
 import stripe
 import StringIO
+import os
+from uuid import uuid4
 from PIL import Image
 
 from django.db import models
@@ -33,12 +35,33 @@ class Skills(tagulous.models.TagModel):
         ]
         autocomplete_view = 'skills_autocomplete'
 
-    verification_test = models.ForeignKey('expertratings.SkillTest', null=True)
+    verification_tests = models.ManyToManyField('expertratings.SkillTest', through='VerificationTest')
 
     def is_verified(self, user):
         return SkillTestResult.objects.filter(
-                user=user, test=self.verification_test, test_result='PASS').exists()
+                user=user, test__in=self.verification_tests.all(), test_result='PASS').exists()
 
+
+class VerificationTestManager(models.Manager):
+    def taken(self, user):
+        return self.filter(skilltest__in = user.taken_tests)
+
+    def not_taken(self, user):
+        return self.exclude(skilltest__in = user.taken_tests)
+
+    def recommended(self, user):
+        return self.not_taken(user).filter(skill__in = user.get_skills())
+
+
+class VerificationTest(models.Model):
+    objects = VerificationTestManager()
+
+    skill = models.ForeignKey(Skills, on_delete=models.CASCADE)
+    skilltest = models.ForeignKey('expertratings.SkillTest', on_delete=models.CASCADE)
+    relevance = models.FloatField()
+
+    class Meta:
+        ordering = ('-relevance',)
 
 
 class SkillTest(models.Model):
@@ -69,6 +92,20 @@ class SkillTest(models.Model):
     def test_details(self):
         return self.expertratings_test
 
+
+def path_and_rename(instance, filename):
+    upload_to = 'profile-photos'
+    ext = filename.split('.')[-1]
+    # get filename
+    if instance.pk:
+        filename = '{}{}.{}'.format(uuid4().hex, instance.pk, ext)
+    else:
+        # set filename as random string
+        filename = '{}.{}'.format(uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -81,7 +118,7 @@ class Profile(AbstractUser):
     location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='profile-photos')
+    photo = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     skills = tagulous.models.TagField(to=Skills, blank=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
@@ -122,6 +159,13 @@ class Profile(AbstractUser):
 
     def get_skills(self):
         return self.skills.tag_model.objects.all()
+
+    @property
+    def skilltests(self):
+        return SkillTest.objects.filter(profile=self)
+    @property
+    def taken_tests(self):
+        return [t.expertratings_test for t in self.skilltests]
 
     def get_default_payment(self):
         if self.stripe:

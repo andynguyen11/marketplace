@@ -2,9 +2,10 @@ from rest_framework import serializers
 from social.apps.django_app.default.models import UserSocialAuth
 from html_json_forms.serializers import JSONFormSerializer
 
-from accounts.models import Profile, Skills, SkillTest
+from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from expertratings.models import SkillTest as ERSkillTest
+from expertratings.exceptions import ExpertRatingsAPIException
 from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer
 from generics.base_serializers import RelationalModelSerializer
@@ -24,8 +25,14 @@ class SocialSerializer(serializers.ModelSerializer):
         model = UserSocialAuth
 
 
+class VerificationTestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VerificationTest
+        exclude = ('skill', )
+
+
 class SkillsSerializer(serializers.ModelSerializer):
-    verification_test  = serializers.PrimaryKeyRelatedField(required=False, queryset=ERSkillTest.objects.all())
+    verification_tests = VerificationTestSerializer(source='verificationtest_set', many=True, read_only=True)
 
     class Meta:
         model = Skills
@@ -73,12 +80,10 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         return serializer.data
 
     def get_skills_data(self, obj):
-        return [{
-            'verified': skill.is_verified(obj),
-            'verification_test': skill.verification_test and  skill.verification_test.test_id,
-            'id': skill.id,
-            'name': skill.name,
-            } for skill in obj.get_skills()]
+        return [dict(
+                    verified = skill.is_verified(obj),
+                    **SkillsSerializer(skill).data
+                    ) for skill in obj.get_skills()]
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
@@ -103,7 +108,11 @@ class SkillTestSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         test = super(SkillTestSerializer, self).create(data)
-        test.create_ticket()
+        try:
+            test.create_ticket()
+        except ExpertRatingsAPIException, e:
+            test.delete()
+            raise e
         return test
 
     def update(self, instance, data):

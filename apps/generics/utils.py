@@ -75,6 +75,7 @@ def normalized_subdict(d, keys):
 API_KEY = settings.MANDRILL_API_KEY
 
 def send_mail(template_name, users, context):
+    logger = logging.getLogger()
     mandrill_client = mandrill.Mandrill(API_KEY)
     message = {
         'to': [],

@@ -4,15 +4,17 @@ from django.conf.urls import patterns, url
 from rest_framework_nested import routers
 from generics.routers import DeclarativeRouter
 
-from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet
+from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
+from generics.api import AttachmentViewSet
 from postman.api import ConversationDetail, MessageAPI
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
 router = DeclarativeRouter({
+    'attachment': AttachmentViewSet,
     'jobs': JobViewSet,
     'profile': {
         'view': ProfileViewSet,
@@ -23,7 +25,15 @@ router = DeclarativeRouter({
             }
         }
     },
-    'skills': SkillViewSet,
+    'skills': {
+        'view': SkillViewSet,
+        'nested': {
+            'lookup': 'skill',
+            'routes': {
+                'verificationtest': VerificationTestViewSet
+            }
+        }
+    },
     'skilltest': ERSkillTestViewSet,
     'project': {
         'view': ProjectViewSet,
