@@ -9,6 +9,10 @@
     padding-bottom: @gutter;
     padding: 0 @gutter--medium;
 
+    @media (max-width: @screen-md) {
+      padding: 0 @gutter--medium;
+    }
+
     @media (max-width: @screen-sm) {
       padding: (@gutter * 2) @gutter--medium 0;
 
@@ -63,6 +67,14 @@
       flex-basis: 49%;
       margin-right: 0;
       flex-shrink: 0;
+
+      &:nth-child(2) {
+        display: none;
+      }
+    }
+
+    @media (max-width: @screen-xs) {
+      flex-basis: 100%;
     }
 
     @media (max-width: @screen-sm) {
@@ -225,6 +237,12 @@
     position: relative;
     display: flex;
     font-family: @brand-font-bold;
+
+    @media (max-width: @screen-md) {
+      &:nth-child(2) {
+        display: flex;
+      }
+    }
 
     @media (max-width: @screen-sm) {
       flex-basis: 100%;
