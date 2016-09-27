@@ -9,6 +9,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from django.db.models import Q
+from django.utils.encoding import smart_str
 
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
@@ -53,7 +54,7 @@ class MessageAPI(APIView):
     def post(self, request):
         body = request.data['body']
         recipient = Profile.objects.get(id=request.data['recipient'])
-        title = 'New message about {0}'.format(request.data['title'])
+        title = 'New message about {0}'.format(smart_str(request.data['title']))
         project = Project.objects.get(id=request.data['project'])
         job, created = Job.objects.get_or_create(project=project, contractor=request.user )
         new_message = Message.objects.create(
