@@ -34,6 +34,7 @@ import business.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [
+    url(r'^_/', TemplateView.as_view(template_name='spa.html'), name='spa'),
     url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
