@@ -2,12 +2,13 @@ import tagulous
 
 from django.conf.urls import patterns, url
 from rest_framework_nested import routers
-from generics.routers import DeclarativeRouter
+from rest_framework_jwt.views import obtain_jwt_token
 
 from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
 from generics.api import AttachmentViewSet
+from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI
 from reviews.api import ReviewListCreate
 from business.models import Category
@@ -63,6 +64,7 @@ router = DeclarativeRouter({
 })
 
 urlpatterns = [
+    url(r'^token/', obtain_jwt_token),
     url(r'creditcard/$', view=CreditCardView.as_view()),
     url(r'paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),

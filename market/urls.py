@@ -77,6 +77,7 @@ urlpatterns = [
     url(r'^projects/(?P<type>[\w-]+)/$', business_views.discover_projects, name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^discover/developers/(?P<role>[-\w]+)/$', accounts_views.discover_developers,name='discover-developers'),
+    url(r'^social/complete/$', accounts_views.psa_redirect, name='social-redirect'),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
