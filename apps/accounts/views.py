@@ -11,7 +11,7 @@ from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, Manager
 from accounts.models import Profile
 from business.models import Project, Job, Terms, PROJECT_TYPES
 from business.views import project_groups
-from generics.utils import set_jwt_token
+from apps.api.utils import set_jwt_token
 
 
 def error404(request):

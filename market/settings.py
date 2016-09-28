@@ -226,6 +226,11 @@ REST_FRAMEWORK = {
     ),
 }
 
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+    'api.utils.jwt_response_payload_handler',
+}
+
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
