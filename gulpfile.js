@@ -136,6 +136,7 @@ gulp.task('default', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 
 	gulp.watch('./assets/js/vendor.js', ['scripts:vendor']);
 	gulp.watch('./assets/js/routes/**/*.js', ['scripts:routes']);
 	gulp.watch('./assets/js/components/**/*.js', ['scripts:app', 'scripts:routes']);
+	gulp.watch('./assets/js/SPAcomponents/**/*.js', ['scripts:app', 'scripts:routes']);
 
 	gulp.watch('./assets/less/**/*.less', ['less']);
 	gulp.watch('./assets/fonts/**/*.*', ['fonts']);
