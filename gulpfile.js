@@ -120,9 +120,17 @@ gulp.task('images', function(){
 	})
 });
 
+gulp.task('spa', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./spa/**/*.*')
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./static/spa/'));
+	})
+});
+
 gulp.task('build', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
 gulp.task('dist', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
-gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
+gulp.task('default', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
 
 	gulp.watch('./assets/js/main.js', ['scripts:app']);
 	gulp.watch('./assets/js/vendor.js', ['scripts:vendor']);
@@ -132,6 +140,8 @@ gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less',
 	gulp.watch('./assets/less/**/*.less', ['less']);
 	gulp.watch('./assets/fonts/**/*.*', ['fonts']);
 	gulp.watch('./assets/images/**/*.*', ['images']);
+
+	gulp.watch('./SPA/**/*.*', ['spa']);
 });
 
 
