@@ -567,7 +567,7 @@ class Message(Interaction):
 
     interaction_ptr = models.OneToOneField(Interaction, parent_link=True, db_column='id')
 
-    SUBJECT_MAX_LENGTH = 120
+    SUBJECT_MAX_LENGTH = 255
 
     subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
     body = models.TextField(_("body"), blank=True)

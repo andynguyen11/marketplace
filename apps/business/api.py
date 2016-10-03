@@ -94,31 +94,6 @@ class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
     serializer_class = TermsSerializer
     permission_classes = (IsAuthenticated, )
 
-    def perform_update(self, serializer):
-        if serializer.validated_data['status'] == 'sent':
-            # Send email notification
-            job = serializer.validated_data['job']
-            email_template = None
-            if job.equity:
-                email_template = 'bid-accepted-equity'
-            if job.cash:
-                email_template = 'bid-accepted-cash'
-            if job.equity and job.cash:
-                email_template = 'bid-accepted-cash-equity'
-            else:
-                email_template = 'bid-accepted-cash' if job.cash else 'bid-accepted-equity'
-            if email_template:
-                send_mail(email_template, [job.contractor], {
-                    'developername': job.contractor.first_name,
-                    'projectname': job.project.title,
-                    'developertype': job.contractor.role.capitalize(),
-                    'cash': job.cash,
-                    'equity': simplejson.dumps(job.equity),
-                    'hours': job.hours,
-                    'email': job.contractor.email
-                })
-        serializer.save()
-
 
 class CompanyListCreate(generics.ListCreateAPIView):
     queryset = Company.objects.all()
