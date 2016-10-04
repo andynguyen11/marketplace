@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from datetime import datetime, timedelta
 import pytz
+import simplejson
 
 from celery import shared_task
 
@@ -76,3 +77,55 @@ def dev_contact_card_email(job_id):
     dev_context['title'] = job.project.project_manager.title if job.project.project_manager.title else ''
     dev_context['company'] = job.project.company.name if job.project.company else ''
     send_mail('new-contract', [job.contractor], dev_context)
+
+@shared_task
+def nda_sent_email(job_id):
+    job = Job.objects.get(id=job_id)
+    thread = Message.objects.get(job=job)
+    merge_vars = {
+        'fname': job.project.project_manager.first_name,
+        'project': job.project.title,
+        'email': job.contractor.email,
+        'thread': thread.id,
+    }
+    send_mail('nda-sent', [job.contractor], merge_vars)
+
+@shared_task
+def nda_signed_email(job_id):
+    job = Job.objects.get(id=job_id)
+    thread = Message.objects.get(job=job)
+    merge_vars = {
+        'fname': job.contractor.first_name,
+        'project': job.project.title,
+        'email': job.project.project_manager.email,
+        'thread': thread.id,
+    }
+    send_mail('nda-signed', [job.project.project_manager], merge_vars)
+
+@shared_task
+def terms_sent_email(job_id):
+    job = Job.objects.get(id=job_id)
+    thread = Message.objects.get(job=job)
+    send_mail('bid-accepted', [job.contractor], {
+        'entrepreneur': job.project.project_manager.first_name,
+        'developername': job.contractor.first_name,
+        'projectname': job.project.title,
+        'developertype': job.contractor.role.capitalize(),
+        'cash': job.cash if job.cash else 0,
+        'equity': simplejson.dumps(job.equity) if job.equity else 0,
+        'hours': job.hours,
+        'email': job.contractor.email,
+        'thread': thread.id,
+    })
+
+@shared_task
+def terms_approved_email(job_id):
+    job = Job.objects.get(id=job_id)
+    thread = Message.objects.get(job=job)
+    merge_vars = {
+        'fname': job.contractor.first_name,
+        'project': job.project.title,
+        'email': job.project.project_manager.email,
+        'thread': thread.id,
+    }
+    send_mail('terms-approved', [job.project.project_manager], merge_vars)

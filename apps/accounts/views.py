@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
@@ -11,6 +11,7 @@ from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, Manager
 from accounts.models import Profile
 from business.models import Project, Job, Terms, PROJECT_TYPES
 from business.views import project_groups
+from apps.api.utils import set_jwt_token
 
 
 def error404(request):
@@ -31,7 +32,9 @@ def user_login(request):
             if account is not None:
                 if account.is_active:
                     login(request, account)
-                    return redirect(next)
+                    response = redirect(next)
+                    response = set_jwt_token(response, account)
+                    return response
             else:
                 form.add_error(None, 'Your email or password is incorrect.')
     return render(request, 'login.html', {'form': form, 'next': next})
@@ -48,9 +51,23 @@ def signup(request):
             user.set_password(password)
             user.save()
             account = authenticate(username=user.username, password=password)
+            response = redirect('signup-type')
+            response = set_jwt_token(response, account)
             login(request, account)
-            return redirect('signup-type')
+            return response
     return render(request, 'signup.html', {'form': form})
+
+
+def psa_redirect(request):
+    """
+    Hijacks the Python Social Auth redirect to set the JWT
+    """
+    if request.user.title or request.user.role:
+        response = redirect('dashboard')
+    else:
+        response = redirect('signup-type')
+    response = set_jwt_token(response, request.user)
+    return response
 
 
 def home(request):
@@ -60,8 +77,10 @@ def home(request):
 
 
 def logout(request):
+    response = redirect('/')
+    response.delete_cookie('loom_token')
     auth_logout(request)
-    return redirect('/')
+    return response
 
 
 def view_profile(request, user_id=None):

@@ -1106,7 +1106,7 @@ const ProjectDetails = withRouter(React.createClass({
     return {
       projectBackground: {
         name: 'project_background',
-        label: 'Project Background (at least 140 characters)',
+        label: 'Project Background (MINIMUM 140 CHARACTERS)',
         value: initialState.background || '',
         helperText: 'Give the developer community some background. Where did the idea come from? How did you get here? Who have you been working on this with?',
         error: false,
@@ -1164,7 +1164,7 @@ const ProjectDetails = withRouter(React.createClass({
         name: 'project_scope',
         label: 'What do you need a developer to do? (MINIMUM 140 CHARACTERS)',
         value: initialState.scope || '',
-        helperText: <span>This is where you should outline the scope of the project.<br/><br/>Think about the project from bedinning to end and be as specific as you can about what you expect to be done.</span>,
+        helperText: <span>This is where you should outline the scope of the project.<br/><br/>Think about the project from beginning to end and be as specific as you can about what you expect to be done.</span>,
         error: false,
         validator: (value) => {
           const { formFields } = this.state;

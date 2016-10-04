@@ -1,7 +1,7 @@
 import simplejson
 
 from notifications.signals import notify
-
+from django.utils.encoding import smart_str
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
 from drf_haystack.serializers import HaystackSerializerMixin
@@ -105,7 +105,7 @@ class JobSerializer(serializers.ModelSerializer):
         message = "Hi, I'm interested in working on your project and just submitted a bid. \n\n" \
                   "The bid terms are: \n\n" \
                   "{0} for an estimated {1} hours of work. \n\n" \
-                  "Personal message from developer: {2}".format(compensation, job.hours, msg)
+                  "Personal message from developer: {2}".format(compensation, job.hours, smart_str(msg))
         message = pm_write(
             sender=job.contractor,
             recipient=job.project.project_manager,
