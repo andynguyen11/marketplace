@@ -100,7 +100,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     def get_signing_url(self, obj):
         try:
             document = Document.objects.get(job=obj.job, type='MSA')
-            return document.docusign_document.signing_url
+            return document.docusign_document.get_signer_url(self.context['request'].user)
         except Document.DoesNotExist:
             return None
 
