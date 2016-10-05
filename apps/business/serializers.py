@@ -237,3 +237,9 @@ class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
         search_fields = ("text", )
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Employee

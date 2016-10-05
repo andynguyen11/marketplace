@@ -70,6 +70,8 @@ urlpatterns = [
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
     url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
     url(r'^company/(?P<pk>[0-9]+)/$', view=CompanyDetail.as_view(), name='company-detail'),
+    url(r'^employee/$', view=EmployeeListCreate.as_view(), name='employee'),
+    url(r'^employee/(?P<pk>[0-9]+)/$', view=EmployeeDetail.as_view(), name='employee-detail'),
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^thread/(?P<thread_id>[0-9]+)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),

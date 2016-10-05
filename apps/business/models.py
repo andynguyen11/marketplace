@@ -22,6 +22,14 @@ class Employee(models.Model):
     company = models.ForeignKey('business.Company')
     profile = models.ForeignKey('accounts.Profile')
     primary = models.BooleanField(default=False)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    current = models.BooleanField(default=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
 
 class Company(models.Model):
@@ -328,6 +336,9 @@ class Terms(models.Model):
             self.hours = self.job.hours
             self.start_date = self.job.project.start_date
             self.end_date = self.job.project.end_date
+            self.scope = self.job.project.scope
+            self.milestones = self.job.project.milestones
+            self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
 
 

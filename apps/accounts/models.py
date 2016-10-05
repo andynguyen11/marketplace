@@ -152,8 +152,11 @@ class Profile(AbstractUser):
 
     @property
     def company(self):
+        """
+        TODO Needs to support multiple primary companies
+        """
         try:
-            return Employee.objects.get(profile=self).company
+            return Employee.objects.get(profile=self, primary=True).company
         except Employee.DoesNotExist:
             return None
 

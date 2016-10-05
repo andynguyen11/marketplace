@@ -3,6 +3,8 @@ from social.apps.django_app.default.models import UserSocialAuth
 from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
+from business.models import Employee
+from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from expertratings.models import SkillTest as ERSkillTest
 from expertratings.exceptions import ExpertRatingsAPIException
@@ -57,6 +59,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     skills_data = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
     signup = serializers.BooleanField(write_only=True, required=False)
+    work_history = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -65,7 +68,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         public_fields = ( # this is just used in the view atm
                 'first_name', 'last_name', 'username',
                 'location', 'country', 'city', 'state',
-                'title', 'role', 'biography',
+                'title', 'role', 'biography', 'work_history',
                 'photo_url', 'photo' 'featured', 'skills', 'id')
 
     def get_photo_url(self, obj):
@@ -84,6 +87,10 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
                     verified = skill.is_verified(obj),
                     **SkillsSerializer(skill).data
                     ) for skill in obj.get_skills()]
+
+    def get_work_history(self, obj):
+        serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)
+        return serializer.data
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
