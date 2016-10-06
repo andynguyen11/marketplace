@@ -145,7 +145,7 @@ class ProjectSearchView(HaystackViewSet):
 
 
 class EmployeeListCreate(generics.ListCreateAPIView):
-    queresety = Employee.objects.all()
+    queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = (IsAuthenticated, )
 

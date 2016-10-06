@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'collectfast',
     'password_reset',
     'storages',
+    'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_docs',
@@ -77,6 +78,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -222,7 +224,7 @@ GEOIPV6_DATABASE = os.path.join(BASE_DIR, 'market/GeoLiteCityv6.dat')
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%b %d, %Y (%a)',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
@@ -230,6 +232,7 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':
     'api.utils.jwt_response_payload_handler',
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=108000)
 }
 
 USE_I18N = True
@@ -377,6 +380,14 @@ FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
 LOOM_FEE = 3
 
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
+
+CORS_ORIGIN_WHITELIST = (
+    'www.joinloom.com',
+    'joinloom.com',
+    'dev.joinloom.com',
+    'localhost:8000',
+    '127.0.0.1:9000'
+)
 
 try:
     from local_settings import *
