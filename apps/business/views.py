@@ -82,7 +82,7 @@ def projects_by_type(request, type='all'):
     kwargs = {'type': type} if type in [category[0] for category in PROJECT_TYPES] else {}
     return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
 
-
+@login_required
 def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []
