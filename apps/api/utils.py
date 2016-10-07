@@ -40,7 +40,7 @@ def jwt_payload_handler(user):
 
     payload = {
         'user_id': user.pk,
-        'company_id': user.company.id,
+        'company_id': user.company.id if user.company else None,
         'email': user.email,
         'username': username,
         'photo': user.get_photo,
