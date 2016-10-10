@@ -22,17 +22,23 @@
     window.loom_api = require('./api');
     window.loomKeys = require('./keys.js');
     const cookieUtils = require('./utils/csrf');
+    const Cookies = require('js-cookie');
 
     // SETUP AJAX WITH CSRF
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
             const csrftoken = cookieUtils.getCookie('csrftoken');
+            const jwt = Cookies.get('loom_token');
 
             if (!cookieUtils.csrfSafeMethod(settings.type) && cookieUtils.sameOrigin(settings.url)) {
                 // Send the token to same-origin, relative URLs only.
                 // Send the token only if the method warrants CSRF protection
                 // Using the CSRFToken value acquired earlier
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+
+            if(jwt) {
+                xhr.setRequestHeader("Authorization", "JWT " + jwt);
             }
         }
     });
