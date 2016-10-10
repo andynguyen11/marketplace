@@ -38,7 +38,7 @@ class ExpertRatingsXMLWebhook(APIView):
         return HttpResponse(body, content_type = 'application/x-www-form-urlencoded')
 
 
-    def extract_request(self, data):
+    def extract_request(self, data): # TODO: ExpertRatings sends url encoded strings for comment content, and we don't parse it
         return xml2dict(data)['request']['method']
 
     def serialize(self, parsed):
@@ -47,7 +47,7 @@ class ExpertRatingsXMLWebhook(APIView):
         test = int(parameters.pop('test_id'))
         user = int(parameters.pop('user_id'))
         if method == "SubmitUserTestFeedback":
-            parameters['test_result'] = get_test_result(user=user, test=test).pk
+            parameters['test_result'] = get_test_result( user=user, test=test, transcript_id=parameters['transcript_id'] ).pk
         else:
             parameters['test'] = test
             parameters['user'] = user
