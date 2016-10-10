@@ -137,6 +137,57 @@ const Attachment = React.createClass({
   }
 });
 
+const MessageHelper = React.createClass({
+	getInitialState() {
+		return {
+			dismissForever: false
+		};
+	},
+
+	dismissForever() {
+		const { dismissForever } = this.state;
+
+		this.setState({ dismissForever: !dismissForever });
+	},
+
+  dismissHelper() {
+    const { onDismiss, isProjectOwner } = this.props;
+    const { dismissForever } = this.state;
+
+		onDismiss(isProjectOwner, dismissForever);
+  },
+
+  render() {
+    const { isProjectOwner } = this.props;
+		const { dismissForever } = this.state;
+
+		const ownerMessage = (
+			<div>
+				<p><span className="brand-color">Did you know?</span> Each message thread contains an agreement tracker to help streamline the contract process and get you working faster.</p>
+				<p>When you find a freelancer you like, send a non-disclosure agreement to legally protect your ideas and provide access to your private project information. Then, when you're ready to hire the freelancer, you can build a contract and send for signature.</p>
+			</div>
+		);
+		const talentMessage = (
+			<div>
+				<p><span className="brand-color">Did you know?</span> Each message thread contains an agreement tracker to help streamline the contract process and get you working faster. When project owners send you non-disclosure agreements and work contracts they will appear in the panel on the right side of each message.</p>
+			</div>
+		);
+    const message = isProjectOwner ? ownerMessage : talentMessage;
+
+    return (
+      <div className="thread-messageHelper">
+				{message}
+        <button className="btn btn-brand" onClick={this.dismissHelper}>Okay, I understand</button>
+				<div className="checkbox">
+					<label>
+						<input type="checkbox" onClick={this.dismissForever} checked={dismissForever}/> Don't show again on this computer.
+					</label>
+				</div>
+      </div>
+    );
+  }
+});
+
 const Messages = React.createClass({
   propTypes: {
     threadId: React.PropTypes.number.isRequired
@@ -404,7 +455,44 @@ const Messages = React.createClass({
     this.setState({ formElements })
   },
 
+  getMessageHelperStatus() {
+    const { loom_hideMessageHelperOwner, loom_hideMessageHelperTalent } = window.localStorage;
+
+    this.setState({
+      hideMessageHelperOwner: !!loom_hideMessageHelperOwner,
+      hideMessageHelperTalent: !!loom_hideMessageHelperTalent
+    });
+  },
+
+	dismissMessageHelper(isProjectOwner, dismissForever) {
+  	let helperKey = null;
+		let storageKey = null;
+
+  	if(isProjectOwner) {
+  		helperKey = 'hideMessageHelperOwner';
+
+			if(dismissForever) {
+				storageKey = 'loom_hideMessageHelperOwner';
+			}
+		}else{
+			helperKey = 'hideMessageHelperTalent';
+
+			if(dismissForever) {
+				storageKey = 'loom_hideMessageHelperTalent';
+			}
+		}
+
+		if(helperKey){
+			this.setState({ [helperKey]: true });
+		}
+
+		if(storageKey){
+			window.localStorage.setItem(storageKey, true);
+		}
+	},
+
   componentWillMount() {
+    this.getMessageHelperStatus();
     this.fetchThread();
   },
 
@@ -535,10 +623,6 @@ const Messages = React.createClass({
       thread: threadId,
       body: message
     };
-
-    //if(attachment) {
-    //  payload.attachment = attachment;
-    //};
 
     this.setState({ messageSending: true });
 
@@ -681,7 +765,9 @@ const Messages = React.createClass({
 
   scrollBottom() {
     const threadContainer = this.refs.thread;
-    threadContainer.scrollTop = threadContainer.scrollHeight + threadContainer.offsetHeight;
+		if(threadContainer){
+			threadContainer.scrollTop = threadContainer.scrollHeight + threadContainer.offsetHeight;
+		}
   },
 
   updateComposerContent(value) {
@@ -837,8 +923,16 @@ const Messages = React.createClass({
       fileSending,
       fileToUpload,
       fileToUploadTitle,
-      fileToDeleteName
+      fileToDeleteName,
+      hideMessageHelperOwner,
+      hideMessageHelperTalent,
+      isOwner
     } = this.state;
+
+		if(isLoading) {
+			return <Loader/>;
+		}
+
     const { threadId } = this.props;
     const messages = interactions.map((interaction, i) => {
       const { content, sender, timestamp, attachment, interactionType } = interaction;
@@ -917,7 +1011,8 @@ const Messages = React.createClass({
           </div>
           <div className="thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
           <div className="thread-content-wrapper">
-            { isLoading && <Loader/> }
+            { !hideMessageHelperOwner && isOwner && <MessageHelper isProjectOwner={true} onDismiss={this.dismissMessageHelper} /> }
+            { !hideMessageHelperTalent && !isOwner && <MessageHelper isProjectOwner={false} onDismiss={this.dismissMessageHelper} /> }
             <div className="thread-content" ref="thread">
               {messages}
               {error}
