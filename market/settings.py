@@ -224,7 +224,7 @@ GEOIPV6_DATABASE = os.path.join(BASE_DIR, 'market/GeoLiteCityv6.dat')
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%b %d, %Y (%a)',
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
 }
