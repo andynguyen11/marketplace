@@ -121,6 +121,15 @@ gulp.task('images', function(){
 	})
 });
 
+gulp.task('spa-index', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./templates/spa.html')
+			.pipe(replace('/static/spa', 'spa'))
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./templates'));
+	})
+});
+
 gulp.task('spa', function(){
 	del('./static/spa/**/*.*').then(function() {
 		return gulp.src('./SPA/**/*.*')
