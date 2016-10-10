@@ -390,7 +390,10 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:9000'
 )
 
+GULP_PRODUCTION_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp'
+
 GULP_DEVELOP_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp'
+
 
 try:
     from local_settings import *
