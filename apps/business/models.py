@@ -1,3 +1,5 @@
+import os
+from uuid import uuid4
 from datetime import datetime, timedelta
 
 import tagulous.models
@@ -195,6 +197,19 @@ class ProjectManager(models.Manager):
         return super(ProjectManager, self).get_queryset().filter(deleted=False)
 
 
+def path_and_rename(instance, filename):
+    upload_to = 'project-images'
+    ext = filename.split('.')[-1]
+    # get filename
+    if instance.pk:
+        filename = '{}{}.{}'.format(uuid4().hex, instance.pk, ext)
+    else:
+        # set filename as random string
+        filename = '{}.{}'.format(uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
@@ -225,7 +240,7 @@ class Project(models.Model):
     milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
-    project_image = models.ImageField(blank=True, null=True, upload_to='project-images')
+    project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
 
     objects = ProjectManager()
