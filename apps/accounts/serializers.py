@@ -30,7 +30,6 @@ class SocialSerializer(serializers.ModelSerializer):
 class VerificationTestSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerificationTest
-        exclude = ('skill', )
 
 
 class SkillsSerializer(serializers.ModelSerializer):
