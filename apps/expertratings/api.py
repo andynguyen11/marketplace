@@ -92,10 +92,9 @@ class ExpertRatings(object):
             **self.auth
         )
         data['partneruserid'] = user_id
-        data.update(self.options)
         data.update(options)
         response = self.post('/GenerateTicket.aspx', data=data)
-        ticket_url = response.text + urllib.urlencode(self.options)
+        ticket_url = response.text + '&' + urllib.urlencode(self.options)
         if not is_url(ticket_url):
             raise ExpertRatingsAPIException(detail='failed to create url: expertRatings API misconfigured or temporarily unavailable')
         if(ticket_url == 'SOMETHING MISSING IN URL'): # expert rating return 200 on errors

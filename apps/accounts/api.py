@@ -1,4 +1,5 @@
 from django.http import HttpResponseForbidden
+from django.core.urlresolvers import reverse
 from django.contrib.auth import login, authenticate
 from rest_condition import Not
 from rest_framework import status, generics
@@ -24,10 +25,17 @@ def nicely_serialize_result(r):
         'time': r.time
     }
 
+def test_url(test, user):
+    return '%(url)s?%(query)s' % {
+        'url': reverse('api:skilltest-take', kwargs={'profile_pk': user.id}),
+        'query': ('expertratings_test=%s' % test.test_id)
+    }
+
 def nicely_serialize_skilltest(st, user):
     formatted = {
             'testID': st.test_id,
             'testName': st.test_name,
+            'testUrl': test_url(st, user),
             'stats': {
                 'questions': st.total_questions,
                 'estimated_time': '%d minutes' % st.duration,
