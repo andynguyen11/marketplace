@@ -2,7 +2,7 @@ import tagulous
 
 from django.conf.urls import patterns, url
 from rest_framework_nested import routers
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import refresh_jwt_token
 
 from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
@@ -64,9 +64,9 @@ router = DeclarativeRouter({
 })
 
 urlpatterns = [
-    url(r'^token/', obtain_jwt_token),
-    url(r'creditcard/$', view=CreditCardView.as_view()),
-    url(r'paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
+    url(r'^jwt/$', refresh_jwt_token),
+    url(r'^creditcard/$', view=CreditCardView.as_view()),
+    url(r'^paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
     url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
     url(r'^company/(?P<pk>[0-9]+)/$', view=CompanyDetail.as_view(), name='company-detail'),
