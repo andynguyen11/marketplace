@@ -41,6 +41,14 @@ def get_interaction(interaction_id):
         return Message.objects.get(id=interaction_id)
 
 
+class MessageCount(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request):
+        count = Message.objects.inbox_unread_count(request.user)
+        return Response({'message_count': count})
+
+
 class ConversationDetail(generics.RetrieveAPIView):
     queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
@@ -141,8 +149,6 @@ class MessageAPI(APIView):
             except Message.DoesNotExist, e:
                 return Response(status=404)
         return Response(status=403)
-
-
 
     def delete(self, request, thread_id):
         try:
