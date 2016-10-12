@@ -98,7 +98,6 @@ class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
 class CompanyListCreate(generics.ListCreateAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    permission_classes = (AuthedCreateRead,)
 
     def create(self, request, *args, **kwargs):
         request.data['user_id'] = request.data.get('user_id', request.user.id)

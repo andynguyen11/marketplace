@@ -39,7 +39,6 @@ class ReadOnlyOrIsAdminUser(permissions.BasePermission):
         return (request.method in permissions.SAFE_METHODS)
 
     def allowed_write(self, request, view):
-        print view.action, self.allowed_authenticated_writes
         return view.action in self.allowed_unauthenticated_writes or \
             request.user.is_authenticated() and view.action in self.allowed_authenticated_writes
 
