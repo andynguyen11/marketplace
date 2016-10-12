@@ -5,7 +5,6 @@ import logging
 from django.conf import settings
 
 
-
 def to_nice_string(num):
     return {
         1: 'one',

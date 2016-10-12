@@ -38,6 +38,57 @@ class IsOwnerOrIsStaff(permissions.BasePermission):
         return is_owner or is_staff
 
 
+class ReadOnlyOrIsAdminUser(permissions.BasePermission):
+    """ allow SAFE_METHODS, admin actions, and specified unauthenticated writes"""
+
+    allowed_unauthenticated_writes = []
+    allowed_authenticated_writes = []
+
+    def is_safe(self, request):
+        return (request.method in permissions.SAFE_METHODS)
+
+    def allowed_write(self, request, view):
+        print view.action, self.allowed_authenticated_writes
+        return view.action in self.allowed_unauthenticated_writes or \
+            request.user.is_authenticated() and view.action in self.allowed_authenticated_writes
+
+    def permitted(self, request, view):
+        return self.is_safe(request) or self.allowed_write(request, view) or request.user.is_staff
+
+    def has_permission(self, request, view):
+        if self.permitted(request, view):
+            return True
+        else:
+            try:
+                obj = view.get_object()
+                return self.has_object_permission(request, view, obj)
+            except AssertionError, e:
+                return False
+
+    def has_object_permission(self, request, view, obj):
+        return self.permitted(request, view)
+
+
+class CreateReadOrIsCurrentUser(ReadOnlyOrIsAdminUser):
+    allowed_unauthenticated_writes = [ 'create' ]
+    def has_object_permission(self, request, view, obj):
+        return self.permitted(request, view) or request.user == obj or request.user.is_staff
+
+class AuthedCreateRead(ReadOnlyOrIsAdminUser):
+    allowed_authenticated_writes = [ 'create' ]
+
+class ReadOrIsOwnedByCurrentUser(ReadOnlyOrIsAdminUser):
+    def has_object_permission(self, request, view, obj):
+        return self.permitted(request, view) or request.user == obj.profile or request.user.is_staff
+
+class SkillTestPermission(ReadOrIsOwnedByCurrentUser):
+    def has_permission(self, request, view):
+        return super(SkillTestPermission, self).has_permission(request, view) and (
+            view.action != 'take' or request.user == view.parent or request.user.is_staff )
+
+
+
+
 class BidPermission(permissions.BasePermission):
     """
     Custom permission for project managers and developers to edit job.

@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, 
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
-from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, IsProfile
+from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
 from business.models import Job, Employee
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
@@ -96,8 +96,8 @@ class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
 class CompanyListCreate(generics.ListCreateAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    permission_classes = (AuthedCreateRead,)
 
-    @permission_classes(IsAuthenticated)
     def create(self, request, *args, **kwargs):
         request.data['user_id'] = request.data.get('user_id', request.user.id)
         return super(CompanyListCreate, self).create(request, *args, **kwargs)
