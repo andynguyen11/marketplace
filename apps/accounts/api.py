@@ -10,7 +10,9 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
-from apps.api.permissions import IsCurrentUser, IsOwnerOrIsStaff
+from apps.api.permissions import (
+        IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
+        ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
 from generics.tasks import account_confirmation
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from django.shortcuts import redirect
@@ -53,17 +55,7 @@ class SkillViewSet(ModelViewSet):
     queryset = Skills.objects.all()
     serializer_class = SkillsSerializer
 
-    @permission_classes((IsAdminUser, ))
-    def update(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).update(request, *args, **kwargs)
-
-    @permission_classes((IsAdminUser, ))
-    def partial_update(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).partial_update(request, *args, **kwargs)
-
-    @permission_classes((IsAdminUser, ))
-    def delete(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).delete(request, *args, **kwargs)
+    permission_classes = ( ReadOnlyOrIsAdminUser, )
 
 
 class VerificationTestViewSet(NestedModelViewSet):
@@ -71,22 +63,13 @@ class VerificationTestViewSet(NestedModelViewSet):
     serializer_class = VerificationTestSerializer
     parent_key = 'skill'
 
-    @permission_classes((IsAdminUser, ))
-    def update(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).update(request, *args, **kwargs)
-
-    @permission_classes((IsAdminUser, ))
-    def partial_update(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).partial_update(request, *args, **kwargs)
-
-    @permission_classes((IsAdminUser, ))
-    def delete(self, request, *args, **kwargs):
-        return super(SkillViewSet, self).delete(request, *args, **kwargs)
+    permission_classes = ( ReadOnlyOrIsAdminUser, )
 
 
 class ProfileViewSet(ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = ( CreateReadOrIsCurrentUser, )
 
     def create(self, request, *args, **kwargs):
         password = request.data.pop('password')
@@ -104,7 +87,7 @@ class ProfileViewSet(ModelViewSet):
     def public_view(self, profile_dict):
         return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }
 
-    def list(self, request, *args, **kwargs):
+    def list(self, request, *args, **kwargs): # TODO: This is really slow
         response = super(ProfileViewSet, self).list(request, *args, **kwargs)
         response.data = map(self.public_view, response.data)
         return response
@@ -115,7 +98,6 @@ class ProfileViewSet(ModelViewSet):
             response.data = self.public_view(response.data)
         return response
 
-    @permission_classes((IsAuthenticated, IsCurrentUser ))
     def update(self, request, *args, **kwargs):
         if request.data.get('signup', None):
             account_confirmation.delay(
@@ -124,15 +106,7 @@ class ProfileViewSet(ModelViewSet):
             )
         return super(ProfileViewSet, self).update(request, *args, **kwargs)
 
-    @permission_classes((IsAuthenticated, IsCurrentUser ))
-    def partial_update(self, request, *args, **kwargs):
-        return super(ProfileViewSet, self).partial_update(request, *args, **kwargs)
-
-    @permission_classes((IsAdminUser, ))
-    def destroy(self, request, *args, **kwargs):
-        return super(ProfileViewSet, self).destroy(request, *args, **kwargs)
-
-    @detail_route(methods=['get'], permission_classes=(IsAuthenticated, IsOwnerOrIsStaff))
+    @detail_route(methods=['get'])
     def skillsummary(self, request, *args, **kwargs):
         user = request.user
         summary = {
@@ -148,14 +122,11 @@ class ProfileViewSet(ModelViewSet):
         return Response(summary)
 
 
-class SkillTestViewSet(CreatorPermissionsMixin, NestedModelViewSet):
+class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
     serializer_class = SkillTestSerializer
     parent_key = 'profile'
-
-    def retrieve(self, request, *args, **kwargs):
-        print 'request', request.user.id
-        return super(SkillTestViewSet, self).retrieve(request, *args, **kwargs)
+    permission_classes = ( SkillTestPermission, )
 
     def new_ticket(self, request):
         instance = SkillTest.objects.get(profile=Profile.objects.get(id=request.data['profile']), expertratings_test=request.data['expertratings_test'])
