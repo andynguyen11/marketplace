@@ -108,7 +108,7 @@
 
       <div class="project-basics-actions">
         {% if request.user == project.project_manager %}
-          <a class="btn btn-brand" href="{% url 'edit-project' %}#/{{ project.id }}/basics">Edit Project</a>
+          <a class="btn btn-brand" href="{% url 'edit-project' %}{{ project.id }}">Edit Project</a>
         {% else %}
           {% if not job %}
 
