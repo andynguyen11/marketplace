@@ -125,6 +125,7 @@ class Profile(AbstractUser):
     role = models.CharField(max_length=100, blank=True, null=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
+    long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)

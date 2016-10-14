@@ -8,6 +8,7 @@ from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from expertratings.models import SkillTest as ERSkillTest
 from expertratings.exceptions import ExpertRatingsAPIException
+from expertratings.utils import nicely_serialize_verification_tests
 from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer
 from generics.base_serializers import RelationalModelSerializer
@@ -55,7 +56,8 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()
-    skills_data = serializers.SerializerMethodField()
+    my_skills = serializers.SerializerMethodField()
+    skills_test = serializers.SerializerMethodField()
     password = serializers.CharField(write_only=True, required=False)
     signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
@@ -65,10 +67,10 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         model = Profile
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
         public_fields = ( # this is just used in the view atm
-                'first_name', 'last_name', 'username',
-                'location', 'country', 'city', 'state',
+                'first_name', 'location', 'country', 'city', 'state',
                 'title', 'role', 'biography', 'work_history',
-                'photo_url', 'photo' 'featured', 'skills', 'id')
+                'photo_url', 'photo' 'featured', 'skills', 'id',
+                'my_skills', 'skills_test')
 
     def get_photo_url(self, obj):
         return obj.get_photo
@@ -81,7 +83,18 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         serializer = SkillsSerializer(Skills.objects.all(), many=True)
         return serializer.data
 
-    def get_skills_data(self, obj):
+    def get_skills_test(self, obj):
+        summary = {
+            key: nicely_serialize_verification_tests(values, obj)
+            for key, values in {
+                'testsTaken': VerificationTest.objects.taken(obj)
+            }.items() }
+        for st in summary['testsTaken']:
+            if not st.has_key('results'):
+                st['results'] = [{'result': 'INPROGRESS'}]
+        return summary
+
+    def get_my_skills(self, obj):
         return [dict(
                     verified = skill.is_verified(obj),
                     **SkillsSerializer(skill).data
