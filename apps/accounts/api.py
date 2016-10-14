@@ -85,8 +85,9 @@ class ProfileViewSet(ModelViewSet):
                 'testsNotTaken': VerificationTest.objects.not_taken(user)
             }.items() }
         for st in summary['testsTaken']:
-            if not st.has_key('results'):
-                st['results'] = [{'result': 'INPROGRESS'}]
+            for t in st.get('tests', []):
+                if not t.has_key('results'):
+                    t['results'] = [{'result': 'INPROGRESS'}]
         return Response(summary)
 
 
