@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
 from django.utils.datastructures import MultiValueDictKeyError
+from generics.viewsets import assign_crud_permissions
 
 from postman.models import Message
 from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm, SignupForm
@@ -50,6 +51,7 @@ def signup(request):
             password = form.cleaned_data.get('password')
             user.set_password(password)
             user.save()
+            assign_crud_permissions(user, user)
             account = authenticate(username=user.username, password=password)
             response = redirect('signup-type')
             response = set_jwt_token(response, account)

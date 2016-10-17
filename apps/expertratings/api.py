@@ -87,7 +87,6 @@ class ExpertRatings(object):
     def create_ticket( self, test_id, user_id, options={} ):
         data = dict(
             testid = test_id,
-            #user_id = user_id,
             returnURL = self.return_url,
             **self.auth
         )

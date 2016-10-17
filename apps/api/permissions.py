@@ -23,7 +23,6 @@ class IsProfile(permissions.BasePermission):
     Permission to make sure if user is primary to edit company
     """
     def has_object_permission(self, request, view, obj):
-        print(obj.profile)
         return obj.profile == request.user
 
 
@@ -84,8 +83,6 @@ class SkillTestPermission(ReadOrIsOwnedByCurrentUser):
     def has_permission(self, request, view):
         return super(SkillTestPermission, self).has_permission(request, view) and (
             view.action != 'take' or request.user == view.parent or request.user.is_staff )
-
-
 
 
 class BidPermission(permissions.BasePermission):

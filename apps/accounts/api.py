@@ -15,7 +15,7 @@ from apps.api.permissions import (
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
 from expertratings.utils import nicely_serialize_verification_tests
 from generics.tasks import account_confirmation
-from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
+from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from django.shortcuts import redirect
 
 
@@ -47,6 +47,7 @@ class ProfileViewSet(ModelViewSet):
         user.username = user.email
         user.set_password(password[0])
         user.save()
+        assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
         login(request, account)
