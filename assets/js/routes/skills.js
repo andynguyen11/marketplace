@@ -9,189 +9,20 @@ import PrettySelect from '../SPAcomponents/prettySelect';
 import Loader from '../SPAcomponents/loader';
 
 const getLastItem = (arr) => {
-  const lastIndex = arr.length;
-  const lastItem = arr[lastIndex - 1];
+  if(arr) {
+    const lastIndex = arr.length;
+    const lastItem = arr[lastIndex - 1];
 
-  return lastItem;
+    return lastItem;
+  }
+
+  return false;
 };
 
 const getTestScore = (total, score) => {
   const scoreNormalized = total * (score / 100);
 
   return scoreNormalized + '/' + total;
-};
-
-const sampleSkillsObj = {
-  testsTaken: [
-    {
-      categoryId: 101,
-      categoryName: 'PHP',
-      tests: [
-        {
-          testId: 1,
-          testName: 'PHP is amazing',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 70
-          },
-          results: [
-            {
-              result: 'PASS',
-              percentile: 96,
-              score: 90
-            }
-          ]
-        },
-        {
-          testId: 1,
-          testName: 'PHP is even more amazing',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          },
-          results: [
-            {
-              result: 'FAIL',
-              percentile: 91,
-              score: 30
-            }
-          ]
-        },
-        {
-          testId: 1,
-          testName: 'PHP is literally the best',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          },
-          results: [
-            {
-              result: 'INPROGRESS',
-              percentile: 81,
-              score: 70
-            }
-          ]
-        }
-      ]
-    },
-    {
-      categoryId: 101,
-      categoryName: 'Java',
-      tests: [
-        {
-          testId: 1,
-          testName: 'Java for real tho',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 50
-          },
-          results: [
-            {
-              result: 'PASS',
-              percentile: 76,
-              score: 80
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  testsRecommended: [
-    {
-      categoryId: 102,
-      categoryName: 'QBASIC',
-      tests: [
-        {
-          testId: 2,
-          testName: 'QBASIC is better',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        }
-      ]
-    }
-  ],
-  testsNotTaken: [
-    {
-      categoryId: 103,
-      categoryName: 'Fortran',
-      tests: [
-        {
-          testId: 3,
-          testName: 'Fortran is okay i guess',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        },
-        {
-          testId: 3,
-          testName: 'Fortran is okay i guess',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        },
-        {
-          testId: 3,
-          testName: 'Fortran is okay i guess',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        }
-      ]
-    },
-    {
-      categoryId: 103,
-      categoryName: 'Visual Basic',
-      tests: [
-        {
-          testId: 3,
-          testName: 'VB is okay i guess',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        }
-      ]
-    },
-    {
-      categoryId: 103,
-      categoryName: 'CoffeeScript',
-      tests: [
-        {
-          testId: 3,
-          testName: 'CS is okay i guess',
-          testLink: 'whatever the link to the test is',
-          stats: {
-            questions: 10,
-            estimated_time: '17 minutes',
-            average_score: 40
-          }
-        }
-      ]
-    },
-  ]
 };
 
 const TableTests = React.createClass({
@@ -248,15 +79,15 @@ const TableTestsRow = React.createClass({
 
 const TableTestsCategoryHeader = React.createClass({
   propTypes: {
-    categoryName: React.PropTypes.any.isRequired
+    skillName: React.PropTypes.any.isRequired
   },
 
   render() {
-    const { categoryName } = this.props;
+    const { skillName } = this.props;
 
     return (
       <tr className="skills-test-category">
-        <td colSpan="2">{categoryName}</td>
+        <td colSpan="2">{skillName}</td>
         <td className="hide-mobile"></td>
         <td className="hide-mobile"></td>
       </tr>
@@ -284,10 +115,10 @@ const TestsTaken = React.createClass({
     const { tests, takeTest } = this.props;
 
     const categoriesList = tests.map((category, categoryKey) => {
-      const { categoryName, tests } = category;
+      const { skillName, tests } = category;
 
       const testsList = tests.map((test, testKey) => {
-        const { testName, stats: { questions, average_score } } = test;
+        const { testName, testUrl, stats: { questions, average_score } } = test;
         const mostRecentResult = getLastItem(test.results);
         const { percentile, score, result } = mostRecentResult;
 
@@ -300,12 +131,12 @@ const TestsTaken = React.createClass({
           'skills-test-status--inprogress': result === 'INPROGRESS'
         });
 
-        const scoreDisplay = getTestScore(questions, score);
+        const scoreDisplay = result !== 'INPROGRESS' && getTestScore(questions, score);
 
-        const buttonText = result !== 'INPROGRESS' ? 'Retake' : 'Resume';
-        const buttonType = result !== 'INPROGRESS' ? 'tertiary' : 'secondary';
+        const buttonText = result === 'INPROGRESS' ? 'Resume' : 'Retake';
+        const buttonType = result === 'INPROGRESS' ? 'secondary' : 'tertiary';
         const takeThisTest = () => {
-          takeTest('id');
+          takeTest(testUrl);
         };
 
         return (
@@ -326,7 +157,7 @@ const TestsTaken = React.createClass({
       return (
         <tbody key={categoryKey}>
           <tr className="skills-test-category">
-            <td colSpan="2">{categoryName}</td>
+            <td colSpan="2">{skillName}</td>
             <td className="hide-mobile"></td>
             <td className="hide-mobile"></td>
             <td className="hide-mobile"></td>
@@ -360,13 +191,13 @@ const RecommendedTests = React.createClass({
     const { tests, takeTest } = this.props;
 
     const categoriesList = tests.map((category, categoryKey) => {
-      const { categoryName, tests } = category;
+      const { skillName, tests } = category;
 
       const testsList = tests && tests.map((test, testKey) => {
-        const { testName, stats: { questions, estimated_time } } = test;
+        const { testName, testUrl, stats: { questions, estimated_time } } = test;
 
         const takeThisTest = () => {
-          takeTest('id');
+          takeTest(testUrl);
         };
 
         return <TableTestsRow key={testKey} testName={testName} questionCount={questions} estimatedTime={estimated_time} buttonText="Take Test" onButtonClick={takeThisTest}/>;
@@ -374,7 +205,7 @@ const RecommendedTests = React.createClass({
 
       return (
         <tbody key={categoryKey}>
-          <TableTestsCategoryHeader categoryName={categoryName}/>
+          <TableTestsCategoryHeader skillName={skillName}/>
           {testsList}
         </tbody>
       );
@@ -414,10 +245,10 @@ const AllTests = React.createClass({
     const categoryIsSelected = !!currentCategory;
     const testsListHeader = categoryIsSelected && <TableTestsHeader/>;
     const testsList = categoryIsSelected && currentCategory.tests.map((test, testKey) => {
-      const { testName, stats: { questions, estimated_time } } = test;
+      const { testName, testUrl, stats: { questions, estimated_time } } = test;
 
       const takeThisTest = () => {
-        takeTest('id');
+        takeTest(testUrl);
       };
 
       return <TableTestsRow key={testKey} testName={testName} questionCount={questions} estimatedTime={estimated_time} buttonText="Take Test" onButtonClick={takeThisTest}/>;
@@ -426,7 +257,7 @@ const AllTests = React.createClass({
     const noCategory = !categoryIsSelected && <ContentTileEmptyState>Please select a skill above to see tests.</ContentTileEmptyState>;
 
     const skillSelectorOptions = categories.map((category, categoryKey) => {
-      const { categoryName } = category;
+      const { skillName } = category;
       const chooseCategory = (event) => {
         event.preventDefault();
 
@@ -435,13 +266,13 @@ const AllTests = React.createClass({
 
       return (
         <div className="skills-test-selector-option" key={categoryKey}>
-          <a href="" onClick={chooseCategory}>{categoryName}</a>
+          <a href="" onClick={chooseCategory}>{skillName}</a>
         </div>
       );
     });
 
     const tileHeaderText = isOnlyTable ? 'Tests' : 'Other Tests';
-    const selectorText = categoryIsSelected ? currentCategory.categoryName : 'choose a skill';
+    const selectorText = categoryIsSelected ? currentCategory.skillName : 'choose a skill';
     const selectorPrefix = <span className="hide-xs">Sort by:</span>;
     const tileHeader = (
       <div className="tile-header-inner">
@@ -512,26 +343,17 @@ const SkillsPage = React.createClass({
     }
   },
 
-  takeTest(testId) {
-    console.log('take test', testId);
-    // const { userId } = this.props;
-    //
-    // if(userId){
-    //   $.ajax({
-    //     url: loom_api.profile + userId + '/skillsummary/',
-    //     method: 'GET',
-    //     success: (result) => {
-    //       console.log(result);
-    //       this.setState({
-    //         skillsLists: result,
-    //         isLoading: false
-    //       });
-    //     },
-    //     error: (xhr, status, error) => {
-    //       console.error(xhr, status, error);
-    //     }
-    //   });
-    // }
+  takeTest(testUrl) {
+    $.ajax({
+      url: testUrl,
+      method: 'GET',
+      success: (result) => {
+        console.log(result);
+      },
+      error: (xhr, status, error) => {
+        console.error(xhr, status, error);
+      }
+    });
   },
 
   render() {
