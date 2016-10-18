@@ -91,15 +91,15 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             }.items() }
         for st in summary['testsTaken']:
             for t in st.get('tests', []):
-                if not t.has_key('results'):
-                    t['results'] = [{'result': 'INPROGRESS'}]
+                if not t.has_key('results') or t['results'][0]['result'] != 'PASS':
+                    summary['testsTaken'].remove(st)
         return summary
 
     def get_my_skills(self, obj):
         return [dict(
                     verified = skill.is_verified(obj),
                     **SkillsSerializer(skill).data
-                    ) for skill in obj.get_skills()]
+                    ) for skill in obj.skills.all()]
 
     def get_work_history(self, obj):
         serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)

@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
+from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
@@ -50,8 +51,10 @@ class ProfileViewSet(ModelViewSet):
         assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
+        response = Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        response = set_jwt_token(response, account)
         login(request, account)
-        return Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        return response
 
     def public_view(self, profile_dict):
         return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }

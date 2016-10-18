@@ -167,6 +167,7 @@ class Profile(AbstractUser):
     @property
     def skilltests(self):
         return SkillTest.objects.filter(profile=self)
+
     @property
     def taken_tests(self):
         return [t.expertratings_test for t in self.skilltests]
