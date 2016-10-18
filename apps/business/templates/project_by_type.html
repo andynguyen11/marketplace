@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load cache %}
+{% load thumbnail %}
 
 {% block content %}
   {% cache 3600 projects ENVIRONMENT type %}
@@ -83,10 +84,14 @@
           {% for project in new %}
             {% if project.project_image %}
             <a class="plate" href="{% url 'project' project.slug %}">
-              <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
+              {% thumbnail project.project_image "650" as image %}
+              <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('{{ image.url }}');"{% endif %}></div>
+              {% endthumbnail %}
               <div class="plate-info">
                 <div class="plate-info-profile">
-                  <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+                  {% thumbnail project.project_manager.get_photo "200" as image %}
+                  <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
+                  {% endthumbnail %}
                   <div class="plate-info-profile-name">
                     <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
                     {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
@@ -126,10 +131,14 @@
             {% for project in all %}
               {% if MEDIA_URL and project.project_image %}
                 <a class="plate" href="{% url 'project' project.slug %}">
-                  <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
+                  {% thumbnail project.project_image "650" as image %}
+                  <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
+                  {% endthumbnail %}
                   <div class="plate-info">
                     <div class="plate-info-profile">
-                      <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+                      {% thumbnail project.project_manager.get_photo "200" as image %}
+                      <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
+                      {% endthumbnail %}
                       <div class="plate-info-profile-name">
                         <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
                         {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}

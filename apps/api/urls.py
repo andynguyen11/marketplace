@@ -2,14 +2,14 @@ import tagulous
 
 from django.conf.urls import patterns, url
 from rest_framework_nested import routers
-from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import refresh_jwt_token
 
 from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
-from postman.api import ConversationDetail, MessageAPI
+from postman.api import ConversationDetail, MessageAPI, MessageCount
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
@@ -64,13 +64,16 @@ router = DeclarativeRouter({
 })
 
 urlpatterns = [
-    url(r'^token/', obtain_jwt_token),
-    url(r'creditcard/$', view=CreditCardView.as_view()),
-    url(r'paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
+    url(r'^jwt/$', refresh_jwt_token),
+    url(r'^creditcard/$', view=CreditCardView.as_view()),
+    url(r'^paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
     url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
     url(r'^company/(?P<pk>[0-9]+)/$', view=CompanyDetail.as_view(), name='company-detail'),
+    url(r'^employee/$', view=EmployeeListCreate.as_view(), name='employee'),
+    url(r'^employee/(?P<pk>[0-9]+)/$', view=EmployeeDetail.as_view(), name='employee-detail'),
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
+    url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^thread/(?P<thread_id>[0-9]+)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
     url(r'^orders/$', view=OrderListCreate.as_view(), name='orders'),

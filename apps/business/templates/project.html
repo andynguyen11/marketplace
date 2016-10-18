@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load thumbnail %}
 
 {% block content %}
 <div id="project" data-user="{{ request.user.id }}" data-id="{{ project.id }}" data-name="{{ project.title }}" >
@@ -19,7 +20,9 @@
       </h4>
     </div>
     <div class="col-md-7 project-header-left">
-      <div class="project-image" style="background-image: url({{ MEDIA_URL }}{{ project.project_image.file }})"></div>
+      {% thumbnail project.project_image "650" as image %}
+      <div class="project-image" style="background-image: url('{{ image.url }}')"></div>
+      {% endthumbnail %}
       <div class="sub-section">{{ project.short_blurb }}</div>
       <ul class="project-meta sub-section">
         <li><img class="icon" src="{% static 'images/icon-location.png' %}" />
@@ -105,7 +108,7 @@
 
       <div class="project-basics-actions">
         {% if request.user == project.project_manager %}
-          <a class="btn btn-brand" href="{% url 'edit-project' %}#/{{ project.id }}/basics">Edit Project</a>
+          <a class="btn btn-brand" href="{% url 'edit-project' %}{{ project.id }}">Edit Project</a>
         {% else %}
           {% if not job %}
 

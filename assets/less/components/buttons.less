@@ -1,3 +1,72 @@
+.SPAbutton {
+  padding: 8px 25px;
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  outline: 0 !important;
+  color: #FFF;
+  border: 2px solid @brand--accent;
+  background: @brand--accent;
+  border-radius: @border-radius--small;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 100ms, opacity 100ms;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &.SPAbutton--secondary {
+    color: @brand--accent;
+    background: #FFF;
+
+    &:hover {
+      opacity: 1;
+      background: #F5F5F5;
+    }
+  }
+
+  &.SPAbutton--tertiary {
+    color: @brand-neutral--2;
+    border-color: @brand-neutral--2;
+    background: #FFF;
+
+    &:hover {
+      opacity: 1;
+      background: #F5F5F5;
+    }
+  }
+
+  &.SPAbutton--large {
+    padding: 20px 40px;
+    font-size: 18px;
+  }
+
+  &.SPAbutton--full {
+    width: 100%;
+  }
+
+  &.SPAbutton--pretty {
+    font-weight: bold;
+    font-family: @brand-font;
+    letter-spacing: 1px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  i {
+    margin-left: 5px;
+  }
+}
+
 .btn {
   padding: 8px 25px;
   font-weight: 700;

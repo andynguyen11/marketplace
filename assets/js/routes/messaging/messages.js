@@ -28,12 +28,20 @@ const MessageComposer = React.createClass({
   },
 
   sendListener(e) {
-    const { sendMessage } = this.props;
     const textarea = ReactDOM.findDOMNode(this.refs.textarea);
 
     // send message when user hits enter and is focused on the textarea
-    if(e.which ===  13 && !e.shiftKey && document.activeElement === textarea && textarea.value.length) {
+    if(e.which ===  13 && !e.shiftKey && document.activeElement === textarea) {
       e.preventDefault();
+      this.sendMessage();
+    }
+  },
+
+  sendMessage() {
+    const { sendMessage } = this.props;
+    const textarea = ReactDOM.findDOMNode(this.refs.textarea);
+
+    if(textarea.value.length) {
       sendMessage();
     }
   },
@@ -55,12 +63,14 @@ const MessageComposer = React.createClass({
     })();
 
     const loadingIndicator = (messageSending || fileSending) && <div className="text-field-loading"><i className="fa fa-circle-o-notch fa-spin fa-fw"></i></div>;
+    const sendButton = (!messageSending && !fileSending) && <button className="text-field-sendButton" onClick={this.sendMessage}>send</button>;
 
     return (
       <div className="thread-composer">
         {fileButton}
         <TextareaAutosize minRows={1} maxRows={5} value={value} id={name} name={name} onChange={this.onUpdate} ref="textarea" {...disabled}></TextareaAutosize>
         {loadingIndicator}
+        {sendButton}
       </div>
     );
   }

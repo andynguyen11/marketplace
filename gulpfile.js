@@ -9,6 +9,7 @@ const sourcemaps = require('gulp-sourcemaps');
 const uglify = require('gulp-uglify');
 const del = require('del');
 const glob = require('glob');
+const replace = require('gulp-replace');
 
 var less = require('gulp-less-sourcemap');
 var uglifyCss = require('gulp-uglifycss');
@@ -120,18 +121,49 @@ gulp.task('images', function(){
 	})
 });
 
-gulp.task('build', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
-gulp.task('dist', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'])
-gulp.task('default', ['scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
+gulp.task('spa-index', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./templates/spa.html')
+			.pipe(replace('/static/spa', 'spa'))
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./templates'));
+	})
+});
+
+gulp.task('spa', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./SPA/**/*.*')
+			.pipe(replace('static/spa/.', 'static/spa', { skipBinary: true }))
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./static/spa/'));
+	})
+});
+
+gulp.task('spa-dev', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./SPA/**/*.*')
+			.pipe(replace('static/spa/.', 'static-dev/spa', { skipBinary: true }))
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./static/spa/'));
+	})
+});
+
+gulp.task('build', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
+gulp.task('dist-dev', ['spa-dev', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
+gulp.task('dist', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
+gulp.task('default', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
 
 	gulp.watch('./assets/js/main.js', ['scripts:app']);
 	gulp.watch('./assets/js/vendor.js', ['scripts:vendor']);
 	gulp.watch('./assets/js/routes/**/*.js', ['scripts:routes']);
 	gulp.watch('./assets/js/components/**/*.js', ['scripts:app', 'scripts:routes']);
+	gulp.watch('./assets/js/SPAcomponents/**/*.js', ['scripts:app', 'scripts:routes']);
 
 	gulp.watch('./assets/less/**/*.less', ['less']);
 	gulp.watch('./assets/fonts/**/*.*', ['fonts']);
 	gulp.watch('./assets/images/**/*.*', ['images']);
+
+	gulp.watch('./SPA/**/*.*', ['spa']);
 });
 
 

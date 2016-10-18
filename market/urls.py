@@ -34,6 +34,7 @@ import business.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [
+    url(r'^_/', TemplateView.as_view(template_name='spa.html'), name='spa'),
     url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
@@ -58,6 +59,8 @@ urlpatterns = [
     url(r'^signup/developer/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-developer'),
     url(r'^signup/entrepreneur/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-entrepreneur'),
     url(r'^signup/beta/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-prelaunch'),
+    #url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
+    #url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
     url(r'^profile/$', accounts_views.view_profile, name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', accounts_views.view_profile, name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
@@ -68,6 +71,8 @@ urlpatterns = [
     url(r'^profile/settings/$', accounts_views.profile, {'template': 'settings.html'}, name='settings'),
     url(r'^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
+    #url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
+    #url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
     url(r'^project/create/$', business_views.create_project, name='create-project'),
     url(r'^project/edit/$', business_views.create_project, name='edit-project'),
     url(r'^project/edit/(?P<project_id>[0-9]+)/$', business_views.create_project, name='edit-project'),
@@ -82,6 +87,7 @@ urlpatterns = [
 
 if settings.DEBUG and settings.MEDIA_URL :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns.append(url(r'^docs/', include('rest_framework_docs.urls')))
 
 handler404 = error404
 handler500 = error500

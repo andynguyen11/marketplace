@@ -125,6 +125,7 @@ class Profile(AbstractUser):
     role = models.CharField(max_length=100, blank=True, null=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
+    long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
@@ -152,8 +153,11 @@ class Profile(AbstractUser):
 
     @property
     def company(self):
+        """
+        TODO Needs to support multiple primary companies
+        """
         try:
-            return Employee.objects.get(profile=self).company
+            return Employee.objects.get(profile=self, primary=True).company
         except Employee.DoesNotExist:
             return None
 
@@ -163,6 +167,7 @@ class Profile(AbstractUser):
     @property
     def skilltests(self):
         return SkillTest.objects.filter(profile=self)
+
     @property
     def taken_tests(self):
         return [t.expertratings_test for t in self.skilltests]

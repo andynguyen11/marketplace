@@ -1,3 +1,5 @@
+import os
+from uuid import uuid4
 from datetime import datetime, timedelta
 
 import tagulous.models
@@ -22,6 +24,14 @@ class Employee(models.Model):
     company = models.ForeignKey('business.Company')
     profile = models.ForeignKey('accounts.Profile')
     primary = models.BooleanField(default=False)
+    title = models.CharField(max_length=255, blank=True, null=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    current = models.BooleanField(default=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
+    state = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
 
 class Company(models.Model):
@@ -187,6 +197,19 @@ class ProjectManager(models.Manager):
         return super(ProjectManager, self).get_queryset().filter(deleted=False)
 
 
+def path_and_rename(instance, filename):
+    upload_to = 'project-images'
+    ext = filename.split('.')[-1]
+    # get filename
+    if instance.pk:
+        filename = '{}{}.{}'.format(uuid4().hex, instance.pk, ext)
+    else:
+        # set filename as random string
+        filename = '{}.{}'.format(uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
@@ -217,7 +240,7 @@ class Project(models.Model):
     milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
-    project_image = models.ImageField(blank=True, null=True, upload_to='project-images')
+    project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
 
     objects = ProjectManager()
@@ -328,6 +351,9 @@ class Terms(models.Model):
             self.hours = self.job.hours
             self.start_date = self.job.project.start_date
             self.end_date = self.job.project.end_date
+            self.scope = self.job.project.scope
+            self.milestones = self.job.project.milestones
+            self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
 
 

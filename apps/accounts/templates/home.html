@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load cache %}
+{% load thumbnail %}
 
 {% block content %}
 {% cache 3600 home ENVIRONMENT %}
@@ -21,7 +22,7 @@
         <div class="hero-slide">
           <h2 class="brand-bold">Raise ideas,<br class="hide-desktop"> not funds.</h2>
           <h5 class="brand">Loom is the first ever work-for-equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring digital products to life.</h5>
-          <a href="/signup/prelaunch/" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          <a href="/signup/beta/" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
         </div>
       </div>
       <div id="home-hero-2" class="item hero-item--home hero-item--home-post-project">
@@ -97,10 +98,14 @@
   <div class="plates-inner">
     {% for project in featured %}
     <a class="plate" href="{% url 'project' project.slug %}">
-      <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
+      {% thumbnail project.project_image "650" as image %}
+        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
+      {% endthumbnail %}
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+          {% thumbnail project.project_manager.get_photo "200" as image %}
+            <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
+          {% endthumbnail %}
           <div class="plate-info-profile-name">
             <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
             {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
@@ -140,10 +145,14 @@
   <div class="plates-inner plates-inner--dev">
     {% for project in new %}
     <a class="plate" href="{% url 'project' project.slug %}">
-      <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
+      {% thumbnail project.project_image "650" as image %}
+        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
+      {% endthumbnail %}
       <div class="plate-info">
         <div class="plate-info-profile">
-          <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
+          {% thumbnail project.project_manager.get_photo "200" as image %}
+          <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
+          {% endthumbnail %}
           <div class="plate-info-profile-name">
             <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
             {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
@@ -184,14 +193,16 @@
     <div class='plates-inner plates-inner--dev'>
       {% for developer in developers %}
       <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
-        <div class='plate--dev-profile-overlay' style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=400&url={{ developer.get_photo }}')"></div>
+        {% thumbnail project.project_manager.get_photo "200" as image %}
+        <div class='plate--dev-profile-overlay' style="background-image: url('{{ image.url }}');"></div>
         <div class='plate--dev-info'>
-            <div class="plate--dev-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ developer.get_photo }}')"></div>
+            <div class="plate--dev-info-profile-photo" style="background-image: url('{{ image.url }}')"></div>
             <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
             <div class='plate--dev-type'>{{ developer.role }} </div>
             <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
             <div class="plate--dev-info-hire-button btn btn-white--clear">View Profile</div>
         </div>
+        {% endthumbnail %}
       </a>
       {% endfor %}
     </div>
@@ -203,9 +214,8 @@
     <div class="cta-content">
         Let's bring your ideas to life.<br/> Posting projects is <span class="highlight">free</span>.
     </div>
-    <a href="/signup/prelaunch/" class="btn btn-brand btn-brand--attn">Post your project</a>
+    <a href="/signup/beta/" class="btn btn-brand btn-brand--attn">Post your project</a>
 </div>
-
 
 {% comment %}
 <div class="page-content page-content--alternate">
@@ -256,7 +266,17 @@
 
 
 {% endcomment %}
+
 {% endcache %}
+
+{% comment %}
+<div class="press-footer">
+  <img src="{% static 'images/Austin-Inno-Logo.png' %}" />
+  <img src="{% static 'images/press-techcrunch.png' %}" />
+  <img src="{% static 'images/press-abj.svg' %}" />
+</div>
+{% endcomment %}
+
 {% endblock %}
 
 {% block scripts %}

@@ -237,3 +237,16 @@ class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
         search_fields = ("text", )
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    company = CompanySerializer()
+
+    class Meta:
+        model = Employee
+
+    def create(self, validated_data):
+        company_data = validated_data.pop('company')
+        company, created = Company.objects.get_or_create(**company_data)
+        work_history = Employee.objects.create(company=company, **validated_data)
+        return work_history

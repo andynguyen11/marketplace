@@ -10,46 +10,15 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
+from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
+from expertratings.utils import nicely_serialize_verification_tests
 from generics.tasks import account_confirmation
-from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
+from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from django.shortcuts import redirect
 
-
-def nicely_serialize_result(r):
-    return {
-        'result': r.test_result,
-        'percentile': r.percentile,
-        'score': r.percentage,
-        'time': r.time
-    }
-
-def nicely_serialize_skilltest(st, user):
-    formatted = {
-            'testID': st.test_id,
-            'testName': st.test_name,
-            'stats': {
-                'questions': st.total_questions,
-                'estimated_time': '%d minutes' % st.duration,
-                'passing_score': st.passing_marks,
-            }}
-    results = st.results(user)
-    if results:
-        formatted['results'] = map(nicely_serialize_result, results)    
-
-    return formatted
-
-def nicely_serialize_verification_tests(verification_tests, user):
-    skill_map = {}
-    for vt in verification_tests:
-        if not skill_map.has_key(vt.skill.id):
-            skill_map[vt.skill.id] = {
-                    'skillName': vt.skill.name,
-                    'tests': [] }
-        skill_map[vt.skill.id]['tests'].append(nicely_serialize_skilltest(vt.skilltest, user))
-    return [dict(skillId=key, **value) for key, value in skill_map.items()]
 
 class SkillViewSet(ModelViewSet):
     queryset = Skills.objects.all()
@@ -79,10 +48,13 @@ class ProfileViewSet(ModelViewSet):
         user.username = user.email
         user.set_password(password[0])
         user.save()
+        assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
+        response = Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        response = set_jwt_token(response, account)
         login(request, account)
-        return Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        return response
 
     def public_view(self, profile_dict):
         return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }
@@ -117,8 +89,9 @@ class ProfileViewSet(ModelViewSet):
                 'testsNotTaken': VerificationTest.objects.not_taken(user)
             }.items() }
         for st in summary['testsTaken']:
-            if not st.has_key('results'):
-                st['results'] = [{'result': 'INPROGRESS'}]
+            for t in st.get('tests', []):
+                if not t.has_key('results'):
+                    t['results'] = [{'result': 'INPROGRESS'}]
         return Response(summary)
 
 

@@ -9,8 +9,8 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, 
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 
-from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead
-from business.models import Job
+from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
+from business.models import Job, Employee
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
@@ -18,15 +18,13 @@ from generics.utils import send_mail
 
 class AgreeTerms(APIView):
     """
-    View to list all users in the system.
-    * Requires token authentication.
-    * Only admin users are able to access this view.
+    View to update terms to agreed
     """
     permission_classes = (IsAuthenticated, BidPermission)
 
     def post(self, request):
         """
-        Return a list of all users.
+        Update to agreed on post
         """
         terms = Terms.objects.get(id=request.data['terms_id'])
         if request.user == terms.job.contractor:
@@ -145,4 +143,14 @@ class ProjectSearchView(HaystackViewSet):
     serializer_class = ProjectSearchSerializer
 
 
+class EmployeeListCreate(generics.ListCreateAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = (IsAuthenticated, )
+
+
+class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Employee.objects.all()
+    serializer_class = EmployeeSerializer
+    permission_classes = (IsAuthenticated, IsProfile)
 

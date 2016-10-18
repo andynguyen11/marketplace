@@ -1,5 +1,5 @@
 from django.conf import settings
-import requests, re
+import requests, re, urllib
 from expertratings.utils import xml2dict, xml_body, upper_camel_case
 from expertratings.exceptions import ExpertRatingsAPIException
 
@@ -32,12 +32,17 @@ def cast(k, v):
 def normalize_record(record):
     return { k[1:]: cast(k, v) for k, v in record.items()}
 
+partner_id = int(settings.EXPERT_RATING['auth']['partnerid'])
+
 class ExpertRatings(object):
 
     def __init__(self,
             url     = settings.EXPERT_RATING['root_url'],
-            options = { 'dev': 1, 'debug': 1, 'reuse': 1, },
+            options = { 'reuse': partner_id },
             auth    = settings.EXPERT_RATING['auth']):
+        if settings.DEBUG == True:
+            options['dev'] = partner_id
+            options['debug'] = partner_id
         self.url = url
         self.auth = auth
         self.options = options
@@ -82,15 +87,13 @@ class ExpertRatings(object):
     def create_ticket( self, test_id, user_id, options={} ):
         data = dict(
             testid = test_id,
-            #user_id = user_id,
             returnURL = self.return_url,
             **self.auth
         )
         data['partneruserid'] = user_id
-        data.update(self.options)
         data.update(options)
         response = self.post('/GenerateTicket.aspx', data=data)
-        ticket_url = response.text
+        ticket_url = response.text + '&' + urllib.urlencode(self.options)
         if not is_url(ticket_url):
             raise ExpertRatingsAPIException(detail='failed to create url: expertRatings API misconfigured or temporarily unavailable')
         if(ticket_url == 'SOMETHING MISSING IN URL'): # expert rating return 200 on errors

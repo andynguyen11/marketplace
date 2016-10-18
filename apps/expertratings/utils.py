@@ -3,6 +3,9 @@ import lxml.etree as et
 import xmltodict
 from io import BytesIO
 
+from django.core.urlresolvers import reverse
+
+
 def upper_camel_case(value):
     def camelcase(): 
         while True:
@@ -62,4 +65,44 @@ def xml2dict(string):
 
 def xml_body(d):
     return xml_to_body_str(dict2xml(d))
+
+def nicely_serialize_result(r):
+    return {
+        'result': r.test_result,
+        'percentile': r.percentile,
+        'score': r.percentage,
+        'time': r.time
+    }
+
+def test_url(test, user):
+    return '%(url)s?%(query)s' % {
+        'url': reverse('api:skilltest-take', kwargs={'profile_pk': user.id}),
+        'query': ('expertratings_test=%s' % test.test_id)
+    }
+
+def nicely_serialize_skilltest(st, user):
+    formatted = {
+            'testID': st.test_id,
+            'testName': st.test_name,
+            'testUrl': test_url(st, user),
+            'stats': {
+                'questions': st.total_questions,
+                'estimated_time': '%d minutes' % st.duration,
+                'passing_score': st.passing_marks,
+            }}
+    results = st.results(user)
+    if results:
+        formatted['results'] = map(nicely_serialize_result, results)
+
+    return formatted
+
+def nicely_serialize_verification_tests(verification_tests, user):
+    skill_map = {}
+    for vt in verification_tests:
+        if not skill_map.has_key(vt.skill.id):
+            skill_map[vt.skill.id] = {
+                    'skillName': vt.skill.name,
+                    'tests': [] }
+        skill_map[vt.skill.id]['tests'].append(nicely_serialize_skilltest(vt.skilltest, user))
+    return [dict(skillId=key, **value) for key, value in skill_map.items()]
 
