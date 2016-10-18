@@ -1,15 +1,15 @@
 'use strict';
 
-const gulp = require('gulp');
-const browserify = require('browserify');
-const babelify = require('babelify');
-const source = require('vinyl-source-stream');
-const buffer = require('vinyl-buffer');
-const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify');
-const del = require('del');
-const glob = require('glob');
-const replace = require('gulp-replace');
+var gulp = require('gulp');
+var browserify = require('browserify');
+var babelify = require('babelify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var sourcemaps = require('gulp-sourcemaps');
+var uglify = require('gulp-uglify');
+var del = require('del');
+var glob = require('glob');
+var replace = require('gulp-replace');
 
 var less = require('gulp-less-sourcemap');
 var uglifyCss = require('gulp-uglifycss');
@@ -17,13 +17,13 @@ var LessAutoprefix = require('less-plugin-autoprefix');
 var autoprefix = new LessAutoprefix({ browsers: ['>0%'] });
 var gutil = require('gulp-util');
 
-const vendorFiles = require('./assets/js/vendor.js');
-const routeFiles = glob.sync('./assets/js/routes/*.js');
+var vendorFiles = require('./assets/js/vendor.js');
+var routeFiles = glob.sync('./assets/js/routes/*.js');
 
 
 gulp.task('scripts:vendor', function(){
 	del('./static/js/vendor.js**').then(function(){
-		const b = browserify({
+		var b = browserify({
 			debug: true
 		});
 
