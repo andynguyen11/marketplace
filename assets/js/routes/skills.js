@@ -330,7 +330,6 @@ const SkillsPage = React.createClass({
         url: loom_api.profile + userId + '/skillsummary/',
         method: 'GET',
         success: (result) => {
-          console.log(result);
           this.setState({
             skillsLists: result,
             isLoading: false
