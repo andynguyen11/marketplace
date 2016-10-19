@@ -962,7 +962,7 @@ const Messages = React.createClass({
     const attachmentError = fileError && <div className="alert alert-danger" role="alert">{fileError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
     const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
-    const otherUserName = otherUserData && <span>Message with <span className="text-brand">{otherUserProfileLink}</span></span>;
+    const otherUserName = otherUserData && <span><span className="message-with">Message with </span><span className="text-brand">{otherUserProfileLink}</span></span>;
 
     const fileUploadModal = fileToUpload && (() => {
       const disabled = fileSending && { disabled: true };
@@ -1016,7 +1016,7 @@ const Messages = React.createClass({
       <div id="messages">
         <div className="messages-thread">
           <div className="messages-topBar messages-topBar--align-center">
-            <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> back to messages</a>
+            <a href="/profile/messages/inbox/" className="messages-back-to-list"><i className="fa fa-angle-left" aria-hidden="true"></i> <span className="messages-back-to-list-text">back to messages</span></a>
             {otherUserName}
           </div>
           <div className="thread-mobile-message">For agreements and contracts, visit the desktop site.</div>
