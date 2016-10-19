@@ -89,10 +89,12 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             for key, values in {
                 'testsTaken': VerificationTest.objects.taken(obj)
             }.items() }
+        results = []
         for st in summary['testsTaken']:
-            for t in st.get('tests', []):
-                if not t.has_key('results') or t['results'][0]['result'] != 'PASS':
-                    summary['testsTaken'].remove(st)
+            st['tests'] = [test for test in st.get('tests', []) if test.has_key('results') and test['results'][0]['result'] == 'PASS']
+            if st['tests']:
+                results.append(st)
+        summary['testsTaken'] = results
         return summary
 
     def get_my_skills(self, obj):

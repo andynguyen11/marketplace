@@ -193,7 +193,7 @@
     <div class='plates-inner plates-inner--dev'>
       {% for developer in developers %}
       <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
-        {% thumbnail project.project_manager.get_photo "200" as image %}
+        {% thumbnail developer.get_photo "200" as image %}
         <div class='plate--dev-profile-overlay' style="background-image: url('{{ image.url }}');"></div>
         <div class='plate--dev-info'>
             <div class="plate--dev-info-profile-photo" style="background-image: url('{{ image.url }}')"></div>

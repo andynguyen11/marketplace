@@ -46,7 +46,7 @@
   }
 }
 
-#messages, #pm_messages {
+#messages {
   flex-grow: 1;
   display: flex;
 
@@ -108,7 +108,11 @@
       }
 
       @media (max-width: @screen-sm) {
-        display: none;
+        font-size: 32px;
+
+        .messages-back-to-list-text {
+          display: none;
+        }
       }
     }
   }
@@ -144,6 +148,7 @@
     overflow-y: scroll;
     padding: 0 15px;
     position: relative;
+    -webkit-overflow-scrolling: touch;
   }
 
   .thread-item {
@@ -373,6 +378,7 @@
       font-size: 16px;
       padding: @gutter--small @gutter--medium;
       border: 1px solid @brand-neutral--3;
+      border-radius: 0;
       flex-grow: 1;
       resize: none;
       outline: none;
@@ -612,7 +618,8 @@
       }
     }
   }
-
+}
+#pm_messages {
   tr td {
     padding: 20px 15px;
     background: #f7f7f7;
@@ -866,6 +873,22 @@
     }
     .thread-bookmark {
       color: @brand-neutral--3;
+    }
+  }
+}
+
+.view-message {
+  @media (max-width: @screen-sm) {
+    .account-nav, .header {
+      display: none;
+    }
+
+    #messages-wrapper {
+      top: 0;
+
+      .message-with {
+        display: none;
+      }
     }
   }
 }
