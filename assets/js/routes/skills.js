@@ -343,16 +343,7 @@ const SkillsPage = React.createClass({
   },
 
   takeTest(testUrl) {
-    $.ajax({
-      url: testUrl,
-      method: 'GET',
-      success: (result) => {
-        console.log(result);
-      },
-      error: (xhr, status, error) => {
-        console.error(xhr, status, error);
-      }
-    });
+    window.location = testUrl;
   },
 
   render() {

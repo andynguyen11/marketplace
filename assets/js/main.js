@@ -28,7 +28,7 @@
         if(status.status === 401 || error == 'Unauthorized') {
             Cookies.remove('csrftoken');
             Cookies.remove('loom_token');
-
+            Cookies.remove('sessionid');
             const redirectLocation = window.location.pathname;
 
             window.location = '/login/?next=' + redirectLocation;
