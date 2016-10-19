@@ -21,7 +21,8 @@ export const RankBadge = React.createClass({
     let badgeText = '';
     let badgeClass = null;
 
-    if(score > average) {
+    // currently no average us supplied so let's compare to a percentile of 65
+    if(percentile > 65) {
       if(percentile > 95) {
         badgeText = 'Top 5%';
         badgeClass = 'top-5';
