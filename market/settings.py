@@ -90,6 +90,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'easy_timezones.middleware.EasyTimezoneMiddleware',
+    'accounts.middleware.CheckJWT',
 )
 
 AUTHENTICATION_BACKENDS = (
