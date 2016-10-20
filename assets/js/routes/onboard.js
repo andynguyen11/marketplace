@@ -17,7 +17,7 @@ import PrelaunchOnboard from './onboarding/prelaunch';
     else if (window.location.pathname === '/signup/entrepreneur/') {
       ReactDOM.render(<EntrepreneurOnboard />, onboardDiv);
     }
-    else if (window.location.pathname === '/signup/beta/') {
+    else if (window.location.pathname === '/signup/prelaunch/') {
       ReactDOM.render(<PrelaunchOnboard />, onboardDiv);
     }
   });
