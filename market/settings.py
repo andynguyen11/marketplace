@@ -79,6 +79,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'accounts.middleware.CheckJWT',
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -90,7 +91,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'easy_timezones.middleware.EasyTimezoneMiddleware',
-    'accounts.middleware.CheckJWT',
 )
 
 AUTHENTICATION_BACKENDS = (

@@ -107,7 +107,7 @@
             <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
           {% endthumbnail %}
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
             {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
           </div>
         </div>
@@ -154,7 +154,7 @@
           <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
           {% endthumbnail %}
           <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
             {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
           </div>
         </div>
@@ -233,7 +233,7 @@
           <div class="plate-info-profile">
             {% if project.project_manager.get_photo %}<div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>{% endif %}
             <div class="plate-info-profile-name">
-              <div class="plate-info-profile-name--primary">{{ project.project_manager.name }}</div>
+              <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
               {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
             </div>
           </div>
