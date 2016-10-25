@@ -15,7 +15,7 @@
         {% if project.company %}
         {{ project.company.name }}
         {% else %}
-        {{ project.project_manager.first_name }} {{ project.project_manager.last_name }}
+        {{ project.project_manager.first_name }}
         {% endif %}
       </h4>
     </div>
@@ -227,7 +227,7 @@
               <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
               <div class="project-byline pull-left">
                 <p>
-                  <span class="project-manager">{{ project.project_manager.name }}</span> <br />
+                  <span class="project-manager">{{ project.project_manager.first_name }}</span> <br />
                   {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                 </p>
               </div>
@@ -314,7 +314,7 @@
               <div class="project-manager-photo--bg pull-left" style="background-image: url('{{ project.project_manager.get_photo }}')"></div>
               <div class="project-byline pull-left">
                 <p>
-                  <span class="project-manager">{{ project.project_manager.name }}</span> <br />
+                  <span class="project-manager">{{ project.project_manager.first_name }}</span> <br />
                   {% if project.company %}<span class="project-company">{{ project.company.name }}</span>{% endif %}
                 </p>
               </div>

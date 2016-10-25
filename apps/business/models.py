@@ -342,6 +342,7 @@ class Terms(models.Model):
     status = models.CharField(max_length=100, default='new')
 
     def save(self, *args, **kwargs):
+        #TODO Add autopopulation back in after wysiwig removal
         if not self.pk:
             self.contractee = self.job.project.company.name if self.job.project.company else self.job.project.project_manager.name
             self.contractor = '{0} {1}'.format(smart_str(self.job.contractor.first_name), smart_str(self.job.contractor.last_name))
@@ -351,9 +352,9 @@ class Terms(models.Model):
             self.hours = self.job.hours
             self.start_date = self.job.project.start_date
             self.end_date = self.job.project.end_date
-            self.scope = self.job.project.scope
-            self.milestones = self.job.project.milestones
-            self.deliverables = self.job.project.specs
+            #self.scope = self.job.project.scope
+            #self.milestones = self.job.project.milestones
+            #self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
 
 
