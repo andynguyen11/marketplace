@@ -162,7 +162,7 @@ class Profile(AbstractUser):
             return None
 
     def get_skills(self):
-        return self.skills.tag_model.objects.all()
+        return self.skills.all()
 
     @property
     def skilltests(self):
