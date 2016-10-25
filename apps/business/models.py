@@ -242,6 +242,7 @@ class Project(models.Model):
     private_info = models.TextField(blank=True, null=True)
     project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
 
     objects = ProjectManager()
 

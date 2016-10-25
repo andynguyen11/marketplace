@@ -18,6 +18,8 @@ from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user
 def view_project(request, project_slug):
     try:
         project = Project.objects.get(slug=project_slug)
+        if not project.approved and (request.user != project.project_manager or request.user.is_staff):
+            return redirect('project-gallery')
     except Project.DoesNotExist:
         return redirect('project-gallery')
     job = None
@@ -65,9 +67,9 @@ def attach_docs(request):
     return NotImplemented
 
 def project_groups(**kwargs):
-    new = Project.objects.filter(published=True, **kwargs).order_by('-date_created')[:3]
+    new = Project.objects.filter(published=True, approved=True, **kwargs).order_by('-date_created')[:3]
     try:
-        featured = Project.objects.filter(featured=1, published=True, **kwargs)[:3]
+        featured = Project.objects.filter(featured=1, published=True, approved=True, **kwargs)[:3]
     except Project.DoesNotExist, e:
         featured = new[0]
     return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
@@ -87,7 +89,7 @@ def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []
     for item in PROJECT_TYPES:
-        if Project.objects.filter(type=item[0], published=True):
+        if Project.objects.filter(type=item[0], published=True, approved=True):
             project_types.append(item)
 
     if type != 'all':
@@ -96,8 +98,8 @@ def discover_projects(request, type='all'):
     else:
         cat_name = 'all'
 
-    all = Project.objects.filter(published=True)
-    new = all.filter(type=type, published=True).order_by('-date_created')
+    all = Project.objects.filter(published=True, approved=True)
+    new = all.filter(type=type).order_by('-date_created')
     featured = all.filter(type=type, featured=1)[:3]
     return render(request, 'project_by_type.html', {
         'all': all,

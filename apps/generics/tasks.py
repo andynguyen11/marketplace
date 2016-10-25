@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytz
 import simplejson
 
+from django.conf import settings
 from celery import shared_task
 
 from accounts.models import Profile
@@ -129,3 +130,21 @@ def terms_approved_email(job_id):
         'thread': thread.id,
     }
     send_mail('terms-approved', [job.project.project_manager], merge_vars)
+
+
+@shared_task
+def project_in_review(project_id):
+    project = Project.objects.get(id=project_id)
+    send_mail('project-in-review', [project.project_manager], {})
+
+@shared_task
+def project_posted(project_id):
+    project = Project.objects.get(id=project_id)
+    admin = User.objects.get(username='admin')
+    send_mail('project-in-review', [admin], {
+        'project': project.title,
+        'date': datetime.now(),
+        'entrepreneur': project.project_manager.name,
+        'email': project.project_manager.email,
+        'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+    })

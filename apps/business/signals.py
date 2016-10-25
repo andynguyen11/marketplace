@@ -1,10 +1,11 @@
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
-from business.models import Document, Terms
+from business.models import Document, Terms, Project
 from postman.models import Message
 from notifications.signals import notify
 
-from generics.tasks import nda_sent_email, nda_signed_email, terms_sent_email, terms_approved_email
+from generics.tasks import nda_sent_email, nda_signed_email, terms_sent_email,\
+    terms_approved_email, project_in_review, project_posted
 
 @receiver(pre_save, sender=Document)
 def nda_update_event(sender, instance, **kwargs):
@@ -33,3 +34,9 @@ def terms_update_event(sender, instance, **kwargs):
     if instance.status != old_status and instance.status.lower() == 'agreed':
         notify.send(thread, recipient=instance.job.project.project_manager, verb=u'Contract terms have been agreed', action_object=thread)
         terms_approved_email.delay(thread.job.id)
+
+@receiver(post_save, sender=Project)
+def project_posted(sender, instance, created, **kwargs):
+    if created:
+        project_in_review.delay(instance.id)
+        project_posted.delay(instance.id)

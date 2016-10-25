@@ -1,5 +1,21 @@
 import parseFormat from 'moment-parseformat';
 
+const filters = {
+  'pii': {
+    'error': 'Words',
+    'list': [
+      /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i
+    ]
+  },
+  'badWords': {
+    'error': 'Bad Words',
+    'list': [
+      'fuck',
+      'shit'
+    ]
+  }
+}
+
 const FormHelpers = {
 	checks: {
 		isRequired(value) {
@@ -43,7 +59,17 @@ const FormHelpers = {
 		});
 
 		callback && callback(formIsValid, elements);
-	}
+	},
+  filterInput: function(string) {
+    for (var filter in filters) {
+      for (var i = 0; i < filters[filter]['list'].length; i++) {
+        if (string.toLowerCase().search(filters[filter]['list'][i]) != -1) {
+          return filters[filter]['error'];
+        }
+      }
+    }
+    return false;
+  }
 };
 
 export default FormHelpers;
