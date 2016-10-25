@@ -222,6 +222,9 @@ class DocumentSerializer(ParentModelSerializer):
         return data
 
 
+# TODO: less liberal 
+# project manager shouldn't be able to change hours, compensation, etc.
+# project manager can only change "less important" attributes, not compensation
 class TermsSerializer(serializers.ModelSerializer):
     project = serializers.SerializerMethodField()
     update_date = serializers.DateTimeField(read_only=True)

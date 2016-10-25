@@ -6,7 +6,8 @@ from expertratings.api import expertratings_api
 
 ERRORS_FOUND = (('yes', 'YES'), ('no', 'NO'))
 class SkillTestUserFeedback(models.Model):
-    test_result = models.ForeignKey('expertratings.SkillTestResult')
+
+    test_result = models.OneToOneField('expertratings.SkillTestResult')
 
     content_rating = models.IntegerField()
     content_comments = models.CharField(max_length=500)

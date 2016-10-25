@@ -7,27 +7,27 @@ from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 
-from apps.api.permissions import BidPermission, IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
+from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
 from business.models import Job, Employee
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
 
 
-class AgreeTerms(APIView):
+class AgreeTerms(APIView): # TODO this and other terms views can be folded into a viewset
     """
     View to update terms to agreed
+    Only Contractors can agree to Terms, but they cannot edit them
     """
-    permission_classes = (IsAuthenticated, BidPermission)
+    permission_classes = (IsAuthenticated, )
 
     def post(self, request):
         """
         Update to agreed on post
         """
         terms = Terms.objects.get(id=request.data['terms_id'])
-        if request.user == terms.job.contractor:
+        if request.user == terms.job.contractor: # SECURED
             terms.status = 'agreed'
             terms.save()
             serializer = TermsSerializer(terms)
@@ -35,11 +35,15 @@ class AgreeTerms(APIView):
         return Response(status=403)
 
 
+# Bids are Jobs - only contractors should be able to edit
 class JobViewSet(viewsets.ModelViewSet):
+    """
+    Only Contractors can create Jobs/Bids.
+    Subsequently Project Managers create Terms based on them
+    """
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, BidPermission)
+    permission_classes = (IsAuthenticated, ContractorBidPermission)
 
     def create(self, request, *args, **kwargs):
         # DRF doesn't recognize blank strings as null values, replace with None
@@ -51,9 +55,13 @@ class JobViewSet(viewsets.ModelViewSet):
 
 
 class NestedJobViewSet(NestedModelViewSet):
+    """
+    Only Contractors can create Jobs/Bids.
+    Subsequently Project Managers create Terms based on them
+    """
     queryset = Job.objects.all()
     serializer_class = JobSerializer
-    permission_classes = (IsAuthenticated, BidPermission)
+    permission_classes = (IsAuthenticated, ContractorBidPermission)
     parent_key = 'project'
 
 
@@ -64,9 +72,14 @@ class DocumentViewSet(NestedModelViewSet):
     parent_key = 'job'
 
 
+# this isn't too insecure due to `self.contractee = ...` in `Terms.save`
 class TermsListCreate(generics.ListCreateAPIView):
+    """
+    Only Contractees can generate Terms based on a Job/Bid.
+    They should not be able to edit critical aspects of a Bid, such as compensation.
+    """
     serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, ) #TODO add Term permission
+    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -86,11 +99,14 @@ class TermsListCreate(generics.ListCreateAPIView):
             queryset, created = Terms.objects.get_or_create(bid=bid)
         return queryset
 
-
 class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
+    """
+    Only Contractees can edit  Terms based on a Job/Bid.
+    They should not be able to edit critical aspects of a Bid, such as compensation.
+    """
     queryset = Terms.objects.all()
     serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
 
 
 class CompanyListCreate(generics.ListCreateAPIView):
