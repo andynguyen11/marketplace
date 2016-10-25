@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'sorl.thumbnail',
     'guardian',
-    'django_logging',
+    #'django_logging',
     'easy_timezones',
     'haystack',
     'generics',
@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'easy_timezones.middleware.EasyTimezoneMiddleware',
-    'django_logging.middleware.DjangoLoggingMiddleware',
+    #'django_logging.middleware.DjangoLoggingMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -148,12 +148,12 @@ WSGI_APPLICATION = 'market.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 database_backend = 'django.db.backends.postgresql_psycopg2'
 
-DJANGO_LOGGING = {
-    "CONSOLE_LOG": False,
-    "SQL_LOG": False,
-    "DISABLE_EXISTING_LOGGERS": True,
-    "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ) #'charset', 'headers',
-}
+#DJANGO_LOGGING = {
+#    "CONSOLE_LOG": False,
+#    "SQL_LOG": False,
+#    "DISABLE_EXISTING_LOGGERS": True,
+#    "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ) #'charset', 'headers',
+#}
 
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
@@ -214,11 +214,11 @@ if 'RDS_DB_NAME' in os.environ:
                 },
             },
         }
-        DJANGO_LOGGING["IGNORED_PATHS"] = [
-                '/admin', '/static', '/favicon.ico',
-                '/api/thread/', 
-                '/api/message/',
-                '/api/messages/' ]
+        #DJANGO_LOGGING["IGNORED_PATHS"] = [
+        #        '/admin', '/static', '/favicon.ico',
+        #        '/api/thread/',
+        #        '/api/message/',
+        #        '/api/messages/' ]
 
 
 
