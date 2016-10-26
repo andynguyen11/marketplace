@@ -79,7 +79,7 @@ class TermsListCreate(generics.ListCreateAPIView):
     They should not be able to edit critical aspects of a Bid, such as compensation.
     """
     serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
+    permission_classes = (IsAuthenticated, )
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -106,7 +106,7 @@ class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
     """
     queryset = Terms.objects.all()
     serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
+    permission_classes = (IsAuthenticated, )
 
 
 class CompanyListCreate(generics.ListCreateAPIView):
