@@ -13,7 +13,6 @@ module.exports = [
 	'lodash',
 	'react-dropzone',
 	'react-router',
-	'quill',
 	'react-slick',
 	'classnames'
 ];

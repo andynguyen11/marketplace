@@ -36,7 +36,7 @@ def terms_update_event(sender, instance, **kwargs):
         terms_approved_email.delay(thread.job.id)
 
 @receiver(post_save, sender=Project)
-def project_posted(sender, instance, created, **kwargs):
+def new_project_posted(sender, instance, created, **kwargs):
     if created:
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)

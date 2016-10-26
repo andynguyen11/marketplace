@@ -1,25 +1,11 @@
 import React from 'react';
 import FormHelpers from '../../utils/formHelpers';
-import Quill from '../../components/editor/Quill'
 
 const CompanyForm = React.createClass({
   propTypes: {
     formElements: React.PropTypes.object.isRequired,
     handleChange: React.PropTypes.func.isRequired,
     isCompany: React.PropTypes.bool.isRequired
-  },
-
-  quillConf(){
-   return {
-        modules: {
-            toolbar: {
-                container: `#toolbar-long_description`,
-            },
-        },
-        bounds: `#project-info-long_description`,
-        placeholder: this.props.formElements.companyBio.placeholder,
-        theme: 'snow',
-    }
   },
 
   expandPanel(){
@@ -281,14 +267,15 @@ const CompanyForm = React.createClass({
 
         <div className={'form-group col-md-8 col-md-offset-2 ' + formElements.companyBio.errorClass } >
           <label className="control-label" htmlFor={formElements.companyBio.name}>{formElements.companyBio.label}</label>
-          <Quill
-            config={this.quillConf()}
+          <textarea
+            className="form-control"
             name={formElements.companyBio.name}
+            id={formElements.companyDescription.name}
             placeholder={formElements.companyBio.placeholder}
-            className="long_description"
             value={formElements.companyBio.value}
             onChange={handleBio}
-          />
+          >
+          </textarea>
         </div>
         <div className="clearfix"></div>
       </div>
