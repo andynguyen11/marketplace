@@ -57,7 +57,7 @@ const EntrepreneurOnboard = React.createClass({
         new_profile.biography = result.linkedin.extra_data.summary;
         new_profile.username = result.email;
       }
-
+      new_profile.country = new_profile.country ? new_profile.country : 'United States of America';
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url

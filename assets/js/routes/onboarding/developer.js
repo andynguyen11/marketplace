@@ -48,6 +48,7 @@ const DeveloperOnboard = React.createClass({
         new_profile.username = result.email;
       }
       new_profile.role = 'full-stack';
+      new_profile.country = new_profile.country ? new_profile.country : 'United States of America';
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url
