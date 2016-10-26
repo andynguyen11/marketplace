@@ -264,19 +264,7 @@ const CompanyForm = React.createClass({
             <option value="WY">Wyoming</option>
           </select>
         </div>
-
-        <div className={'form-group col-md-8 col-md-offset-2 ' + formElements.companyBio.errorClass } >
-          <label className="control-label" htmlFor={formElements.companyBio.name}>{formElements.companyBio.label}</label>
-          <textarea
-            className="form-control"
-            name={formElements.companyBio.name}
-            id={formElements.companyDescription.name}
-            placeholder={formElements.companyBio.placeholder}
-            value={formElements.companyBio.value}
-            onChange={handleBio}
-          >
-          </textarea>
-        </div>
+        
         <div className="clearfix"></div>
       </div>
     );
