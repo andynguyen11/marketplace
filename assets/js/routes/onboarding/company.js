@@ -264,7 +264,7 @@ const CompanyForm = React.createClass({
             <option value="WY">Wyoming</option>
           </select>
         </div>
-        
+
         <div className="clearfix"></div>
       </div>
     );
