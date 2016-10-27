@@ -2,6 +2,7 @@ from rest_framework import serializers
 from social.apps.django_app.default.models import UserSocialAuth
 from html_json_forms.serializers import JSONFormSerializer
 
+from django.conf import settings
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from business.models import Employee
 from business.serializers import EmployeeSerializer
@@ -11,6 +12,7 @@ from expertratings.exceptions import ExpertRatingsAPIException
 from expertratings.utils import nicely_serialize_verification_tests
 from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer
+from generics.validators import image_validator
 from generics.base_serializers import RelationalModelSerializer
 
 
@@ -53,6 +55,7 @@ class ObfuscatedProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
+    photo = serializers.ImageField(write_only=True, max_length=settings.MAX_FILE_SIZE, allow_empty_file=False, validators=[image_validator])
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()

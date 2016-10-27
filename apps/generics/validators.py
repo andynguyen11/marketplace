@@ -3,6 +3,7 @@ import magic
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
 from django.core.exceptions import ValidationError
+from rest_framework import serializers
 
 # TODO This validator isn't working properly
 def file_validator(file):
@@ -22,3 +23,8 @@ def file_validator(file):
         return error_messages['content_type'].format(content_type)
 
     return None
+
+def image_validator(file):
+    err = file_validator(file)
+    if err:
+        raise serializers.ValidationError(err)

@@ -114,7 +114,8 @@ class ContractorBidPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return self.can_view(request, obj) or (
                 request.user.id == obj.contractor.id and (
-                    request.data.get('contractor', None) is None or self.user_is_contractor(request)
+                    request.data.get('contractor', None) is None
+                    or self.user_is_contractor(request)
                 ))
 
 
@@ -128,19 +129,21 @@ class ContracteeTermsPermission(permissions.BasePermission):
                 request.user.id == obj.project.project_manager.id)
 
     def get_project_manager(self, request):
-        return Job.objects.get(id=request.data.get('job', None)).project.project_manager
-    def user_is_contractee(self, request):
         try:
-            return request.user.id == self.get_project_manager(request)
+            job = Job.objects.get(id=request.data.get('job', None))
+            return job and job.project and job.project.project_manager
         except Job.DoesNotExist, e:
             return False
+
+    def user_is_contractee(self, request):
+        return request.user.id and (request.user == self.get_project_manager(request))
 
     def has_permission(self, request, view, **kwargs):
         return (request.method in permissions.SAFE_METHODS) or self.user_is_contractee(request)
 
     def has_object_permission(self, request, view, obj):
         return self.can_view(request, obj.job) or (
-                request.user.id == obj.job.project.project_manager)
+                request.user == obj.job.project.project_manager)
 
 
 class IsJobOwnerPermission(permissions.BasePermission):
