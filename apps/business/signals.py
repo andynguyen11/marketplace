@@ -35,8 +35,11 @@ def terms_update_event(sender, instance, **kwargs):
         notify.send(thread, recipient=instance.job.project.project_manager, verb=u'Contract terms have been agreed', action_object=thread)
         terms_approved_email.delay(thread.job.id)
 
-@receiver(post_save, sender=Project)
-def new_project_posted(sender, instance, created, **kwargs):
-    if created:
+@receiver(pre_save, sender=Project)
+def new_project_posted(sender, instance, **kwargs):
+    if not hasattr(instance, 'id') or instance.id is None:
+        return
+    old_project = Project.objects.get(pk=instance.id)
+    if not old_project.approved and not old_project.published and instance.published:
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)
