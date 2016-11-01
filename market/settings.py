@@ -151,7 +151,8 @@ database_backend = 'django.db.backends.postgresql_psycopg2'
 DJANGO_LOGGING = {
     "CONSOLE_LOG": False,
     "SQL_LOG": False,
-    "DISABLE_EXISTING_LOGGERS": True,
+    "DISABLE_EXISTING_LOGGERS": False,
+    "ENCODING": "utf-8",
     "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
     "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
         '/api/thread/', '/api/message/', '/api/messages/' ]
