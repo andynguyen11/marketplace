@@ -18,7 +18,7 @@ from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user
 def view_project(request, project_slug):
     try:
         project = Project.objects.get(slug=project_slug)
-        if not project.approved and (request.user != project.project_manager or request.user.is_staff):
+        if not project.approved and (request.user != project.project_manager or not request.user.is_staff):
             return redirect('project-gallery')
     except Project.DoesNotExist:
         return redirect('project-gallery')
