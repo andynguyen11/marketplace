@@ -168,7 +168,7 @@ const Bid = React.createClass({
       },
       hours: {
         name: 'hours',
-        label: 'Time Estimate',
+        label: 'How many hours do you need to complete this job?',
         value: job.hours || '',
         errorClass: '',
         validator: (value) => {
@@ -344,8 +344,6 @@ const Bid = React.createClass({
 
     const headerText = newBid ? (
       <div>
-        <h4 className="brand-bold">Place your bid to work on:</h4>
-        <h3 className="brand-bold text-brand">{project.title}</h3>
         <h4 className="brand">What type of bid do you want to submit?</h4>
       </div>
     ) : (
@@ -422,6 +420,25 @@ const Bid = React.createClass({
         </div>
       );
 
+    const hoursInput = (
+        <div className="hours-input">
+          <div className={"form-group " + formElements.hours.errorClass}>
+            <h4 className="brand" htmlFor={formElements.hours.name}>{formElements.hours.label}</h4>&nbsp;
+            <div className="input-group">
+              <input
+                  className="form-control"
+                  name={formElements.hours.name}
+                  id={formElements.hours.name}
+                  placeholder={formElements.hours.placeholder}
+                  value={formElements.hours.value}
+                  onChange={this.handleChange}
+              />
+              <span className="input-group-addon">hours</span>
+            </div>
+          </div>
+        </div>
+    );
+
     return (
       <div className="bid-form text-center messages-tracker-content">
         <div className="messages-tracker-popup-content">
@@ -438,20 +455,7 @@ const Bid = React.createClass({
             {equityInput}
             </div>
 
-            <div className={"form-group " + formElements.hours.errorClass}>
-              <label className="control-label" htmlFor={formElements.hours.name}>{formElements.hours.label}</label>&nbsp;
-              <div className="input-group">
-                <input
-                  className="form-control"
-                  name={formElements.hours.name}
-                  id={formElements.hours.name}
-                  placeholder={formElements.hours.placeholder}
-                  value={formElements.hours.value}
-                  onChange={this.handleChange}
-                />
-                <span className="input-group-addon">hours</span>
-              </div>
-            </div>
+            {hoursInput}
 
             <input type="hidden" name="contractor" value={current_user} />
             <input type="hidden" name="project" value={project.id} />
