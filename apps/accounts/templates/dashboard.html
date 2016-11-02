@@ -15,11 +15,12 @@
       </div>
       <div class="col-md-3">
         <div class="section profile-snapshot--dashboard text-center">
-            <img src="{{ user.get_photo }}" class="profile-photo" />
+            <a href="{% url 'profile' %}">
+              <div class="profile-photo" style="background-image: url({{ user.get_photo }});"></div>
+            </a>
             <h3 class="brand-bold">{{ user.first_name }}</h3>
             <p>
-              <a href="{% url 'profile' %}">View Profile</a><br />
-              <a href="{% url 'settings' %}#/profile/">Edit Profile</a>
+              <a href="{% url 'profile' %}">Edit Profile</a>
             </p>
         </div>
         <div class="section">

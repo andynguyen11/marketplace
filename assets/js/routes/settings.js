@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {createHashHistory} from 'history';
-import {Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory} from 'react-router';
-import ProfileSettings from './settings/profile';
+import {Router, Route, Redirect, IndexRedirect, Link, useRouterHistory} from 'react-router';
 import CompanySettings from './settings/company';
 import AccountSettings from './settings/account';
-import {objectToFormData} from './project/utils'
+import {objectToFormData} from './project/utils';
+
 
 (function () {
   const settingsDiv = document.getElementById('settings');
@@ -64,10 +64,6 @@ import {objectToFormData} from './project/utils'
           pathname: '/account'
         },
         {
-          title: 'Profile Settings',
-          pathname: '/profile'
-        },
-        {
           title: 'Company Settings',
           pathname: '/company'
         }
@@ -100,8 +96,8 @@ import {objectToFormData} from './project/utils'
       <Router history={browserHistory}>
         <Route path="/" component={SettingsPage}>
           <IndexRedirect to="/account"/>
+          <Redirect from="/profile" to="/account"/>
           <Route path="/account" component={AccountSettings}/>
-          <Route path="/profile" component={ProfileSettings}/>
           <Route path="/company" component={CompanySettings}/>
         </Route>
       </Router>
