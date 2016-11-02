@@ -3,6 +3,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from html_json_forms.serializers import JSONFormSerializer
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from accounts.models import Profile, Skills, SkillTest, VerificationTest
 from business.models import Employee
 from business.serializers import EmployeeSerializer
@@ -10,8 +11,9 @@ from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializ
 from expertratings.models import SkillTest as ERSkillTest
 from expertratings.exceptions import ExpertRatingsAPIException
 from expertratings.utils import nicely_serialize_verification_tests
+from generics.models import Attachment
 from generics.utils import update_instance, field_names
-from generics.serializers import ParentModelSerializer
+from generics.serializers import ParentModelSerializer, AttachmentSerializer
 from generics.validators import image_validator
 from generics.base_serializers import RelationalModelSerializer
 
@@ -64,6 +66,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
     signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
+    work_examples = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -108,6 +111,16 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_work_history(self, obj):
         serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)
+        return serializer.data
+
+    def get_work_examples(self, obj):
+        serializer = AttachmentSerializer(
+            Attachment.objects.filter(
+                content_type= ContentType.objects.get_for_model(Profile),
+                object_id=obj.id
+            ),
+            many=True
+        )
         return serializer.data
 
     def update(self, instance, validated_data):
