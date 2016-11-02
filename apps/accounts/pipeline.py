@@ -24,7 +24,6 @@ def save_profile(backend, user, response, is_new, *args, **kwargs):
                 user.role = kwargs.get('role')
                 user.capacity = kwargs.get('capacity')
                 user.location = response.get('location')['name']
-                user.city, user.state = response.get('location')['name'].split(', ') or None
             except:
                 pass
             user.save()

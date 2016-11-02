@@ -18,8 +18,6 @@ from business.models import Company, Job, Project, Employee, PROJECT_TYPES, user
 def view_project(request, project_slug):
     try:
         project = Project.objects.get(slug=project_slug)
-        if not project.approved and (request.user != project.project_manager or not request.user.is_staff):
-            return redirect('project-gallery')
     except Project.DoesNotExist:
         return redirect('project-gallery')
     job = None
@@ -28,7 +26,10 @@ def view_project(request, project_slug):
             job = Job.objects.get(project=project, contractor=request.user)
     except Job.DoesNotExist:
         pass
-    return render_to_response('project.html', {'project': project, 'job': job }, context_instance=RequestContext(request))
+    if project.approved or request.user == project.project_manager or request.user.is_staff:
+        return render_to_response('project.html', {'project': project, 'job': job }, context_instance=RequestContext(request))
+    else:
+        return redirect('project-gallery')
 
 def company_profile(request, company_slug=None):
     company = Company.objects.get(slug=company_slug)
