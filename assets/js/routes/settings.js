@@ -32,7 +32,7 @@ import {objectToFormData} from './project/utils';
             </ul>
             <p>
               We're doing our best to keep these settings updated as we learn and grow. If you need any support related
-              to your account, email <a href="emailto:support@joinloom.com">support@joinloom.com</a> and we'll do our
+              to your account, email <a href="emailto:support@loom.co">support@loom.co</a> and we'll do our
               best to get it handled for you.
             </p>
           </div>

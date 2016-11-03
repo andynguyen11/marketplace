@@ -32,7 +32,7 @@ FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
 ALLOWED_HOSTS = ['*']
 
 ADMINS = ()
-SERVER_EMAIL = 'info@joinloom.com'
+SERVER_EMAIL = 'info@loom.co'
 
 AUTH_USER_MODEL = 'accounts.Profile'
 
@@ -274,7 +274,7 @@ STRIPE_KEY = os.environ.get('STRIPE_API_KEY', 'sk_test_W0tpg5Cv7AZ1jzhWxRkJgr4u'
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'pk_test_PhUrky9HrJfcAQvmstWpEna6')
 MANDRILL_API_KEY = os.environ.get('MANDRILL_API_KEY', 'VzOGiohfxEjbDlX0ekKDlg')
 
-DEFAULT_FROM_EMAIL = "Loom <info@joinloom.com>"
+DEFAULT_FROM_EMAIL = "Loom <info@loom.co>"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.mandrillapp.com'
 EMAIL_PORT = 587
@@ -399,9 +399,9 @@ LOOM_FEE = 3
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
 
 CORS_ORIGIN_WHITELIST = (
-    'www.joinloom.com',
-    'joinloom.com',
-    'dev.joinloom.com',
+    'www.loom.co',
+    'loom.co',
+    'dev.loom.co',
     'localhost:8000',
     '127.0.0.1:9000',
     'expertrating.com',
