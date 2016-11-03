@@ -21,7 +21,7 @@ class AttachmentSerializer(RelationalModelSerializer):
 
     class Meta:
         model = Attachment
-        fields = ('id', 'file', 'tag', 'url', 'original_name')
+        fields = ('id', 'file', 'tag', 'url', 'original_name', 'description', )
 
     def retrieve_content_object(self, obj):
         obj.update(retrieve_content_object(self.initial_data.dict()))
