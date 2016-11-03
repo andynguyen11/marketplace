@@ -1,7 +1,15 @@
 .bid-form {
+  h4.brand {
+    margin: @gutter 0;
+  }
+
   .bid-form-wrapper {
     max-width: 400px;
     margin: auto;
+
+    a {
+      color: @brand--accent;
+    }
   }
   h3.text-brand {
     margin-top: 10px;
@@ -69,4 +77,19 @@
       width: 40%;
     }
   }
+
+  .hours-input {
+    .form-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .input-group {
+      width: 50%;
+    }
+  }
+}
+
+.modal-content {
+  border-color: @brand--secondary;
 }

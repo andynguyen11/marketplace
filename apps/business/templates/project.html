@@ -37,7 +37,7 @@
         <li><img class="icon" src="{% static 'images/icon-category.png' %}" /> <h4 class="text-capitalize">{{ project.type }}</h4></li>
       </ul>
     </div>
-    <div class="col-md-5 project-basics-stats">
+    <div class="col-md-5 project-basics-stats {% if project.average_equity or project.average_cash %}has-bids-stats{% endif %}">
       <div class="project-basics-financials">
         <h2>Project Budget</h2>
         <div class="project-basics-financial-row">
@@ -66,6 +66,7 @@
           {% endif %}
         </div>
 
+        {% if project.average_equity or project.average_cash %}
         <div class="project-basics-financials-bids">
           <h2>Average Bid Placed</h2>
           {% if project.active_jobs|length >= 2 and project.average_combined.equity or project.average_combined.cash or project.average_equity or project.average_cash %}
@@ -100,13 +101,18 @@
           </div>
           <div class="project-basics-financial-label">avg combined bid</div>
           {% endif %}
-          {% else %}
-          <h4 class="brand-bold text-spaced">Be the first to bid!</h4>
           {% endif %}
         </div>
+      {% endif %}
       </div>
 
-      <div class="project-basics-actions">
+
+      {% if project.average_equity or project.average_cash %}
+        <div class="project-basics-actions has-bids">
+      {% else %}
+        <div class="project-basics-actions">
+      {% endif %}
+
         {% if request.user == project.project_manager %}
           <a class="btn btn-brand" href="{% url 'edit-project' %}{{ project.id }}">Edit Project</a>
         {% else %}

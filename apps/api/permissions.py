@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from business.models import Job
 
 
 class IsCurrentUser(permissions.BasePermission):
@@ -93,6 +94,56 @@ class BidPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return request.user.id == obj.contractor.id or \
                request.user.id == obj.project.project_manager.id
+
+
+class ContractorBidPermission(permissions.BasePermission):
+    """
+    Custom permission for project managers and developers to edit job.
+    """
+    def can_view(self, request, obj):
+        return (request.method in permissions.SAFE_METHODS) and (
+                request.user.id == obj.contractor.id or \
+                request.user.id == obj.project.project_manager.id)
+
+    def user_is_contractor(self, request):
+        return request.user.id == request.data.get('contractor', None)
+
+    def has_permission(self, request, view, **kwargs):
+        return view.action not in ['create'] or self.user_is_contractor(request)
+
+    def has_object_permission(self, request, view, obj):
+        return self.can_view(request, obj) or (
+                request.user.id == obj.contractor.id and (
+                    request.data.get('contractor', None) is None
+                    or self.user_is_contractor(request)
+                ))
+
+
+class ContracteeTermsPermission(permissions.BasePermission):
+    """
+    Custom permission for project managers and developers to edit job.
+    """
+    def can_view(self, request, obj):
+        return (request.method in permissions.SAFE_METHODS) and (
+                request.user.id == obj.contractor.id or \
+                request.user.id == obj.project.project_manager.id)
+
+    def get_project_manager(self, request):
+        try:
+            job = Job.objects.get(id=request.data.get('job', None))
+            return job and job.project and job.project.project_manager
+        except Job.DoesNotExist, e:
+            return False
+
+    def user_is_contractee(self, request):
+        return request.user.id and (request.user == self.get_project_manager(request))
+
+    def has_permission(self, request, view, **kwargs):
+        return (request.method in permissions.SAFE_METHODS) or self.user_is_contractee(request)
+
+    def has_object_permission(self, request, view, obj):
+        return self.can_view(request, obj.job) or (
+                request.user == obj.job.project.project_manager)
 
 
 class IsJobOwnerPermission(permissions.BasePermission):

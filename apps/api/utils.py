@@ -8,7 +8,6 @@ from rest_framework_jwt.compat import get_username, get_username_field
 from rest_framework_jwt.settings import api_settings
 
 from accounts.serializers import ProfileSerializer
-from rest_framework_jwt.settings import api_settings
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -66,9 +65,10 @@ def jwt_payload_handler(user):
 
     return payload
 
-def set_jwt_token(response, user):
+def set_jwt_token(response, user, payload=None):
     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-    payload = jwt_payload_handler(user)
+    if not payload:
+        payload = jwt_payload_handler(user)
     token = jwt_encode_handler(payload)
     response.set_cookie(key='loom_token', value=token)
     return response

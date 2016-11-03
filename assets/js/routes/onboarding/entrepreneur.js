@@ -57,7 +57,7 @@ const EntrepreneurOnboard = React.createClass({
         new_profile.biography = result.linkedin.extra_data.summary;
         new_profile.username = result.email;
       }
-
+      new_profile.country = new_profile.country ? new_profile.country : 'United States of America';
       this.setState({
         profile: new_profile,
         photo_url: result.photo_url
@@ -658,6 +658,8 @@ const EntrepreneurOnboard = React.createClass({
             <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
             Sign Up
           </a>
+
+          <h6 className="by-signing-up">By signing up, you agree to Loom's <a href='/terms-of-service/'>Terms of Services</a></h6>
         </div>
 
       </div>

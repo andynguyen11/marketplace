@@ -104,6 +104,8 @@ django-rest-assured==0.2.0
 factory-boy==2.7.0
 fake-factory==0.5.7
 django-fixture-magic==0.0.8
+#logging
+-e git+http://github.com/micimize/django-logging/#egg=django_logging
 
 # search
 django-haystack==2.5.dev2

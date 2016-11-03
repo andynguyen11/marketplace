@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
     'sorl.thumbnail',
     'guardian',
+    #'django_logging',
     'easy_timezones',
     'haystack',
     'generics',
@@ -91,6 +92,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'easy_timezones.middleware.EasyTimezoneMiddleware',
+    #'django_logging.middleware.DjangoLoggingMiddleware',
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -145,6 +147,18 @@ WSGI_APPLICATION = 'market.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 database_backend = 'django.db.backends.postgresql_psycopg2'
+
+#DJANGO_LOGGING = {
+#    "CONSOLE_LOG": False,
+#    "SQL_LOG": False,
+#    "DISABLE_EXISTING_LOGGERS": False,
+#    "ENCODING": "utf-8",
+#    "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
+#    "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
+#        '/api/thread/', '/api/message/', '/api/messages/' ]
+#}
+#if ENVIRONMENT != 'local':
+#    DJANGO_LOGGING["LOG_PATH"] = os.environ.get('JSON_LOG_PATH', '/var/log/app-logs')
 
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
@@ -234,8 +248,8 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':
     'api.utils.jwt_response_payload_handler',
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=108000),
-    'JWT_ALLOW_REFRESH': True
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=604800),
 }
 
 USE_I18N = True

@@ -1,7 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
 import momentPropTypes from 'react-moment-proptypes';
-import Quill from '../components/editor/Quill';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import HelperBubble from './helper';
@@ -167,73 +166,6 @@ export const Textarea = React.createClass({
         <label className="control-label" htmlFor={name}>{label}</label>
         <textarea className="form-control" name={name} id={name} value={value} onChange={this.changeHandler} ref="textarea" {...attrPlaceholder} {...attrDisabled} {...attrMaxLength} {...attrRows}></textarea>
         {textareaError}
-      </div>
-    );
-  }
-});
-
-export const WYSIWYG = React.createClass({
-  propTypes: {
-    className: React.PropTypes.string,
-    inputDisabled: React.PropTypes.bool,
-    config: React.PropTypes.shape({
-      name: React.PropTypes.string.isRequired,
-      label: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.node
-      ]).isRequired,
-      value: React.PropTypes.string.isRequired,
-      error: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.bool
-      ]).isRequired,
-      helperText: React.PropTypes.oneOfType([
-        React.PropTypes.string,
-        React.PropTypes.node
-      ]),
-      onChange: React.PropTypes.func.isRequired
-    })
-  },
-
-  changeHandler(value, valueClean) {
-    const { inputDisabled, config: { onChange } } = this.props;
-
-    if(value === '<p><br></p>') {
-      value = '';
-    }
-
-    if(!inputDisabled) {
-      onChange(value);
-    }
-  },
-
-  render() {
-    const { className, inputDisabled, config: { name, label, value, error, helperText } } = this.props;
-    const formGroupClass = classNames('form-group', 'form-group-helper', className, { 'has-error': !!error, 'quill-disabled': inputDisabled });
-    const textareaError = error && <InputError>{error}</InputError>;
-    const quillConfig = {
-      modules: {
-        toolbar: {
-          container: '#toolbar-long_description' + name,
-        },
-      },
-      bounds: '#project-info-long_description' + name,
-      theme: 'snow'
-    };
-    const helperBubble = !!helperText && (
-        <div className="form-group-helper-text">
-          <HelperBubble helperText={helperText} />
-        </div>
-      );
-
-    return (
-      <div className={formGroupClass}>
-        <label className="control-label" htmlFor={name}>{label}</label>
-        <div className="form-group-helper-input">
-          <Quill className="long_description" name={name} id={name} value={value} onChange={this.changeHandler} ref="textarea" config={quillConfig}/>
-          {textareaError}
-        </div>
-        {helperBubble}
       </div>
     );
   }
