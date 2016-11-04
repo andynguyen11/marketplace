@@ -124,7 +124,7 @@
         </div>
         {% endif %}
         {% if project.estimated_cash %}
-        <div class="plate-stat">
+        <div class="plate-stat {% if project.mix %}mix{% endif %}">
           <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
           <div class="plate-stat-type">Cash</div>
         </div>

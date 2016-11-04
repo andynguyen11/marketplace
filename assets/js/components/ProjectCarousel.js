@@ -3,7 +3,7 @@ import Slider from 'react-slick'
 
 function Stat({project, statName, type}){
   return project[statName] ? (
-    <div className="plate-stat">
+    <div className={`plate-stat ${ project.mix ? 'mix' : 'xor' }`}>
       <div className="plate-stat-amount">{ project[statName] }</div>
       <div className="plate-stat-type">{ type }</div>
     </div>
