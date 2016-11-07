@@ -70,14 +70,6 @@ class ProfileViewSet(ModelViewSet):
             response.data = self.public_view(response.data)
         return response
 
-    def update(self, request, *args, **kwargs):
-        if request.data.get('signup', None):
-            account_confirmation.delay(
-                request.user.id,
-                request.data.get('role', None)
-            )
-        return super(ProfileViewSet, self).update(request, *args, **kwargs)
-
     @detail_route(methods=['get'])
     def skillsummary(self, request, *args, **kwargs):
         user = request.user
