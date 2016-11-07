@@ -404,8 +404,8 @@ CORS_ORIGIN_WHITELIST = (
     'dev.joinloom.com',
     'localhost:8000',
     '127.0.0.1:9000',
+    'expertrating.com',
     'www.expertrating.com',
-    'expertrating.com'
 )
 
 GULP_PRODUCTION_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp dist'

@@ -1,11 +1,13 @@
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+
+from accounts.models import Profile
 from business.models import Document, Terms, Project
 from postman.models import Message
 from notifications.signals import notify
 
 from generics.tasks import nda_sent_email, nda_signed_email, terms_sent_email,\
-    terms_approved_email, project_in_review, project_posted
+    terms_approved_email, project_in_review, project_posted, account_confirmation
 
 @receiver(pre_save, sender=Document)
 def nda_update_event(sender, instance, **kwargs):
@@ -43,3 +45,14 @@ def new_project_posted(sender, instance, **kwargs):
     if not old_project.approved and not old_project.published and instance.published:
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)
+
+@receiver(pre_save, sender=Profile)
+def new_account(sender, instance, **kwargs):
+    if not hasattr(instance, 'id') or instance.id is None:
+        return
+    old_profile = Profile.objects.get(pk=instance.id)
+    if not old_profile.country and instance.country:
+        account_confirmation.delay(
+                instance.id,
+                instance.role
+            )
