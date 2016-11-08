@@ -248,6 +248,19 @@ class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
 
+    def update(self, instance, validated_data):
+        company_data = validated_data.pop('company')
+        if instance.company.name != company_data.name:
+            company_data.pop('id')
+            company, created = Company.objects.get_or_create(**company_data)
+            instance.company = company
+        instance.title = validated_data.get('title', instance.title)
+        instance.description = validated_data.get('description', instance.description)
+        instance.start_date = validated_data.get('start_date', instance.start_date)
+        instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.save()
+        return instance
+
     def create(self, validated_data):
         company_data = validated_data.pop('company')
         company, created = Company.objects.get_or_create(**company_data)
