@@ -92,7 +92,7 @@ import { Router, Route, IndexRoute, IndexRedirect, Link, useRouterHistory } from
             {
               title: 'Support',
               pathname: '',
-              href: 'http://support.joinloom.com/'
+              href: 'http://support.loom.co/'
             },
             {
               title: 'Terms of Service',
