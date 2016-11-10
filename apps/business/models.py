@@ -34,7 +34,7 @@ class Employee(models.Model):
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ['current', '-end_date', '-start_date']
+        ordering = ['-current', '-end_date', '-start_date']
 
 
 class Company(models.Model):
