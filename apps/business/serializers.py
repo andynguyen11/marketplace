@@ -243,26 +243,32 @@ class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    company = CompanySerializer()
+    company = CompanySerializer(read_only=True)
+    company_name = serializers.CharField(write_only=True)
 
     class Meta:
         model = Employee
 
     def update(self, instance, validated_data):
-        company_data = validated_data.pop('company')
-        if instance.company.name != company_data.name:
-            company_data.pop('id')
-            company, created = Company.objects.get_or_create(**company_data)
+        company_name = validated_data.pop('company_name')
+        if instance.company.name != company_name:
+            company, created = Company.objects.get_or_create(name=company_name)
             instance.company = company
         instance.title = validated_data.get('title', instance.title)
         instance.description = validated_data.get('description', instance.description)
         instance.start_date = validated_data.get('start_date', instance.start_date)
         instance.end_date = validated_data.get('end_date', instance.end_date)
+        instance.current = validated_data.get('current', instance.current)
         instance.save()
         return instance
 
     def create(self, validated_data):
-        company_data = validated_data.pop('company')
-        company, created = Company.objects.get_or_create(**company_data)
-        work_history = Employee.objects.create(company=company, **validated_data)
+        company_name = validated_data.pop('company_name')
+        profile_id = validated_data.pop('profile')
+        company, created = Company.objects.get_or_create(name=company_name)
+        work_history = Employee.objects.create(
+            company=company,
+            profile=self.context['request'].user,
+            **validated_data
+        )
         return work_history
