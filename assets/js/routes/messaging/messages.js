@@ -636,15 +636,14 @@ const Messages = React.createClass({
 
     this.setState({ messageSending: true });
 
-    // TODO Add filtering back in when work history is up
-    //let filterError = FormHelpers.filterInput(message)
-    //if(filterError) {
-    //  this.setState({
-    //    messageSending: false,
-    //    messageError: filterError
-    //  });
-    //  return;
-    //}
+    let filterError = FormHelpers.filterInput(message)
+    if(filterError) {
+      this.setState({
+        messageSending: false,
+        messageError: filterError
+      });
+      return;
+    }
 
     $.ajax({
       url: loom_api.message,
