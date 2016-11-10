@@ -78,21 +78,21 @@ const CreditCardForm = React.createClass({
             </div>
           </div>
 
-          <div className="form-group">
-            <div className='checkbox'>
-              <label htmlFor={formElements.saveCard.name}>
-                <input
-                  type='checkbox'
-                  id={formElements.saveCard.name}
-                  name={formElements.saveCard.name}
-                  value={!formElements.saveCard.value}
-                  checked={formElements.saveCard.value}
-                  onChange={handleCheckboxChange}
-                />
-                {formElements.saveCard.label}
-              </label>
-            </div>
-          </div>
+          //<div className="form-group">
+          //  <div className='checkbox'>
+          //    <label htmlFor={formElements.saveCard.name}>
+          //      <input
+          //        type='checkbox'
+          //        id={formElements.saveCard.name}
+          //        name={formElements.saveCard.name}
+          //        value={!formElements.saveCard.value}
+          //        checked={formElements.saveCard.value}
+          //        onChange={handleCheckboxChange}
+          //      />
+          //      {formElements.saveCard.label}
+          //    </label>
+          //  </div>
+          //</div>
         </div>
       </div>
     )
