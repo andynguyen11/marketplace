@@ -248,6 +248,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
+        exclude = ('primary', )
 
     def update(self, instance, validated_data):
         company_name = validated_data.pop('company_name')

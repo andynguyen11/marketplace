@@ -33,6 +33,9 @@ class Employee(models.Model):
     country = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
+    class Meta:
+        ordering = ['current', '-end_date', '-start_date']
+
 
 class Company(models.Model):
     name = models.CharField(max_length=255, unique=True)
