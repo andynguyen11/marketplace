@@ -2,7 +2,10 @@ import parseFormat from 'moment-parseformat';
 
 const filters = {
   "pii": {
-    "error": "Words",
+    "error": "Message was not sent.  Please remove personal identifiers like email, phone numbers, or external links." +
+    "Sharing of personal information prior to engaging in a work contract violates Loom's Terms of Service. Sharing personal " +
+    "information to meet outside of Loom is considered an offline hire and is subject to a $3,000.00 recruiting fee. " +
+    "Personal contact information is provided to both parties after a Loom work contract has been paid for.",
     "list": [
       /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i,
       /^[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i,
