@@ -69,7 +69,7 @@ class Template(models.Model):
 class DocumentSignerTab(models.Model):
     template_role_tab = models.ForeignKey('docusign.TemplateRoleTab')
     document_signer = models.ForeignKey('docusign.DocumentSigner')
-    value = models.TextField()
+    value = models.TextField(blank=True, null=True)
 
     @property
     def label(self):
