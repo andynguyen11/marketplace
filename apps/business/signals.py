@@ -6,7 +6,7 @@ from business.models import Document, Terms, Project
 from postman.models import Message
 from notifications.signals import notify
 
-from generics.tasks import nda_sent_email, nda_signed_email, terms_sent_email,\
+from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
     terms_approved_email, project_in_review, project_posted, account_confirmation
 
 @receiver(pre_save, sender=Document)
@@ -21,7 +21,8 @@ def nda_update_event(sender, instance, **kwargs):
 
     if instance.status != old_status and instance.status.lower() == 'signed':
         notify.send(thread, recipient=instance.manager, verb=u'An NDA document has been signed', action_object=thread)
-        nda_signed_email.delay(thread.job.id)
+        nda_signed_freelancer_email.delay(thread.job.id)
+        nda_signed_entrepreneur_email.delay(thread.job.id)
 
 @receiver(pre_save, sender=Terms)
 def terms_update_event(sender, instance, **kwargs):
