@@ -209,6 +209,7 @@ const Messages = React.createClass({
       interactions: [],
       isLoading: true,
       messageError: false,
+      filterError: false,
       messageSending: false,
       attachmentModalIsOpen: false,
       attachmentDeleteModalIsOpen: false,
@@ -634,14 +635,23 @@ const Messages = React.createClass({
       body: message
     };
 
-    this.setState({ messageSending: true });
+    this.setState({
+      messageSending: true,
+      filterError: false
+    });
 
     let filterError = FormHelpers.filterInput(message)
     if(filterError) {
       this.setState({
         messageSending: false,
-        messageError: filterError
-      });
+        filterError: filterError
+      }, this.scrollBottom);
+      if (window.heap) {
+        window.heap.track('Message Filter', {id: threadId, message: message});
+      }
+      if (window.ga) {
+        window.ga('send', 'event', 'Messages', 'filter', threadId);
+      }
       return;
     }
 
@@ -658,7 +668,7 @@ const Messages = React.createClass({
           isLoading: false,
           messageError: 'Something went wrong with sending your message. Please try again.',
           messageSending: false
-        })
+        }, this.scrollBottom)
       }
     });
   },
@@ -931,6 +941,7 @@ const Messages = React.createClass({
       interactions,
       currentUser,
       isLoading,
+      filterError,
       messageError,
       otherUserData,
       terms,
@@ -968,6 +979,7 @@ const Messages = React.createClass({
       }
     });
     const error = messageError && <div className="alert alert-danger" role="alert">{messageError}</div>;
+    const pii = filterError && <div className="alert alert-danger" role="alert">{filterError}</div>;
     const attachmentError = fileError && <div className="alert alert-danger" role="alert">{fileError}</div>;
     const otherUserProfileUrl = otherUserData && this.getProfileUrl(otherUserData.id);
     const otherUserProfileLink = otherUserData && <a href={otherUserProfileUrl}>{otherUserData.first_name}</a>;
@@ -1035,6 +1047,7 @@ const Messages = React.createClass({
             <div className="thread-content" ref="thread">
               {messages}
               {error}
+              {pii}
             </div>
           </div>
           <MessageComposer messageSending={messageSending} threadId={threadId} fileUpload={true} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} onFileSelection={this.onFileSelection} fileToUpload={fileToUpload} />

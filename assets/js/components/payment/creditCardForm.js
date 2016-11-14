@@ -78,7 +78,6 @@ const CreditCardForm = React.createClass({
             </div>
           </div>
 
-          {/*
           <div className="form-group">
             <div className='checkbox'>
               <label htmlFor={formElements.saveCard.name}>
@@ -94,7 +93,6 @@ const CreditCardForm = React.createClass({
               </label>
             </div>
           </div>
-          */}
 
         </div>
       </div>
