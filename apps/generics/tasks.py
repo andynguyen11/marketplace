@@ -92,16 +92,24 @@ def nda_sent_email(job_id):
     send_mail('nda-sent', [job.contractor], merge_vars)
 
 @shared_task
-def nda_signed_email(job_id):
+def nda_signed_entrepreneur_email(job_id):
     job = Job.objects.get(id=job_id)
-    thread = Message.objects.get(job=job)
     merge_vars = {
-        'fname': job.contractor.first_name,
+        'fname': job.project.contractor.first_name,
         'project': job.project.title,
         'email': job.project.project_manager.email,
-        'thread': thread.id,
     }
-    send_mail('nda-signed', [job.project.project_manager], merge_vars)
+    send_mail('nda-signed-entrepreneur', [job.project.project_manager], merge_vars)
+
+@shared_task
+def nda_signed_freelancer_email(job_id):
+    job = Job.objects.get(id=job_id)
+    merge_vars = {
+        'fname': job.project.project_manager.first_name,
+        'project': job.project.title,
+        'email': job.contractor.email,
+    }
+    send_mail('nda-signed-freelancer', [job.contractor], merge_vars)
 
 @shared_task
 def terms_sent_email(job_id):
