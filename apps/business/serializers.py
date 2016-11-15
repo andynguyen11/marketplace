@@ -248,6 +248,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
+        exclude = ('primary', )
 
     def update(self, instance, validated_data):
         company_name = validated_data.pop('company_name')
@@ -259,6 +260,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
         instance.start_date = validated_data.get('start_date', instance.start_date)
         instance.end_date = validated_data.get('end_date', instance.end_date)
         instance.current = validated_data.get('current', instance.current)
+        instance.city = validated_data.get('city', instance.city)
+        instance.state = validated_data.get('state', instance.state)
+        instance.country = validated_data.get('country', instance.country)
         instance.save()
         return instance
 
