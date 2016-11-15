@@ -85,7 +85,7 @@ const NDA = React.createClass({
                 disclosing Party desires to treat as confidential.
               </p>
               <p>
-                2. <strong>“Confidential Information”</strong> means any propriety or confidential information
+                2. <strong>“Confidential Information”</strong> means any proprietary or confidential information
                 disclosed by either Party to the other Party, either directly or indirectly in
                 writing, orally, or by inspection of tangible objects (including, without limitation,
                 business plans, customer data, designs, documents, drawings, engineering

@@ -10,7 +10,7 @@ class ContentObjectPermission(permissions.BasePermission):
     """ User owns related object """
 
     def content_object_permission(self, request, content_object):
-        perm = 'change_%s' % content_object._meta.model_name 
+        perm = 'change_%s' % content_object._meta.model_name
         return perm in get_perms(request.user, content_object)
 
     def can_write(self, request):

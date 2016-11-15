@@ -33,6 +33,9 @@ class Employee(models.Model):
     country = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
+    class Meta:
+        ordering = ['-current', '-end_date', '-start_date']
+
 
 class Company(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -51,8 +54,8 @@ class Company(models.Model):
     description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     category = tagulous.models.TagField(to=Category, blank=True)
-    type = models.CharField(max_length=100, choices=COMPANY_TYPES)
-    filing_location = models.CharField(max_length=100)
+    type = models.CharField(max_length=100, choices=COMPANY_TYPES, blank=True, null=True)
+    filing_location = models.CharField(max_length=100, blank=True, null=True)
 
     @property
     def get_logo(self):

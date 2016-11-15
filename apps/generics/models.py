@@ -18,6 +18,7 @@ class Attachment(models.Model):
     object_id = models.PositiveIntegerField()
     deleted = models.BooleanField(default=False)
     content_object = GenericForeignKey('content_type', 'object_id')
+    description = models.TextField(blank=True, null=True)
 
     @property
     def basename(self):

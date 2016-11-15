@@ -36,6 +36,7 @@ let Checkout = React.createClass({
       formError: false,
       formErrorsList: [],
       price: 3 * parseInt(job.hours),
+      basePrice: 3 * parseInt(job.hours),
       apiError: false
     }
   },
@@ -267,6 +268,15 @@ let Checkout = React.createClass({
     });
   },
 
+  applyValueOff(value_off){
+    let price = this.state.basePrice
+    let discount = parseFloat(value_off.replace(/\$|%/, ''))
+    let applied = value_off.charAt(0) == "$" ?
+      price - discount :
+      price - (price * (discount / 100.00))
+    return applied > 0 ? applied : 0.0
+  },
+
   updatePromo(event) {
     const { value } = event.target;
 
@@ -275,7 +285,6 @@ let Checkout = React.createClass({
 
   applyPromo() {
     const { enteredPromo } = this.state;
-    // TODO Need to reimplement with dynamic pricing by updating order on backend when promo is applied
     this.setState({ applyingPromo: true, promo_error: '' });
 
     $.ajax({
@@ -291,11 +300,8 @@ let Checkout = React.createClass({
           promo: enteredPromo,
           enteredPromo: '',
           promo_message: result.message,
-          price: 0,
+          price: this.applyValueOff(result.value),
           applyingPromo: false,
-          showCreditCardForm: false,
-          currentCard: null,
-          cards: []
         });
       }.bind(this),
       error: function(result) {
@@ -418,6 +424,7 @@ let Checkout = React.createClass({
             <h5>Please pay the following service fee to view, sign and send your contract:</h5>
             <div className="fee-container">
               <strong>$3 x {job.hours} total project hours for the {terms.project.title} project.</strong>
+              { promo && <small>— with the promo <span className="label label-default" style={{"background": "#423d51"}}>{promo}</span> applied —</small> }
               <div className="fees">
                 <div>fee total</div>
                 <h2>${price}</h2>

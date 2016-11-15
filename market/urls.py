@@ -51,6 +51,7 @@ urlpatterns = [
     url(r'^careers/$', TemplateView.as_view(template_name='careers.html'), name='careers'),
     url(r'^contact/$', TemplateView.as_view(template_name='contact.html'), name='contact'),
     url(r'^privacy/$', TemplateView.as_view(template_name='privacy.html'), name='privacy'),
+    url(r'^nda/$', TemplateView.as_view(template_name='nda.html'), name='nda'),
     url(r'^terms-of-service/$', TemplateView.as_view(template_name='terms.html'), name='terms'),
     url(r'^dmca/$', TemplateView.as_view(template_name='dmca.html'), name='dmca'),
     url(r'^prelaunch/$', TemplateView.as_view(template_name='prelaunch_router.html'), name='prelaunch-router'),

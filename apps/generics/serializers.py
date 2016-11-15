@@ -5,7 +5,7 @@ from generics.models import Attachment
 from generics.base_serializers import RelationalModelSerializer, ParentModelSerializer
 from generics.validators import file_validator
 
-def retrieve_content_object(source, known_keys=['id', 'file', 'tag']):
+def retrieve_content_object(source, known_keys=['id', 'file', 'tag', 'description', ]):
     additional = { k: v for k, v in source.items() if k not in known_keys }
     if len(additional.keys()) == 1:
         model_name = additional.keys()[0]
@@ -21,7 +21,7 @@ class AttachmentSerializer(RelationalModelSerializer):
 
     class Meta:
         model = Attachment
-        fields = ('id', 'file', 'tag', 'url', 'original_name')
+        fields = ('id', 'file', 'tag', 'url', 'original_name', 'description', )
 
     def retrieve_content_object(self, obj):
         obj.update(retrieve_content_object(self.initial_data.dict()))
@@ -32,7 +32,7 @@ class AttachmentSerializer(RelationalModelSerializer):
 
     def resolve_relations(self, obj):
         obj = self.retrieve_content_object(obj)
-        new_obj = { k: obj.pop(k) for k in ['id', 'file', 'tag'] if obj.has_key(k) }
+        new_obj = { k: obj.pop(k) for k in ['id', 'file', 'tag', 'description', ] if obj.has_key(k) }
         values = [v for k, v in obj.items() if k not in self.Meta.fields]
         if self.instance and self.instance.id is not None:
             if len(values) == 1:

@@ -29,51 +29,6 @@
     </div>
 
     <div class="page-content--alternate">
-    {% comment %}
-    {% if featured %}
-      <div class="page-content page-content--alternate">
-        <div class="plates page-content--medium">
-          <div class="plates-headcap">
-            <h3 class="plates-header brand-bold">Featured {{ type }} projects</h3>
-          </div>
-          <div class="plates-inner">
-            {% for project in featured %}
-              <a class="plate" href="{% url 'project' project.slug %}">
-                <div class="plate-image"{% if MEDIA_URL and project.project_image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.project_image.file }}');"{% endif %}></div>
-                <div class="plate-info">
-                  <div class="plate-info-profile">
-                    <div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>
-                    <div class="plate-info-profile-name">
-                      <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
-                      {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-                    </div>
-                  </div>
-                  <div class="plate-info-project">
-                    <h4 class="plate-info-project-name">{{ project.title }}</h4>
-                    <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-                  </div>
-                </div>
-                <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-                  {% if project.estimated_equity_percentage %}
-                    <div class="plate-stat">
-                      <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-                      <div class="plate-stat-type">Equity</div>
-                    </div>
-                  {% endif %}
-                  {% if project.estimated_cash %}
-                    <div class="plate-stat">
-                      <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-                      <div class="plate-stat-type">Cash</div>
-                    </div>
-                  {% endif %}
-                </div>
-              </a>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    {% endif %}
-    {% endcomment %}
 
     {% if new %}
       <div class="plates page-content--medium">
@@ -110,7 +65,7 @@
                   </div>
                 {% endif %}
                 {% if project.estimated_cash %}
-                  <div class="plate-stat">
+                  <div class="plate-stat {% if project.mix %}mix{% endif %}">
                     <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
                     <div class="plate-stat-type">Cash</div>
                   </div>
@@ -157,7 +112,7 @@
                       </div>
                     {% endif %}
                     {% if project.estimated_cash %}
-                      <div class="plate-stat">
+                      <div class="plate-stat {% if project.mix %}mix{% endif %}">
                         <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
                         <div class="plate-stat-type">Cash</div>
                       </div>
