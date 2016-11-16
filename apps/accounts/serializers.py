@@ -74,7 +74,8 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
         public_fields = ( # this is just used in the view atm
                 'first_name', 'location', 'country', 'city', 'state',
-                'title', 'role', 'biography', 'work_history',
+                'title', 'role', 'biography',
+                'work_history', 'work_examples', 'long_description',
                 'photo_url', 'photo' 'featured', 'skills', 'id',
                 'my_skills', 'skills_test')
 
