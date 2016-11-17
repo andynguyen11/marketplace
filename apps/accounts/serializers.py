@@ -127,7 +127,9 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.username = validated_data.get('email', instance.email)
+        email = validated_data.get('email', None)
+        if email and instance.email != email:
+            instance.username = email
         password = validated_data.get('password', None)
         if password:
             instance.set_password(password)
