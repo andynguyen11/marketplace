@@ -118,8 +118,8 @@ class CreditCardView(APIView):
         if order.can_pay(request.user):
             order.pay(customer, card)
             signer_url = self.generate_contract(request, order.job)
-            job.status = 'connected'
-            job.save()
+            order.job.status = 'connected'
+            order.job.save()
             return ("Success", signer_url)
 
         return ("There was a problem processing your payment.", "/profile/dashboard/")
