@@ -17,6 +17,7 @@ const filters = {
       /^\+?\d{2}[- ]?\d{3}[- ]?\d{5}/,
 	  /(twitter|facebook|gmail|skype|upwork|linkedin|angellist)/ig, 	// Site names.
 	  /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/g,		// Twiter urls
+	  /@[a-z0-9_-]{15}/g,												// Twitter usernames.
 	  /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/, 	// Facebook urls
     ]
   }
