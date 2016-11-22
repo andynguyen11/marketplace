@@ -4,11 +4,14 @@ import pytz
 import simplejson
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from celery import shared_task
 
 from accounts.models import Profile
-from business.models import Job, Document, Project
+from business.models import Job, Document, Project, Employee
 from postman.models import Message
+from generics.models import Attachment
+from expertratings.models import SkillTestResult
 from generics.utils import send_mail
 
 utc=pytz.UTC
@@ -145,6 +148,7 @@ def project_in_review(project_id):
     project = Project.objects.get(id=project_id)
     send_mail('project-in-review', [project.project_manager], {})
 
+
 @shared_task
 def project_posted(project_id):
     project = Project.objects.get(id=project_id)
@@ -156,3 +160,30 @@ def project_posted(project_id):
         'email': project.project_manager.email,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
     })
+
+
+@shared_task
+def add_work_examples(profile_id):
+    examples = Attachment.objects.filter(
+                content_type= ContentType.objects.get_for_model(Profile),
+                object_id=profile_id
+            )
+    if not examples:
+        profile = Profile.objects.get(id=profile_id)
+        send_mail('add-work-examples', [profile], {})
+
+
+@shared_task
+def add_work_history(profile_id):
+    history = Employee.objects.filter(profile=profile_id)
+    if not history:
+        profile = Profile.objects.get(id=profile_id)
+        send_mail('add-work-history', [profile], {})
+
+
+@shared_task
+def verify_skills(profile_id):
+    results = SkillTestResult.objects.filter(user=profile_id)
+    if not results:
+        profile = Profile.objects.get(id=profile_id)
+        send_mail('verify-skills', [profile], {})

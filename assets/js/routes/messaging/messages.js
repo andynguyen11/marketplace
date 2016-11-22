@@ -629,7 +629,7 @@ const Messages = React.createClass({
 
   sendMessage() {
     const { threadId } = this.props;
-    const { message, attachment } = this.state;
+    const { message, attachment, job } = this.state;
     const payload = {
       thread: threadId,
       body: message
@@ -640,19 +640,21 @@ const Messages = React.createClass({
       filterError: false
     });
 
-    let filterError = FormHelpers.filterInput(message)
-    if(filterError) {
-      this.setState({
-        messageSending: false,
-        filterError: filterError
-      }, this.scrollBottom);
-      if (window.heap) {
-        window.heap.track('Message Filter', {id: threadId, message: message});
+    if (job.status != 'connected') {
+      let filterError = FormHelpers.filterInput(message)
+      if(filterError) {
+        this.setState({
+          messageSending: false,
+          filterError: filterError
+        }, this.scrollBottom);
+        if (window.heap) {
+          window.heap.track('Message Filter', {id: threadId, message: message});
+        }
+        if (window.ga) {
+          window.ga('send', 'event', 'Messages', 'filter', threadId);
+        }
+        return;
       }
-      if (window.ga) {
-        window.ga('send', 'event', 'Messages', 'filter', threadId);
-      }
-      return;
     }
 
     $.ajax({
