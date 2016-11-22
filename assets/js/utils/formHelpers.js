@@ -15,8 +15,9 @@ const filters = {
       /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i,
       /^[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i,
       /^\+?\d{2}[- ]?\d{3}[- ]?\d{5}/,
-	  /(twitter|facebook|gmail|skype|upwork|linkedin|angellist)/ig, // match site names.
-
+	  /(twitter|facebook|gmail|skype|upwork|linkedin|angellist)/ig, 	// Site names.
+	  /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/g,		// Twiter urls
+	  /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/, 	// Facebook urls
     ]
   }
 }
