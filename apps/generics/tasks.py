@@ -4,6 +4,7 @@ import pytz
 import simplejson
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from celery import shared_task
 
 from accounts.models import Profile
