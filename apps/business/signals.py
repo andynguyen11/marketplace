@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+from django.contrib.contenttypes.models import ContentType
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
@@ -7,7 +10,7 @@ from postman.models import Message
 from notifications.signals import notify
 
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
-    terms_approved_email, project_in_review, project_posted, account_confirmation
+    terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills
 
 @receiver(pre_save, sender=Document)
 def nda_update_event(sender, instance, **kwargs):
@@ -57,3 +60,8 @@ def new_account(sender, instance, **kwargs):
                 instance.id,
                 instance.role
             )
+        if instance.role:
+            today = datetime.utcnow()
+            add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
+            add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))
+            verify_skills.apply_async((instance.id, ), eta=today + timedelta(days=3))
