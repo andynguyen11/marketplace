@@ -61,6 +61,6 @@ def new_account(sender, instance, **kwargs):
             )
         if instance.role:
             today = datetime.utcnow()
-            #add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
-            #add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))
-            #verify_skills.apply_async((instance.id, ), eta=today + timedelta(days=3))
+            add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
+            add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))
+            verify_skills.apply_async((instance.id, ), eta=today + timedelta(days=3))
