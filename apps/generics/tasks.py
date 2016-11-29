@@ -98,7 +98,7 @@ def nda_sent_email(job_id):
 def nda_signed_entrepreneur_email(job_id):
     job = Job.objects.get(id=job_id)
     merge_vars = {
-        'fname': job.project.contractor.first_name,
+        'fname': job.contractor.first_name,
         'project': job.project.title,
         'email': job.project.project_manager.email,
     }
