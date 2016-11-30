@@ -13,11 +13,13 @@ from django.conf import settings
 
 from accounts.models import Profile
 from generics.tasks import pm_contact_card_email
+from generics.viewsets import ImmutableNestedModelViewSet
 from business.models import Job, Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
-from payment.models import Order, Promo, get_promo
-from payment.serializers import OrderSerializer
+from business.products import products
+from payment.models import ProductOrder, Order, Promo, get_promo
+from payment.serializers import OrderSerializer, ProductOrderSerializer
 from payment.helpers import stripe_helpers 
 from postman.forms import build_payload
 
@@ -26,7 +28,12 @@ stripe.api_key = settings.STRIPE_KEY
 class StripePaymentSourceView(APIView):
     """
     API view handling create, update, and delete on stripe payment sources
+    * `POST` and `PUT` `stripe_token`s authenticated to add sources
+    * `PATCH` with a `source_id to update a source
+    * `DELETE` with `source_id`
+    * `GET` lists sources
 
+    only acts on requesting user's stripe resources
     """
     permission_classes = (IsAuthenticated, )
     update_fields = ( 'address_city', 'address_country', 'address_line1', 'address_line2',
@@ -199,3 +206,23 @@ class PromoCheck(APIView):
 
     def post(self, request):
         return self.get(request, code=request.data.get('promo', None))
+
+
+class ProductOrderViewSet(ImmutableNestedModelViewSet):
+    queryset = ProductOrder.objects.all()
+    serializer_class = ProductOrderSerializer
+    permission_classes = (IsAuthenticated, )
+    parent_key = '_product'
+
+    @property
+    def parent(self):
+        return products.get(self.parent_key, None)
+
+    def list(self, request, **kwargs):
+        user_orders = self.get_queryset().filter(payer=request.user, **self.keys)
+        return Response(self.serializer_class(user_orders, many=True).data)
+
+    def create(self, request, **kwargs):
+        request.data['payer'] = self.request.user.id
+        return super(ProductOrderViewSet, self).create(request, **kwargs)
+

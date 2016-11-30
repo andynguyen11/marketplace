@@ -1,4 +1,4 @@
-from rest_framework import viewsets, generics, permissions
+from rest_framework import viewsets, generics, permissions, mixins
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import re
@@ -30,8 +30,11 @@ class CreatorPermissionsMixin(object):
         assign_crud_permissions(self.request.user, object)
 
 
-class NestedModelViewSet(viewsets.ModelViewSet):
-    ""
+# # # # # # # # # # # # # # #
+# NestedModelViewSet mixins
+# # # # # # # # # # # # # # #
+class NestedModelBaseMixin(object):
+    " adds utilities and helpers for nested view sets "
     parent_key = None
     _parent = None
 
@@ -52,26 +55,57 @@ class NestedModelViewSet(viewsets.ModelViewSet):
     @property
     def parent(self):
         if not self._parent:
-             self._parent = getattr(self.serializer_class.Meta.model, self.parent_key).field.related_model.objects.get(**self.parent_kwargs)
+            parent_field = getattr(self.serializer_class.Meta.model, self.parent_key).field
+            self._parent = parent_field.related_model.objects.get(**self.parent_kwargs)
         return self._parent
+
+
+class NestedCreateModelMixin(mixins.CreateModelMixin):
+    def create(self, request, **kwargs):
+        request.data[self.parent_key] = self.parent_kwargs['id']
+        return super(NestedCreateModelMixin, self).create(request, **kwargs)
+
+
+class NestedUpdateModelMixin(mixins.UpdateModelMixin):
+    def update(self, request, **kwargs):
+        request.data[self.parent_key] = self.parent_kwargs['id']
+        return super(NestedUpdateModelMixin, self).update(request, **kwargs)
+
+
+class NestedRetrieveModelMixin(mixins.RetrieveModelMixin):
+
+    def retrieve(self, request, **kwargs):
+        data = get_object_or_404(self.get_queryset(), **self.keys)
+        serializer = self.serializer_class(data)
+        return Response(serializer.data)
+
+
+class NestedListModelMixin(mixins.ListModelMixin):
 
     @property
     def list_data(self):
-        data = self.queryset.filter(**self.keys)
+        data = self.get_queryset().filter(**self.keys)
         return self.serializer_class(data, many=True).data
 
     def list(self, request, **kwargs):
         return Response(self.list_data)
 
-    def retrieve(self, request, **kwargs):
-        data = get_object_or_404(self.queryset, **self.keys)
-        serializer = self.serializer_class(data)
-        return Response(serializer.data)
+class NestedWriteModelMixin(NestedCreateModelMixin, NestedUpdateModelMixin):
+    pass
 
-    def create(self, request, **kwargs):
-        request.data[self.parent_key] = self.parent_kwargs['id']
-        return super(NestedModelViewSet, self).create(request, **kwargs)
+class NestedReadModelMixin(NestedListModelMixin, NestedRetrieveModelMixin):
+    pass
 
-    def update(self, request, **kwargs):
-        request.data[self.parent_key] = self.parent_kwargs['id']
-        return super(NestedModelViewSet, self).update(request, **kwargs)
+class NestedModelMixin(NestedWriteModelMixin, NestedReadModelMixin, NestedModelBaseMixin):
+    pass
+
+class NestedImmutableModelMixin(NestedCreateModelMixin, NestedReadModelMixin, NestedModelBaseMixin):
+    pass
+
+
+class NestedModelViewSet(NestedModelMixin, viewsets.GenericViewSet):
+    pass
+
+
+class ImmutableNestedModelViewSet(NestedImmutableModelMixin, viewsets.GenericViewSet):
+    pass

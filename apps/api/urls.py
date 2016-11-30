@@ -6,7 +6,7 @@ from rest_framework_jwt.views import refresh_jwt_token
 
 from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
-from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck
+from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck, ProductOrderViewSet
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount
@@ -54,6 +54,16 @@ router = DeclarativeRouter({
                         }
                     }
                 }
+            }
+        }
+    },
+    'product': {
+        'view': ProductViewSet,
+        'base_name': 'product',
+        'nested': {
+            'lookup': '_product',
+            'routes': {
+                'order': ProductOrderViewSet,
             }
         }
     },

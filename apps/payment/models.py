@@ -1,8 +1,12 @@
 from datetime import datetime, date
-from decimal import Decimal
 from django.db import models
 from django.conf import settings
 from payment.helpers import stripe_helpers 
+from payment.enums import *
+from business.products import products, ProductType, PRODUCT_CHOICES
+from generics.utils import percentage 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 
 class Promo(models.Model):
@@ -42,9 +46,9 @@ class Promo(models.Model):
 
     def apply_to(self, amount):
         if self.dollars_off:
-            return amount - self.dollars_off
-        if self.percent_off:
-            return round(amount - (amount * Decimal(self.percent_off * 0.01)), 2)
+            amount = amount - self.dollars_off
+        elif self.percent_off:
+            amount = percentage(base=amount, percent=self.percent_off, operation='removed')
         return amount if amount > 0 else 0.00
 
 
@@ -58,10 +62,11 @@ def get_promo(code):
 class Order(models.Model):
     date_created = models.DateTimeField(auto_now=True)
     date_charged = models.DateTimeField(blank=True, null=True)
+    _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
     job = models.OneToOneField('business.Job')
     promo = models.ForeignKey(Promo, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=100, default='pending')
+    status = models.CharField(max_length=20, default='pending', choices=ORDER_STATUSES)
 
     def __str__(self):
         return 'Transaction: {0}'.format(self.job)
@@ -102,4 +107,116 @@ class Order(models.Model):
         self.date_charged = datetime.now()
         self.status = 'paid'
         self.save()
+
+
+"""
+class StripeAccount(models.Model):
+    id = models.CharField(max_length=50, primary_key=True)
+    profile = models.OneToOneField('accounts.Profile')
+    secret_key = models.CharField(max_length=50)
+    publishable_key = models.CharField(max_length=50)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            account = stripe_helpers.create_account(self.profile)
+            self.id = account.id
+            self.secret_key = account.keys.secret
+            self.publishable_key = account.keys.publishable
+        return super(StripeAccount, self).save(*args, **kwargs)
+"""
+
+
+class ProductOrder(models.Model):
+    date_created = models.DateTimeField(auto_now=True)
+    date_charged = models.DateTimeField(blank=True, null=True)
+    _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
+    payer = models.ForeignKey('accounts.Profile', related_name='payer')
+    recipient = models.ForeignKey('accounts.Profile', related_name='recipient', null=True)
+
+    related_model = models.ForeignKey(ContentType)
+    related_object = GenericForeignKey('related_model', 'related_object_id')
+    related_object_id = models.PositiveIntegerField()
+
+    promo = models.ForeignKey(Promo, blank=True, null=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    fee = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    status = models.CharField(max_length=20, default='pending', choices=ORDER_STATUSES)
+    stripe_charge_id = models.CharField(max_length=50, null=True)
+    details = models.CharField(max_length=250, null=True)
+    result = models.CharField(max_length=100, null=True)
+
+    @property
+    def product(self):
+        return products[self._product]
+
+    @product.setter
+    def product(self, product):
+        self._product = product.id
+
+    def __str__(self):
+        return 'Product {0}, Order #{1} on {2}'.format(self.product, self.id, self.related_object)
+
+    def on_ordered(self):
+        return self.product.on_ordered(self)
+
+    def resolve_product_fields(self):
+        if not hasattr(self, 'related_model'):
+            self.related_model = self.product.related_model
+        self.price, self.fee = self.product.calculate_costs(self)
+        self.product.validate_order(self)
+
+    def save(self, *args, **kwargs):
+        self.resolve_product_fields()
+        return super(ProductOrder, self).save(*args, **kwargs)
+
+    def apply_promo(self, amount):
+        return self.promo.apply_to(amount) if self.promo else amount
+
+    @property
+    def final_costs(self):
+        if(self.product.type == ProductType.percentage):
+            return self.price, self.apply_promo(self.fee)
+        return self.apply_promo(self.price), None
+
+    def add_promo(self, code): # TODO: Should an incorrect promo fail silently like this?
+        if code:
+            promo = get_promo(code)
+            if promo and promo.is_valid(self.payer):
+                self.promo = promo
+            else:
+                return False
+
+    def pay(self, customer, source):
+        self.product.can_pay(self, self.payer)
+        amount, fee = self.final_costs
+        payload = dict(
+            amount=amount,
+            source=source,
+            customer=customer,
+            description= 'Loom fee for {0}'.format(self))
+
+        if(self.product.type == ProductType.percentage):
+            payload['amount'] = fee # amount is the fee until connect integration
+
+        charge = stripe_helpers.charge_source(**payload)
+
+        self.stripe_charge_id= charge.id
+        self.status = 'paid' if charge.paid else charge.status
+
+        if self.status == 'paid':
+            if self.promo:
+                self.promo.mark_used_by(self.payer)
+            self.details = self.product.display_value
+            self.date_charged = datetime.now()
+            self.on_ordered()
+
+        if charge.status == 'failed':
+            self.details = '''
+            failure_code: %s,
+            failure_message: %s
+            ''' % (charge.failure_code, charge.failure_message)
+
+        self.save()
+        return self
+
 

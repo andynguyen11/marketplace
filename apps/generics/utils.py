@@ -1,6 +1,7 @@
 import re
 import mandrill
 import logging
+from decimal import Decimal
 
 from django.conf import settings
 
@@ -95,3 +96,23 @@ def send_mail(template_name, users, context):
     except mandrill.Error, e:
         logger.error('Mandrill Error | %s - %s' % (e.__class__, e))
 
+
+def percentage(base=None, percent=0, operation='of'):
+    """
+    utility for various percentage operations.
+    operation options: { raw, of, removed, added }
+    returns raw percentage if no base is provided
+    all results are rounded to 2 decimal places
+    """
+    percent = Decimal(percent * 0.01)
+    if (not base) or (operation == 'raw'):
+        result = percent
+    elif operation == 'of':
+        result = (base * percent)
+    elif operation == 'removed':
+        result = base - (base * percent)
+    elif operation == 'added':
+        result = base + (base * percent)
+    else:
+        raise TypeError('operation must be one of { raw, of, removed, added }')
+    return round(result, 2)

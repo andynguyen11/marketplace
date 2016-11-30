@@ -25,8 +25,8 @@ PROJECT_TYPES = (
 
 JOB_STATUS = (
     (u'pending', u'Pending'),
-    (u'active', u'Active'),
     (u'connected', u'Connected'),
+    (u'active', u'Active'),
     (u'completed', u'Completed'),
 )
 
@@ -43,3 +43,4 @@ COMPENSATION_SCHEDULE = (
     (u'50% upfront and 50% upon completion', u'50% upfront and 50% upon completion'),
     (u'50% at a halfway milestone and 50% upon completion', u'50% at a halfway milestone and 50% upon completion'),
 )
+
