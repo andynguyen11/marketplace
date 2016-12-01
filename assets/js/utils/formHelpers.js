@@ -23,11 +23,7 @@ const FormHelpers = {
 	checks: {
 		isRequired(value) {
 			// TODO This fails if an int is passed in
-			let check = value.toString();
-			return !!check.length;
-		},
-		isRequiredString(value) {
-			let check = value.toString();
+			let check = value.toString().trim();
 			return !!check.length;
 		},
 		isRequiredInt(value) {
