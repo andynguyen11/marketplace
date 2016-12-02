@@ -8,8 +8,8 @@ from rest_framework.decorators import permission_classes, list_route, detail_rou
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from accounts.models import Profile, Skills, SkillTest, VerificationTest
-from accounts.serializers import ProfileSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
+from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
+from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
@@ -17,7 +17,7 @@ from apps.api.permissions import (
 from expertratings.utils import nicely_serialize_verification_tests
 from generics.tasks import account_confirmation
 from generics.viewsets import NestedModelViewSet, assign_crud_permissions
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 
 
 class SkillViewSet(ModelViewSet):
@@ -33,6 +33,33 @@ class VerificationTestViewSet(NestedModelViewSet):
     parent_key = 'skill'
 
     permission_classes = ( ReadOnlyOrIsAdminUser, )
+
+
+class ContactDetailsViewSet(ModelViewSet):
+    serializer_class = ContactDetailsSerializer
+    permission_classes = ( IsAuthenticated, )
+
+    def get_queryset(self):
+        return ContactDetails.objects.filter(profile=self.request.user)
+
+    def get_object(self):
+        return get_object_or_404(self.get_queryset()) 
+
+    def list(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        return Response(ContactDetailsSerializer(self.get_object()).data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        if len(self.get_queryset()):
+            return self.update(request, *args, **kwargs)
+        request.data['profile'] = request.user.id
+        return super(ContactDetailsViewSet, self).create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        request.data['profile'] = request.user.id
+        return super(ContactDetailsViewSet, self).update(request, *args, **kwargs)
 
 
 class ProfileViewSet(ModelViewSet):

@@ -93,6 +93,24 @@ class SkillTest(models.Model):
         return self.expertratings_test
 
 
+class ContactDetails(models.Model):
+    """
+    All Contact Details / PII for a user
+    """
+    profile = models.ForeignKey('accounts.Profile', primary_key=True)
+
+    email = models.CharField(max_length=50)
+    phone = models.CharField(max_length=50)
+    website = models.CharField(max_length=50, blank=True, null=True)
+    skype = models.CharField(max_length=50, blank=True, null=True)
+    linkedin = models.CharField(max_length=50, blank=True, null=True)
+    angellist = models.CharField(max_length=50, blank=True, null=True)
+    github = models.CharField(max_length=50, blank=True, null=True)
+    instagram = models.CharField(max_length=50, blank=True, null=True)
+    twitter = models.CharField(max_length=50, blank=True, null=True)
+    facebook = models.CharField(max_length=50, blank=True, null=True)
+
+
 def path_and_rename(instance, filename):
     upload_to = 'profile-photos'
     ext = filename.split('.')[-1]
@@ -110,7 +128,6 @@ class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
     address2 = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
@@ -159,6 +176,13 @@ class Profile(AbstractUser):
         try:
             return Employee.objects.get(profile=self, primary=True).company
         except Employee.DoesNotExist:
+            return None
+
+    @property
+    def contact_details(self):
+        try:
+            return ContactDetails.objects.get(profile=self)
+        except ContactDetails.DoesNotExist:
             return None
 
     def get_skills(self):

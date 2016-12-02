@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from rest_framework_nested import routers
 from rest_framework_jwt.views import refresh_jwt_token
 
-from accounts.api import ProfileViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
+from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck, ProductOrderViewSet
 from generics.api import AttachmentViewSet
@@ -25,6 +25,10 @@ router = DeclarativeRouter({
                 'skilltest': SkillTestViewSet,
             }
         }
+    },
+    'contactdetails': {
+        'view': ContactDetailsViewSet,
+        'base_name': 'contactdetails'
     },
     'skills': {
         'view': SkillViewSet,

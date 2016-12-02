@@ -4,7 +4,7 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from accounts.models import Profile, Skills, SkillTest, VerificationTest
+from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from business.models import Employee
 from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
@@ -45,6 +45,20 @@ class SkillsSerializer(serializers.ModelSerializer):
         exclude = ('protected', 'slug', )
 
 
+class ContactDetailsSerializer(RelationalModelSerializer):
+
+    email = serializers.CharField(required=False)
+    profile = serializers.PrimaryKeyRelatedField(queryset=Profile.objects.all(), required=False)
+
+    class Meta:
+        model = ContactDetails
+
+    def resolve_relations(self, data):
+        data = { k: v for k, v in data.items() if v } 
+        data['email'] = data.get('email', data['profile'].email)
+        return data
+
+
 class ObfuscatedProfileSerializer(serializers.ModelSerializer):
     photo_url = serializers.SerializerMethodField()
 
@@ -67,6 +81,8 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
     work_examples = serializers.SerializerMethodField()
+
+    contact_details = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -123,6 +139,12 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             many=True
         )
         return serializer.data
+
+    def get_contact_details(self, obj):
+        if obj.contact_details:
+            details = ContactDetailsSerializer(obj.contact_details).data
+            details.pop('profile')
+            return details
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
