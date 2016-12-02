@@ -21,16 +21,18 @@ from postman.models import Message
 
 class CompanySerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(write_only=True)
+    user_title = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Company
-        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type', 'user_id')
+        fields = field_names(Company, exclude=('stripe', 'slug',)) + ('type', 'user_id', 'user_title')
 
     def create(self, data):
         user_id = data.pop('user_id')
+        user_title = data.pop('user_title', None)
         user = Profile.objects.get(id=user_id)
         company = Company.objects.create(**data)
-        Employee.objects.create(profile=user, company=company, primary=True)
+        Employee.objects.create(profile=user, title=user_title, company=company, primary=True)
         for project in Project.objects.filter(project_manager=user):
             project.company = company
             project.save()
