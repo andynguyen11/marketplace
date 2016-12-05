@@ -136,6 +136,7 @@ class ConnectJob(Product):
 
     def on_ordered(self, order):
         job = order.related_object
+        job.owner.connect(job.contractor)
         job.status = 'connected'
         job.save()
         order.result = "%s, status: '%s'" % (job.__str__(), job.status)

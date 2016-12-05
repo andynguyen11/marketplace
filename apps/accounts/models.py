@@ -124,6 +124,21 @@ def path_and_rename(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+class Connection(models.Model):
+    """
+    TODO: When implementing the `request_connection` api:
+    * Add `from_type = { REQUESTER, REQUESTEE }`
+    * Add `status = { requested, accepted, connected }`
+    * Don't show `contact_details` unless `status == connected`
+    """
+    class Meta:
+        unique_together = ('from_profile', 'to_profile')
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    from_profile = models.ForeignKey('accounts.Profile', related_name='from_profile')
+    to_profile = models.ForeignKey('accounts.Profile', related_name='to_profile')
+
+
 class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -146,6 +161,12 @@ class Profile(AbstractUser):
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
     featured = models.BooleanField(default=False)
+
+    connections = models.ManyToManyField('self', through='Connection', symmetrical=False, related_name='reverse_connections+')
+
+    def connect(self, to_profile):
+        Connection.objects.create(from_profile=self, to_profile=to_profile)
+        Connection.objects.create(to_profile=self, from_profile=to_profile)
 
     @property
     def name(self):

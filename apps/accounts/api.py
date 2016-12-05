@@ -94,7 +94,10 @@ class ProfileViewSet(ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         response = super(ProfileViewSet, self).retrieve(request, *args, **kwargs)
         if response.data['id'] != self.request.user.id:
-            response.data = self.public_view(response.data)
+            view = self.public_view(response.data)
+            if hasattr(self.request.user, 'connections') and len(self.request.user.connections.filter(id=view['id'])):
+                view['contact_details'] = response.data.get('contact_details', None)
+            response.data = view
         return response
 
     @detail_route(methods=['get'])
@@ -112,6 +115,20 @@ class ProfileViewSet(ModelViewSet):
                 if not t.has_key('results'):
                     t['results'] = [{'result': 'INPROGRESS'}]
         return Response(summary)
+
+    @list_route(methods=['get'], url_path="connections")
+    def connections(self, request, *args, **kwargs):
+        user = request.user
+        connections = ProfileSerializer(user.connections, many=True).data
+        fields = [ 'id', 'first_name', 'last_name', 'photo', 'city', 'state', 'country', 'contact_details' ] #'username', 
+        return Response([
+            { k: v for k, v in connection.items() if k in fields }
+            for connection in connections ])
+
+    @detail_route(methods=['get'], url_path="connections")
+    def _connections(self, request, *args, **kwargs):
+        return self.connections(request, *args, **kwargs)
+
 
 
 class SkillTestViewSet(NestedModelViewSet):
