@@ -53,9 +53,11 @@ const MessageComposer = React.createClass({
       disabled: messageSending || fileSending
     };
     const fileButton = fileUpload && (() => {
+      const { jobStatus } = this.props;
+      const isConnected = jobStatus == 'connected' ? true : false;
       const input = !fileToUpload && <input type="file" onChange={onFileSelection} {...disabled} />;
 
-      return (
+      return isConnected && (
         <div className="text-field-fileUpload">
           {input}
         </div>
@@ -1052,7 +1054,7 @@ const Messages = React.createClass({
               {pii}
             </div>
           </div>
-          <MessageComposer messageSending={messageSending} threadId={threadId} fileUpload={true} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} onFileSelection={this.onFileSelection} fileToUpload={fileToUpload} />
+          <MessageComposer messageSending={messageSending} jobStatus={job.status} threadId={threadId} fileUpload={true} value={message} updateComposerContent={this.updateComposerContent} sendMessage={this.sendMessage} onFileSelection={this.onFileSelection} fileToUpload={fileToUpload} />
         </div>
         <div className="messages-tracker">
           <div className="messages-topBar agreement-topBar">
