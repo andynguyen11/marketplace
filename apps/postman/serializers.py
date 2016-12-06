@@ -4,7 +4,7 @@ from operator import attrgetter
 from django.db.models import Q
 from rest_framework import serializers
 
-from accounts.serializers import ObfuscatedProfileSerializer
+from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer
 from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
 from business.models import Document
 from docusign.models import DocumentSigner
@@ -84,6 +84,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     interactions = serializers.SerializerMethodField()
     sender = ObfuscatedProfileSerializer()
     recipient = ObfuscatedProfileSerializer()
+    contact_details = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -93,6 +94,15 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_current_user(self, obj):
         return self.context['request'].user.id
+
+    def get_contact_details(self, obj):
+        " TODO rebase after merge of connections and retest"
+        if self.get_is_owner(obj):
+            profile = obj.job.contractor
+        else:
+            profile = obj.job.project.project_manager
+        if len(self.context['request'].user.connections.filter(id=profile.id)):
+            return ContactDetailsSerializer(profile.contact_details).data
 
     def get_is_owner(self, obj):
         return self.context['request'].user == obj.job.project.project_manager
