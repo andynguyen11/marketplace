@@ -18,11 +18,23 @@ def nda_update_event(sender, instance, **kwargs):
     old_status = Document.objects.get(id=instance.id).status
     thread = Message.objects.get(nda=instance)
     if instance.status != old_status and instance.status.lower() == 'sent':
-        notify.send(thread, recipient=instance.contractor, verb=u'An NDA document signature needed', action_object=thread)
+        notify.send(
+            instance.manager,
+            recipient=instance.contractor,
+            verb=u'sent a non-disclosure agreement for',
+            action_object=thread,
+            target=instance.job.project
+        )
         nda_sent_email.delay(thread.job.id)
 
     if instance.status != old_status and instance.status.lower() == 'signed':
-        notify.send(thread, recipient=instance.manager, verb=u'An NDA document has been signed', action_object=thread)
+        notify.send(
+            instance.contractor,
+            recipient=instance.manager,
+            verb=u'signed a non-disclosure agreement for',
+            action_object=thread,
+            target=instance.job.project
+        )
         nda_signed_freelancer_email.delay(thread.job.id)
         nda_signed_entrepreneur_email.delay(thread.job.id)
 
@@ -33,11 +45,23 @@ def terms_update_event(sender, instance, **kwargs):
     old_status = Terms.objects.get(id=instance.id).status
     thread = Message.objects.get(terms=instance)
     if instance.status != old_status and instance.status.lower() == 'sent':
-        notify.send(thread, recipient=instance.job.contractor, verb=u'There are contract terms to preview and approve', action_object=thread)
+        notify.send(
+            instance.job.project.project_manager,
+            recipient=instance.job.contractor,
+            verb=u'sent contract terms to preview and approve for',
+            action_object=thread,
+            target=instance.job.project
+        )
         terms_sent_email.delay(thread.job.id)
 
     if instance.status != old_status and instance.status.lower() == 'agreed':
-        notify.send(thread, recipient=instance.job.project.project_manager, verb=u'Contract terms have been agreed', action_object=thread)
+        notify.send(
+            instance.job.contractor,
+            recipient=instance.job.project.project_manager,
+            verb=u'agreed to contract terms for',
+            action_object=thread,
+            target=instance.job.project
+        )
         terms_approved_email.delay(thread.job.id)
 
 @receiver(pre_save, sender=Project)

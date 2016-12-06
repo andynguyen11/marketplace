@@ -126,7 +126,14 @@ class JobSerializer(serializers.ModelSerializer):
             thread = Message.objects.get(job=job)
         message.thread = thread
         message.save()
-        notify.send(message, recipient=message.recipient, verb=u'A new bid received', action_object=job)
+
+        notify.send(
+            message.sender,
+            recipient=message.recipient,
+            verb=u'submitted a bid on',
+            action_object=message,
+            target=job.project
+        )
         # Send email notification
         if email_template:
             send_mail(email_template, [message.recipient], {

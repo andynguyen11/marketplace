@@ -46,6 +46,7 @@ class RawXMLParser(BaseParser):
 
 def signal_change(document, signer, new_status):
     if new_status.lower() in tuple('signed'):
+        # TODO Revisit this notification signal to reflect a proper target
         notify.send(signer, recipient=document.manager, verb=u'Contract signed', action_object=document)
 
 
@@ -67,6 +68,7 @@ class Webhook(APIView):
             if signer.status == 'sent' and signer.profile.id == job_document.job.contractor.id:
                 dev_contact_card_email.delay(job_document.job.id)
             signer.save()
+            # TODO Reimplement when this notify signal is refactored properly
             #signal_change(document, signer, new_status)
         return Response(status=200, data={"message": "Success"})
 
