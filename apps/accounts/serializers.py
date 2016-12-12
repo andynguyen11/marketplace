@@ -64,7 +64,7 @@ class ObfuscatedProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'first_name', 'photo_url')
+        fields = ('id', 'first_name', 'photo_url', 'role', 'capacity', 'city', 'state', 'country', 'location')
 
     def get_photo_url(self, obj):
         return obj.get_photo

@@ -4,6 +4,7 @@ from operator import attrgetter
 from django.db.models import Q
 from rest_framework import serializers
 
+from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer
 from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
 from business.models import Document
@@ -84,6 +85,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     interactions = serializers.SerializerMethodField()
     sender = ObfuscatedProfileSerializer()
     recipient = ObfuscatedProfileSerializer()
+    connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
 
     class Meta:
@@ -92,30 +94,40 @@ class ConversationSerializer(serializers.ModelSerializer):
                    'sender_archived', 'recipient_archived', 'sender_deleted_at', 'recipient_deleted_at',
                    'moderation_status', 'moderation_date', 'moderation_reason', 'parent', 'moderation_by')
 
-    def get_current_user(self, obj):
-        return self.context['request'].user.id
+    # Helpers used in SerializerMethodFields
+    def current_user(self, obj):
+        return self.context['request'].user
 
-    def get_contact_details(self, obj):
-        " TODO rebase after merge of connections and retest"
-        if self.get_is_owner(obj):
-            profile = obj.job.contractor
-        else:
-            profile = obj.job.project.project_manager
-        if len(self.context['request'].user.connections.filter(id=profile.id)):
-            return ContactDetailsSerializer(profile.contact_details).data
+    def other_user(self, obj):
+        return obj.job.contractor if self.get_is_owner(obj) else obj.job.project.project_manager
+
+    def is_connected(self, obj):
+        return len(self.current_user(obj).connections.filter(id=self.other_user(obj).id))
+
 
     def get_is_owner(self, obj):
-        return self.context['request'].user == obj.job.project.project_manager
+        return self.current_user(obj) == obj.job.project.project_manager
+
+    def get_current_user(self, obj):
+        return self.current_user(obj).id
+
+    def get_connection_contact_details(self, obj):
+        other_user = self.other_user(obj)
+        if self.is_connected(obj):
+            return ContactDetailsSerializer(self.other_user(obj).contact_details).data
+
+    def get_contact_details(self, obj):
+        return ContactDetailsSerializer(self.current_user(obj).contact_details).data
 
     def get_signing_url(self, obj):
         try:
             document = Document.objects.get(job=obj.job, type='MSA')
-            return document.docusign_document.get_signer_url(self.context['request'].user)
+            return document.docusign_document.get_signer_url(self.current_user(obj))
         except Document.DoesNotExist:
             return None
 
     def get_interactions(self, obj):
-        mark_read(self.context['request'].user, obj.id)
+        mark_read(self.current_user(obj), obj.id)
         interactions = sorted(chain(*[
             BaseModel.objects.filter(thread=obj.id).order_by('sent_at') for BaseModel
             in [Message, AttachmentInteraction]
