@@ -9,7 +9,7 @@ from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck, ProductOrderViewSet
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
-from postman.api import ConversationDetail, MessageAPI, MessageCount
+from postman.api import ConversationDetail, MessageAPI, MessageCount, ConnectThreadAPI
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
@@ -89,6 +89,7 @@ urlpatterns = [
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^thread/(?P<thread_id>[0-9]+)/$', view=MessageAPI.as_view(), name='view-thread'),
+    url(r'^thread/(?P<thread_id>[0-9]+)/connect$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
    #url(r'^orders/$', view=OrderListCreate.as_view(), name='orders'),
    #url(r'^order/(?P<pk>[0-9]+)/$', view=OrderDetail.as_view(), name='order-detail'),

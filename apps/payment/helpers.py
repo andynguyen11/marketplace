@@ -31,27 +31,52 @@ def get_customer(user):
     else: return connect_customer(user)
 
 
-def get_customer_and_card(user, stripe_token):
+def add_source(user, stripe_token, metadata={}):
+    " add a payment source to an existing customer via a token "
+    stripe_customer = stripe.Customer.retrieve(user.stripe)
+    return stripe_customer.sources.create(source=stripe_token, metadata=metadata)
+
+
+def metadata_filter(sub):
+    """
+    Find all sources that have the same slice of metadata.
+    Stripe seems to cast all metadata to strings
+    """
+    def match(full):
+        for k, v in sub.items():
+            if not str(full.metadata.get(k, None)) == str(v):
+                return False
+        return True
+    return match
+
+def get_source(user=None, customer=None, source_id=None, metadata={}):
+    " get a specific stripe payment source's details "
+    if isinstance(source_id, stripe.Card):
+        return source_id
+    if user:
+        return get_source(
+                customer=stripe.Customer.retrieve(user.stripe),
+                source_id=source_id,
+                metadata=metadata)
+    if source_id:
+        return customer.sources.retrieve(source_id)
+    matches = filter(metadata_filter(metadata), customer.sources.data)
+    assert len(matches) == 1
+    return matches[0]
+
+def get_customer_and_card(user, stripe_token=None, metadata={}):
     if user.stripe:
         customer = stripe.Customer.retrieve(user.stripe)
         try:
-            card = customer.sources.retrieve(stripe_token)
+            card = get_source(customer=customer, source_id=stripe_token, metadata=metadata)
         except stripe.error.InvalidRequestError, e:
             card = customer.sources.create(source=stripe_token)
     else:
         customer = connect_customer(user, stripe_token),
         card = customer.sources.create(source=stripe_token)
+    card.metadata = metadata
+    card.save()
     return customer, card
-
-def add_source(user, stripe_token):
-    " add a payment source to an existing customer via a token "
-    stripe_customer = stripe.Customer.retrieve(user.stripe)
-    return stripe_customer.sources.create(source=stripe_token)
-
-def get_source(user, source_id):
-    " get a specific stripe payment source's details "
-    stripe_customer = stripe.Customer.retrieve(user.stripe)
-    return stripe_customer.sources.retrieve(source_id)
 
 def charge_source(amount, application_fee=None, **kwargs):
     " thin wrapper around stripe.Charge.create "

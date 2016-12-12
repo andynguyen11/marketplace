@@ -8,6 +8,7 @@ from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer
 from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
 from business.models import Document
+from payment.models import ProductOrder
 from docusign.models import DocumentSigner
 from generics.serializers import AttachmentSerializer
 from postman.models import Message, AttachmentInteraction
@@ -87,6 +88,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     recipient = ObfuscatedProfileSerializer()
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
+    connection_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -135,3 +137,13 @@ class ConversationSerializer(serializers.ModelSerializer):
         mapped_interactions = map(serialize_interaction, interactions)
         serializer = InteractionSerializer(mapped_interactions, many=True)
         return serializer.data
+
+    def get_connection_status(self, obj):
+        if(obj.job.status != 'pending'):
+            return 'connected'
+        try:
+            if(ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=obj.job.id)):
+                return 'requested'
+        except ProductOrder.DoesNotExist:
+            pass
+

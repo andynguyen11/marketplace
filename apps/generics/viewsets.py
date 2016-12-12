@@ -75,9 +75,10 @@ class NestedUpdateModelMixin(mixins.UpdateModelMixin):
 class NestedRetrieveModelMixin(mixins.RetrieveModelMixin):
 
     def retrieve(self, request, **kwargs):
-        data = get_object_or_404(self.get_queryset(), **self.keys)
-        serializer = self.serializer_class(data)
-        return Response(serializer.data)
+        request.query_params._mutable = True
+        request.query_params[self.parent_key] = self.parent_kwargs['id']
+        request.query_params._mutable = False
+        return super(NestedRetrieveModelMixin, self).retrieve(request, **kwargs)
 
 
 class NestedListModelMixin(mixins.ListModelMixin):

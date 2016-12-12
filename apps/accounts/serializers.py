@@ -54,7 +54,6 @@ class ContactDetailsSerializer(RelationalModelSerializer):
         model = ContactDetails
 
     def resolve_relations(self, data):
-        data = { k: v for k, v in data.items() if v } 
         data['email'] = data.get('email', data['profile'].email)
         return data
 

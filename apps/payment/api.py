@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, viewsets
+from apps.api.permissions import ProductOrderPermission
 from django.conf import settings
 
 from accounts.models import Profile
@@ -19,7 +20,7 @@ from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
 from payment.models import ProductOrder, Order, Promo, get_promo
-from payment.serializers import OrderSerializer, ProductOrderSerializer
+from payment.serializers import OrderSerializer, ProductOrderSerializer, ensure_order_is_payable
 from payment.helpers import stripe_helpers 
 from postman.forms import build_payload
 
@@ -211,18 +212,37 @@ class PromoCheck(APIView):
 class ProductOrderViewSet(ImmutableNestedModelViewSet):
     queryset = ProductOrder.objects.all()
     serializer_class = ProductOrderSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, ProductOrderPermission)
     parent_key = '_product'
 
     @property
     def parent(self):
-        return products.get(self.parent_key, None)
+        parent_field = getattr(self.serializer_class.Meta.model, self.parent_key).field
+        return products.get(parent_field, None)
 
     def list(self, request, **kwargs):
         user_orders = self.get_queryset().filter(payer=request.user, **self.keys)
         return Response(self.serializer_class(user_orders, many=True).data)
 
     def create(self, request, **kwargs):
-        request.data['payer'] = self.request.user.id
+        request.data['requester'] = self.request.user.id
         return super(ProductOrderViewSet, self).create(request, **kwargs)
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated, ProductOrderPermission))
+    def update_status(self, request, **kwargs):
+        order = self.get_object()
+        status = request.data.get('status', None)
+        user = request.user
+
+        if(order.payer == user):
+            payable, details = ensure_order_is_payable(order, stripe_token=request.data.get('stripe_token', None))
+            if not payable:
+                return Response(status=400, data={'stripe_token': [
+                    'Payer has not specified a payment source for this Order',
+                    details ]})
+
+        updated = order.product.change_status(status, order, user)
+        data = ProductOrderSerializer(updated).data
+        return Response(status=204, data=data)
+
 

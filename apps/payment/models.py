@@ -8,6 +8,8 @@ from generics.utils import percentage
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+def noop(*args, **kwargs):
+    pass
 
 class Promo(models.Model):
     code = models.CharField(max_length=15)
@@ -130,6 +132,8 @@ class ProductOrder(models.Model):
     date_created = models.DateTimeField(auto_now=True)
     date_charged = models.DateTimeField(blank=True, null=True)
     _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
+
+    requester = models.ForeignKey('accounts.Profile', related_name='requester')
     payer = models.ForeignKey('accounts.Profile', related_name='payer')
     recipient = models.ForeignKey('accounts.Profile', related_name='recipient', null=True)
 
@@ -140,7 +144,10 @@ class ProductOrder(models.Model):
     promo = models.ForeignKey(Promo, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     fee = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
     status = models.CharField(max_length=20, default='pending', choices=ORDER_STATUSES)
+    request_status = models.CharField(max_length=50, null=True)
+
     stripe_charge_id = models.CharField(max_length=50, null=True)
     details = models.CharField(max_length=250, null=True)
     result = models.CharField(max_length=100, null=True)
@@ -153,11 +160,35 @@ class ProductOrder(models.Model):
     def product(self, product):
         self._product = product.id
 
+    def set_status(self, status):
+        """
+        This allows Products to implement logic that is stored in request_status.
+        request_statuses are usually substatuses of pending.
+        Products can implement on_{status} hooks for ORDER_STATUSES and request_statuses
+        """
+        valid_order_status = status in { t[0] for t in ORDER_STATUSES }
+        valid_request_status = status in self.product.status_flow
+
+        if valid_order_status:
+            self.status = status
+        if valid_request_status :
+            self.request_status = status
+        if not (valid_order_status or valid_request_status):
+            raise TypeError('status "%s" is not an ORDER_STATUS or defined by product %s' % (status, self.product))
+        return getattr(self.product, 'on_%s' % status, noop)(self)
+
+    @property
+    def full_status(self):
+        return '%s.%s' % (self.status, self.request_status)
+
     def __str__(self):
         return 'Product {0}, Order #{1} on {2}'.format(self.product, self.id, self.related_object)
 
-    def on_ordered(self):
-        return self.product.on_ordered(self)
+    @property
+    def involved_users(self):
+        if hasattr(self.product, 'involved_users'):
+            return self.product.involved_users(self)
+        return { self.payer, self.requester, self.recipient }
 
     def resolve_product_fields(self):
         if not hasattr(self, 'related_model'):
@@ -178,7 +209,8 @@ class ProductOrder(models.Model):
             return self.price, self.apply_promo(self.fee)
         return self.apply_promo(self.price), None
 
-    def add_promo(self, code): # TODO: Should an incorrect promo fail silently like this?
+    def add_promo(self, code):
+        # TODO: Should an incorrect promo fail silently like this?
         if code:
             promo = get_promo(code)
             if promo and promo.is_valid(self.payer):
@@ -186,7 +218,10 @@ class ProductOrder(models.Model):
             else:
                 return False
 
-    def pay(self, customer, source):
+    def pay(self, customer=None, source=None):
+        if not (customer and source):
+            customer, source = stripe_helpers.get_customer_and_card(
+                    self.payer, metadata={'order': self.id})
         self.product.can_pay(self, self.payer)
         amount, fee = self.final_costs
         payload = dict(
@@ -200,17 +235,16 @@ class ProductOrder(models.Model):
 
         charge = stripe_helpers.charge_source(**payload)
 
-        self.stripe_charge_id= charge.id
-        self.status = 'paid' if charge.paid else charge.status
+        self.stripe_charge_id = charge.id
+        self.set_status('paid' if charge.paid else charge.status)
 
         if self.status == 'paid':
             if self.promo:
                 self.promo.mark_used_by(self.payer)
             self.details = self.product.display_value
             self.date_charged = datetime.now()
-            self.on_ordered()
 
-        if charge.status == 'failed':
+        if self.status == 'failed':
             self.details = '''
             failure_code: %s,
             failure_message: %s

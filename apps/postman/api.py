@@ -1,18 +1,25 @@
+import json
 from datetime import timedelta, datetime
 
 from django.db.models import Q
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
+from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
+from rest_framework.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.encoding import smart_str
 
 from accounts.models import Profile
 from business.models import Project, Job, Terms, Document
+
+from payment.models import ProductOrder
+from payment.serializers import ProductOrderSerializer, ensure_order_is_payable
+
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
@@ -169,4 +176,74 @@ class MessageAPI(APIView):
         interaction.save()
         return self.get(request, interaction.thread.id)
 
+
+class ConnectThreadAPI(APIView):
+
+    def update_contact_details(self, contact_details, new_details={}):
+        for k, v in new_details.items():
+            setattr(contact_details, k, v)
+        contact_details.save()
+
+    def get_or_create_order(self, request, thread):
+        try:
+            return ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id)
+        except ProductOrder.DoesNotExist:
+            serializer = ProductOrderSerializer(data=dict(
+                requester=request.user.id,
+                _product='connect_job',
+                stripe_token=request.data.pop('stripe_token', None),
+                related_object_id=thread.job.id))
+            serializer.is_valid()
+            return serializer.save()
+
+    def validate_order(self, request, order):
+        if order.status == 'failed':
+            try:
+                detail = json.loads(order.details)
+            except:
+                detail = order.details
+            raise ValidationError(detail)
+
+        if(order.payer == request.user):
+            payable, details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
+            if not payable:
+                errors = [ 'Payer has not specified a payment source for this Order' ]
+                if len(details):
+                    errors.append(details)
+                raise ValidationError({ 'stripe_token': errors })
+        return order
+
+    def update_order(self, request, thread):
+        "due to payment frontloading, the order is always completed when the requestee accepts"
+        order = self.get_or_create_order(request, thread)
+        self.validate_order(request, order)
+        if order.requester != request.user:
+            order.product.change_status('accepted', order, request.user)
+            return 'Connection Made!' # TODO: Get actual copy for messages
+        return 'Connection Requested!'
+
+    def new_message(self, thread, user, body):
+        recipient = thread.sender if user == thread.recipient else thread.recipient
+        return Message.objects.create(
+            sender=user,
+            recipient=recipient,
+            thread=thread,
+            body=body,
+            subject=thread.subject
+        )
+
+    def update_thread(self, request, message_body, thread):
+        thread.refresh_from_db()
+        thread.job.refresh_from_db()
+        interaction = self.new_message(thread, request.user, message_body)
+        serializer = ConversationSerializer(thread, context={'request': request})
+        new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
+        return serializer.data
+
+    def post(self, request, thread_id):
+        thread = Message.objects.get(id = thread_id)
+        self.update_contact_details(request.user.contact_details, request.data.get('contact_details', {}))
+        message_body = self.update_order(request, thread)
+        updated_thread = self.update_thread(request, message_body, thread)
+        return Response(updated_thread)
 
