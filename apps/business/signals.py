@@ -9,7 +9,8 @@ from postman.models import Message
 from notifications.signals import notify
 
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
-    terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills
+    terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills,\
+    post_a_project, complete_project
 
 @receiver(pre_save, sender=Document)
 def nda_update_event(sender, instance, **kwargs):
@@ -73,18 +74,31 @@ def new_project_posted(sender, instance, **kwargs):
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)
 
+
+@receiver(post_save, sender=Project)
+def project_saved(sender, instance, created, **kwargs):
+    if created:
+        today = datetime.utcnow()
+        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=2))
+
+
 @receiver(pre_save, sender=Profile)
 def new_account(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
     old_profile = Profile.objects.get(pk=instance.id)
+
     if not old_profile.country and instance.country:
         account_confirmation.delay(
                 instance.id,
                 instance.role
             )
+
         if instance.role:
             today = datetime.utcnow()
             add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
             add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))
             verify_skills.apply_async((instance.id, ), eta=today + timedelta(days=3))
+        else:
+            today = datetime.utcnow()
+            post_a_project.apply_async((instance.id, ), eta=today + timedelta(days=5))

@@ -187,3 +187,20 @@ def verify_skills(profile_id):
     if not results:
         profile = Profile.objects.get(id=profile_id)
         send_mail('verify-skills', [profile], {})
+
+
+@shared_task
+def post_a_project(profile_id):
+    user = Profile.objects.get(id=profile_id)
+    project = Project.objects.filter(project_manager=user)
+    if not len(project):
+        send_mail('post-a-project', [user], {})
+
+
+@shared_task
+def complete_project(project_id):
+    project = Project.objects.get(id=project_id)
+    if not project.published and not project.deleted:
+        send_mail('complete-project', [project.project_manager], {
+            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+        })
