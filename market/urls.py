@@ -85,6 +85,7 @@ urlpatterns = [
 if settings.DEBUG and settings.MEDIA_URL :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns.append(url(r'^docs/', include('rest_framework_docs.urls')))
+    urlpatterns.append(url(r'^dashboard/messages/', TemplateView.as_view(template_name='spa.html')))
 
 handler404 = error404
 handler500 = error500
