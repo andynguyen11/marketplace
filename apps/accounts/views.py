@@ -106,7 +106,6 @@ def edit_profile(request):
 @login_required
 def dashboard(request):
     user = Profile.objects.get(id=request.user.id)
-    print('user id:', request.user.id)
     social = user.social_auth.filter(provider='linkedin-oauth2')
     notifications = user.notifications.unread()
     messages = Message.objects.inbox(request.user, {'is_new': True, })[:5]
