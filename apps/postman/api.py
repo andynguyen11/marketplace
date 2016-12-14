@@ -2,6 +2,7 @@ import json
 from datetime import timedelta, datetime
 
 from django.db.models import Q
+from django.conf import settings
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -123,9 +124,17 @@ class MessageAPI(APIView):
             'interaction': new_interaction
         }
 
+    def passed_limit(self, thread, user):
+        return (thread.job.status == 'pending' and
+                thread.get_participant_replies_count(user) >= settings.UNCONNECTED_THREAD_REPLY_LIMIT)
+
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
+
         if request.user == thread.sender or request.user == thread.recipient:
+            if(self.passed_limit(thread, request.user)):
+                return Response("Unconnected Thread Reply Limit Exceeded", status=403)
+
             if request.data.has_key('attachment'):
                 tag = request.data.get('tag', 'Attachment')
                 attachment = self.new_attachment(thread, request.user, request.data['attachment'], tag)

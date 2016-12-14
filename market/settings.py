@@ -397,6 +397,8 @@ FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
 
 LOOM_FEE = 3
 
+UNCONNECTED_THREAD_REPLY_LIMIT = 5
+
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
 
 CORS_ORIGIN_WHITELIST = (
