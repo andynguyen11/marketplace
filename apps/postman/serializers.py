@@ -2,6 +2,7 @@ from itertools import chain
 from operator import attrgetter
 
 from django.db.models import Q
+from notifications.models import Notification
 from rest_framework import serializers
 
 from accounts.models import ContactDetails
@@ -33,6 +34,17 @@ class FileInteraction(Interaction):
         self.interactionType = 'attachment'
         self.attachment = attachment
         super(FileInteraction, self).__init__(*args, **kwargs)
+
+
+class MessageAlertSerializer(serializers.ModelSerializer):
+    type = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = ('id', 'timestamp', 'unread', 'type', )
+
+    def get_type(self, obj):
+        return obj.data['type']
 
 
 class MessageSerializer(serializers.ModelSerializer):
@@ -89,6 +101,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
     connection_status = serializers.SerializerMethodField()
+    alerts = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -106,7 +119,6 @@ class ConversationSerializer(serializers.ModelSerializer):
     def is_connected(self, obj):
         return len(self.current_user(obj).connections.filter(id=self.other_user(obj).id))
 
-
     def get_is_owner(self, obj):
         return self.current_user(obj) == obj.job.project.project_manager
 
@@ -120,6 +132,10 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_contact_details(self, obj):
         return ContactDetailsSerializer(self.current_user(obj).contact_details).data
+
+    def get_alerts(self, obj):
+        alerts = Notification.objects.filter(recipient=self.context['request'].user, data__isnull=False)
+        return MessageAlertSerializer(alerts, many=True).data
 
     def get_signing_url(self, obj):
         try:

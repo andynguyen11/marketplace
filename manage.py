@@ -17,8 +17,8 @@ if __name__ == "__main__":
     from django.core.management import execute_from_command_line
 
     from django.conf import settings
-    if not settings.LOCAL_DB and 'migrate' in sys.argv:
-        if not yes_or_no("LOCAL_DB is set to False - are you sure you want to migrate the dev database?"):
-            exit()
+    #if not settings.LOCAL_DB and 'migrate' in sys.argv:
+    #    if not yes_or_no("LOCAL_DB is set to False - are you sure you want to migrate the dev database?"):
+    #        exit()
 
     execute_from_command_line(sys.argv)

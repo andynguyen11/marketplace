@@ -1,8 +1,12 @@
 import json
 from datetime import timedelta, datetime
+from itertools import chain
+from operator import attrgetter
 
-from django.db.models import Q
 from django.conf import settings
+from django.db.models import Q
+from django.utils.encoding import smart_str
+from notifications.signals import notify
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -12,24 +16,18 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import ValidationError
-from django.db.models import Q
-from django.utils.encoding import smart_str
 
-from accounts.models import Profile
+from accounts.models import Profile, Connection
 from business.models import Project, Job, Terms, Document
-
-from payment.models import ProductOrder
-from payment.serializers import ProductOrderSerializer, ensure_order_is_payable
-
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
+from payment.models import ProductOrder
+from payment.serializers import ProductOrderSerializer, ensure_order_is_payable
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
 
-from itertools import chain
-from operator import attrgetter
 
 def all_interactions(thread_id):
     return sorted(chain(*[
@@ -228,7 +226,33 @@ class ConnectThreadAPI(APIView):
         self.validate_order(request, order)
         if order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
+            if (order.status == 'paid' and order.requester in request.user.connections.all()):
+                notify.send(
+                    request.user,
+                    recipient=order.requester,
+                    verb=u'has connected with you on',
+                    action_object=thread,
+                    target=thread.job.project,
+                    type=u'connectionAccepted'
+                )
+                notify.send(
+                    order.requester,
+                    recipient=request.user,
+                    verb=u'has connected with you on',
+                    action_object=thread,
+                    target=thread.job.project,
+                    type=u'connectionAccepted'
+                )
             return 'Connection Made!' # TODO: Get actual copy for messages
+        recipient = thread.sender if request.user == thread.recipient else thread.recipient
+        notify.send(
+            request.user,
+            recipient=recipient,
+            verb=u'made a connection request for',
+            action_object=thread,
+            target=thread.job.project,
+            type=u'connectionRequest'
+        )
         return 'Connection Requested!'
 
     def new_message(self, thread, user, body):

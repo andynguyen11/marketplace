@@ -24,7 +24,8 @@ def nda_update_event(sender, instance, **kwargs):
             recipient=instance.contractor,
             verb=u'sent a non-disclosure agreement for',
             action_object=thread,
-            target=instance.job.project
+            target=instance.job.project,
+            type=u'ndaRequest'
         )
         nda_sent_email.delay(thread.job.id)
 
@@ -34,7 +35,8 @@ def nda_update_event(sender, instance, **kwargs):
             recipient=instance.manager,
             verb=u'signed a non-disclosure agreement for',
             action_object=thread,
-            target=instance.job.project
+            target=instance.job.project,
+            type=u'ndaSigned'
         )
         nda_signed_freelancer_email.delay(thread.job.id)
         nda_signed_entrepreneur_email.delay(thread.job.id)
