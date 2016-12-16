@@ -134,7 +134,11 @@ class ConversationSerializer(serializers.ModelSerializer):
         return ContactDetailsSerializer(self.requesting_user(obj).contact_details).data
 
     def get_alerts(self, obj):
-        alerts = Notification.objects.filter(recipient=self.context['request'].user, data__isnull=False)
+        alerts = Notification.objects.filter(
+            recipient=self.context['request'].user,
+            action_object_object_id=obj.id,
+            data__isnull=False
+        )
         return MessageAlertSerializer(alerts, many=True).data
 
     def get_signing_url(self, obj):
