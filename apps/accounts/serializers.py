@@ -4,6 +4,8 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from notifications.models import Notification
+
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from business.models import Employee
 from business.serializers import EmployeeSerializer
@@ -159,7 +161,6 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
 
 class SkillTestSerializer(serializers.ModelSerializer):
-
     skills = serializers.CharField(required=False)
     test_details = ERSkillTestSerializer(read_only=True)
     results = SkillTestResultSerializer(many=True, read_only=True)
@@ -181,3 +182,10 @@ class SkillTestSerializer(serializers.ModelSerializer):
         update_instance(instance, data)
         instance.create_ticket()
         return instance
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Notification
+        fields = ('unread', )

@@ -235,14 +235,6 @@ class ConnectThreadAPI(APIView):
                     target=thread.job.project,
                     type=u'connectionAccepted'
                 )
-                notify.send(
-                    order.requester,
-                    recipient=request.user,
-                    verb=u'has connected with you on',
-                    action_object=thread,
-                    target=thread.job.project,
-                    type=u'connectionAccepted'
-                )
             return 'Connection Made!' # TODO: Get actual copy for messages
         recipient = thread.sender if request.user == thread.recipient else thread.recipient
         notify.send(
@@ -276,7 +268,11 @@ class ConnectThreadAPI(APIView):
     def post(self, request, thread_id):
         thread = Message.objects.get(id = thread_id)
         self.update_contact_details(request.user.contact_details, request.data.get('contact_details', {}))
+        #TODO These need to become system messages when we support that
         message_body = self.update_order(request, thread)
-        updated_thread = self.update_thread(request, message_body, thread)
-        return Response(updated_thread)
-
+        #updated_thread = self.update_thread(request, message_body, thread)
+        #return Response(updated_thread)
+        thread.refresh_from_db()
+        thread.job.refresh_from_db()
+        serializer = ConversationSerializer(thread, context={'request': request})
+        return Response(serializer.data)

@@ -4,7 +4,7 @@ from django.conf.urls import patterns, url
 from rest_framework_nested import routers
 from rest_framework_jwt.views import refresh_jwt_token
 
-from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet
+from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate
 from business.api import *
 from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck, ProductOrderViewSet
 from generics.api import AttachmentViewSet
@@ -88,6 +88,7 @@ urlpatterns = [
     url(r'^employee/(?P<pk>[0-9]+)/$', view=EmployeeDetail.as_view(), name='employee-detail'),
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
+    url(r'^notification/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
     url(r'^thread/(?P<thread_id>[0-9]+)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),

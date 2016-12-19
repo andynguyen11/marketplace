@@ -1,5 +1,7 @@
 from django.http import HttpResponseForbidden
 from django.contrib.auth import login, authenticate
+from django.shortcuts import redirect, get_object_or_404
+from notifications.models import Notification
 from rest_condition import Not
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
@@ -9,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
-from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer
+from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
@@ -17,7 +19,7 @@ from apps.api.permissions import (
 from expertratings.utils import nicely_serialize_verification_tests
 from generics.tasks import account_confirmation
 from generics.viewsets import NestedModelViewSet, assign_crud_permissions
-from django.shortcuts import redirect, get_object_or_404
+from postman.serializers import ConversationSerializer
 
 
 class SkillViewSet(ModelViewSet):
@@ -130,7 +132,6 @@ class ProfileViewSet(ModelViewSet):
         return self.connections(request, *args, **kwargs)
 
 
-
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
     serializer_class = SkillTestSerializer
@@ -144,7 +145,7 @@ class SkillTestViewSet(NestedModelViewSet):
         self.perform_update(serializer)
         return serializer.data
 
-    def create(self,  request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         try:
             return super(SkillTestViewSet, self).create(request, *args, **kwargs)
         except ValidationError, e: # just need a new ticket in expertratings
@@ -158,3 +159,19 @@ class SkillTestViewSet(NestedModelViewSet):
         create_response = self.create(request, *args, **kwargs)
         return redirect(create_response.data['ticket_url'])
 
+
+class NotificationUpdate(generics.UpdateAPIView):
+    queryset = Notification.objects.all()
+    serializer_class = NotificationSerializer
+    permission_classes = ( IsAuthenticated, )
+
+    def patch(self, request, pk, *args, **kwargs):
+        # TODO, this assumes that notifications will always be marked unread from a message thread.
+        # Need to refactor to mark as unread anywhere and update the permissions.
+        notification = Notification.objects.get(id = pk)
+        if request.user == notification.recipient:
+            self.partial_update(request, *args, **kwargs)
+            serializer = ConversationSerializer(notification.action_object, context={'request': request})
+            return Response(serializer.data)
+        else:
+            return Response(status=403)
