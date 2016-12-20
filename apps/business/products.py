@@ -6,9 +6,10 @@ from generics.utils import percentage
 from business.models import Terms, Job
 from django.contrib.contenttypes.models import ContentType
 
-from generics.tasks import pm_contact_card_email
+from generics.tasks import pm_contact_card_email, connection_request_to_freelancer, connection_request_to_entrepreneur, connection_made_entrepreneur, connection_made_freelancer
 from docusign.models import Document as DocusignDocument
 from postman.forms import build_payload
+from postman.models import Message
 
 def content_type(model):
     return ContentType.objects.get_for_model(model)
@@ -197,11 +198,15 @@ class ConnectJob(Product):
 
     def on_requested_by_freelancer(self, order):
         "request contact_details from entrepreneur"
-        pass
+        job = order.related_object
+        thread = Message.objects.get(job=job)
+        connection_request_to_entrepreneur.delay(job.contractor.id, thread.id)
 
     def on_requested_by_entrepreneur(self, order):
         "request contact_details from freelancer"
-        pass
+        job = order.related_object
+        thread = Message.objects.get(job=job)
+        connection_request_to_freelancer.delay(job.owner.id, thread.id)
 
     def on_accepted(self, order):
         "pay order with cached card"
@@ -214,6 +219,9 @@ class ConnectJob(Product):
         job.save()
         order.result = "%s, status: '%s'" % (job.__str__(), job.status)
         order.save()
+        thread = Message.objects.get(job=job)
+        connection_made_entrepreneur.delay(job.contractor.id, thread.id)
+        connection_made_freelancer.delay(job.owner.id, thread.id)
         return order
 
 

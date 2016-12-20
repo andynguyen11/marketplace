@@ -248,3 +248,35 @@ def complete_project(project_id):
         send_mail('complete-project', [project.project_manager], {
             'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
         })
+
+@shared_task
+def connection_request_to_freelancer(entrepreneur_id, thread_id):
+    entrepreneur = Profile.objects.get(id=entrepreneur_id)
+    send_mail('connection-request-freelancer', [freelancer], {
+        'fname': freelancer.first_name,
+        'thread_id': thread_id,
+    })
+
+@shared_task
+def connection_request_to_entrepreneur(freelancer_id, thread_id):
+    freelancer = Profile.objects.get(id=freelancer_id)
+    send_mail('connection-request-entrepreneur', [freelancer], {
+        'fname': freelancer.first_name,
+        'thread_id': thread_id,
+    })
+
+@shared_task
+def connection_made_freelancer(entrepreneur_id, thread_id):
+    entrepreneur = Profile.objects.get(id=entrepreneur_id)
+    send_mail('connection-made-freelancer', [entrepreneur], {
+        'fname': entrepreneur.first_name,
+        'thread_id': thread_id,
+    })
+
+@shared_task
+def connection_made_entrepreneur(freelancer_id, thread_id):
+    freelancer = Profile.objects.get(id=freelancer_id)
+    send_mail('connection-made-entrepreneur', [freelancer], {
+        'fname': freelancer.first_name,
+        'thread_id': thread_id,
+    })
