@@ -397,6 +397,8 @@ FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
 
 LOOM_FEE = 3
 
+PRODUCTS = { 'connect_job': {'price': 100.00} }
+
 UNCONNECTED_THREAD_REPLY_LIMIT = 5
 
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')

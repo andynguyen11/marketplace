@@ -4,6 +4,8 @@ import logging
 from decimal import Decimal
 
 from django.conf import settings
+from django.core import signing
+from rest_framework.exceptions import PermissionDenied
 
 
 def to_nice_string(num):
@@ -74,27 +76,37 @@ def camel_to_underscored(name):
 def normalized_subdict(d, keys):
     return { camel_to_underscored(k): d.get(k, None) for k in keys }
 
-API_KEY = settings.MANDRILL_API_KEY
 
-def send_mail(template_name, users, context):
+API_KEY = settings.MANDRILL_API_KEY
+def send_to_emails(template_name, email=None, emails=[], context={}):
+    " send template to the given emails, with the given context "
+    if email:
+        emails.append(email)
     logger = logging.getLogger()
     mandrill_client = mandrill.Mandrill(API_KEY)
     message = {
-        'to': [],
-        'global_merge_vars': []
-    }
-    for user in users:
-        if user.email_notifications:
-            message['to'].append({'email': user.email})
-
-    for k, v in context.iteritems():
-        message['global_merge_vars'].append(
+        'to': [{'email': email} for email in set(emails)],
+        'global_merge_vars': [
             {'name': k, 'content': v}
-        )
+            for k, v in context.iteritems()] }
     try:
         mandrill_client.messages.send_template(template_name, [], message)
     except mandrill.Error, e:
         logger.error('Mandrill Error | %s - %s' % (e.__class__, e))
+
+def send_mail(template_name, users, context):
+    emails = [user.email for user in users if user.email_notifications]
+    send_to_emails(template_name, emails, context)
+
+
+def sign_data(**kwargs):
+    return signing.dumps(kwargs)
+
+def parse_signature(signature):
+    try:
+        return signing.loads(signature)
+    except signing.BadSignature:
+        raise PermissionDenied(detail='signature invalid')
 
 
 def percentage(base=None, percent=0, operation='of'):

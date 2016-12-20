@@ -221,10 +221,9 @@ class ConnectThreadAPI(APIView):
         return order
 
     def update_order(self, request, thread):
-        "due to payment frontloading, the order is always completed when the requestee accepts"
         order = self.get_or_create_order(request, thread)
         self.validate_order(request, order)
-        if order.requester != request.user:
+        if request.user.contact_details.email_confirmed and order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
             if (order.status == 'paid' and order.requester in request.user.connections.all()):
                 notify.send(
@@ -235,17 +234,31 @@ class ConnectThreadAPI(APIView):
                     target=thread.job.project,
                     type=u'connectionAccepted'
                 )
-            return 'Connection Made!' # TODO: Get actual copy for messages
-        recipient = thread.sender if request.user == thread.recipient else thread.recipient
-        notify.send(
-            request.user,
-            recipient=recipient,
-            verb=u'made a connection request for',
-            action_object=thread,
-            target=thread.job.project,
-            type=u'connectionRequest'
-        )
-        return 'Connection Requested!'
+                notify.send(
+                    order.requester,
+                    recipient=request.user,
+                    verb=u'has connected with you on',
+                    action_object=thread,
+                    target=thread.job.project,
+                    type=u'connectionAccepted'
+                )
+                return 'Connection Made!' # TODO: Get actual copy for messages
+        elif request.user.contact_details.email_confirmed:
+            recipient = thread.sender if request.user == thread.recipient else thread.recipient
+            notify.send(
+                request.user,
+                recipient=recipient,
+                verb=u'made a connection request for',
+                action_object=thread,
+                target=thread.job.project,
+                type=u'connectionRequest'
+            )
+            return 'Connection Requested!'
+        else:
+            order.product.change_status(
+                    '%s_is_validating' % ('freelancer' if request.user.role else 'entrepreneur'),
+                    order,
+                    request.user)
 
     def new_message(self, thread, user, body):
         recipient = thread.sender if user == thread.recipient else thread.recipient
@@ -260,9 +273,10 @@ class ConnectThreadAPI(APIView):
     def update_thread(self, request, message_body, thread):
         thread.refresh_from_db()
         thread.job.refresh_from_db()
-        interaction = self.new_message(thread, request.user, message_body)
+        if message_body:
+            interaction = self.new_message(thread, request.user, message_body)
+            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
         serializer = ConversationSerializer(thread, context={'request': request})
-        new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
         return serializer.data
 
     def post(self, request, thread_id):

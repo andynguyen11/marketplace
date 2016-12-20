@@ -241,7 +241,7 @@ class ProductOrderViewSet(ImmutableNestedModelViewSet):
                     'Payer has not specified a payment source for this Order',
                     details ]})
 
-        updated = order.product.change_status(status, order, user)
+        updated = order.change_status(status, user)
         data = ProductOrderSerializer(updated).data
         return Response(status=204, data=data)
 

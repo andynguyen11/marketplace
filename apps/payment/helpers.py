@@ -60,7 +60,7 @@ def get_source(user=None, customer=None, source_id=None, metadata={}):
                 metadata=metadata)
     if source_id:
         return customer.sources.retrieve(source_id)
-    matches = filter(metadata_filter(metadata), customer.sources.data)
+    matches = list({ c['fingerprint']: c for c in filter(metadata_filter(metadata), customer.sources.data) }.values())
     assert len(matches) == 1
     return matches[0]
 

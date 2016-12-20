@@ -1,5 +1,6 @@
 from types import FunctionType, MethodType
 from django.db import models
+from django.conf import settings
 from enum import Enum
 from generics.utils import percentage
 from business.models import Terms, Job
@@ -51,7 +52,6 @@ class Product(object):
             raise TypeError('<Product %s> must have field %s' % (getattr(self, 'id', 'missing id'), field))
         parent_type = value if isinstance(value, type) else type(value)
         if not isinstance(getattr(self, field), parent_type):
-            print self.related_class
             raise TypeError('<Product %s>.%s must be of type %s, is %s' % (
                 getattr(self, 'id', 'missing id'), field, parent_type, type(getattr(self, field))))
 
@@ -130,44 +130,59 @@ class ConnectJob(Product):
     description = 'Removes the PII filter from chat, before contract has been signed'
     type = ProductType.flat
     status_flow = (
-        # feelancer verified details, waiting on entrepeneur
+        # feelancer verified details, waiting on entrepreneur
+        'freelancer_is_validating',
         'requested_by_freelancer',
-        # entrepeneur verified details, waiting on freelancer
-        'requested_by_entrepeneur',
+        # entrepreneur verified details, waiting on freelancer
+        'entrepreneur_is_validating',
+        'requested_by_entrepreneur',
         # Everyone has accepted
         'accepted',
         'paid')
-    price = 300.00
+    price = settings.PRODUCTS.get('connect_job', {}).get('price', 100.00)
     related_class = Job
 
     def validate_order(self, order):
         if not hasattr(order, 'payer'): 
             order.payer = order.related_object.owner
-        if order.requester == order.payer:
-            order.set_status('requested_by_entrepeneur')
-        else:
-            order.set_status( 'requested_by_freelancer')
+        if order.requester == order.payer and not order.request_status:
+            pattern = 'requested_by_%s' if order.requester.contact_details.email_confirmed else '%s_is_validating'
+            order.set_status(pattern % 'entrepreneur')
+        elif not order.request_status:
+            order.set_status(pattern % 'freelancer')
         return super(ConnectJob, self).validate_order(order)
 
     def can_pay(self, order, payer):
         if order.status != 'pending' or order.request_status != 'accepted':
             raise TypeError("Order %s cannot be paid in it's current status" % order)
         if payer in order.related_object.contractor.connections.all():
+            order.set_status('failed')
             raise TypeError("These users have already been connected")
         return super(ConnectJob, self).can_pay(order, payer)
-    
-    def valid_update(self, order, user):
-        if (order.request_status == 'requested_by_entrepeneur' and
-                user == order.related_object.contractor):
-            return 'freelancer'
 
-        elif (order.request_status == 'requested_by_freelancer' and
-                order.related_object.owner == user):
-            return 'entrepeneur'
+    def get_role(self, order, user):
+        if(user == order.related_object.contractor):
+            return 'freelancer', 'entrepreneur'
+        if(user == order.related_object.owner):
+            return 'entrepreneur', 'freelancer'
+
+    def valid_statuses(self, order, user):
+        role, other = self.get_role(order, user)
+        if not role:
+            return None
+        valid_transitions = {
+                '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
+                'requested_by_%s' % other:  ['%s_is_validating' % role, 'cancelled'], }
+        if order.requester != user:
+            valid_transitions['%s_is_validating' % role].append('accepted')
+        if (order.request_status in ['%s_is_validating' % role, 'requested_by_%s' % other]):
+            return valid_transitions[order.request_status]
+        return []
 
     def change_status(self, status, order, user):
-        if((self.valid_update(order, user)) and
-           status in ('accepted', 'cancelled')):
+        if status == order.request_status:
+            return
+        if(status in self.valid_statuses(order, user)):
             order.set_status(status)
             order.save()
             return order
@@ -181,10 +196,10 @@ class ConnectJob(Product):
         return {job.contractor, job.owner}
 
     def on_requested_by_freelancer(self, order):
-        "request contact_details from entrepeneur"
+        "request contact_details from entrepreneur"
         pass
 
-    def on_requested_by_entrepeneur(self, order):
+    def on_requested_by_entrepreneur(self, order):
         "request contact_details from freelancer"
         pass
 

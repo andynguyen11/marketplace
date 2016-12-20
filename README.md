@@ -15,6 +15,8 @@
 ##### Install dependencies:
 * `pip install -r /path/to/requirements.txt`
 * `npm install`
+* redis for queueing `brew install redis; brew services start redis`
+
 
 ##### Problems install pyscopg2?
 * `export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/9.3/bin`

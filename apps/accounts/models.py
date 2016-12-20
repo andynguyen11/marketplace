@@ -100,6 +100,7 @@ class ContactDetails(models.Model):
     profile = models.ForeignKey('accounts.Profile', primary_key=True)
 
     email = models.CharField(max_length=50)
+    email_confirmed = models.BooleanField(default=False)
     phone = models.CharField(max_length=50)
     website = models.CharField(max_length=50, blank=True, null=True)
     skype = models.CharField(max_length=50, blank=True, null=True)
@@ -109,6 +110,11 @@ class ContactDetails(models.Model):
     instagram = models.CharField(max_length=50, blank=True, null=True)
     twitter = models.CharField(max_length=50, blank=True, null=True)
     facebook = models.CharField(max_length=50, blank=True, null=True)
+
+    @property
+    def id(self):
+        return self.profile.id
+
 
 
 def path_and_rename(instance, filename):
@@ -160,6 +166,7 @@ class Profile(AbstractUser):
     long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
+    email_confirmed = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
 
     connections = models.ManyToManyField('self', through='Connection', symmetrical=False, related_name='reverse_connections+')

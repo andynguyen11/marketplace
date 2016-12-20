@@ -171,11 +171,14 @@ class ProductOrder(models.Model):
 
         if valid_order_status:
             self.status = status
-        if valid_request_status :
+        if valid_request_status:
             self.request_status = status
         if not (valid_order_status or valid_request_status):
             raise TypeError('status "%s" is not an ORDER_STATUS or defined by product %s' % (status, self.product))
         return getattr(self.product, 'on_%s' % status, noop)(self)
+
+    def change_status(self, status, user):
+        return self.product.change_status(status, self, user)
 
     @property
     def full_status(self):

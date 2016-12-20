@@ -1,25 +1,29 @@
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, get_object_or_404
 from notifications.models import Notification
 from rest_condition import Not
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.decorators import permission_classes, list_route, detail_route
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
+from business.models import Job, Project
+from payment.models import ProductOrder
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
 from expertratings.utils import nicely_serialize_verification_tests
-from generics.tasks import account_confirmation
+from generics.tasks import account_confirmation, validate_confirmation_signature
 from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from postman.serializers import ConversationSerializer
+from generics.utils import parse_signature
+from django.shortcuts import redirect, get_object_or_404
 
 
 class SkillViewSet(ModelViewSet):
@@ -62,6 +66,30 @@ class ContactDetailsViewSet(ModelViewSet):
     def update(self, request, *args, **kwargs):
         request.data['profile'] = request.user.id
         return super(ContactDetailsViewSet, self).update(request, *args, **kwargs)
+
+    @detail_route(permission_classes=tuple())
+    def confirm_email(self, request, pk, *args, **kwargs):
+        signature = request.query_params.get('signature', None)
+        contact_details = ContactDetails.objects.get(profile_id=pk)
+        validate_confirmation_signature(contact_details, signature)
+        if contact_details.email_confirmed:
+            # update all connect_job orders
+            # TODO UGLY
+            if contact_details.profile.role:
+                role = 'freelancer' 
+                related_ids = [j.id for j in Job.objects.filter(status='pending', contractor_id=contact_details.id)]
+            else:
+                role = 'entrepreneur'
+                project_ids = [p.id for p in Project.objects.filter(project_manager_id=contact_details.id)]
+                related_ids = [j.id for j in Job.objects.filter(status='pending', project_id__in=project_ids)]
+            orders = ProductOrder.objects.filter(
+                    _product='connect_job',
+                    request_status='%s_is_validating' % role,
+                    related_object_id__in=related_ids)
+            for order in orders:
+                new_status = 'requested_by_%s' % role if order.requester == contact_details.profile else 'accepted'
+                order.change_status(new_status, contact_details.profile)
+        return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
 
 
 class ProfileViewSet(ModelViewSet):
@@ -131,6 +159,11 @@ class ProfileViewSet(ModelViewSet):
     def _connections(self, request, *args, **kwargs):
         return self.connections(request, *args, **kwargs)
 
+    @detail_route(permission_classes=tuple())
+    def confirm_email(self, request, *args, **kwargs):
+        signature = request.query_params.get('signature', None)
+        validate_confirmation_signature(self.get_object(), signature)
+        return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
 
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()

@@ -31,6 +31,7 @@ import business.views as business_views
 import accounts.views as accounts_views
 
 import business.signals
+import accounts.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [
@@ -40,6 +41,7 @@ urlpatterns = [
     url(r'^company/(?P<company_slug>[-\w]+)/$', business_views.company_profile, name='company'),
     url(r'^welcome/$', TemplateView.as_view(template_name='welcome.html'), name='welcome'),
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
+    url(r'^confirmed/$', TemplateView.as_view(template_name='email_confirmed.html'), name='email_confirmed'),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
     url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
