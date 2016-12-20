@@ -139,7 +139,7 @@ class ConnectJob(Product):
         # Everyone has accepted
         'accepted',
         'paid')
-    price = settings.PRODUCTS.get('connect_job', {}).get('price', 100.00)
+    price = settings.PRODUCTS.get('connect_job', {}).get('price', 99.00)
     related_class = Job
 
     def validate_order(self, order):

@@ -397,7 +397,7 @@ FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
 
 LOOM_FEE = 3
 
-PRODUCTS = { 'connect_job': {'price': 100.00} }
+PRODUCTS = { 'connect_job': {'price': 99.00} }
 
 UNCONNECTED_THREAD_REPLY_LIMIT = 5
 
