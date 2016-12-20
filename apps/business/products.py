@@ -220,7 +220,7 @@ class ConnectJob(Product):
         order.result = "%s, status: '%s'" % (job.__str__(), job.status)
         order.save()
         thread = Message.objects.get(job=job)
-        connection_made_entrepreneur.delay(job.contractor.id, thread.id)
+        connection_made_entrepreneur.delay(job.contractor.id, thread.id, order.id)
         connection_made_freelancer.delay(job.owner.id, thread.id)
         return order
 

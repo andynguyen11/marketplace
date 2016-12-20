@@ -3,19 +3,21 @@ from datetime import datetime, timedelta
 import pytz
 import simplejson
 
+from celery import shared_task
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from celery import shared_task
-
-from rest_framework.exceptions import ValidationError, PermissionDenied
-from accounts.models import Profile
-from business.models import Job, Document, Project, Employee
-from postman.models import Message
-from generics.models import Attachment
-from expertratings.models import SkillTestResult
-from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
+from rest_framework.exceptions import ValidationError, PermissionDenied
+
+from accounts.models import Profile
+from business.models import Job, Document, Project, Employee
+from expertratings.models import SkillTestResult
+from generics.models import Attachment
+from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
+from payment.models import Order
+from postman.models import Message
+
 
 utc=pytz.UTC
 
@@ -274,9 +276,15 @@ def connection_made_freelancer(entrepreneur_id, thread_id):
     })
 
 @shared_task
-def connection_made_entrepreneur(freelancer_id, thread_id):
+def connection_made_entrepreneur(freelancer_id, thread_id, order_id):
     freelancer = Profile.objects.get(id=freelancer_id)
+    order = Order.objects.get(id=order_id)
     send_mail('connection-made-entrepreneur', [freelancer], {
         'fname': freelancer.first_name,
         'thread_id': thread_id,
+        'date': order.date_charged,
+        'order_id': order.id,
+        'connection_fee': order.price,
+        'total': order.price,
+        'full_name': '{0} {1}'.format(freelancer.first_name, freelancer.last_name)
     })
