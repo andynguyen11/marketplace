@@ -255,8 +255,12 @@ class ConnectThreadAPI(APIView):
             )
             return 'Connection Requested!'
         else:
+            if request.user == thread.job.contractor:
+                role = 'freelancer'
+            else:
+                role = 'entrepreneur'
             order.product.change_status(
-                    '%s_is_validating' % ('freelancer' if request.user.role else 'entrepreneur'),
+                    '%s_is_validating' % role,
                     order,
                     request.user)
 

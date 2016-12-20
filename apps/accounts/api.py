@@ -67,6 +67,20 @@ class ContactDetailsViewSet(ModelViewSet):
         request.data['profile'] = request.user.id
         return super(ContactDetailsViewSet, self).update(request, *args, **kwargs)
 
+    def update_orders_for_user(self, contact_details, role):
+        if role == 'freelancer':
+            related_ids = [j.id for j in Job.objects.filter(status='pending', contractor_id=contact_details.id)]
+        else:
+            project_ids = [p.id for p in Project.objects.filter(project_manager_id=contact_details.id)]
+            related_ids = [j.id for j in Job.objects.filter(status='pending', project_id__in=project_ids)]
+        orders = ProductOrder.objects.filter(
+                _product='connect_job',
+                request_status='%s_is_validating' % role,
+                related_object_id__in=related_ids)
+        for order in orders:
+            new_status = 'requested_by_%s' % role if order.requester == contact_details.profile else 'accepted'
+            order.change_status(new_status, contact_details.profile)
+
     @detail_route(permission_classes=tuple())
     def confirm_email(self, request, pk, *args, **kwargs):
         signature = request.query_params.get('signature', None)
@@ -75,20 +89,8 @@ class ContactDetailsViewSet(ModelViewSet):
         if contact_details.email_confirmed:
             # update all connect_job orders
             # TODO UGLY
-            if contact_details.profile.role:
-                role = 'freelancer' 
-                related_ids = [j.id for j in Job.objects.filter(status='pending', contractor_id=contact_details.id)]
-            else:
-                role = 'entrepreneur'
-                project_ids = [p.id for p in Project.objects.filter(project_manager_id=contact_details.id)]
-                related_ids = [j.id for j in Job.objects.filter(status='pending', project_id__in=project_ids)]
-            orders = ProductOrder.objects.filter(
-                    _product='connect_job',
-                    request_status='%s_is_validating' % role,
-                    related_object_id__in=related_ids)
-            for order in orders:
-                new_status = 'requested_by_%s' % role if order.requester == contact_details.profile else 'accepted'
-                order.change_status(new_status, contact_details.profile)
+            self.update_orders_for_user(contact_details, 'freelancer')
+            self.update_orders_for_user(contact_details, 'entrepreneur')
         return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
 
 
