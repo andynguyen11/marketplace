@@ -68,10 +68,10 @@
                 <li>
                   <a href="{% url 'public-profile' user_id=notification.actor.id %}">{{ notification.actor.first_name }}</a>
                   {{ notification.verb }}
-                  <a href="{% url 'postman:view_conversation' notification.action_object.id %}">{{ notification.target.title }}</a>
+                  <a href="{% url 'view-conversation' notification.action_object.id %}">{{ notification.target.title }}</a>
                 </li>
               {% else %}
-                <li>{{ notification.verb }} on a project: <a href="{% url 'postman:view_conversation' notification.actor.id %}">{{ notification.action_object.project.title }}</a></li>
+                <li>{{ notification.verb }} on a project: <a href="{% url 'view-conversation' notification.actor.id %}">{{ notification.action_object.project.title }}</a></li>
               {% endif %}
               {% endfor %}
             {% else %}
@@ -106,7 +106,7 @@
                 {% endblock %}
                 <td>
                   {% block pm_subject %}
-                  <a href="{% if message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+                  <a href="{% if message.thread_id %}{% url 'view-conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
                   {% include "postman/inc_subject_ex.html" %}
                   </a>
                   {% endblock %}

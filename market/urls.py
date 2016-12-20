@@ -42,6 +42,8 @@ urlpatterns = [
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
+    url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
+    url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^login/$', accounts_views.user_login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
     url(r'', include('password_reset.urls')),
@@ -69,7 +71,6 @@ urlpatterns = [
     url(r'^profile/documents/$', accounts_views.view_documents, name='view-documents'),
     url(r'^profile/skills/$', accounts_views.profile, {'template': 'skills.html'}, name='view-skills'),
     url(r'^profile/settings/$', accounts_views.profile, {'template': 'settings.html'}, name='settings'),
-    url(r'^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
@@ -85,7 +86,6 @@ urlpatterns = [
 if settings.DEBUG and settings.MEDIA_URL :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns.append(url(r'^docs/', include('rest_framework_docs.urls')))
-    urlpatterns.append(url(r'^dashboard/messages/', TemplateView.as_view(template_name='spa.html')))
 
 handler404 = error404
 handler500 = error500

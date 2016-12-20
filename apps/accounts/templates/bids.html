@@ -36,7 +36,7 @@
                   <td>{{ bid.date_created }}</td>
                   <td>
                     {% if bid.conversation %}
-                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
+                      <a href="{% url 'view-conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
                     {% endif %}
                   </td>
                 </tr>
@@ -103,7 +103,7 @@
                   </td>
                   <td>
                     {% if bid.conversation %}
-                      <a href="{% url 'postman:view_conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
+                      <a href="{% url 'view-conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
                     {% endif %}
                   </td>
                 </tr>

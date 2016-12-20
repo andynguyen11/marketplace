@@ -145,7 +145,7 @@
 
           {% if user.is_authenticated %}
             {% if job %}
-              <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+              <a class="btn btn-brand" href="{% url 'view-conversation' thread_id=job.conversation.id %}">Send Message</a>
             {% else %}
               <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
             {% endif %}
@@ -283,7 +283,7 @@
               </div>
               {% if user.is_authenticated %}
                 {% if job %}
-                  <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
+                  <a class="btn btn-brand" href="{% url 'view-conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
                 {% else %}
                   <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Request NDA Access</button>
                 {% endif %}

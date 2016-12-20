@@ -54,7 +54,7 @@ in the INSTALLED_APPS setting.
       <div class="messages-list">
         {% for message in pm_messages %}
         <div class="messages-list-message{% if message.is_new %} unread{% endif %}">
-          <a href="{% url 'postman:view_conversation' message.thread_id %}">
+          <a href="{% url 'view-conversation' message.thread_id %}">
             <div class="messages-list-message-profile">
               <div class="messages-list-message-profile-photo" style="background-image: url(https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ message.sender.get_photo }})"></div>
               <div class="messages-list-message-meta show-mobile">
