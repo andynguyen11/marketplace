@@ -96,8 +96,7 @@ def send_to_emails(template_name, email=None, emails=[], context={}):
 
 def send_mail(template_name, users, context):
     emails = [user.email for user in users if user.email_notifications]
-    send_to_emails(template_name, emails, context)
-
+    send_to_emails(template_name, emails=emails, context=context)
 
 def sign_data(**kwargs):
     return signing.dumps(kwargs)
