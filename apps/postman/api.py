@@ -123,8 +123,9 @@ class MessageAPI(APIView):
         }
 
     def passed_limit(self, thread, user):
+        limit = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.project.project_manager == user else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
         return (thread.job.status == 'pending' and
-                thread.get_participant_replies_count(user) >= settings.UNCONNECTED_THREAD_REPLY_LIMIT)
+                thread.get_participant_replies_count(user) >= limit)
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
@@ -226,33 +227,9 @@ class ConnectThreadAPI(APIView):
         if request.user.contact_details.email_confirmed and order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
             if (order.status == 'paid' and order.requester in request.user.connections.all()):
-                notify.send(
-                    request.user,
-                    recipient=order.requester,
-                    verb=u'has connected with you on',
-                    action_object=thread,
-                    target=thread.job.project,
-                    type=u'connectionAccepted'
-                )
-                notify.send(
-                    order.requester,
-                    recipient=request.user,
-                    verb=u'has connected with you on',
-                    action_object=thread,
-                    target=thread.job.project,
-                    type=u'connectionAccepted'
-                )
                 return 'Connection Made!' # TODO: Get actual copy for messages
         elif request.user.contact_details.email_confirmed:
             recipient = thread.sender if request.user == thread.recipient else thread.recipient
-            notify.send(
-                request.user,
-                recipient=recipient,
-                verb=u'made a connection request for',
-                action_object=thread,
-                target=thread.job.project,
-                type=u'connectionRequest'
-            )
             return 'Connection Requested!'
         else:
             if request.user == thread.job.contractor:

@@ -16,8 +16,8 @@ def field_changed(instance, field, id_field='id'):
 #        instance.email_confirmed = False
 #        email_confirmation(user=instance, redirect='/profile')
 
-@receiver(pre_save, sender=ContactDetails)
-def contact_email_update_event(sender, instance, **kwargs):
-    if not instance.profile.id or field_changed(instance, field='email', id_field='profile_id'):
-        instance.email_confirmed = False
-        email_confirmation(user=instance.profile, instance=instance)
+#@receiver(pre_save, sender=ContactDetails)
+#def contact_email_update_event(sender, instance, **kwargs):
+#    if not instance.profile.id or field_changed(instance, field='email', id_field='profile_id'):
+#        instance.email_confirmed = False
+#        email_confirmation(user=instance.profile, instance=instance)

@@ -72,7 +72,7 @@ def get_customer_and_card(user, stripe_token=None, metadata={}):
         except stripe.error.InvalidRequestError, e:
             card = customer.sources.create(source=stripe_token)
     else:
-        customer = connect_customer(user, stripe_token),
+        customer = connect_customer(user, stripe_token)
         card = customer.sources.create(source=stripe_token)
     card.metadata = metadata
     card.save()
