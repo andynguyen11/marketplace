@@ -125,6 +125,8 @@ class Job(models.Model):
         return self.project.project_manager
 
     def save(self, *args, **kwargs):
+        if (self.pk is None or self.status == 'pending') and self.contractor.is_connected(self.project.project_manager):
+            self.status = 'connected'
         try:
             terms = Terms.objects.get(job=self)
             if terms.status != 'contracted' or terms.status != 'agreed':

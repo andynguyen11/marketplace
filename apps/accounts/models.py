@@ -175,6 +175,9 @@ class Profile(AbstractUser):
         Connection.objects.create(from_profile=self, to_profile=to_profile)
         Connection.objects.create(to_profile=self, from_profile=to_profile)
 
+    def is_connected(self, profile):
+        return self in profile.connections.all()
+
     @property
     def name(self):
         return '{0} {1}'.format(self.first_name, self.last_name)
