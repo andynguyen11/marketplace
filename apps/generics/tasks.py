@@ -15,7 +15,6 @@ from business.models import Job, Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
-#from payment.models import ProductOrder
 from postman.models import Message
 
 
@@ -252,18 +251,11 @@ def complete_project(project_id):
         })
 
 @shared_task
-def connection_request_to_freelancer(entrepreneur_id, thread_id):
-    entrepreneur = Profile.objects.get(id=entrepreneur_id)
-    send_mail('connection-request-freelancer', [freelancer], {
-        'fname': freelancer.first_name,
-        'thread_id': thread_id,
-    })
-
-@shared_task
-def connection_request_to_entrepreneur(freelancer_id, thread_id):
-    freelancer = Profile.objects.get(id=freelancer_id)
-    send_mail('connection-request-entrepreneur', [freelancer], {
-        'fname': freelancer.first_name,
+def connection_request(this_id, that_id, thread_id, template):
+    this_user = Profile.objects.get(id=this_id)
+    that_user = Profile.objects.get(id=that_id)
+    send_mail(template, [this_user], {
+        'fname': that_user.first_name,
         'thread_id': thread_id,
     })
 
@@ -276,15 +268,15 @@ def connection_made_freelancer(entrepreneur_id, thread_id):
     })
 
 @shared_task
-def connection_made_entrepreneur(freelancer_id, thread_id, order_id):
-    freelancer = Profile.objects.get(id=freelancer_id)
-#    order = ProductOrder.objects.get(id=order_id)
-    send_mail('connection-made-entrepreneur', [freelancer], {
-        'fname': freelancer.first_name,
+def connection_made(this_id, that_id, thread_id, order_context=None):
+    template = 'connection-made-freelancer'
+    this_user = Profile.objects.get(id=this_id)
+    that_user = Profile.objects.get(id=that_id)
+    context = {
+        'fname': that_user.first_name,
         'thread_id': thread_id,
-#        'date': order.date_charged,
-#        'order_id': order.id,
-#        'connection_fee': order.price,
-#        'total': order.price,
-        'full_name': '{0} {1}'.format(freelancer.first_name, freelancer.last_name)
-    })
+    }
+    if order_context:
+        context.update(order_context)
+        template = 'connection-made-entrepreneur'
+    send_mail(template, [this_user], context)

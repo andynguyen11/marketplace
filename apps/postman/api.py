@@ -224,22 +224,22 @@ class ConnectThreadAPI(APIView):
     def update_order(self, request, thread):
         order = self.get_or_create_order(request, thread)
         self.validate_order(request, order)
-        if request.user.contact_details.email_confirmed and order.requester != request.user:
+        if order.requester != request.user: #and request.user.contact_details.email_confirmed:
             order.product.change_status('accepted', order, request.user)
             if (order.status == 'paid' and order.requester in request.user.connections.all()):
                 return 'Connection Made!' # TODO: Get actual copy for messages
-        elif request.user.contact_details.email_confirmed:
+        else: #elif request.user.contact_details.email_confirmed:
             recipient = thread.sender if request.user == thread.recipient else thread.recipient
             return 'Connection Requested!'
-        else:
-            if request.user == thread.job.contractor:
-                role = 'freelancer'
-            else:
-                role = 'entrepreneur'
-            order.product.change_status(
-                    '%s_is_validating' % role,
-                    order,
-                    request.user)
+        #else:
+        #    if request.user == thread.job.contractor:
+        #        role = 'freelancer'
+        #    else:
+        #        role = 'entrepreneur'
+        #    order.product.change_status(
+        #            '%s_is_validating' % role,
+        #            order,
+        #            request.user)
 
     def new_message(self, thread, user, body):
         recipient = thread.sender if user == thread.recipient else thread.recipient

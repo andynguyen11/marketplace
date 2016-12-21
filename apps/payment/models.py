@@ -1,10 +1,10 @@
 from datetime import datetime, date
 from django.db import models
 from django.conf import settings
-from payment.helpers import stripe_helpers 
+from payment.helpers import stripe_helpers
 from payment.enums import *
 from business.products import products, ProductType, PRODUCT_CHOICES
-from generics.utils import percentage 
+from generics.utils import percentage
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 

@@ -9,7 +9,7 @@ from notifications.signals import notify
 from business.models import Terms, Job
 from docusign.models import Document as DocusignDocument
 from generics.utils import percentage
-from generics.tasks import pm_contact_card_email, connection_request_to_freelancer, connection_request_to_entrepreneur, connection_made_entrepreneur, connection_made_freelancer
+from generics.tasks import pm_contact_card_email, connection_request, connection_made
 from postman.forms import build_payload
 from postman.models import Message
 
@@ -175,7 +175,7 @@ class ConnectJob(Product):
             return None
         valid_transitions = {
                 '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
-                'requested_by_%s' % other:  ['%s_is_validating' % role, 'cancelled'], }
+                'requested_by_%s' % other:  ['%s_is_validating' % role, 'accepted', 'cancelled'], }
         if order.requester != user:
             valid_transitions['%s_is_validating' % role].append('accepted')
         if (order.request_status in ['%s_is_validating' % role, 'requested_by_%s' % other]):
@@ -210,7 +210,7 @@ class ConnectJob(Product):
             target=thread.job.project,
             type=u'connectionRequest'
         )
-        connection_request_to_entrepreneur.delay(job.contractor.id, thread.id)
+        connection_request.delay(job.owner.id, job.contractor.id, thread.id, 'connection-request-entrepreneur')
 
     def on_requested_by_entrepreneur(self, order):
         "request contact_details from freelancer"
@@ -224,7 +224,7 @@ class ConnectJob(Product):
             target=thread.job.project,
             type=u'connectionRequest'
         )
-        connection_request_to_freelancer.delay(job.owner.id, thread.id)
+        connection_request.delay(job.contractor.id, job.owner.id, thread.id, 'connection-request-freelancer')
 
     def on_accepted(self, order):
         "pay order with cached card"
@@ -238,24 +238,33 @@ class ConnectJob(Product):
         order.result = "%s, status: '%s'" % (job.__str__(), job.status)
         order.save()
         thread = Message.objects.get(job=job)
-        notify.send(
-            job.contractor,
-            recipient=job.owner,
-            verb=u'has connected with you on',
-            action_object=thread,
-            target=thread.job.project,
-            type=u'connectionAccepted'
-        )
-        notify.send(
-            job.owner,
-            recipient=job.contractor,
-            verb=u'has connected with you on',
-            action_object=thread,
-            target=thread.job.project,
-            type=u'connectionAccepted'
-        )
-        connection_made_entrepreneur.delay(job.contractor.id, thread.id, order.id)
-        connection_made_freelancer.delay(job.owner.id, thread.id)
+        if order.requester != job.contractor:
+            notify.send(
+                job.contractor,
+                recipient=job.owner,
+                verb=u'has connected with you on',
+                action_object=thread,
+                target=thread.job.project,
+                type=u'connectionAccepted'
+            )
+        else:
+            notify.send(
+                job.owner,
+                recipient=job.contractor,
+                verb=u'has connected with you on',
+                action_object=thread,
+                target=thread.job.project,
+                type=u'connectionAccepted'
+            )
+        order_context = {
+            'date': order.date_charged.strftime("%m-%d-%Y"),
+            'order_id': order.id,
+            'connection_fee': order.price,
+            'total': order.price,
+            'full_name': '{0} {1}'.format(job.contractor.first_name, job.contractor.last_name)
+        }
+        connection_made.delay(job.owner.id, job.contractor.id, thread.id, order_context)
+        connection_made.delay(job.contractor.id, job.owner.id, thread.id)
         return order
 
 
