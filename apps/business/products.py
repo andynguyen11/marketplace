@@ -1,3 +1,4 @@
+from datetime import datetime
 from types import FunctionType, MethodType
 from enum import Enum
 
@@ -257,7 +258,7 @@ class ConnectJob(Product):
                 type=u'connectionAccepted'
             )
         order_context = {
-            'date': order.date_charged.strftime("%m-%d-%Y"),
+            'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,
             'connection_fee': order.price,
             'total': order.price,
