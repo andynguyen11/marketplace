@@ -17,54 +17,127 @@
 
     h2 {
       color: @brand-neutral--1;
-      font-size: 80px;
+      font-size: 60px;
       font-family: @brand-font-bold;
+      margin: @gutter auto;
+
+      @media (max-width: @screen-md) {
+        font-size: 30px;
+      }
     }
 
-    @media (max-width: @screen-sm) {
+    h4 {
+      color: @brand-neutral--1;
+      font-size: 27px;
+      font-family: @brand-font;
+      font-weight: normal;
+      margin: @gutter--medium 0;
+
+      @media (max-width: @screen-md) {
+        font-size: 22px;
+      }
+    }
+
+    h3 {
+      color: @brand-neutral--1;
+      font-size: 27px;
+      font-family: @brand-font;
+      margin: @gutter auto;
+
+      @media (max-width: @screen-md) {
+        font-size: 22px;
+      }
+    }
+
+    @media (max-width: @screen-md) {
       height: auto;
-      padding: @gutter * 3 0;
-
-      h2 {
-        font-size: 48px;
-      }
-
-      h3 {
-        font-size: 36px;
-      }
+      padding: @gutter * 2 @gutter;
     }
   }
 
   .hero-overlay--logo-mark {
     &.hero-overlay--logo-mark--orange {
-      background: none;
+      background: #fff6f3;
 
       &:before {
-        background: url("../images/overlay-logo-pattern-orange--left.svg") no-repeat right center;
+        background: url("../images/overlay-logo-pattern-white--left.svg") no-repeat right center;
         background-position: -35px center;
         background-size: 85%;
-        opacity: .35;
+        opacity: 1;
       }
 
       &:after {
-        background: url("../images/overlay-logo-pattern-orange--right.svg") no-repeat left center;
+        background: url("../images/overlay-logo-pattern-white--right.svg") no-repeat left center;
         background-position: 105px center;
         background-size: 73%;
-        opacity: .35;
+        opacity: 1;
       }
     }
   }
 }
 
+.how-tabs {
+  display: flex;
+  justify-content: center;
+  margin-top: @gutter * 2;
+  border-bottom: 7px solid #f3f2f3;
+
+  @media (max-width: @screen-md) {
+    margin-top: @gutter;
+  }
+
+  & > li {
+    float: none;
+    margin-bottom: -7px;
+    border: none;
+    border-bottom: 7px solid transparent;
+
+    &:first-child {
+      margin-right: @gutter;
+
+      @media (max-width: @screen-md) {
+        margin-right: @gutter--medium;
+      }
+    }
+
+    a {
+      border: none !important;
+      margin: 0 !important;
+      background: none !important;
+      font-family: @brand-font-bold;
+      font-size: 34px;
+
+      @media (max-width: @screen-md) {
+        font-size: 22px;
+        padding-right: @gutter--medium;
+        padding-left: @gutter--medium;
+        text-align: center;
+      }
+    }
+
+    &.active {
+      border-bottom-color: #00dab2;
+
+      a {
+        border: none;
+      }
+    }
+  }
+}
+
+.how-tab-pane {
+  padding-top: @gutter * 2;
+}
+
 .how-tile {
   display: flex;
   align-items: center;
-  padding: 0 @gutter (@gutter * 4);
+  padding: 0 100px (@gutter * 4);
   justify-content: space-between;
 
-  @media (max-width: @screen-sm) {
+  @media (max-width: @screen-md) {
     flex-direction: column;
-    padding-bottom: @gutter * 2;
+    padding: 0 @gutter (@gutter * 2);
   }
 
   .how-tile-content {
@@ -72,18 +145,18 @@
     color: @how-color-1;
     flex-basis: 50%;
 
-    @media (max-width: @screen-sm) {
+    @media (max-width: @screen-md) {
       order: 2;
       padding-top: @gutter * 2;
       flex-basis: initial;
     }
 
     h3 {
-      font-size: 36px;
+      font-size: 27px;
       font-weight: normal;
       margin-bottom: @gutter * 2;
       margin-top: 0;
-      color: @brand-neutral--1;
+      color: @brand--primary;
       font-family: @brand-font-bold;
     }
   }
@@ -92,7 +165,7 @@
     flex-basis: 40%;
     flex-shrink: 0;
 
-    @media (max-width: @screen-sm) {
+    @media (max-width: @screen-md) {
       order: 1;
       max-width: 90%;
       flex-basis: initial;
@@ -120,6 +193,7 @@
 
     @media (max-width: @screen-md) {
       font-size: 36px;
+      padding: 0 @gutter;
     }
   }
 
@@ -140,7 +214,7 @@
   .why-item {
     display: flex;
     flex-direction: column;
-    flex-basis: 250px;
+    flex-basis: 300px;
     margin: @gutter @gutter * 3;
     align-items: center;
 
@@ -166,74 +240,30 @@
 }
 
 .how-pricing {
-  position: relative;
-  padding: 100px 0;
-
-  &:before {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translatex(-50%);
-    content: '';
-    width: 6px;
-    height: 100px;
-    background: url('../images/vert-line.png') no-repeat top center;
-  }
-
-  .how-pricing-content {
-    padding: 0 250px;
-    text-align: center;
-    font-size: 18px;
-
-    h3 {
-      font-size: 48px;
-      font-weight: normal;
-      margin-bottom: 0;
-      font-family: @brand-font-bold;
-
-      @media (max-width: @screen-md) {
-        font-size: 36px;
-      }
-    }
-
-    @media (max-width: @screen-md) {
-      padding: @gutter;
-    }
-  }
-
-  p.important {
-    padding: (@gutter * 2) 0;
-    margin: 0;
-    color: @brand--primary;
-  }
-}
-
-.how-pricing-breakdown {
   text-align: center;
+  padding-top: 1px;
   padding-bottom: @gutter * 2;
-
-  img.how-pricing-tag {
-    margin-top: -75px;
-  }
 
   .how-pricing-header {
     padding: 0 @gutter;
 
     h2 {
       margin: @gutter * 2 0;
-      font-size: 64px;
+      font-size: 32px;
+      font-family: @brand-font-bold;
 
       @media (max-width: @screen-md) {
-        font-size: 30px;
+        font-size: 27px;
       }
     }
 
     h3 {
       margin: 0 0 @gutter * 2;
-      font-size: 36px;
+      font-size: 27px;
+      font-weight: normal;
 
       @media (max-width: @screen-md) {
-        font-size: 24px;
+        font-size: 20px;
       }
     }
   }
@@ -241,57 +271,43 @@
 
   .how-pricing-row {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     padding: @gutter 0;
 
     @media (max-width: @screen-md) {
       flex-wrap: wrap;
+      padding: 0;
     }
   }
 
   .how-pricing-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 320px;
-    width: 100%;
-    margin: @gutter * 2 @gutter @gutter;
-    padding: (@gutter * 3) @gutter (@gutter * 2);
-    background: #FFF;
-    border-radius: @border-radius;
-    box-shadow: 0 1px 1px 0 #CCC;
-    position: relative;
-    font-size: 24px;
+    text-align: center;
     font-family: @brand-font;
-
-    .how-pricing-item-header {
-      position: absolute;
-      top: 0;
-      right: 0;
-      left: 0;
-      margin: auto;
-      background: #ff7a56;
-      border-radius: @border-radius;
-      transform: translateY(-50%);
-      width: 50%;
-      padding: @gutter--medium + @gutter--small @gutter--medium;
-      color: #FFF;
-      text-align: center;
-      font-weight: bold;
-    }
-  }
-
-  .how-pricing-breakdown-types {
-    display: flex;
-    justify-content: center;
-    padding: @gutter 0;
-
-    img {
-      margin: @gutter (@gutter * 2);
-    }
+    font-weight: normal;
+    font-size: 22px;
+    color: @brand--primary;
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: top center;
+    flex-basis: 30%;
+    flex-shrink: 1;
+    padding: 55px 20px 0;
 
     @media (max-width: @screen-md) {
-      flex-wrap: wrap;
+      flex-basis: 70%;
+      margin-bottom: @gutter + @gutter--medium;
+    }
+
+    &.how-pricing-item--messaging {
+      background-image: url("../images/how-pricing-messages.svg");
+    }
+
+    &.how-pricing-item--attachments {
+      background-image: url("../images/how-pricing-attachments.svg");
+    }
+
+    &.how-pricing-item--contact {
+      background-image: url("../images/how-pricing-contact.svg");
     }
   }
 }
