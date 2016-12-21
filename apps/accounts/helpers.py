@@ -16,3 +16,4 @@ def create_auth_token(user):
         token = Token.objects.create(user=user)
 
     return token
+

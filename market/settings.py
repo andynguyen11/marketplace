@@ -114,7 +114,7 @@ CACHES = {
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://loom-redis-001.kkhbg2.0001.usw2.cache.amazonaws.com:6379/1' if ENVIRONMENT == 'prod' else 'redis://loom-redis-001.kkhbg2.0001.usw2.cache.amazonaws.com:6379/2'
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 345000}
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 518400}
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -397,6 +397,10 @@ FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
 
 LOOM_FEE = 3
 
+PRODUCTS = { 'connect_job': {'price': 99.00} }
+
+UNCONNECTED_THREAD_REPLY_LIMIT = 5
+
 DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
 
 CORS_ORIGIN_WHITELIST = (
@@ -413,6 +417,8 @@ CORS_ORIGIN_WHITELIST = (
 GULP_PRODUCTION_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp dist'
 
 GULP_DEVELOP_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp dist'
+
+NOTIFICATIONS_USE_JSONFIELD = True
 
 try:
     from local_settings import *

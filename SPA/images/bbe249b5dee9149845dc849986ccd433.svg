@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="42px" height="35px" viewBox="0 0 42 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 9</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-9" fill="#423D51">
+            <g id="Group-7">
+                <g id="Group-6-Copy" transform="translate(16.500000, 7.000000) rotate(-180.000000) translate(-16.500000, -7.000000) translate(0.000000, 6.000000)">
+                    <rect id="Rectangle-15-Copy" x="0" y="1.77635684e-15" width="17" height="2"></rect>
+                    <rect id="Rectangle-15-Copy-2" x="19" y="-8.8817842e-16" width="6" height="2"></rect>
+                    <rect id="Rectangle-15-Copy-3" x="27" y="-1.77635684e-15" width="6" height="2"></rect>
+                </g>
+                <path d="M38.8284271,7.24264069 L33,1.41421356 L34.4142136,-2.30926389e-14 L40.781429,6.36721544 C41.0195531,6.60533953 41.1122834,6.93361988 41.0579992,7.24264069 C41.1122834,7.5516615 41.0195531,7.87994184 40.781429,8.11806593 L34.4142136,14.4852814 L33,13.0710678 L38.8284271,7.24264069 Z" id="Combined-Shape"></path>
+            </g>
+            <g id="Group-6" transform="translate(21.000000, 27.500000) rotate(-180.000000) translate(-21.000000, -27.500000) translate(0.000000, 20.000000)">
+                <g id="Group-6-Copy-2" transform="translate(16.500000, 8.000000) rotate(-180.000000) translate(-16.500000, -8.000000) translate(0.000000, 7.000000)">
+                    <rect id="Rectangle-15-Copy" x="7.10542736e-15" y="5.32907052e-15" width="17" height="2"></rect>
+                    <rect id="Rectangle-15-Copy-2" x="19" y="0" width="6" height="2"></rect>
+                    <rect id="Rectangle-15-Copy-3" x="27" y="-1.77635684e-15" width="6" height="2"></rect>
+                </g>
+                <path d="M38.8284271,7.24264069 L33,1.41421356 L34.4142136,-3.01980663e-14 L40.781429,6.36721544 C41.0195531,6.60533953 41.1122834,6.93361988 41.0579992,7.24264069 C41.1122834,7.5516615 41.0195531,7.87994184 40.781429,8.11806593 L34.4142136,14.4852814 L33,13.0710678 L38.8284271,7.24264069 Z" id="Combined-Shape-Copy"></path>
+            </g>
+        </g>
+    </g>
+</svg>

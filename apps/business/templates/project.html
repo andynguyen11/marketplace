@@ -119,7 +119,11 @@
           {% if not job %}
 
             {% if user.is_authenticated %}
-              <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+              {% if not user.role %}
+                  <button id="bid-button" class="btn btn-brand btn-disabled" data-toggle="tooltip" data-placement="bottom" title="Only freelancers can bid on projects.">Bid on Project</button>
+              {% else %}
+                  <button id="bid-button" class="btn btn-brand" data-toggle="modal" data-target="#bid-modal">Bid on Project</button>
+              {% endif %}
             {% else %}
               <button type="button" class="btn btn-brand" data-toggle="modal" data-target="#noAuthBidModal">Bid on Project</button>
 
@@ -141,7 +145,7 @@
 
           {% if user.is_authenticated %}
             {% if job %}
-              <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Send Message</a>
+              <a class="btn btn-brand" href="{% url 'view-conversation' thread_id=job.conversation.id %}">Send Message</a>
             {% else %}
               <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Send Message</button>
             {% endif %}
@@ -279,7 +283,7 @@
               </div>
               {% if user.is_authenticated %}
                 {% if job %}
-                  <a class="btn btn-brand" href="{% url 'postman:view_conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
+                  <a class="btn btn-brand" href="{% url 'view-conversation' thread_id=job.conversation.id %}">Request NDA Access</a>
                 {% else %}
                   <button id="message-button" class="btn btn-brand btn-brand--clear" data-toggle="modal" data-target="#message-modal">Request NDA Access</button>
                 {% endif %}

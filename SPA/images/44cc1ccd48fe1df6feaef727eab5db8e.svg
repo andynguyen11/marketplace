@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="93px" height="23px" viewBox="0 0 93 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 41.2 (35397) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 9</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="2.09214258" y="5.13533896" width="2.15384615" height="6.29822261"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="2.15384615" height="6.29822261" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="8.24700369" y="-1.33542638" width="2.15384615" height="14.3187063"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="2.15384615" height="14.3187063" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group-9" transform="translate(0.000000, 1.000000)">
+            <g id="Group-7" transform="translate(0.000000, 4.000000)" fill="#423D51">
+                <rect id="Rectangle-15-Copy" transform="translate(46.000000, 7.000000) rotate(-360.000000) translate(-46.000000, -7.000000) " x="8" y="6" width="76" height="2"></rect>
+                <path d="M5.82842712,7.24264069 L-2.22044605e-14,1.41421356 L1.41421356,-2.30926389e-14 L7.781429,6.36721544 C8.01955309,6.60533953 8.11228343,6.93361988 8.05799916,7.24264069 C8.11228343,7.5516615 8.01955309,7.87994184 7.781429,8.11806593 L1.41421356,14.4852814 L-2.24265051e-14,13.0710678 L5.82842712,7.24264069 Z" id="Combined-Shape-Copy" transform="translate(4.036521, 7.242641) rotate(-180.000000) translate(-4.036521, -7.242641) "></path>
+                <path d="M89.8284271,7.24264069 L84,1.41421356 L85.4142136,-2.30926389e-14 L91.781429,6.36721544 C92.0195531,6.60533953 92.1122834,6.93361988 92.0579992,7.24264069 C92.1122834,7.5516615 92.0195531,7.87994184 91.781429,8.11806593 L85.4142136,14.4852814 L84,13.0710678 L89.8284271,7.24264069 Z" id="Combined-Shape-Copy-2"></path>
+            </g>
+            <g id="Group-13" transform="translate(36.000000, 0.000000)">
+                <circle id="Oval-33" stroke="#1EDDB2" fill="#1EDDB2" cx="10.5" cy="10.5" r="10.5"></circle>
+                <g id="Group-11" transform="translate(10.724729, 11.113783) rotate(-9.000000) translate(-10.724729, -11.113783) translate(2.724729, 5.113783)" stroke="#FAFAFA" stroke-width="2" fill="#FAFAFA">
+                    <use id="Rectangle-430" mask="url(#mask-2)" transform="translate(3.169066, 8.284450) rotate(-45.000000) translate(-3.169066, -8.284450) " xlink:href="#path-1"></use>
+                    <use id="Rectangle-430-Copy" mask="url(#mask-4)" transform="translate(9.323927, 5.823927) rotate(-315.000000) translate(-9.323927, -5.823927) " xlink:href="#path-3"></use>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

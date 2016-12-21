@@ -5,9 +5,11 @@ from datetime import datetime, timedelta
 import tagulous.models
 from django.db import models
 from django.conf import settings
+from django.dispatch import Signal
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
+from django.contrib.contenttypes.models import ContentType
 
 from postman.models import Message
 from generics.models import Attachment
@@ -123,6 +125,8 @@ class Job(models.Model):
         return self.project.project_manager
 
     def save(self, *args, **kwargs):
+        if (self.pk is None or self.status == 'pending') and self.contractor.is_connected(self.project.project_manager):
+            self.status = 'connected'
         try:
             terms = Terms.objects.get(job=self)
             if terms.status != 'contracted' or terms.status != 'agreed':
@@ -360,5 +364,4 @@ class Terms(models.Model):
             #self.milestones = self.job.project.milestones
             #self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
-
 

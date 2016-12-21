@@ -31,6 +31,7 @@ import business.views as business_views
 import accounts.views as accounts_views
 
 import business.signals
+import accounts.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [
@@ -40,8 +41,11 @@ urlpatterns = [
     url(r'^company/(?P<company_slug>[-\w]+)/$', business_views.company_profile, name='company'),
     url(r'^welcome/$', TemplateView.as_view(template_name='welcome.html'), name='welcome'),
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
+    url(r'^confirmed/$', TemplateView.as_view(template_name='email_confirmed.html'), name='email_confirmed'),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
+    url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
+    url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^login/$', accounts_views.user_login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
     url(r'', include('password_reset.urls')),
@@ -69,7 +73,6 @@ urlpatterns = [
     url(r'^profile/documents/$', accounts_views.view_documents, name='view-documents'),
     url(r'^profile/skills/$', accounts_views.profile, {'template': 'skills.html'}, name='view-skills'),
     url(r'^profile/settings/$', accounts_views.profile, {'template': 'settings.html'}, name='settings'),
-    url(r'^profile/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),

@@ -10,6 +10,7 @@ from rest_framework.response import Response
 
 from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
 from business.models import Job, Employee
+from business.products import products
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
@@ -169,4 +170,18 @@ class EmployeeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = (IsAuthenticated, IsProfile)
+
+
+class ProductViewSet(viewsets.ViewSet):
+    " Simple ViewSet for listing or retrieving Products "
+
+    def list(self, request):
+        return Response([p.as_json for p in products.values()])
+
+    def retrieve(self, request, pk=None):
+        product = products.get(pk, None)
+        if not product:
+            raise Http404('No such product %s' % pk)
+        return Response(product.as_json)
+
 

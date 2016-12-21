@@ -63,7 +63,16 @@
           <ul class="notifications">
             {% if notifications %}
               {% for notification in notifications|slice:":50" %}
-              <li>{{ notification.verb }} on a project: <a href="{% url 'postman:view_conversation' notification.actor.id %}">{{ notification.action_object.project.title }}</a></li>
+              {% comment %} Handle legacy notifications without targets {% endcomment %}
+              {% if notification.target %}
+                <li>
+                  <a href="{% url 'public-profile' user_id=notification.actor.id %}">{{ notification.actor.first_name }}</a>
+                  {{ notification.verb }}
+                  <a href="{% url 'view-conversation' notification.action_object.id %}">{{ notification.target.title }}</a>
+                </li>
+              {% else %}
+                <li>{{ notification.verb }} on a project: <a href="{% url 'view-conversation' notification.actor.id %}">{{ notification.action_object.project.title }}</a></li>
+              {% endif %}
               {% endfor %}
             {% else %}
               <li class="text-brand-bold">You have successfully created your account. Welcome to Loom!</li>
@@ -97,7 +106,7 @@
                 {% endblock %}
                 <td>
                   {% block pm_subject %}
-                  <a href="{% if message.thread_id %}{% url 'postman:view_conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
+                  <a href="{% if message.thread_id %}{% url 'view-conversation' message.thread_id %}{% else %}{% url 'postman:view' message.pk %}{% endif %}?next={{ current_url|urlencode }}">
                   {% include "postman/inc_subject_ex.html" %}
                   </a>
                   {% endblock %}

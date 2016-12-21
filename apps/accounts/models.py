@@ -93,6 +93,30 @@ class SkillTest(models.Model):
         return self.expertratings_test
 
 
+class ContactDetails(models.Model):
+    """
+    All Contact Details / PII for a user
+    """
+    profile = models.ForeignKey('accounts.Profile', primary_key=True)
+
+    email = models.CharField(max_length=50)
+    email_confirmed = models.BooleanField(default=False)
+    phone = models.CharField(max_length=50)
+    website = models.CharField(max_length=50, blank=True, null=True)
+    skype = models.CharField(max_length=50, blank=True, null=True)
+    linkedin = models.CharField(max_length=50, blank=True, null=True)
+    angellist = models.CharField(max_length=50, blank=True, null=True)
+    github = models.CharField(max_length=50, blank=True, null=True)
+    instagram = models.CharField(max_length=50, blank=True, null=True)
+    twitter = models.CharField(max_length=50, blank=True, null=True)
+    facebook = models.CharField(max_length=50, blank=True, null=True)
+
+    @property
+    def id(self):
+        return self.profile.id
+
+
+
 def path_and_rename(instance, filename):
     upload_to = 'profile-photos'
     ext = filename.split('.')[-1]
@@ -106,11 +130,25 @@ def path_and_rename(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+class Connection(models.Model):
+    """
+    TODO: When implementing the `request_connection` api:
+    * Add `from_type = { REQUESTER, REQUESTEE }`
+    * Add `status = { requested, accepted, connected }`
+    * Don't show `contact_details` unless `status == connected`
+    """
+    class Meta:
+        unique_together = ('from_profile', 'to_profile')
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    from_profile = models.ForeignKey('accounts.Profile', related_name='from_profile')
+    to_profile = models.ForeignKey('accounts.Profile', related_name='to_profile')
+
+
 class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
     address2 = models.CharField(max_length=255, blank=True, null=True)
-    phone = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
@@ -128,7 +166,17 @@ class Profile(AbstractUser):
     long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
     email_notifications = models.BooleanField(default=True)
+    email_confirmed = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
+
+    connections = models.ManyToManyField('self', through='Connection', symmetrical=False, related_name='reverse_connections+')
+
+    def connect(self, to_profile):
+        Connection.objects.create(from_profile=self, to_profile=to_profile)
+        Connection.objects.create(to_profile=self, from_profile=to_profile)
+
+    def is_connected(self, profile):
+        return self in profile.connections.all()
 
     @property
     def name(self):
@@ -160,6 +208,14 @@ class Profile(AbstractUser):
             return Employee.objects.get(profile=self, primary=True).company
         except Employee.DoesNotExist:
             return None
+
+    @property
+    def contact_details(self):
+        details, created = ContactDetails.objects.get_or_create(profile=self)
+        if created:
+            details.email = self.email
+            details.save()
+        return details
 
     def get_skills(self):
         return self.skills.all()

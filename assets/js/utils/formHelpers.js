@@ -14,7 +14,11 @@ const filters = {
     "list": [
       /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i,
       /^[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i,
-      /^\+?\d{2}[- ]?\d{3}[- ]?\d{5}/
+	  /\+?\d{2}[- ]?\d{3}[- ]?\d{5}/g,									// Non-formated phone-number with area code
+	  /(twitter|facebook|gmail|skype|upwork|linkedin|angellist)/ig, 	// Site names.
+	  /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/g,		// Twiter urls
+	  /@[a-z0-9_-]{15}/g,												// Twitter usernames.
+	  /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/, 	// Facebook urls
     ]
   }
 }
@@ -23,11 +27,7 @@ const FormHelpers = {
 	checks: {
 		isRequired(value) {
 			// TODO This fails if an int is passed in
-			let check = value.toString();
-			return !!check.length;
-		},
-		isRequiredString(value) {
-			let check = value.toString();
+			let check = value.toString().trim();
 			return !!check.length;
 		},
 		isRequiredInt(value) {

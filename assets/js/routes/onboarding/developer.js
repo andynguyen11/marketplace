@@ -208,7 +208,8 @@ const DeveloperOnboard = React.createClass({
         errorClass: '',
         value: profile.state || '',
         validator: (value) => {
-          const valid = FormHelpers.checks.isRequired(value);
+          const international = profile.country === 'United States of America' ? false : true;
+          const valid = FormHelpers.checks.isRequired(value) || international;
           const { formElements, formErrorsList } = this.state;
           if (!valid) {
             formElements.profileStateProvince.errorClass = 'has-error';

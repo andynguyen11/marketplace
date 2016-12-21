@@ -17,7 +17,6 @@ const EntrepreneurOnboard = React.createClass({
         biography: '',
         availability: '',
         role: '',
-        title: '',
         linkedin: {
           extra_data: ''
         },
@@ -32,7 +31,8 @@ const EntrepreneurOnboard = React.createClass({
         city: '',
         state: '',
         long_description: '',
-        user_id: $('#onboard-form').data('id')
+        user_id: $('#onboard-form').data('id'),
+        user_title: '',
       },
       photo_file: '',
       photo_url: '',
@@ -75,7 +75,7 @@ const EntrepreneurOnboard = React.createClass({
         name: 'title',
         errorClass: '',
         label: 'Title at Your Company',
-        value: profile.title || '',
+        value: company.user_title || '',
         placeholder: 'CEO, Project Manager, Product Manager, etc.',
         validator: (value) => {
           const { isCompany, formElements, formErrorsList } = this.state;
@@ -92,8 +92,8 @@ const EntrepreneurOnboard = React.createClass({
         },
         update: (value) => {
           const { profile } = this.state;
-          profile.title = value;
-          this.setState({ profile });
+          company.user_title = value;
+          this.setState({ company });
         }
       },
       companyName: {

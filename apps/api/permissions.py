@@ -159,3 +159,9 @@ class IsProjectOwnerPermission(permissions.BasePermission):
         return request.user.id == obj.project_manager.id
 
 
+class ProductOrderPermission(permissions.BasePermission):
+    def has_object_permission(self, request, view, order):
+        return (request.method in permissions.SAFE_METHODS or
+                view.action == 'update_status') and (
+                request.user in order.involved_users)
+

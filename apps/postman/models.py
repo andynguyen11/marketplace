@@ -399,7 +399,11 @@ class Interaction(models.Model):
 
     def get_replies_count(self):
         """Return the number of accepted responses."""
-        return self.next_messages.filter(moderation_status=STATUS_ACCEPTED).count()
+        return self.child_interaction.filter(moderation_status=STATUS_ACCEPTED).count()
+
+    def get_participant_replies_count(self, profile):
+        """Return the number of accepted responses for a participant."""
+        return self.child_interaction.filter(sender=profile, moderation_status=STATUS_ACCEPTED).count()
 
     def clean(self):
         """Check some validity constraints."""

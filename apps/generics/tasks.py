@@ -3,18 +3,54 @@ from datetime import datetime, timedelta
 import pytz
 import simplejson
 
+from celery import shared_task
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
-from celery import shared_task
+from django.core.urlresolvers import reverse
+from django.utils.http import urlencode
+from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from accounts.models import Profile
 from business.models import Job, Document, Project, Employee
-from postman.models import Message
-from generics.models import Attachment
 from expertratings.models import SkillTestResult
-from generics.utils import send_mail
+from generics.models import Attachment
+from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
+from postman.models import Message
+
 
 utc=pytz.UTC
+
+def generate_confirmation_signature(user, instance, field):
+    return sign_data(user_id=user.id, id=instance.id, field=field, value=getattr(instance, field))
+
+def validate_confirmation_signature(instance, signature, confirm_on_success='%s_confirmed'):
+    """
+    validates tokens generated with generate_confirmation_signature.
+    sets '%(field)s_confirmed' = True by default, can be disabled with confirm_on_success=False
+    """
+    token_data = parse_signature(signature)
+    if(token_data['id'] != instance.id):
+        raise PermissionDenied(detail='signature used on incorrect instance')
+    if(token_data['value'] != getattr(instance, token_data['field'])):
+        raise ValidationError(detail={'signature': ['instance field value no longer matches signed field value']})
+    if(confirm_on_success):
+        setattr(instance, confirm_on_success % token_data['field'], True)
+        instance.save()
+    return token_data
+
+
+def absolute_url(url, query):
+    base_url = settings.BASE_URL if settings.BASE_URL.startswith('http') else (
+            ('http://' if settings.DEBUG else 'https://') + settings.BASE_URL)
+    return '%s%s?%s' % (base_url, url, urlencode(query))
+
+def generate_confirmation_url(user, instance, field,
+        base_name=None, reverse_pattern='api:%s-confirm-email', **kwargs):
+    if not base_name:
+        base_name = instance._meta.model_name
+    kwargs['signature'] = generate_confirmation_signature(user, instance, field=field)
+    url = reverse(reverse_pattern % base_name, args=(instance.id,))
+    return absolute_url(url, kwargs)
 
 @shared_task
 def account_confirmation(user_id, role=None):
@@ -23,6 +59,15 @@ def account_confirmation(user_id, role=None):
     send_mail(email_template, [user], {
         'fname': user.first_name,
         'email': user.email
+    })
+
+@shared_task
+def email_confirmation(user, instance=None, email_field='email', template='verify-email'):
+    if not instance:
+        instance = user
+    send_to_emails(template, email=getattr(instance, email_field), context={
+        'fname': user.first_name,
+        'url': generate_confirmation_url(user, instance, field=email_field)
     })
 
 
@@ -187,3 +232,51 @@ def verify_skills(profile_id):
     if not results:
         profile = Profile.objects.get(id=profile_id)
         send_mail('verify-skills', [profile], {})
+
+
+@shared_task
+def post_a_project(profile_id):
+    user = Profile.objects.get(id=profile_id)
+    project = Project.objects.filter(project_manager=user)
+    if not len(project):
+        send_mail('post-a-project', [user], {})
+
+
+@shared_task
+def complete_project(project_id):
+    project = Project.objects.get(id=project_id)
+    if not project.published and not project.deleted:
+        send_mail('complete-project', [project.project_manager], {
+            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+        })
+
+@shared_task
+def connection_request(this_id, that_id, thread_id, template):
+    this_user = Profile.objects.get(id=this_id)
+    that_user = Profile.objects.get(id=that_id)
+    send_mail(template, [this_user], {
+        'fname': that_user.first_name,
+        'thread_id': thread_id,
+    })
+
+@shared_task
+def connection_made_freelancer(entrepreneur_id, thread_id):
+    entrepreneur = Profile.objects.get(id=entrepreneur_id)
+    send_mail('connection-made-freelancer', [entrepreneur], {
+        'fname': entrepreneur.first_name,
+        'thread_id': thread_id,
+    })
+
+@shared_task
+def connection_made(this_id, that_id, thread_id, order_context=None):
+    template = 'connection-made-freelancer'
+    this_user = Profile.objects.get(id=this_id)
+    that_user = Profile.objects.get(id=that_id)
+    context = {
+        'fname': that_user.first_name,
+        'thread_id': thread_id,
+    }
+    if order_context:
+        context.update(order_context)
+        template = 'connection-made-entrepreneur'
+    send_mail(template, [this_user], context)
