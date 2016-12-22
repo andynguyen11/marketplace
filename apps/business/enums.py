@@ -27,7 +27,6 @@ JOB_STATUS = (
     (u'pending', u'Pending'),
     (u'connected', u'Connected'),
     (u'active', u'Active'),
-    (u'connected', u'Connected'),
     (u'completed', u'Completed'),
 )
 
