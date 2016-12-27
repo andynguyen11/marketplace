@@ -38,6 +38,10 @@ def nda_update_event(sender, instance, **kwargs):
             target=instance.job.project,
             type=u'ndaSigned'
         )
+        clear_alerts = Notifications.objects.filter(action_object_id=thread.id, data={"type":"ndaRequest"})
+        for alert in clear_alerts:
+            alert.unread = False
+            alert.save()
         nda_signed_freelancer_email.delay(thread.job.id)
         nda_signed_entrepreneur_email.delay(thread.job.id)
 
