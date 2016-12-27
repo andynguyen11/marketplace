@@ -257,10 +257,10 @@ class ConnectJob(Product):
                 target=thread.job.project,
                 type=u'connectionAccepted'
             )
-        #clear_alerts = Notifications.objects.filter(action_object_id=thread.id, data={"type":"connectionRequest"})
-        #for alert in clear_alerts:
-        #    alert.unread = False
-        #    alert.save()
+        clear_alerts = Notifications.objects.filter(action_object_id=thread.id, data={"type":"connectionRequest"})
+        for alert in clear_alerts:
+            alert.unread = False
+            alert.save()
         order_context = {
             'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,
