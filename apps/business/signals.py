@@ -2,15 +2,16 @@ from datetime import datetime, timedelta
 
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
+from notifications.models import Notification
+from notifications.signals import notify
 
 from accounts.models import Profile
 from business.models import Document, Terms, Project
-from postman.models import Message
-from notifications.signals import notify
-
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
     terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills,\
     post_a_project, complete_project
+from postman.models import Message
+
 
 @receiver(pre_save, sender=Document)
 def nda_update_event(sender, instance, **kwargs):
@@ -38,7 +39,7 @@ def nda_update_event(sender, instance, **kwargs):
             target=instance.job.project,
             type=u'ndaSigned'
         )
-        clear_alerts = Notifications.objects.filter(action_object_id=thread.id, data={"type":"ndaRequest"})
+        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"ndaRequest"})
         for alert in clear_alerts:
             alert.unread = False
             alert.save()

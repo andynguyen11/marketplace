@@ -5,6 +5,7 @@ from enum import Enum
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
+from notifications.models import Notification
 from notifications.signals import notify
 
 from business.models import Terms, Job
@@ -257,7 +258,7 @@ class ConnectJob(Product):
                 target=thread.job.project,
                 type=u'connectionAccepted'
             )
-        clear_alerts = Notifications.objects.filter(action_object_id=thread.id, data={"type":"connectionRequest"})
+        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"connectionRequest"})
         for alert in clear_alerts:
             alert.unread = False
             alert.save()
