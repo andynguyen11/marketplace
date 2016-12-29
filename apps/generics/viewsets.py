@@ -110,3 +110,8 @@ class NestedModelViewSet(NestedModelMixin, viewsets.GenericViewSet):
 
 class ImmutableNestedModelViewSet(NestedImmutableModelMixin, viewsets.GenericViewSet):
     pass
+
+
+class ImmutableModelViewSet(mixins.CreateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    pass
+

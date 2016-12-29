@@ -117,9 +117,10 @@ class Product(object):
         repr['related_model'] = self.related_class._meta.label
         repr['type'] = self.type.name
         repr['status_flow_actions'] = {}
-        for status in self.status_flow:
+        for status in getattr(self, 'status_flow', []):
             status_callback = 'on_%s' % status 
-            doc = getattr(getattr(self, status_callback, {}), '__doc__', None)
+            doc = getattr(getattr(self, status_callback), '__doc__', None) if \
+                hasattr(self, status_callback) else None
             if(status_callback and doc):
                 repr['status_flow_actions'][status_callback] = doc
         
@@ -177,12 +178,13 @@ class ConnectJob(Product):
             return None
         valid_transitions = {
                 '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
+                '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
                 'requested_by_%s' % other:  ['%s_is_validating' % role, 'accepted', 'cancelled'], }
         if order.requester != user:
             valid_transitions['%s_is_validating' % role].append('accepted')
         if (order.request_status in ['%s_is_validating' % role, 'requested_by_%s' % other]):
             return valid_transitions[order.request_status]
-        return []
+        return ['cancelled']
 
     def change_status(self, status, order, user):
         if status == order.request_status:

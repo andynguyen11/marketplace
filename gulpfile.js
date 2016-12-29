@@ -143,7 +143,17 @@ gulp.task('spa-dev', function(){
 	del('./static/spa/**/*.*').then(function() {
 		return gulp.src('./SPA/**/*.*')
 			.pipe(replace('static/spa/.', 'static-dev/spa', { skipBinary: true }))
-    //.pipe(replace('https://dev.loom.co/api', 'http://localhost:8000/api', { skipBinary: true }))
+			.on('error', gutil.log)
+			.pipe(gulp.dest('./static/spa/'));
+	})
+});
+
+// for local development 
+gulp.task('spa-dev-local', function(){
+	del('./static/spa/**/*.*').then(function() {
+		return gulp.src('./SPA/**/*.*')
+    //.pipe(replace('static/spa/.', 'static-dev/spa', { skipBinary: true }))
+      .pipe(replace('https://dev.loom.co/api', 'http://localhost:8000/api', { skipBinary: true }))
 			.on('error', gutil.log)
 			.pipe(gulp.dest('./static/spa/'));
 	})
@@ -151,6 +161,7 @@ gulp.task('spa-dev', function(){
 
 gulp.task('build', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
 gulp.task('dist-dev', ['spa-dev', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
+gulp.task('dist-dev-local', ['spa-dev-local', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
 gulp.task('dist', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images']);
 gulp.task('default', ['spa', 'scripts:app', 'scripts:vendor', 'scripts:routes', 'less', 'fonts', 'images'], function() {
 
