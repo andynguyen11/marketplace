@@ -31,52 +31,41 @@ def get_customer(user):
     else: return connect_customer(user)
 
 
-def add_source(user, stripe_token, metadata={}):
+def add_source(user, stripe_token, **kwargs):
     " add a payment source to an existing customer via a token "
     stripe_customer = stripe.Customer.retrieve(user.stripe)
-    return stripe_customer.sources.create(source=stripe_token, metadata=metadata)
+    return stripe_customer.sources.create(source=stripe_token, **kwargs)
 
 
-def metadata_filter(sub):
-    """
-    Find all sources that have the same slice of metadata.
-    Stripe seems to cast all metadata to strings
-    """
-    def match(full):
-        for k, v in sub.items():
-            if not str(full.metadata.get(k, None)) == str(v):
-                return False
-        return True
-    return match
-
-def get_source(user=None, customer=None, source_id=None, metadata={}):
+def get_source(user=None, customer=None, source_id=None):
     " get a specific stripe payment source's details "
     if isinstance(source_id, stripe.Card):
         return source_id
     if user:
         return get_source(
                 customer=stripe.Customer.retrieve(user.stripe),
-                source_id=source_id,
-                metadata=metadata)
-    if source_id:
-        return customer.sources.retrieve(source_id)
-    matches = list({ c['fingerprint']: c for c in filter(metadata_filter(metadata), customer.sources.data) }.values())
-    assert len(matches) == 1
-    return matches[0]
+                source_id=source_id)
+    return customer.sources.retrieve(source_id)
 
-def get_customer_and_card(user, stripe_token=None, metadata={}):
+
+def get_customer_and_card(user, stripe_token=None):
     if user.stripe:
         customer = stripe.Customer.retrieve(user.stripe)
         try:
-            card = get_source(customer=customer, source_id=stripe_token, metadata=metadata)
+            card = get_source(customer=customer, source_id=stripe_token)
         except stripe.error.InvalidRequestError, e:
             card = customer.sources.create(source=stripe_token)
     else:
         customer = connect_customer(user, stripe_token)
         card = get_source(customer=customer)
-    card.metadata = metadata
     card.save()
     return customer, card
+
+
+def capture_charge(charge_id):
+    " thin wrapper around stripe.Charge.create "
+    return stripe.Charge.retrieve(charge_id).capture()
+
 
 def charge_source(amount, application_fee=None, **kwargs):
     " thin wrapper around stripe.Charge.create "
@@ -99,6 +88,7 @@ stripe_helpers = Bunch(
         get_source=get_source,
         add_source=add_source,
         charge_source=charge_source,
+        capture_charge=capture_charge,
         connect_customer=connect_customer,
         get_customer=get_customer,
         create_account=create_account,

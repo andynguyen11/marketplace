@@ -7,6 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from notifications.models import Notification
 from notifications.signals import notify
+from notifications.models import Notification
 
 from business.models import Terms, Job
 from docusign.models import Document as DocusignDocument

@@ -16,10 +16,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
 def ensure_order_is_payable(order, stripe_token=None):
     try: 
-        customer, card = stripe_helpers.get_customer_and_card(order.payer, stripe_token, metadata={'order': order.id})
+        return order.stripe_charge_id or order.prepare_payment(source=stripe_token), 'is payable'
     except StripeError, e:
         return False, e.message
-    return card, 'is payable'
 
 class ProductOrderSerializer(serializers.ModelSerializer):
     recipient = serializers.PrimaryKeyRelatedField(required=False, queryset=Profile.objects.all())

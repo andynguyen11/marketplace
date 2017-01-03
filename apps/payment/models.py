@@ -218,17 +218,30 @@ class ProductOrder(models.Model):
             return self.price, self.apply_promo(self.fee)
         return self.apply_promo(self.price), None
 
-    def pay(self, customer=None, source=None):
+    def add_promo(self, code):
+        # TODO: Should an incorrect promo fail silently like this?
+        if code:
+            promo = get_promo(code)
+            if promo and promo.is_valid(self.payer):
+                self.promo = promo
+            else:
+                return False
+
+    def prepare_payment(self, customer=None, source=None):
+        if self.stripe_charge_id:
+            return self.stripe_charge_id
+
         if not (customer and source):
             customer, source = stripe_helpers.get_customer_and_card(
-                    self.payer, metadata={'order': self.id})
-        self.product.can_pay(self, self.payer)
+                    self.payer, source)
         amount, fee = self.final_costs
         payload = dict(
+            capture=False,
             amount=amount,
             source=source,
             customer=customer,
-            description= 'Loom fee for {0}'.format(self))
+            description= 'Loom fee for {0}'.format(self),
+            metadata={'order': self.id})
 
         if(self.product.type == ProductType.percentage):
             payload['amount'] = fee # amount is the fee until connect integration
@@ -236,6 +249,15 @@ class ProductOrder(models.Model):
         charge = stripe_helpers.charge_source(**payload)
 
         self.stripe_charge_id = charge.id
+        self.save()
+        return self.stripe_charge_id
+
+    def pay(self, customer=None, source=None):
+        self.prepare_payment(customer, source)
+        self.product.can_pay(self, self.payer)
+
+        charge = stripe_helpers.capture_charge(self.stripe_charge_id)
+
         self.set_status('paid' if charge.paid else charge.status)
 
         if self.status == 'paid':
