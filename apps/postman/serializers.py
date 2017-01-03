@@ -97,7 +97,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     attachments = AttachmentSerializer(many=True)
     interactions = serializers.SerializerMethodField()
     sender = serializers.SerializerMethodField()
-    recipient = ObfuscatedProfileSerializer()
+    recipient = serializers.SerializerMethodField()
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
     connection_status = serializers.SerializerMethodField()
@@ -119,20 +119,26 @@ class ConversationSerializer(serializers.ModelSerializer):
     def is_connected(self, obj):
         return len(self.requesting_user(obj).connections.filter(id=self.other_user(obj).id))
 
+    def set_profile(self, obj, user):
+        if self.is_connected(obj):
+            profile = ProfileSerializer(user).data
+            fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
+            return { k: v for k, v in profile.items() if k in fields }
+        else:
+            profile = ObfuscatedProfileSerializer(user).data
+        return profile
+
     def get_is_owner(self, obj):
         return self.requesting_user(obj) == obj.job.project.project_manager
 
     def get_current_user(self, obj):
         return self.requesting_user(obj).id
 
+    def get_recipient(self, obj):
+        return self.set_profile(obj, obj.recipient)
+
     def get_sender(self, obj):
-        if self.is_connected(obj):
-            sender = ProfileSerializer(obj.sender).data
-            fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
-            return { k: v for k, v in sender.items() if k in fields }
-        else:
-            sender = ObfuscatedProfileSerializer(obj.sender).data
-        return sender
+        return self.set_profile(obj, obj.sender)
 
     def get_connection_contact_details(self, obj):
         other_user = self.other_user(obj)
