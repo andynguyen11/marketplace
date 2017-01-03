@@ -152,7 +152,7 @@ class ProfileViewSet(ModelViewSet):
     def connections(self, request, *args, **kwargs):
         user = request.user
         connections = ProfileSerializer(user.connections, many=True).data
-        fields = [ 'id', 'first_name', 'last_name', 'photo', 'city', 'state', 'country', 'contact_details' ]
+        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country', 'contact_details' ]
         return Response([
             { k: v for k, v in connection.items() if k in fields }
             for connection in connections ])

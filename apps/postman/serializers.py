@@ -6,7 +6,7 @@ from notifications.models import Notification
 from rest_framework import serializers
 
 from accounts.models import ContactDetails
-from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer
+from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
 from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
 from business.models import Document
 from payment.models import ProductOrder
@@ -96,7 +96,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     current_user = serializers.SerializerMethodField()
     attachments = AttachmentSerializer(many=True)
     interactions = serializers.SerializerMethodField()
-    sender = ObfuscatedProfileSerializer()
+    sender = serializers.SerializerMethodField()
     recipient = ObfuscatedProfileSerializer()
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
@@ -124,6 +124,15 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_current_user(self, obj):
         return self.requesting_user(obj).id
+
+    def get_sender(self, obj):
+        if self.is_connected(obj):
+            sender = ProfileSerializer(obj.sender).data
+            fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
+            return { k: v for k, v in sender.items() if k in fields }
+        else:
+            sender = ObfuscatedProfileSerializer(obj.sender).data
+        return sender
 
     def get_connection_contact_details(self, obj):
         other_user = self.other_user(obj)

@@ -187,11 +187,6 @@ class MessageAPI(APIView):
 
 class ConnectThreadAPI(APIView):
 
-    def update_contact_details(self, contact_details, new_details={}):
-        for k, v in new_details.items():
-            setattr(contact_details, k, v)
-        contact_details.save()
-
     def get_or_create_order(self, request, thread):
         try:
             return ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id)
@@ -225,22 +220,8 @@ class ConnectThreadAPI(APIView):
     def update_order(self, request, thread):
         order = self.get_or_create_order(request, thread)
         self.validate_order(request, order)
-        if order.requester != request.user: #and request.user.contact_details.email_confirmed:
+        if order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
-            if (order.status == 'paid' and order.requester in request.user.connections.all()):
-                return 'Connection Made!' # TODO: Get actual copy for messages
-        else: #elif request.user.contact_details.email_confirmed:
-            recipient = thread.sender if request.user == thread.recipient else thread.recipient
-            return 'Connection Requested!'
-        #else:
-        #    if request.user == thread.job.contractor:
-        #        role = 'freelancer'
-        #    else:
-        #        role = 'entrepreneur'
-        #    order.product.change_status(
-        #            '%s_is_validating' % role,
-        #            order,
-        #            request.user)
 
     def new_message(self, thread, user, body):
         recipient = thread.sender if user == thread.recipient else thread.recipient
@@ -252,22 +233,9 @@ class ConnectThreadAPI(APIView):
             subject=thread.subject
         )
 
-    def update_thread(self, request, message_body, thread):
-        thread.refresh_from_db()
-        thread.job.refresh_from_db()
-        if message_body:
-            interaction = self.new_message(thread, request.user, message_body)
-            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
-        serializer = ConversationSerializer(thread, context={'request': request})
-        return serializer.data
-
     def post(self, request, thread_id):
         thread = Message.objects.get(id = thread_id)
-        self.update_contact_details(request.user.contact_details, request.data.get('contact_details', {}))
-        #TODO These need to become system messages when we support that
-        message_body = self.update_order(request, thread)
-        #updated_thread = self.update_thread(request, message_body, thread)
-        #return Response(updated_thread)
+        self.update_order(request, thread)
         thread.refresh_from_db()
         thread.job.refresh_from_db()
         serializer = ConversationSerializer(thread, context={'request': request})
