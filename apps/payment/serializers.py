@@ -29,6 +29,11 @@ class ProductOrderSerializer(serializers.ModelSerializer):
     _product = serializers.CharField(write_only=True)
     product = serializers.SerializerMethodField()
 
+    _promo = serializers.CharField(write_only=True, required=False)
+    promo = serializers.CharField(required=False, allow_null=True)
+
+    final_price = serializers.CharField(read_only=True)#required=False)
+
     class Meta:
         model = ProductOrder
         read_only_fields = (
@@ -36,8 +41,8 @@ class ProductOrderSerializer(serializers.ModelSerializer):
             'date_charged',
             'related_model',
             'related_object',
-            'promo',
             'price',
+            'final_price',
             'fee',
             'status',
             'stripe_charge_id',
@@ -46,7 +51,9 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         stripe_token = data.pop('stripe_token', None)
+        promo = data.pop('promo', None)
         order = ProductOrder.objects.create(**data)
+        order.promo = promo
         payable = False
         if(stripe_token):
             payable, order.details = ensure_order_is_payable(order, stripe_token)
@@ -58,6 +65,7 @@ class ProductOrderSerializer(serializers.ModelSerializer):
                     'stripe_token': [
                         'Payment method required for payers to request orders.'
                         ] } })
+        order.save()
         return order
 
     def get_product(self, obj):

@@ -194,7 +194,7 @@ class PromoCheck(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, code=None):
-        promo = get_promo(code)
+        promo = get_promo(code or request.query_params.get('code', None))
         if not promo:
             return Response(status=404, data='This promo code is invalid.')
 
