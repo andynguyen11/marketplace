@@ -19,7 +19,7 @@ from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
 from expertratings.utils import nicely_serialize_verification_tests
-from generics.tasks import account_confirmation, validate_confirmation_signature
+from generics.tasks import account_confirmation, email_confirmation, validate_confirmation_signature
 from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from postman.serializers import ConversationSerializer
 from generics.utils import parse_signature
@@ -81,16 +81,26 @@ class ContactDetailsViewSet(ModelViewSet):
             new_status = 'requested_by_%s' % role if order.requester == contact_details.profile else 'accepted'
             order.change_status(new_status, contact_details.profile)
 
+    @detail_route(methods=['get'])
+    def send_confirmation_email(self, request, *args, **kwargs):
+        details = self.get_object()
+        if not details.email_confirmed:
+            email_confirmation(user=details.profile, instance=details)
+            return Response(status=201)
+        else:
+            return Response("Already confirmed", status=409)
+
     @detail_route(permission_classes=tuple())
     def confirm_email(self, request, pk, *args, **kwargs):
         signature = request.query_params.get('signature', None)
         contact_details = ContactDetails.objects.get(profile_id=pk)
         validate_confirmation_signature(contact_details, signature)
         if contact_details.email_confirmed:
-            # update all connect_job orders
-            # TODO UGLY
             self.update_orders_for_user(contact_details, 'freelancer')
             self.update_orders_for_user(contact_details, 'entrepreneur')
+            if contact_details.profile.email == contact_details.email:
+                contact_details.profile.email_confirmed = True
+                contact_details.profile.save()
         return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
 
 
@@ -161,10 +171,26 @@ class ProfileViewSet(ModelViewSet):
     def _connections(self, request, *args, **kwargs):
         return self.connections(request, *args, **kwargs)
 
+    @detail_route(methods=['get'])
+    def send_confirmation_email(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user != request.user:
+            raise PermissionDenied("Users can only request their own confirmation emails")
+
+        if not user.email_confirmed:
+            email_confirmation(user=user)
+            return Response(status=201)
+        else:
+            return Response("Already confirmed", status=409)
+
     @detail_route(permission_classes=tuple())
     def confirm_email(self, request, *args, **kwargs):
         signature = request.query_params.get('signature', None)
-        validate_confirmation_signature(self.get_object(), signature)
+        profile = self.get_object() 
+        validate_confirmation_signature(profile , signature)
+        if profile.email == profile.contact_details.email:
+            profile.contact_details.email_confirmed = True
+            profile.contact_details.save()
         return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
 
 class SkillTestViewSet(NestedModelViewSet):

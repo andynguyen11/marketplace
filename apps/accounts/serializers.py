@@ -55,8 +55,13 @@ class ContactDetailsSerializer(RelationalModelSerializer):
     class Meta:
         model = ContactDetails
 
+    def different_email(self, data):
+        return (data.get('email', None)) and (data.get('email', None) != data['profile'].email)
+
     def resolve_relations(self, data):
-        data['email'] = data.get('email', data['profile'].email)
+        if not self.different_email(data):
+            data['email'] = data['profile'].email
+            data['email_confirmed'] = data['profile'].email_confirmed
         return data
 
 
