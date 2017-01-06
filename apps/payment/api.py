@@ -23,6 +23,7 @@ from business.products import products
 from payment.models import ProductOrder, Order, Promo, get_promo
 from payment.serializers import OrderSerializer, ProductOrderSerializer, ensure_order_is_payable
 from payment.helpers import stripe_helpers 
+import payment.tasks as tasks
 from postman.forms import build_payload
 
 stripe.api_key = settings.STRIPE_KEY

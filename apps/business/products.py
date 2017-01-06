@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from types import FunctionType, MethodType
 from enum import Enum
 
@@ -42,6 +42,7 @@ class Product(object):
         fee_percentage=10,
         related_class=models.base.ModelBase,
         related_price_field='cash',
+        valid_for=timedelta(),
         on_paid=MethodType)
 
     @property
@@ -148,6 +149,7 @@ class ConnectJob(Product):
         'paid')
     price = settings.PRODUCTS.get('connect_job', {}).get('price', 99.00)
     related_class = Job
+    valid_for = timedelta(days=7)
 
     def validate_order(self, order):
         pattern = 'requested_by_%s' #if order.requester.contact_details.email_confirmed else '%s_is_validating'
@@ -172,6 +174,12 @@ class ConnectJob(Product):
             return 'freelancer', 'entrepreneur'
         if(user == order.related_object.owner):
             return 'entrepreneur', 'freelancer'
+
+    def get_waiting_on(self, order):
+        if order.request_status in ['freelancer_is_validating', 'requested_by_entrepreneur']:
+            return order.related_object.contractor
+        elif order.request_status in ['entrepreneur_is_validating', 'requested_by_freelancer']:
+            return order.related_object.owner
 
     def valid_statuses(self, order, user):
         role, other = self.get_role(order, user)
@@ -203,6 +211,9 @@ class ConnectJob(Product):
         job = order.related_object
         return {job.contractor, job.owner}
 
+    def get_expiry_details(self, order):
+        return {"thread_id": Message.objects.get(job=order.related_object).id}
+
     def on_requested_by_freelancer(self, order):
         "request contact_details from entrepreneur"
         job = order.related_object
@@ -212,7 +223,7 @@ class ConnectJob(Product):
             recipient=job.owner,
             verb=u'made a connection request for',
             action_object=thread,
-            target=thread.job.project,
+            target=job.project,
             type=u'connectionRequest'
         )
         connection_request.delay(job.owner.id, job.contractor.id, thread.id, 'connection-request-entrepreneur')
@@ -226,7 +237,7 @@ class ConnectJob(Product):
             recipient=job.contractor,
             verb=u'made a connection request for',
             action_object=thread,
-            target=thread.job.project,
+            target=job.project,
             type=u'connectionRequest'
         )
         connection_request.delay(job.contractor.id, job.owner.id, thread.id, 'connection-request-freelancer')

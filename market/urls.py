@@ -91,3 +91,4 @@ if settings.DEBUG and settings.MEDIA_URL :
 
 handler404 = error404
 handler500 = error500
+
