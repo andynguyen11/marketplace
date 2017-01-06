@@ -23,7 +23,7 @@ from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
 from payment.models import ProductOrder
-from payment.serializers import ProductOrderSerializer, ensure_order_is_payable
+from payment.serializers import ProductOrderSerializer, ensure_order_is_payable, default_error_details
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
@@ -209,12 +209,11 @@ class ConnectThreadAPI(APIView):
             raise ValidationError(detail)
 
         if(order.payer == request.user):
-            payable, details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
+            payable, order.details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
             if not payable:
-                errors = [ 'Payer has not specified a payment source for this Order' ]
-                if len(details):
-                    errors.append(details)
-                raise ValidationError({ 'stripe_token': errors })
+                default_error_details(order)
+                order.save()
+                raise ValidationError({ 'error': { 'message': order.details } })
         return order
 
     def update_order(self, request, thread):

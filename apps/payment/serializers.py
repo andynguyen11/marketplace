@@ -20,6 +20,10 @@ def ensure_order_is_payable(order, stripe_token=None):
     except StripeError, e:
         return False, e.message
 
+def default_error_details(order):
+    if (not order.details) or not len(order.details):
+        order.details = 'Payment method required for payers to request orders.'
+
 class ProductOrderSerializer(serializers.ModelSerializer):
     recipient = serializers.PrimaryKeyRelatedField(required=False, queryset=Profile.objects.all())
     payer = serializers.PrimaryKeyRelatedField(required=False, queryset=Profile.objects.all())
@@ -59,11 +63,7 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
         if(order.payer == order.requester and not payable):
             order.status = 'failed'
-            order.details = json.dumps({
-                'failure_message': {
-                    'stripe_token': [
-                        'Payment method required for payers to request orders.'
-                        ] } })
+            default_error_details(order)
         order.save()
         return order
 
