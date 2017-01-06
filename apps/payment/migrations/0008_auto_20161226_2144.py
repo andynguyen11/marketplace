@@ -23,4 +23,9 @@ class Migration(migrations.Migration):
             name='date_created',
             field=models.DateTimeField(auto_now_add=True),
         ),
+        migrations.RenameField(
+            model_name='productorder',
+            old_name='promo',
+            new_name='_promo',
+        ),
     ]
