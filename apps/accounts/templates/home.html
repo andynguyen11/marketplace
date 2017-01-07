@@ -6,6 +6,7 @@
 {% block content %}
 {% cache 3600 home ENVIRONMENT %}
 <div class="hero">
+  <!--<div id="hero-carousel&#45;&#45;home" class="carousel slide" data-interval="10000" data-ride="carousel">-->
   <div id="hero-carousel--home" class="carousel slide">
 
     <!-- Indicators -->
@@ -20,8 +21,8 @@
       <div id="home-hero-1" class="item hero-item--home hero-item--home-post-project active">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand-bold">Raise ideas,<br class="hide-desktop"> not funds.</h2>
-          <h5 class="brand">Loom is the first ever work-for-equity platform that connects<br class="hide-mobile"/> visionaries with developers to bring digital products to life.</h5>
+          <h2 class="brand-bold">Build ideas<br class="hide-desktop"> with equity.</h2>
+          <h5 class="brand">Loom is the first ever work-for-equity platform that connects<br class="hide-mobile"/> entrepreneurs with developers to bring digital products to life.</h5>
           <a href="/signup/prelaunch/" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
         </div>
       </div>
@@ -270,9 +271,11 @@
 {% endcache %}
 
 <div class="press-footer">
-  <img src="{% static 'images/Austin-Inno-Logo.png' %}" />
-  <img src="{% static 'images/press-techcrunch.png' %}" />
-  <img src="{% static 'images/press-abj.svg' %}" />
+  <div class="page-content--medium press-footer-inner">
+    <div><img src="{% static 'images/press-austininno.png' %}" /></div>
+    <div><img src="{% static 'images/press-techcrunch.png' %}" /></div>
+    <div><img src="{% static 'images/press-abj.png' %}" /></div>
+  </div>
 </div>
 
 {% endblock %}

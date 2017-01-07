@@ -416,7 +416,7 @@ CORS_ORIGIN_WHITELIST = (
 
 GULP_PRODUCTION_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp dist'
 
-GULP_DEVELOP_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp dist'
+GULP_DEVELOP_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp'
 
 NOTIFICATIONS_USE_JSONFIELD = True
 

@@ -132,25 +132,29 @@
 
 .press-footer {
   background-color: #C8C6CC;
-  display: flex;
-  justify-content: space-around;
-  height: 100px;
 
-  img {
-    height: auto;
-    width: 200px;
-
-    // images/Austin-Inno-Logo.png
-    &:first-of-type {
-      padding: 30px;
-
-      @media (max-width: @screen-sm) {
-        padding: @gutter * 2 10px;
-      }
-    }
+  .press-footer-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding-bottom: 30px;
 
     @media (max-width: @screen-sm) {
-      width: 110px;
+      flex-direction: column;
+    }
+
+    div {
+      flex-basis: 25%;
+      padding: 30px 10px 0;
+
+      img {
+        width: 100%;
+      }
+
+      @media (max-width: @screen-sm) {
+        width: 50%;
+        max-width: 300px;
+      }
     }
   }
 }

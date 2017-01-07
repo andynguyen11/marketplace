@@ -7,14 +7,12 @@
     <div class="container">
       <div class="dashboard-tables">
         {% if bids or projects %}
-        <div class="sub-section">
-          <h2>Manage Your Pending Projects and Bids</h2>
-        </div>
+        <h2>Manage Your Pending Projects and Bids</h2>
         {% endif %}
         {% if bids %}
           <div class="section">
             <div class="section-header">
-              <h4>My Bids</h4>
+              My Bids
             </div>
             <table class="dashboard-table dashboard-table-flex">
               <thead class="hide-mobile">
@@ -60,13 +58,12 @@
         {% if projects %}
           {% for project in projects %}
           <div class="section">
-            <div class="section-header">
-              <h4 class="pull-left"><a href="{% url 'project' project.slug %}">{{ project.title }}</a></h4>
-              <div class="action-buttons pull-right">
-                <a href="{% url 'edit-project' %}{{ project.id }}" class="btn btn-brand">Edit</a>
-                <a href="{% url 'delete-project' project.id %}" onclick="return confirm('Are you sure ?')" class="btn btn-brand">Remove</a>
+            <div class="section-header section-header--projects">
+              <a href="{% url 'project' project.slug %}">{{ project.title }}</a>
+              <div class="action-buttons">
+                <a href="{% url 'edit-project' %}{{ project.id }}" class="btn btn-brand btn-sm">Edit</a>
+                <a href="{% url 'delete-project' project.id %}" onclick="return confirm('Are you sure ?')" class="btn btn-brand btn-sm">Remove</a>
               </div>
-              <div class="clearfix"></div>
             </div>
             {% if project.job_set.all %}
               <table class="dashboard-table dashboard-table-flex">

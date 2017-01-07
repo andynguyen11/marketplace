@@ -13,7 +13,7 @@
       <div class="col-md-12">
         <h2 class="brand">Welcome to Your Dashboard, {{ user.first_name }}</h2>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-3 dashboard-meta">
         <div class="section profile-snapshot--dashboard text-center">
             <a href="{% url 'profile' %}">
               <div class="profile-photo" style="background-image: url({{ user.get_photo }});"></div>
@@ -23,9 +23,9 @@
               <a href="{% url 'profile' %}">Edit Profile</a>
             </p>
         </div>
-        <div class="section">
+        <div class="section section-quickLinks">
           <div class="section-header">
-            <h4>Quick Links</h4>
+            Quick Links
           </div>
           <div class="section-body flex-column text-center quick-links">
             {% comment %}
@@ -58,7 +58,7 @@
       <div class="col-md-9">
         <div class="section">
           <div class="section-header">
-            <h4>Notifications <span class="text-skinny">({{ notifications|length }})</span></h4>
+            Notifications <span class="text-skinny">({{ notifications|length }})</span>
           </div>
           <ul class="notifications">
             {% if notifications %}
@@ -83,7 +83,7 @@
 
         <div class="section">
           <div class="section-header">
-            <h4>Messages {% comment %}<span class="text-skinny">({{ unread_count }} New)</span>{% endcomment %}</h4>
+            Messages {% comment %}<span class="text-skinny">({{ unread_count }} New)</span>{% endcomment %}
           </div>
 
           {% if messages %}
@@ -127,7 +127,7 @@
 
         <div class="section">
           <div class="section-header">
-            <h4>Connected Company <!--<span class="text-skinny">({% notifications_unread %} New)</span>--></h4>
+            Connected Company
           </div>
           <div class="connected-company">
             {% if request.user.company %}
