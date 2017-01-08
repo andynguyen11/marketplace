@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os, sys, datetime
+import security_settings
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
@@ -383,17 +384,7 @@ EXPERT_RATING = {
 WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 
 MAX_FILE_SIZE = 5242880
-FILE_CONTENT_TYPES = ['image/jpeg', 'application/pdf', 'image/bmp',
-                     'image/pjpeg', 'image/png', 'application/x-excel', 'text/html',
-                     'application/excel', 'application/x-msexcel', 'application/vnd.ms-excel',
-                     'application/mspowerpoint', 'application/vnd.ms-powerpoint', 'application/powerpoint',
-                     'application/x-mspowerpoint', 'application/msword', 'text/plain', 'text/richtext',
-                     'application/x-rtf', 'text/vnd.rn-realtext', 'text/csv', 'application/x-iwork-keynote-sffkey',
-                     'application/x-iwork-numbers-sffnumbers', 'application/x-iwork-pages-sffpages',
-                     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-                     'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-                     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', ]
+FILE_CONTENT_TYPES = security_settings.FILE_CONTENT_TYPES
 
 LOOM_FEE = 3
 

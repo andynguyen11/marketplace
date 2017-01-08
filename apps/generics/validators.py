@@ -5,11 +5,10 @@ from django.template.defaultfilters import filesizeformat
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 
-# TODO This validator isn't working properly
 def file_validator(file):
     error_messages = {
         'max_size': u'Ensure this file size is not greater than {0}. Your file size is {1}.',
-        'content_type': u'Files of type {0} are not supported.',
+        'content_type': u'Files of type {0} are not supported. If you need to send this file, please zip it.',
     }
 
     max_size = settings.MAX_FILE_SIZE
