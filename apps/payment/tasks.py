@@ -8,6 +8,30 @@ from payment.models import ProductOrder
 from payment.utils import only_one, is_scheduled
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
 
+from postman.models import Message
+from notifications.signals import notify
+
+def send_expired_notifications(order):
+    requestee = [u for u in order.product.involved_users(order) if u != order.requester][0]
+    job = order.related_object
+    thread = Message.objects.get(job=job)
+    order.product.clear_notifications(thread, type="connectionRequest")
+    notify.send(
+        order.requester,
+        recipient=requestee,
+        verb=u'connection request expired for',
+        action_object=thread,
+        target=job.project,
+        type=u'connectionRequestExpired'
+    )
+    notify.send(
+        requestee,
+        recipient=order.requester,
+        verb=u'connection request expired from',
+        action_object=thread,
+        target=job.project,
+        type=u'connectionRequestExpired'
+    )
 
 @shared_task
 def order_expiring_email(order):
@@ -37,6 +61,7 @@ def expire_order(order):
             ''' % order.product.valid_for
         order.set_status('failed')
         order.save()
+        send_expired_notifications(order)
         return order, 'expired'
 
     elif (today() + timedelta(days=1) >= expiry and

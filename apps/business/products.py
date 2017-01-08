@@ -7,7 +7,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from notifications.models import Notification
 from notifications.signals import notify
-from notifications.models import Notification
 
 from business.models import Terms, Job
 from docusign.models import Document as DocusignDocument
@@ -214,6 +213,12 @@ class ConnectJob(Product):
     def get_expiry_details(self, order):
         return {"thread_id": Message.objects.get(job=order.related_object).id}
 
+    def clear_notifications(self, thread, type):
+        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":type})
+        for alert in clear_alerts:
+            alert.unread = False
+            alert.save()
+
     def on_requested_by_freelancer(self, order):
         "request contact_details from entrepreneur"
         job = order.related_object
@@ -227,6 +232,9 @@ class ConnectJob(Product):
             type=u'connectionRequest'
         )
         connection_request.delay(job.owner.id, job.contractor.id, thread.id, 'connection-request-entrepreneur')
+        self.clear_notifications(thread, type="connectionRequestExpired")
+
+
 
     def on_requested_by_entrepreneur(self, order):
         "request contact_details from freelancer"
@@ -241,6 +249,7 @@ class ConnectJob(Product):
             type=u'connectionRequest'
         )
         connection_request.delay(job.contractor.id, job.owner.id, thread.id, 'connection-request-freelancer')
+        self.clear_notifications(thread, type="connectionRequestExpired")
 
     def on_accepted(self, order):
         "pay order with cached card"
@@ -272,10 +281,7 @@ class ConnectJob(Product):
                 target=thread.job.project,
                 type=u'connectionAccepted'
             )
-        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"connectionRequest"})
-        for alert in clear_alerts:
-            alert.unread = False
-            alert.save()
+        self.clear_notifications(thread, type="connectionRequest")
         order_context = {
             'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,
