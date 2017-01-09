@@ -121,8 +121,8 @@ class MessageAPI(APIView):
             'interaction': new_interaction
         }
 
-    def passed_limit(thread, user):
-        return (thread.job.status == 'pending') and not free_messages(thread, request.user)['remaining']
+    def passed_limit(self, thread, user):
+        return (thread.job.status == 'pending') and not free_messages(thread, user)['remaining']
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
