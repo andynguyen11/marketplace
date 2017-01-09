@@ -92,6 +92,9 @@ def expire_orders(delay=dict(hours=3)):
 
 @signals.celeryd_after_setup.connect
 def begin_loop(sender=None, conf=None, **kwargs):
+    """ TODO: self looping tasks need to be cleaned up at start or finish of worker lifespan,
+              Or delays can be hard coded instead of defaulted
+    """
     if not is_scheduled('payment.tasks.expire_orders', or_running=True):
         expire_orders.delay()
 

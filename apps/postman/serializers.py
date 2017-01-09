@@ -2,6 +2,7 @@ from itertools import chain
 from operator import attrgetter
 
 from django.db.models import Q
+from django.conf import settings
 from notifications.models import Notification
 from rest_framework import serializers
 
@@ -87,6 +88,15 @@ def serialize_interaction(message):
                 content=message.body)
 
 
+
+def free_messages(thread, user):
+    total = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.project.project_manager == user \
+            else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
+    remaining = total - thread.get_participant_replies_count(user)
+    if remaining < 0:
+        remaining = 0
+    return dict(total=total, remaining=remaining)
+
 class ConversationSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     nda = DocumentSerializer()
@@ -102,6 +112,8 @@ class ConversationSerializer(serializers.ModelSerializer):
     contact_details = serializers.SerializerMethodField()
     connection_status = serializers.SerializerMethodField()
     alerts = serializers.SerializerMethodField()
+
+    free_messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -182,3 +194,5 @@ class ConversationSerializer(serializers.ModelSerializer):
         except ProductOrder.DoesNotExist:
             pass
 
+    def get_free_messages(self, obj):
+        return free_messages(obj, self.requesting_user(obj))

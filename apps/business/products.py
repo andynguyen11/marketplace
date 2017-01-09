@@ -233,6 +233,7 @@ class ConnectJob(Product):
         )
         connection_request.delay(job.owner.id, job.contractor.id, thread.id, 'connection-request-entrepreneur')
         self.clear_notifications(thread, type="connectionRequestExpired")
+        self.clear_notifications(thread, type="messageLimitReached")
 
 
 
@@ -250,6 +251,7 @@ class ConnectJob(Product):
         )
         connection_request.delay(job.contractor.id, job.owner.id, thread.id, 'connection-request-freelancer')
         self.clear_notifications(thread, type="connectionRequestExpired")
+        self.clear_notifications(thread, type="messageLimitReached")
 
     def on_accepted(self, order):
         "pay order with cached card"
@@ -282,6 +284,7 @@ class ConnectJob(Product):
                 type=u'connectionAccepted'
             )
         self.clear_notifications(thread, type="connectionRequest")
+        self.clear_notifications(thread, type="messageLimitReached")
         order_context = {
             'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,
