@@ -295,3 +295,95 @@
 	padding-top: @gutter * 2;
 }
 
+.testimonials {
+	background: #fff7f1; /* Old browsers */
+	background: -moz-linear-gradient(left, #fff7f1 0%, #fff5f3 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(left, #fff7f1 0%, #fff5f3 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to right, #fff7f1 0%, #fff5f3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f1', endColorstr='#fff5f3', GradientType=1); /* IE6-9 */
+}
+
+.testimonials-inner {
+	padding: @gutter--medium @gutter (@gutter * 2);
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	.testimonial {
+		flex-basis: 30%;
+		min-width: 280px;
+		border: 1px solid @brand-neutral--3;
+		border-radius: @border-radius;
+		padding: @gutter @gutter;
+		background: #FFF;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		position: relative;
+		margin-top: 60px;
+		margin-right: auto;
+		margin-left: auto;
+
+		@media (max-width: @screen-sm) {
+			flex-basis: 47%;
+		}
+
+		@media (max-width: @screen-xs) {
+			flex-basis: 100%;
+		}
+	}
+
+	.testimonial-avatar {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 70px;
+		height: 70px;
+		border-radius: 50%;
+		border: 1px solid @brand-neutral--4;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+
+		&.testimonial-avatar--neill {
+			background-image: url("../images/avatar-neill.jpg");
+			background-position: top -4px center;
+			background-size: 100%;
+		}
+
+		&.testimonial-avatar--jermaine {
+			background-image: url("../images/avatar-jermaine.jpg");
+			background-size: 200%;
+			background-position: top -5px left -41px;
+		}
+
+		&.testimonial-avatar--juan {
+			background-image: url("../images/avatar-juan.jpg");
+			background-size: 110%;
+			background-position: top left;
+		}
+	}
+
+	.testimonial-text {
+		text-align: center;
+		flex-grow: 1;
+		padding: 35px @gutter 0;
+		line-height: 1.5;
+		background: url("../images/quote.svg") no-repeat top 30px left;
+		background-size: 50px;
+	}
+
+	.testimonial-signature {
+		text-align: center;
+		padding-top: @gutter;
+		padding-bottom: @gutter--medium;
+
+		h4 {
+			margin: 0 0 @gutter--small;
+		}
+		h6 {
+			margin: 0;
+		}
+	}
+}
