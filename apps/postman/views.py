@@ -111,7 +111,7 @@ class InboxView(FolderMixin, TemplateView):
 
     """
     # for FolderMixin:
-    folder_name = 'inbox'
+    folder_name = 'inbox_as_thread'
     view_name = 'inbox'
     # for TemplateView:
     template_name = 'postman/inbox.html'

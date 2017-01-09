@@ -135,8 +135,6 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_work_history(self, obj):
         serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)
-        if self.get_is_connected(obj) or obj.id == self.context['request'].user.id:
-
         return serializer.data
 
     def get_work_examples(self, obj):
