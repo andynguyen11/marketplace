@@ -197,15 +197,15 @@ class PromoCheck(APIView):
     def get(self, request, code=None):
         promo = get_promo(code or request.query_params.get('code', None))
         if not promo:
-            return Response(status=404, data='This promo code is invalid.')
+            return Response(status=400, data='This promo code is invalid.')
 
         if promo.is_valid_for(request.user):
             if promo.not_expired():
                 return Response(status=200, data={'is_valid': True, 'value': promo.value_off})
             else:
-                return Response(status=403, data='This promo code has expired.')
+                return Response(status=400, data='This promo code has expired.')
         else:
-            return Response(status=403, data='This promo code has already been used.')
+            return Response(status=400, data='This promo code has already been used.')
 
     def post(self, request):
         return self.get(request, code=request.data.get('promo', None))
