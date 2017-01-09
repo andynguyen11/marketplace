@@ -101,7 +101,7 @@ class ContactDetailsViewSet(ModelViewSet):
             if contact_details.profile.email == contact_details.email:
                 contact_details.profile.email_confirmed = True
                 contact_details.profile.save()
-        return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
+        return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 
 class ProfileViewSet(ModelViewSet):
@@ -191,7 +191,7 @@ class ProfileViewSet(ModelViewSet):
         if profile.email == profile.contact_details.email:
             profile.contact_details.email_confirmed = True
             profile.contact_details.save()
-        return HttpResponseRedirect(request.query_params.get('next', '/confirmed/'))
+        return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
