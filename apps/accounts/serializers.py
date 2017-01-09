@@ -87,6 +87,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
     work_examples = serializers.SerializerMethodField()
+    is_connected = serializers.SerializerMethodField()
 
     contact_details = serializers.SerializerMethodField()
 
@@ -99,7 +100,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
                 'title', 'role', 'biography', 'capacity',
                 'work_history', 'work_examples', 'long_description',
                 'photo_url', 'photo' 'featured', 'skills', 'id',
-                'my_skills', 'skills_test')
+                'my_skills', 'skills_test', 'is_connected')
 
     def get_photo_url(self, obj):
         return obj.get_photo
@@ -134,6 +135,8 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_work_history(self, obj):
         serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)
+        if self.get_is_connected(obj) or obj.id == self.context['request'].user.id:
+
         return serializer.data
 
     def get_work_examples(self, obj):
@@ -151,6 +154,9 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             details = ContactDetailsSerializer(obj.contact_details).data
             details.pop('profile')
             return details
+
+    def get_is_connected(self, obj):
+        return bool(len(self.context['request'].user.connections.filter(id=obj.id)))
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():

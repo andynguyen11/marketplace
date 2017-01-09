@@ -139,6 +139,7 @@ class ProfileViewSet(ModelViewSet):
             view = self.public_view(response.data)
             if hasattr(self.request.user, 'connections') and len(self.request.user.connections.filter(id=view['id'])):
                 view['contact_details'] = response.data.get('contact_details', None)
+                view['last_name'] = response.data.get('last_name', None)
             response.data = view
         return response
 

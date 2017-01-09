@@ -133,7 +133,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def set_profile(self, obj, user):
         if self.is_connected(obj):
-            profile = ProfileSerializer(user).data
+            profile = ProfileSerializer(user, context={'request': self.context['request']}).data
             fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
             return { k: v for k, v in profile.items() if k in fields }
         else:
