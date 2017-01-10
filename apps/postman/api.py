@@ -205,7 +205,7 @@ class ConnectThreadAPI(APIView):
                 requester=request.user.id,
                 _product='connect_job',
                 stripe_token=request.data.pop('stripe_token', None),
-                promo=request.data.pop('promo', None),
+                promo=request.data.pop('promoCode', None),
                 related_object_id=thread.job.id))
             serializer.is_valid()
             return serializer.save()
