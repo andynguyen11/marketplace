@@ -78,10 +78,8 @@ def normalized_subdict(d, keys):
 
 
 API_KEY = settings.MANDRILL_API_KEY
-def send_to_emails(template_name, email=None, emails=[], context={}):
+def send_to_emails(template_name, emails=[], context={}):
     " send template to the given emails, with the given context "
-    if email:
-        emails.append(email)
     logger = logging.getLogger()
     mandrill_client = mandrill.Mandrill(API_KEY)
     message = {
