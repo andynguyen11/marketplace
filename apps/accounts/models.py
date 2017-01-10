@@ -99,9 +99,9 @@ class ContactDetails(models.Model):
     """
     profile = models.ForeignKey('accounts.Profile', primary_key=True)
 
-    email = models.CharField(max_length=50, blank=True, null=True)
+    email = models.CharField(max_length=50, blank=True, null=True, default='')
     email_confirmed = models.BooleanField(default=False)
-    phone = models.CharField(max_length=50, blank=True, null=True)
+    phone = models.CharField(max_length=50, blank=True, null=True, default='')
     website = models.CharField(max_length=50, blank=True, null=True)
     skype = models.CharField(max_length=50, blank=True, null=True)
     linkedin = models.CharField(max_length=50, blank=True, null=True)
@@ -212,9 +212,6 @@ class Profile(AbstractUser):
     @property
     def contact_details(self):
         details, created = ContactDetails.objects.get_or_create(profile=self)
-        if created:
-            details.email = ''
-            details.save()
         return details
 
     def get_skills(self):
