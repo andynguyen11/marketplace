@@ -162,7 +162,7 @@ class ProfileViewSet(ModelViewSet):
     @list_route(methods=['get'], url_path="connections")
     def connections(self, request, *args, **kwargs):
         user = request.user
-        connections = ProfileSerializer(user.connections, many=True).data
+        connections = ProfileSerializer(user.connections, context={'request': request}, many=True).data
         fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country', 'contact_details' ]
         return Response([
             { k: v for k, v in connection.items() if k in fields }
