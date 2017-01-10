@@ -64,13 +64,8 @@ router = DeclarativeRouter({
     'product': {
         'view': ProductViewSet,
         'base_name': 'product',
-        'nested': {
-            'lookup': '_product',
-            'routes': {
-                'order': ProductOrderViewSet,
-            }
-        }
     },
+    'order': ProductOrderViewSet,
     'search/project': {
         'view': ProjectSearchView,
         'base_name': 'project-search',

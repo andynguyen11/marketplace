@@ -55,8 +55,13 @@ class ContactDetailsSerializer(RelationalModelSerializer):
     class Meta:
         model = ContactDetails
 
+    def different_email(self, data):
+        return (data.get('email', None)) and (data.get('email', None) != data['profile'].email)
+
     def resolve_relations(self, data):
-        data['email'] = data.get('email', data['profile'].email)
+        if not self.different_email(data):
+            data['email'] = data['profile'].email
+            data['email_confirmed'] = data['profile'].email_confirmed
         return data
 
 
@@ -82,6 +87,9 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
     signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
     work_examples = serializers.SerializerMethodField()
+    is_connected = serializers.SerializerMethodField()
+
+    contact_details = serializers.SerializerMethodField()
 
     contact_details = serializers.SerializerMethodField()
 
@@ -91,10 +99,10 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
         public_fields = ( # this is just used in the view atm
                 'first_name', 'location', 'country', 'city', 'state',
-                'title', 'role', 'biography',
+                'title', 'role', 'biography', 'capacity',
                 'work_history', 'work_examples', 'long_description',
                 'photo_url', 'photo' 'featured', 'skills', 'id',
-                'my_skills', 'skills_test')
+                'my_skills', 'skills_test', 'is_connected')
 
     def get_photo_url(self, obj):
         return obj.get_photo
@@ -146,6 +154,9 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             details = ContactDetailsSerializer(obj.contact_details).data
             details.pop('profile')
             return details
+
+    def get_is_connected(self, obj):
+        return bool(len(self.context['request'].user.connections.filter(id=obj.id)))
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():

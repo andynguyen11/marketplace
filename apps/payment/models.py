@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from django.db import models
 from django.conf import settings
+from rest_framework.exceptions import ValidationError
 from payment.helpers import stripe_helpers
 from payment.enums import *
 from business.products import products, ProductType, PRODUCT_CHOICES
@@ -34,7 +35,11 @@ class Promo(models.Model):
         return self.expire_date >= date.today()
 
     def is_valid(self, user):
-        return self.is_valid_for(user) and self.not_expired()
+        if not self.is_valid_for(user):
+            raise ValidationError({"promo": ["This promo code has already been used."]})
+        if not self.not_expired():
+            raise ValidationError({"promo": ["This promo code has expired."]})
+        return True
 
     def mark_used_by(self, user):
         if self.is_valid_for(user):
@@ -62,7 +67,7 @@ def get_promo(code):
 
 
 class Order(models.Model):
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     date_charged = models.DateTimeField(blank=True, null=True)
     _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
     job = models.OneToOneField('business.Job')
@@ -111,26 +116,10 @@ class Order(models.Model):
         self.save()
 
 
-"""
-class StripeAccount(models.Model):
-    id = models.CharField(max_length=50, primary_key=True)
-    profile = models.OneToOneField('accounts.Profile')
-    secret_key = models.CharField(max_length=50)
-    publishable_key = models.CharField(max_length=50)
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            account = stripe_helpers.create_account(self.profile)
-            self.id = account.id
-            self.secret_key = account.keys.secret
-            self.publishable_key = account.keys.publishable
-        return super(StripeAccount, self).save(*args, **kwargs)
-"""
-
-
 class ProductOrder(models.Model):
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     date_charged = models.DateTimeField(blank=True, null=True)
+
     _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
 
     requester = models.ForeignKey('accounts.Profile', related_name='requester')
@@ -141,7 +130,7 @@ class ProductOrder(models.Model):
     related_object = GenericForeignKey('related_model', 'related_object_id')
     related_object_id = models.PositiveIntegerField()
 
-    promo = models.ForeignKey(Promo, blank=True, null=True)
+    _promo = models.ForeignKey(Promo, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     fee = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
@@ -159,6 +148,24 @@ class ProductOrder(models.Model):
     @product.setter
     def product(self, product):
         self._product = product.id
+
+    @property
+    def promo(self):
+        return self._promo
+
+    @promo.setter
+    def promo(self, code):
+        if code:
+            promo = get_promo(code)
+            if not promo:
+                raise ValidationError({"promo": ["This promo code is invalid."]})
+            if promo.is_valid(self.payer):
+                self._promo = promo
+        else: self._promo = None
+
+    @property
+    def final_price(self):
+        return self.promo.apply_to(self.price) if self.promo else self.price
 
     def set_status(self, status):
         """
@@ -199,7 +206,7 @@ class ProductOrder(models.Model):
         self.price, self.fee = self.product.calculate_costs(self)
         self.product.validate_order(self)
 
-    def save(self, *args, **kwargs):
+    def save(self, promo=None, *args, **kwargs):
         self.resolve_product_fields()
         return super(ProductOrder, self).save(*args, **kwargs)
 
@@ -221,17 +228,21 @@ class ProductOrder(models.Model):
             else:
                 return False
 
-    def pay(self, customer=None, source=None):
+    def prepare_payment(self, customer=None, source=None):
+        if self.stripe_charge_id:
+            return self.stripe_charge_id
+
         if not (customer and source):
             customer, source = stripe_helpers.get_customer_and_card(
-                    self.payer, metadata={'order': self.id})
-        self.product.can_pay(self, self.payer)
+                    self.payer, source)
         amount, fee = self.final_costs
         payload = dict(
+            capture=False,
             amount=amount,
             source=source,
             customer=customer,
-            description= 'Loom fee for {0}'.format(self))
+            description= 'Loom fee for {0}'.format(self),
+            metadata={'order': self.id})
 
         if(self.product.type == ProductType.percentage):
             payload['amount'] = fee # amount is the fee until connect integration
@@ -239,6 +250,15 @@ class ProductOrder(models.Model):
         charge = stripe_helpers.charge_source(**payload)
 
         self.stripe_charge_id = charge.id
+        self.save()
+        return self.stripe_charge_id
+
+    def pay(self, customer=None, source=None):
+        self.prepare_payment(customer, source)
+        self.product.can_pay(self, self.payer)
+
+        charge = stripe_helpers.capture_charge(self.stripe_charge_id)
+
         self.set_status('paid' if charge.paid else charge.status)
 
         if self.status == 'paid':

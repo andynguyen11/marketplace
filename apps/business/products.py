@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from types import FunctionType, MethodType
 from enum import Enum
 
@@ -41,6 +41,7 @@ class Product(object):
         fee_percentage=10,
         related_class=models.base.ModelBase,
         related_price_field='cash',
+        valid_for=timedelta(),
         on_paid=MethodType)
 
     @property
@@ -117,9 +118,10 @@ class Product(object):
         repr['related_model'] = self.related_class._meta.label
         repr['type'] = self.type.name
         repr['status_flow_actions'] = {}
-        for status in self.status_flow:
+        for status in getattr(self, 'status_flow', []):
             status_callback = 'on_%s' % status 
-            doc = getattr(getattr(self, status_callback, {}), '__doc__', None)
+            doc = getattr(getattr(self, status_callback), '__doc__', None) if \
+                hasattr(self, status_callback) else None
             if(status_callback and doc):
                 repr['status_flow_actions'][status_callback] = doc
         
@@ -146,6 +148,7 @@ class ConnectJob(Product):
         'paid')
     price = settings.PRODUCTS.get('connect_job', {}).get('price', 99.00)
     related_class = Job
+    valid_for = timedelta(days=7)
 
     def validate_order(self, order):
         pattern = 'requested_by_%s' #if order.requester.contact_details.email_confirmed else '%s_is_validating'
@@ -171,18 +174,25 @@ class ConnectJob(Product):
         if(user == order.related_object.owner):
             return 'entrepreneur', 'freelancer'
 
+    def get_waiting_on(self, order):
+        if order.request_status in ['freelancer_is_validating', 'requested_by_entrepreneur']:
+            return order.related_object.contractor
+        elif order.request_status in ['entrepreneur_is_validating', 'requested_by_freelancer']:
+            return order.related_object.owner
+
     def valid_statuses(self, order, user):
         role, other = self.get_role(order, user)
         if not role:
             return None
         valid_transitions = {
                 '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
+                '%s_is_validating' % role:  ['requested_by_%s' % role, 'cancelled'],
                 'requested_by_%s' % other:  ['%s_is_validating' % role, 'accepted', 'cancelled'], }
         if order.requester != user:
             valid_transitions['%s_is_validating' % role].append('accepted')
         if (order.request_status in ['%s_is_validating' % role, 'requested_by_%s' % other]):
             return valid_transitions[order.request_status]
-        return []
+        return ['cancelled']
 
     def change_status(self, status, order, user):
         if status == order.request_status:
@@ -200,6 +210,15 @@ class ConnectJob(Product):
         job = order.related_object
         return {job.contractor, job.owner}
 
+    def get_expiry_details(self, order):
+        return {"thread_id": Message.objects.get(job=order.related_object).id}
+
+    def clear_notifications(self, thread, type):
+        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":type})
+        for alert in clear_alerts:
+            alert.unread = False
+            alert.save()
+
     def on_requested_by_freelancer(self, order):
         "request contact_details from entrepreneur"
         job = order.related_object
@@ -209,10 +228,14 @@ class ConnectJob(Product):
             recipient=job.owner,
             verb=u'made a connection request for',
             action_object=thread,
-            target=thread.job.project,
+            target=job.project,
             type=u'connectionRequest'
         )
         connection_request.delay(job.owner.id, job.contractor.id, thread.id, 'connection-request-entrepreneur')
+        self.clear_notifications(thread, type="connectionRequestExpired")
+        self.clear_notifications(thread, type="messageLimitReached")
+
+
 
     def on_requested_by_entrepreneur(self, order):
         "request contact_details from freelancer"
@@ -223,10 +246,12 @@ class ConnectJob(Product):
             recipient=job.contractor,
             verb=u'made a connection request for',
             action_object=thread,
-            target=thread.job.project,
+            target=job.project,
             type=u'connectionRequest'
         )
         connection_request.delay(job.contractor.id, job.owner.id, thread.id, 'connection-request-freelancer')
+        self.clear_notifications(thread, type="connectionRequestExpired")
+        self.clear_notifications(thread, type="messageLimitReached")
 
     def on_accepted(self, order):
         "pay order with cached card"
@@ -258,10 +283,8 @@ class ConnectJob(Product):
                 target=thread.job.project,
                 type=u'connectionAccepted'
             )
-        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"connectionRequest"})
-        for alert in clear_alerts:
-            alert.unread = False
-            alert.save()
+        self.clear_notifications(thread, type="connectionRequest")
+        self.clear_notifications(thread, type="messageLimitReached")
         order_context = {
             'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,

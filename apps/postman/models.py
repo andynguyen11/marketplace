@@ -158,12 +158,30 @@ class MessageManager(models.Manager):
         Return accepted messages received by a user but not marked as archived or deleted.
         """
         related = ('sender',) if related else None
-        filters = {
+        filters = ({
             'recipient': user,
             'recipient_archived': False,
             'recipient_deleted_at__isnull': True,
             'moderation_status': STATUS_ACCEPTED,
-        }
+        })
+        return self._folder(related, filters, **kwargs)
+
+    def inbox_as_thread(self, user, related=True, **kwargs):
+        """
+        Return accepted messages received by a user but not marked as archived or deleted.
+        """
+        related = ('sender',) if related else None
+        filters = ({
+            'recipient': user,
+            'recipient_archived': False,
+            'recipient_deleted_at__isnull': True,
+            'moderation_status': STATUS_ACCEPTED,
+        }, {
+            'sender': user,
+            'sender_archived': False,
+            'sender_deleted_at__isnull': True,
+            'moderation_status': STATUS_ACCEPTED,
+        })
         return self._folder(related, filters, **kwargs)
 
     def inbox_unread_count(self, user):

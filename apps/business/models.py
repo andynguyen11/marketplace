@@ -159,7 +159,7 @@ class ProjectInfo(models.Model):
 
 
 class Document(models.Model):
-    date_created = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
@@ -332,7 +332,7 @@ class Project(models.Model):
 
 
 class Terms(models.Model):
-    create_date = models.DateTimeField(auto_now=True)
+    create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(blank=True, null=True)
     job = models.OneToOneField(Job)
     contractor = models.CharField(max_length=100)

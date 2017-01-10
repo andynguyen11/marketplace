@@ -14,7 +14,9 @@
     padding: 0;
     margin-bottom: 25px;
     background: #fff;
-    border: 1px solid @brand-neutral--4;
+    box-shadow: 0 1px 2px 0 #c8c6cc;
+    border-radius: 3px;
+    overflow: hidden;
 
     &.section-padding {
       padding: 20px;
@@ -23,14 +25,55 @@
     .section-header {
       background: @brand-neutral--1;
       color: #fff;
-      padding: 10px;
-      h4 {
-        font-size: 16px;
-      }
-      h4 a {
+      font-weight: 700;
+      font-size: 16px;
+      background: #423d51;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      height: 40px;
+      border-radius: 3px 3px 0 0;
+
+      a {
         color: #fff;
+
         &:hover {
           color: @brand--accent;
+        }
+      }
+
+      .text-skinny {
+        padding-left: 5px;
+      }
+
+      &.section-header--projects {
+        justify-content: space-between;
+
+        a {
+          color: #FFF;
+        }
+
+        @media (max-width: @screen-sm) {
+          flex-wrap: wrap;
+          height: auto;
+
+          a {
+            margin: 10px 0;
+          }
+
+          .action-buttons {
+            margin: 10px 0;
+
+            .btn {
+              margin: 0;
+            }
+          }
+        }
+      }
+
+      .action-buttons {
+        .btn {
+          padding: 4px 20px;
         }
       }
     }
@@ -58,7 +101,7 @@
     }
     ul li {
       padding: 15px 20px;
-      border-bottom: 1px solid #ccc;
+      border-bottom: 1px solid #c8c6cc;
     }
     a.btn-linkedin, a.btn-linkedin:hover,
     a.btn-linkedin:visited, a.btn, a.btn:hover,
@@ -103,6 +146,10 @@
       td {
         padding: 10px 15px;
         border-bottom: 1px solid #ccc;
+
+        &:only-child {
+          border-bottom: none;
+        }
       }
     }
   }
@@ -202,5 +249,21 @@
 
   .dashboard-table-flex-expand {
     flex-grow: 1;
+  }
+}
+
+.dashboard-meta {
+  @media (max-width: @screen-desktop) and (min-width: @screen-xs) {
+    display: flex;
+
+    .profile-snapshot--dashboard {
+      flex-basis: 40%;
+    }
+
+    .section-quickLinks {
+      flex-grow: 1;
+      align-self: flex-start;
+      margin-left: 20px;
+    }
   }
 }

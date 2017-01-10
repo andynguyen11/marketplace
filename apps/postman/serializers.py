@@ -2,11 +2,12 @@ from itertools import chain
 from operator import attrgetter
 
 from django.db.models import Q
+from django.conf import settings
 from notifications.models import Notification
 from rest_framework import serializers
 
 from accounts.models import ContactDetails
-from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer
+from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
 from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
 from business.models import Document
 from payment.models import ProductOrder
@@ -87,6 +88,15 @@ def serialize_interaction(message):
                 content=message.body)
 
 
+
+def free_messages(thread, user):
+    total = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.project.project_manager == user \
+            else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
+    remaining = total - thread.get_participant_replies_count(user)
+    if remaining < 0:
+        remaining = 0
+    return dict(total=total, remaining=remaining)
+
 class ConversationSerializer(serializers.ModelSerializer):
     is_owner = serializers.SerializerMethodField()
     nda = DocumentSerializer()
@@ -96,12 +106,14 @@ class ConversationSerializer(serializers.ModelSerializer):
     current_user = serializers.SerializerMethodField()
     attachments = AttachmentSerializer(many=True)
     interactions = serializers.SerializerMethodField()
-    sender = ObfuscatedProfileSerializer()
-    recipient = ObfuscatedProfileSerializer()
+    sender = serializers.SerializerMethodField()
+    recipient = serializers.SerializerMethodField()
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
     connection_status = serializers.SerializerMethodField()
     alerts = serializers.SerializerMethodField()
+
+    free_messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -119,11 +131,26 @@ class ConversationSerializer(serializers.ModelSerializer):
     def is_connected(self, obj):
         return len(self.requesting_user(obj).connections.filter(id=self.other_user(obj).id))
 
+    def set_profile(self, obj, user):
+        if self.is_connected(obj):
+            profile = ProfileSerializer(user, context={'request': self.context['request']}).data
+            fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
+            return { k: v for k, v in profile.items() if k in fields }
+        else:
+            profile = ObfuscatedProfileSerializer(user).data
+        return profile
+
     def get_is_owner(self, obj):
         return self.requesting_user(obj) == obj.job.project.project_manager
 
     def get_current_user(self, obj):
         return self.requesting_user(obj).id
+
+    def get_recipient(self, obj):
+        return self.set_profile(obj, obj.recipient)
+
+    def get_sender(self, obj):
+        return self.set_profile(obj, obj.sender)
 
     def get_connection_contact_details(self, obj):
         other_user = self.other_user(obj)
@@ -167,3 +194,5 @@ class ConversationSerializer(serializers.ModelSerializer):
         except ProductOrder.DoesNotExist:
             pass
 
+    def get_free_messages(self, obj):
+        return free_messages(obj, self.requesting_user(obj))

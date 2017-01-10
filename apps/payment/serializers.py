@@ -16,10 +16,13 @@ class OrderSerializer(serializers.ModelSerializer):
 
 def ensure_order_is_payable(order, stripe_token=None):
     try: 
-        customer, card = stripe_helpers.get_customer_and_card(order.payer, stripe_token, metadata={'order': order.id})
+        return order.stripe_charge_id or order.prepare_payment(source=stripe_token), 'is payable'
     except StripeError, e:
         return False, e.message
-    return card, 'is payable'
+
+def default_error_details(order):
+    if (not order.details) or not len(order.details):
+        order.details = 'Payment method required for payers to request orders.'
 
 class ProductOrderSerializer(serializers.ModelSerializer):
     recipient = serializers.PrimaryKeyRelatedField(required=False, queryset=Profile.objects.all())
@@ -29,6 +32,11 @@ class ProductOrderSerializer(serializers.ModelSerializer):
     _product = serializers.CharField(write_only=True)
     product = serializers.SerializerMethodField()
 
+    _promo = serializers.CharField(write_only=True, required=False)
+    promo = serializers.CharField(required=False, allow_null=True)
+
+    final_price = serializers.CharField(read_only=True)#required=False)
+
     class Meta:
         model = ProductOrder
         read_only_fields = (
@@ -36,8 +44,8 @@ class ProductOrderSerializer(serializers.ModelSerializer):
             'date_charged',
             'related_model',
             'related_object',
-            'promo',
             'price',
+            'final_price',
             'fee',
             'status',
             'stripe_charge_id',
@@ -46,18 +54,17 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         stripe_token = data.pop('stripe_token', None)
+        promo = data.pop('promo', None)
         order = ProductOrder.objects.create(**data)
+        order.promo = promo
         payable = False
         if(stripe_token):
             payable, order.details = ensure_order_is_payable(order, stripe_token)
 
         if(order.payer == order.requester and not payable):
             order.status = 'failed'
-            order.details = json.dumps({
-                'failure_message': {
-                    'stripe_token': [
-                        'Payment method required for payers to request orders.'
-                        ] } })
+            default_error_details(order)
+        order.save()
         return order
 
     def get_product(self, obj):

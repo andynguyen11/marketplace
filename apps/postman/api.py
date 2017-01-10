@@ -23,11 +23,10 @@ from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
 from payment.models import ProductOrder
-from payment.serializers import ProductOrderSerializer, ensure_order_is_payable
+from payment.serializers import ProductOrderSerializer, ensure_order_is_payable, default_error_details
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
-from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
-
+from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction, free_messages
 
 def all_interactions(thread_id):
     return sorted(chain(*[
@@ -123,15 +122,13 @@ class MessageAPI(APIView):
         }
 
     def passed_limit(self, thread, user):
-        limit = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.project.project_manager == user else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
-        return (thread.job.status == 'pending' and
-                thread.get_participant_replies_count(user) >= limit)
+        return (thread.job.status == 'pending') and not free_messages(thread, user)['remaining']
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
 
         if request.user == thread.sender or request.user == thread.recipient:
-            if(self.passed_limit(thread, request.user)):
+            if self.passed_limit(thread, request.user):
                 return Response("Unconnected Thread Reply Limit Exceeded", status=403)
 
             if request.data.has_key('attachment'):
@@ -143,6 +140,19 @@ class MessageAPI(APIView):
                     interaction = attachment['interaction']
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
+
+            # messages updated, so passed message alerts possible
+            # we want to do this before serialization
+            if self.passed_limit(thread, request.user):
+                notify.send(
+                    interaction.recipient,
+                    recipient=request.user,
+                    verb=u'message limit reached for',
+                    action_object=thread,
+                    target=thread.project,
+                    type=u'messageLimitReached'
+                )
+
             serializer = ConversationSerializer(thread, context={'request': request})
             new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
             return Response(serializer.data)
@@ -187,11 +197,6 @@ class MessageAPI(APIView):
 
 class ConnectThreadAPI(APIView):
 
-    def update_contact_details(self, contact_details, new_details={}):
-        for k, v in new_details.items():
-            setattr(contact_details, k, v)
-        contact_details.save()
-
     def get_or_create_order(self, request, thread):
         try:
             return ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id)
@@ -200,6 +205,7 @@ class ConnectThreadAPI(APIView):
                 requester=request.user.id,
                 _product='connect_job',
                 stripe_token=request.data.pop('stripe_token', None),
+                promo=request.data.pop('promoCode', None),
                 related_object_id=thread.job.id))
             serializer.is_valid()
             return serializer.save()
@@ -213,33 +219,18 @@ class ConnectThreadAPI(APIView):
             raise ValidationError(detail)
 
         if(order.payer == request.user):
-            payable, details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
+            payable, order.details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
             if not payable:
-                errors = [ 'Payer has not specified a payment source for this Order' ]
-                if len(details):
-                    errors.append(details)
-                raise ValidationError({ 'stripe_token': errors })
+                default_error_details(order)
+                order.save()
+                raise ValidationError({ 'error': { 'message': order.details } })
         return order
 
     def update_order(self, request, thread):
         order = self.get_or_create_order(request, thread)
         self.validate_order(request, order)
-        if order.requester != request.user: #and request.user.contact_details.email_confirmed:
+        if order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
-            if (order.status == 'paid' and order.requester in request.user.connections.all()):
-                return 'Connection Made!' # TODO: Get actual copy for messages
-        else: #elif request.user.contact_details.email_confirmed:
-            recipient = thread.sender if request.user == thread.recipient else thread.recipient
-            return 'Connection Requested!'
-        #else:
-        #    if request.user == thread.job.contractor:
-        #        role = 'freelancer'
-        #    else:
-        #        role = 'entrepreneur'
-        #    order.product.change_status(
-        #            '%s_is_validating' % role,
-        #            order,
-        #            request.user)
 
     def new_message(self, thread, user, body):
         recipient = thread.sender if user == thread.recipient else thread.recipient
@@ -251,22 +242,9 @@ class ConnectThreadAPI(APIView):
             subject=thread.subject
         )
 
-    def update_thread(self, request, message_body, thread):
-        thread.refresh_from_db()
-        thread.job.refresh_from_db()
-        if message_body:
-            interaction = self.new_message(thread, request.user, message_body)
-            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
-        serializer = ConversationSerializer(thread, context={'request': request})
-        return serializer.data
-
     def post(self, request, thread_id):
         thread = Message.objects.get(id = thread_id)
-        self.update_contact_details(request.user.contact_details, request.data.get('contact_details', {}))
-        #TODO These need to become system messages when we support that
-        message_body = self.update_order(request, thread)
-        #updated_thread = self.update_thread(request, message_body, thread)
-        #return Response(updated_thread)
+        self.update_order(request, thread)
         thread.refresh_from_db()
         thread.job.refresh_from_db()
         serializer = ConversationSerializer(thread, context={'request': request})

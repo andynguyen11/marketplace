@@ -35,6 +35,7 @@
 
 ##### Fire up local environment:
 * `python /path/to/manage.py runserver`
+* `celery -A makret worker -l info` for celery tasks
 * `gulp` in another terminal (to run css/js tasks)
 * Hit localhost:8000 in browser to access local environment
 

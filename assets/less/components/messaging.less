@@ -625,10 +625,10 @@
 }
 #pm_messages {
   tr td {
-    padding: 20px 15px;
+    padding: 10px 15px;
     background: #f7f7f7;
     color: #444;
-    border-top: 1px solid #e7e7e7;
+    border-top: 1px solid #c8c6cc;
   }
   tr.unread td {
     background: #fff;
@@ -767,37 +767,54 @@
 }
 
 #postman {
+  h2 {
+    margin: 30px 0;
+    font-size: 24px;
+    font-family: @page-font;
+    color: @brand--primary;
+  }
+  .section {
+    padding: 0;
+    margin-bottom: 25px;
+    background: #fff;
+    box-shadow: 0 1px 2px 0 #c8c6cc;
+    border-radius: 3px;
+    overflow: hidden;
+  }
   .section-header {
     background: @brand-neutral--1;
     color: #fff;
-    padding: 10px;
-    margin-top: 10px;
-    h4 {
-      font-size: 16px;
-    }
-    h4 a {
+    font-weight: 700;
+    font-size: 16px;
+    background: #423d51;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    height: 40px;
+    border-radius: 3px 3px 0 0;
+
+    a {
       color: #fff;
+
       &:hover {
         color: @brand--accent;
       }
+    }
+
+    .text-skinny {
+      padding-left: 5px;
     }
   }
 }
 
 .messages-list {
-  margin-bottom: @gutter;
-  background: #FFF;
-  border-right: 1px solid #e7e7e7;
-  border-left: 1px solid #e7e7e7;
 
   .messages-list-message {
     display: flex;
-    border-top: 1px solid #e7e7e7;
-    border-bottom: 1px solid #e7e7e7;
     align-items: center;
 
     & + .messages-list-message {
-      border-top: none;
+      border-top: 1px solid #e7e7e7;
     }
 
     &:hover {

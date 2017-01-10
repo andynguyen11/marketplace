@@ -4,8 +4,9 @@ from requests.exceptions import ConnectionError
 from django.shortcuts import redirect
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view, detail_route
+from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, viewsets
@@ -14,7 +15,7 @@ from django.conf import settings
 
 from accounts.models import Profile
 from generics.tasks import pm_contact_card_email
-from generics.viewsets import ImmutableNestedModelViewSet
+from generics.viewsets import ImmutableModelViewSet
 from business.models import Job, Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
@@ -22,6 +23,7 @@ from business.products import products
 from payment.models import ProductOrder, Order, Promo, get_promo
 from payment.serializers import OrderSerializer, ProductOrderSerializer, ensure_order_is_payable
 from payment.helpers import stripe_helpers 
+import payment.tasks as tasks
 from postman.forms import build_payload
 
 stripe.api_key = settings.STRIPE_KEY
@@ -193,49 +195,44 @@ class PromoCheck(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request, code=None):
-        promo = get_promo(code)
+        promo = get_promo(code or request.query_params.get('code', None))
         if not promo:
-            return Response(status=404, data='This promo code is invalid.')
+            return Response(status=400, data='This promo code is invalid.')
 
         if promo.is_valid_for(request.user):
             if promo.not_expired():
                 return Response(status=200, data={'is_valid': True, 'value': promo.value_off})
             else:
-                return Response(status=403, data='This promo code has expired.')
+                return Response(status=400, data='This promo code has expired.')
         else:
-            return Response(status=403, data='This promo code has already been used.')
+            return Response(status=400, data='This promo code has already been used.')
 
     def post(self, request):
         return self.get(request, code=request.data.get('promo', None))
 
 
-class ProductOrderViewSet(ImmutableNestedModelViewSet):
+class ProductOrderViewSet(ImmutableModelViewSet):
     queryset = ProductOrder.objects.all()
     serializer_class = ProductOrderSerializer
     permission_classes = (IsAuthenticated, ProductOrderPermission)
-    parent_key = '_product'
 
     @property
-    def parent(self):
-        parent_field = getattr(self.serializer_class.Meta.model, self.parent_key).field
-        return products.get(parent_field, None)
+    def keys(self):
+        return dict(id=self.kwargs.get('id', self.kwargs.get('pk', None)))
 
     def list(self, request, **kwargs):
-        user_orders = self.get_queryset().filter(payer=request.user, **self.keys)
+        user_orders = self.get_queryset().filter(payer=request.user, **self.request.query_params)
         return Response(self.serializer_class(user_orders, many=True).data)
 
     def create(self, request, **kwargs):
         request.data['requester'] = self.request.user.id
         return super(ProductOrderViewSet, self).create(request, **kwargs)
 
-    @detail_route(methods=['post'], permission_classes=(IsAuthenticated, ProductOrderPermission))
-    def update_status(self, request, **kwargs):
-        order = self.get_object()
-        status = request.data.get('status', None)
-        user = request.user
-
+    def _update_status(self, order, user, data):
+        status = data.get('status', None)
+        stripe_token = data.get('stripe_token', None)
         if(order.payer == user):
-            payable, details = ensure_order_is_payable(order, stripe_token=request.data.get('stripe_token', None))
+            payable, details = ensure_order_is_payable(order, stripe_token=stripe_token)
             if not payable:
                 return Response(status=400, data={'stripe_token': [
                     'Payer has not specified a payment source for this Order',
@@ -244,5 +241,20 @@ class ProductOrderViewSet(ImmutableNestedModelViewSet):
         updated = order.change_status(status, user)
         data = ProductOrderSerializer(updated).data
         return Response(status=204, data=data)
+
+    @detail_route(methods=['post'], permission_classes=(IsAuthenticated, ProductOrderPermission))
+    def update_status(self, request, **kwargs):
+        return self._update_status(order=self.get_object(), user=request.user, data=request.data)
+
+    @list_route(methods=['post'], permission_classes=(IsAuthenticated,))
+    def find_and_update_status(self, request, **kwargs):
+        related_object_id = request.data.get('related_object_id', None)
+        order = ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=related_object_id)
+        user = request.user
+
+        if not (user in order.involved_users):
+            raise PermissionDenied(detail='user not involved in order')
+
+        return self._update_status(order, user, request.data)
 
 
