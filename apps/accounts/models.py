@@ -99,9 +99,9 @@ class ContactDetails(models.Model):
     """
     profile = models.ForeignKey('accounts.Profile', primary_key=True)
 
-    email = models.CharField(max_length=50)
+    email = models.CharField(max_length=50, blank=True, null=True)
     email_confirmed = models.BooleanField(default=False)
-    phone = models.CharField(max_length=50)
+    phone = models.CharField(max_length=50, blank=True, null=True)
     website = models.CharField(max_length=50, blank=True, null=True)
     skype = models.CharField(max_length=50, blank=True, null=True)
     linkedin = models.CharField(max_length=50, blank=True, null=True)
