@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from social.apps.django_app.default.models import UserSocialAuth
 from html_json_forms.serializers import JSONFormSerializer
 
@@ -77,7 +78,8 @@ class ObfuscatedProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
-    photo = serializers.ImageField(write_only=True, max_length=settings.MAX_FILE_SIZE, allow_empty_file=False, validators=[image_validator])
+    photo = serializers.ImageField(write_only=True, max_length=settings.MAX_FILE_SIZE, validators=[image_validator],
+                                   allow_empty_file=False, required=False, allow_null=True)
     photo_url = serializers.SerializerMethodField()
     linkedin = serializers.SerializerMethodField()
     all_skills = serializers.SerializerMethodField()
@@ -167,6 +169,10 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         password = validated_data.get('password', None)
         if password:
             instance.set_password(password)
+
+        if not ((instance.get_photo and instance.linkedin) or getattr(validated_data, 'photo', None)):
+            raise ValidationError({'photo': ['photo required without a linkedin photo']})
+
         instance.save()
         return instance
 
