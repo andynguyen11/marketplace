@@ -120,7 +120,7 @@ class ProfileViewSet(ModelViewSet):
         assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
-        response = Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        response = Response(ProfileSerializer(user, context={'request': request}).data, status=status.HTTP_201_CREATED)
         response = set_jwt_token(response, account)
         login(request, account)
         return response

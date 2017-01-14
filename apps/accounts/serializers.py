@@ -156,9 +156,11 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             return details
 
     def get_is_connected(self, obj):
-        if not self.context['request'].user.is_authenticated():
+        request = self.context.get('request', None)
+        user = request.user if request else None
+        if not user and user.is_authenticated():
             return False
-        return bool(len(self.context['request'].user.connections.filter(id=obj.id)))
+        return bool(user and len(user.connections.filter(id=obj.id)))
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
