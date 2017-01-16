@@ -171,8 +171,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         password = validated_data.get('password', None)
         if password:
             instance.set_password(password)
-
-        if not ((instance.get_photo and instance.linkedin) or getattr(validated_data, 'photo', None)):
+        if not ((instance.get_photo and instance.linkedin) or validated_data.get('photo', None)):
             raise ValidationError({'photo': ['photo required without a linkedin photo']})
 
         instance.save()
