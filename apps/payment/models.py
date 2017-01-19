@@ -8,6 +8,7 @@ from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from decimal import Decimal
 
 def noop(*args, **kwargs):
     pass
@@ -52,6 +53,7 @@ class Promo(models.Model):
             return False
 
     def apply_to(self, amount):
+        amount = Decimal(amount)
         if self.dollars_off:
             amount = amount - self.dollars_off
         elif self.percent_off:
@@ -206,7 +208,7 @@ class ProductOrder(models.Model):
         self.price, self.fee = self.product.calculate_costs(self)
         self.product.validate_order(self)
 
-    def save(self, promo=None, *args, **kwargs):
+    def save(self, *args, **kwargs):
         self.resolve_product_fields()
         return super(ProductOrder, self).save(*args, **kwargs)
 
@@ -218,15 +220,6 @@ class ProductOrder(models.Model):
         if(self.product.type == ProductType.percentage):
             return self.price, self.apply_promo(self.fee)
         return self.apply_promo(self.price), None
-
-    def add_promo(self, code):
-        # TODO: Should an incorrect promo fail silently like this?
-        if code:
-            promo = get_promo(code)
-            if promo and promo.is_valid(self.payer):
-                self.promo = promo
-            else:
-                return False
 
     def prepare_payment(self, customer=None, source=None):
         if self.stripe_charge_id:
