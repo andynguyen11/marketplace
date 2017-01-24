@@ -1,0 +1,229 @@
+
+.projectCards, .plates .projectCards {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+  height: 480px;
+  overflow: hidden;
+
+  .projectCard {
+    flex-basis: 320px;
+    max-width: 360px;
+    min-width: 280px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 20px 10px 0;
+  }
+
+  &.projectCards-discover {
+    height: auto;
+    overflow: visible;
+
+    .projectCard {
+      flex-basis: 345px;
+      max-width: 345px;
+      flex-shrink: 0;
+
+      @media (max-width: 400px) {
+        flex-shrink: 1;
+      }
+    }
+  }
+}
+
+.projectCard {
+  border: 1px solid @brand-neutral--2;
+  border-radius: @border-radius;
+  color: @brand-neutral--1;
+  overflow: hidden;
+  flex-basis: 32%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  height: 460px;
+
+  &:hover, &:active, &:visited {
+    color: @brand-neutral--1;
+  }
+}
+
+.projectCard-details {
+  flex-grow: 1;
+  padding: @gutter @gutter 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.projectCard-title {
+  font-family: @brand-font;
+  line-height: 1.4;
+  font-weight: bold;
+  font-size: 26px;
+
+  &.projectCard-title--long {
+    font-size: 22px;
+  }
+
+  &.projectCard-title--short {
+    font-size: 32px;
+  }
+}
+
+.projectCard-description {
+  color: @brand-neutral--3;
+  margin-top: @gutter--medium;
+  height: 80px;
+  flex-grow: 1;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.projectCard-owner {
+  display: flex;
+  align-items: center;
+  margin-top: @gutter--medium;
+}
+
+.projectCard-owner-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border: 3px solid @brand-neutral--2;
+}
+
+.projectCard-owner-meta {
+  display: flex;
+  flex-direction: column;
+  margin-left: @gutter--medium;
+}
+
+.projectCard-owner-name {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.projectCard-owner-location {
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 12px;
+  color: @brand-neutral--3;
+}
+
+.projectCard-meta {
+  flex-basis: 30%;
+  color: #FFF;
+}
+
+.projectCard-skills {
+  padding: @gutter--medium @gutter;
+}
+
+.projectCard-skills-header {
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.projectCard-skills-list {
+  display: flex;
+  margin: -5px;
+  flex-wrap: wrap;
+  height: 44px;
+  overflow: hidden;
+  align-items: flex-start;
+}
+
+.projectCard-skill {
+  background: #FFF;
+  color: @brand-neutral--1;
+  font-weight: 600;
+  border-radius: @border-radius--small;
+  border: 2px solid @brand--primary;
+  padding: 5px 10px;
+  margin: 5px;
+}
+
+.projectCard-budget {
+  background: @brand-neutral--1;
+  padding: @gutter--medium @gutter;
+  margin-top: 15px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 95px;
+
+  &::before {
+    content: 'Project Budget';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: inherit;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    color: @brand-neutral--3;
+  }
+}
+
+.projectCard-budget-item {
+  font-size: 22px;
+  font-family: @brand-font;
+  font-weight: bold;
+  flex-basis: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &.projectCard-budget-item--only {
+    flex-direction: row;
+
+    .projectCard-budget-item-amount {
+      font-size: 32px;
+    }
+
+    .projectCard-budget-item-type {
+      font-size: 32px;
+      margin-left: @gutter--medium;
+    }
+  }
+}
+
+.projectCard-budget-item-amount {
+  font-size: 24px;
+  font-family: @brand-font;
+  font-weight: bold;
+  text-align: center;
+}
+
+.projectCard-budget-item-type {
+  font-family: @brand-font-bold;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 16px;
+  color: @brand--primary;
+}
+
+.projectCard-budget-andor {
+  height: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 12px;
+  background: darken(@brand-neutral--1, 5%);
+  color: @brand-neutral--3;
+  margin: 0 10px;
+}

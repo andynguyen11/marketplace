@@ -1,0 +1,55 @@
+{% load thumbnail %}
+
+<a href="{% url 'project' project.slug %}" class="projectCard">
+  <div class="projectCard-details">
+    <div class="projectCard-title{% if project.title|length < 15 %} projectCard-title--short{% endif %}{% if project.title|length > 30 %} projectCard-title--long{% endif %}">
+      {{ project.title }}
+    </div>
+    <div class="projectCard-description">
+      {{ project.short_blurb }}
+    </div>
+    <div class="projectCard-owner">
+      {% thumbnail project.project_manager.get_photo "200" as image %}
+      <div class="projectCard-owner-avatar" style="background-image: url('{{ image.url }}');"></div>
+      {% endthumbnail %}
+      <div class="projectCard-owner-meta">
+        <div class="projectCard-owner-name">Posted by: {{ project.project_manager.first_name }}</div>
+        <div class="projectCard-owner-location">Austin, TX</div>
+      </div>
+    </div>
+  </div>
+  <div class="projectCard-meta">
+    {% if project.skills %}
+    <div class="projectCard-skills">
+      <div class="projectCard-skills-list">
+        {% for skill in project.skills.all %}
+        <div class="projectCard-skill">{{ skill.name }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    <div class="projectCard-budget">
+      {% if project.estimated_equity_percentage %}
+        <div class="projectCard-budget-item{% if project.estimated_cash == None %} projectCard-budget-item--only{% endif %}">
+          <div class="projectCard-budget-item-amount">{{ project.estimated_equity_percentage }}%</div>
+          <div class="projectCard-budget-item-type">Equity</div>
+        </div>
+      {% endif %}
+      {% if project.estimated_equity_percentage and project.estimated_cash %}
+        <div class="projectCard-budget-andor">
+          {% if project.mix %}
+            and
+          {% else %}
+            or
+          {% endif %}
+        </div>
+      {% endif %}
+      {% if project.estimated_cash %}
+        <div class="projectCard-budget-item{% if project.estimated_equity_percentage == None %} projectCard-budget-item--only{% endif %}">
+          <div class="projectCard-budget-item-amount">${{ project.estimated_cash }}</div>
+          <div class="projectCard-budget-item-type">Cash</div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</a>

@@ -96,42 +96,9 @@
     <h3 class="plates-header brand-bold">Featured Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
   </div>
-  <div class="plates-inner">
+  <div class="plates-inner projectCards">
     {% for project in featured %}
-    <a class="plate" href="{% url 'project' project.slug %}">
-      {% thumbnail project.project_image "650" as image %}
-        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
-      {% endthumbnail %}
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% thumbnail project.project_manager.get_photo "200" as image %}
-            <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
-          {% endthumbnail %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
-            {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ project.title }}</h4>
-          <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-        </div>
-      </div>
-      <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-        {% if project.estimated_equity_percentage %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if project.estimated_cash %}
-        <div class="plate-stat {% if project.mix %}mix{% endif %}">
-          <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
+      {% include 'projectCard.html' with project=project %}
     {% endfor %}
   </div>
 </div>
@@ -143,42 +110,9 @@
     <h3 class="plates-header brand-bold">Recent Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
   </div>
-  <div class="plates-inner plates-inner--dev">
+  <div class="plates-inner projectCards">
     {% for project in new %}
-    <a class="plate" href="{% url 'project' project.slug %}">
-      {% thumbnail project.project_image "650" as image %}
-        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
-      {% endthumbnail %}
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% thumbnail project.project_manager.get_photo "200" as image %}
-          <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
-          {% endthumbnail %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
-            {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ project.title }}</h4>
-          <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-        </div>
-      </div>
-      <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-        {% if project.estimated_equity_percentage %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if project.estimated_cash %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
+      {% include 'projectCard.html' with project=project %}
     {% endfor %}
   </div>
 </div>
