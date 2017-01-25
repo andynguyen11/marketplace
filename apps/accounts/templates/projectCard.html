@@ -18,16 +18,16 @@
       </div>
     </div>
   </div>
-  <div class="projectCard-meta">
-    {% if project.skills %}
-    <div class="projectCard-skills">
-      <div class="projectCard-skills-list">
-        {% for skill in project.skills.all %}
-        <div class="projectCard-skill">{{ skill.name }}</div>
-        {% endfor %}
-      </div>
+  {% if project.skills %}
+  <div class="projectCard-skills">
+    <div class="projectCard-skills-list">
+      {% for skill in project.skills.all %}
+      <div class="projectCard-skill">{{ skill.name }}</div>
+      {% endfor %}
     </div>
-    {% endif %}
+  </div>
+  {% endif %}
+  <div class="projectCard-meta">
     <div class="projectCard-budget">
       {% if project.estimated_equity_percentage %}
         <div class="projectCard-budget-item{% if project.estimated_cash == None %} projectCard-budget-item--only{% endif %}">
