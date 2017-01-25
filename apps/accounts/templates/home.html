@@ -96,42 +96,9 @@
     <h3 class="plates-header brand-bold">Featured Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
   </div>
-  <div class="plates-inner">
+  <div class="plates-inner projectCards">
     {% for project in featured %}
-    <a class="plate" href="{% url 'project' project.slug %}">
-      {% thumbnail project.project_image "650" as image %}
-        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
-      {% endthumbnail %}
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% thumbnail project.project_manager.get_photo "200" as image %}
-            <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
-          {% endthumbnail %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
-            {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ project.title }}</h4>
-          <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-        </div>
-      </div>
-      <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-        {% if project.estimated_equity_percentage %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if project.estimated_cash %}
-        <div class="plate-stat {% if project.mix %}mix{% endif %}">
-          <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
+      {% include 'projectCard.html' with project=project %}
     {% endfor %}
   </div>
 </div>
@@ -143,42 +110,9 @@
     <h3 class="plates-header brand-bold">Recent Projects</h3>
     <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
   </div>
-  <div class="plates-inner plates-inner--dev">
+  <div class="plates-inner projectCards">
     {% for project in new %}
-    <a class="plate" href="{% url 'project' project.slug %}">
-      {% thumbnail project.project_image "650" as image %}
-        <div class="plate-image" style="background-image: url('{{ image.url }}');"></div>
-      {% endthumbnail %}
-      <div class="plate-info">
-        <div class="plate-info-profile">
-          {% thumbnail project.project_manager.get_photo "200" as image %}
-          <div class="plate-info-profile-photo" style="background-image: url('{{ image.url }}');"></div>
-          {% endthumbnail %}
-          <div class="plate-info-profile-name">
-            <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
-            {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
-          </div>
-        </div>
-        <div class="plate-info-project">
-          <h4 class="plate-info-project-name">{{ project.title }}</h4>
-          <p class="plate-info-project-description">{{ project.short_blurb }}</p>
-        </div>
-      </div>
-      <div class="plate-stats{% if project.estimated_equity_percentage and project.estimated_cash %} plate-stats-dual {% endif %}">
-        {% if project.estimated_equity_percentage %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">{{ project.estimated_equity_percentage }}%</div>
-          <div class="plate-stat-type">Equity</div>
-        </div>
-        {% endif %}
-        {% if project.estimated_cash %}
-        <div class="plate-stat">
-          <div class="plate-stat-amount">${{ project.estimated_cash }}</div>
-          <div class="plate-stat-type">Cash</div>
-        </div>
-        {% endif %}
-      </div>
-    </a>
+      {% include 'projectCard.html' with project=project %}
     {% endfor %}
   </div>
 </div>
@@ -273,7 +207,7 @@
     <div class="testimonial">
       <div class="testimonial-avatar testimonial-avatar--neill"></div>
       <div class="testimonial-text">
-        We used a variety of services to engage freelancers. Within two days on Loom we had over ten responses, and within a week had a work-for-equity agreement. Loom is easy to use, effective, and importantly, has no overbearing contract to deal with. We'll use Loom again and we would definitely recommend it to other entrepreneurs."
+        We used a variety of services to engage freelancers. Within two days on Loom we had over ten responses, and within a week had a work-for-equity agreement. Loom is easy to use, effective, and importantly, has no overbearing contract to deal with. We'll use Loom again and recommend it to other entrepreneurs."
       </div>
       <div class="testimonial-signature">
         <h4 class="brand-bold brand-color">Neill Groom</h4>
@@ -284,7 +218,7 @@
     <div class="testimonial">
       <div class="testimonial-avatar testimonial-avatar--jermaine"></div>
       <div class="testimonial-text">
-        Loom literally brought confidence back to our startup. I signed up in minutes, and within a day had over five bids from serious developers; some of which are now an integral part of our team as we get ready to launch next month, thanks to Loom. I couldn't possibly ask for a better platform to bring my ideas to life. I'm truly grateful"
+        Loom literally brought confidence back to our startup. I signed up in minutes, and within a day had over five bids from serious developers; some of which are now an integral part of our team as we get ready to launch next month, thanks to Loom. I couldn't possibly ask for a better platform to bring my ideas to life. I'm truly grateful."
       </div>
       <div class="testimonial-signature">
         <h4 class="brand-bold brand-color">Jermaine Malcolm</h4>

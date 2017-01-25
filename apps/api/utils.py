@@ -43,6 +43,7 @@ def jwt_payload_handler(user):
         'email': user.email,
         'username': username,
         'photo': user.get_photo,
+        'last_name': user.last_name,
         'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
     }
     if isinstance(user.pk, uuid.UUID):
@@ -72,3 +73,4 @@ def set_jwt_token(response, user, payload=None):
     token = jwt_encode_handler(payload)
     response.set_cookie(key='loom_token', value=token)
     return response
+
