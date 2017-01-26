@@ -45,7 +45,11 @@ def get_source(user=None, customer=None, source_id=None):
         return get_source(
                 customer=stripe.Customer.retrieve(user.stripe),
                 source_id=source_id)
-    return customer.sources.retrieve(source_id)
+    if source_id:
+        return customer.sources.retrieve(source_id)
+    sources = customer.sources.all().data
+    assert len(sources) == 1
+    return sources[0]
 
 
 def get_customer_and_card(user, stripe_token=None):
