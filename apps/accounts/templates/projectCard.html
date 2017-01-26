@@ -14,7 +14,21 @@
       {% endthumbnail %}
       <div class="projectCard-owner-meta">
         <div class="projectCard-owner-name">Posted by: {{ project.project_manager.first_name }}</div>
-        <div class="projectCard-owner-location">Austin, TX</div>
+        <div class="projectCard-owner-location">
+          {% if project.company %}
+            {{ project.company.city }}
+            {% if project.company.state %}
+              , {{ project.company.state }}
+            {% endif %}
+          {% else %}
+            {{ project.project_manager.city }}
+            {% if project.project_manager.state %}
+              , {{ project.project_manager.state }}
+            {% else %}
+              , {{ project.project_manager.country }}
+            {% endif %}
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
