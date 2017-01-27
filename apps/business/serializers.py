@@ -56,13 +56,6 @@ class InfoSerializer(ParentModelSerializer):
         child_fields = ('attachments',)
 
 
-class ProjectSummarySerializer(serializers.ModelSerializer):
-
-     class Meta:
-         model = Project
-         fields = ('id', 'title', 'slug' , 'type', 'date_created', 'short_blurb', 'company', 'project_manager')
-
-
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
@@ -171,6 +164,62 @@ class JobSerializer(serializers.ModelSerializer):
             thread=thread
         )
         return super(JobSerializer, self).update(instance, validated_data)
+
+
+class ManagerBidSerializer(serializers.ModelSerializer):
+    " bid serializer for summarizing details a project manager cares about "
+    cash = serializers.IntegerField(required=False, allow_null=True )
+    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
+    contractor = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = field_names(Job)
+
+    def get_contractor(self, obj):
+        contractor = { k: getattr(obj.contractor, k) for k in [
+            'first_name', 'capacity', 'role'
+        ]}
+        contractor['photo_url'] = obj.contractor.get_photo
+        return contractor
+
+class ContractorBidSerializer(serializers.ModelSerializer):
+    cash = serializers.IntegerField(required=False, allow_null=True )
+    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
+    project = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = field_names(Job)
+
+    def get_project(self, obj):
+        return { k: getattr(obj.project, k) for k in [
+             'id','title',
+        ]}
+
+
+class ProjectSummarySerializer(ParentModelSerializer):
+    " serializer for the project tab "
+    slug = serializers.CharField(read_only=True)
+    published = serializers.BooleanField(default=False)
+    bids = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = ('id', 'title', 'slug', 'short_blurb',
+                'type', 'category', 'skills',
+                'date_created', 'start_date', 'end_date',
+                'estimated_hours', 'estimated_cash',
+                'estimated_equity_percentage',
+                'estimated_equity_shares', 'mix', 'remote',
+                'status', 'featured', 'published', 'approved',
+                'company', 'project_manager',
+                'bids')
+        parent_key = 'project'
+
+    def get_bids(self, obj):
+        jobs = Job.objects.filter(project=obj)
+        return ManagerBidSerializer(jobs, many=True).data
 
 
 class DocumentSerializer(ParentModelSerializer):

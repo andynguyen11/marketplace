@@ -54,6 +54,14 @@ class JobViewSet(viewsets.ModelViewSet):
         request.data['equity'] = equity if equity else None
         return super(JobViewSet, self).create(request, *args, **kwargs)
 
+    @list_route(methods=['GET'])
+    def summaries(self, request):
+        " summarizes and organizes bids for a contractor "
+        jobs = Job.objects.filter(contractor=request.user, status='pending')
+        serializer = ContractorBidSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+
 
 class NestedJobViewSet(NestedModelViewSet):
     """
@@ -137,6 +145,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (IsAuthenticated, IsProjectOwnerPermission, )
+
+    @list_route(methods=['GET'])
+    def summaries(self, request):
+        " summarizes and organizes project details for a project manager "
+        projects = Project.objects.filter(project_manager=request.user, deleted=False)
+        serializer = ProjectSummarySerializer(projects, many=True)
+        return Response(serializer.data)
+
+    @detail_route(methods=['GET'])
+    def summary(self, request, pk=None):
+        " summarizes and organizes project details for a project manager "
+        project = Project.objects.get(project_manager=request.user, id=pk)
+        serializer = ProjectSummarySerializer(project)
+        return Response(serializer.data)
 
 
 class ProjectSearchView(HaystackViewSet):
