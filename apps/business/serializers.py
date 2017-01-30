@@ -165,16 +165,17 @@ class JobSerializer(serializers.ModelSerializer):
         )
         return super(JobSerializer, self).update(instance, validated_data)
 
-
+# TODO DRY: ManagerBidSerializer and ContractorBidSerializer can inherit from a base BidSummarySerializer
 class ManagerBidSerializer(serializers.ModelSerializer):
     " bid serializer for summarizing details a project manager cares about "
     cash = serializers.IntegerField(required=False, allow_null=True )
     equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
     contractor = serializers.SerializerMethodField()
+    thread_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
-        fields = field_names(Job)
+        fields = field_names(Job) + ('thread_id', )
 
     def get_contractor(self, obj):
         contractor = { k: getattr(obj.contractor, k) for k in [
@@ -183,19 +184,26 @@ class ManagerBidSerializer(serializers.ModelSerializer):
         contractor['photo_url'] = obj.contractor.get_photo
         return contractor
 
+    def get_thread_id(self, job):
+        return Message.objects.filter(job=job)[0].thread_id
+
 class ContractorBidSerializer(serializers.ModelSerializer):
     cash = serializers.IntegerField(required=False, allow_null=True )
     equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
     project = serializers.SerializerMethodField()
+    thread_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
-        fields = field_names(Job)
+        fields = field_names(Job) + ('thread_id', )
 
     def get_project(self, obj):
         return { k: getattr(obj.project, k) for k in [
              'id','title',
         ]}
+
+    def get_thread_id(self, job):
+        return Message.objects.filter(job=job)[0].thread_id
 
 
 class ProjectSummarySerializer(ParentModelSerializer):
