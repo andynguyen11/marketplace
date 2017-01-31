@@ -1,16 +1,33 @@
-{{ object.title }}
-{{ object.date_created }}
-
-{{ object.type }}
-{{ object.short_blurb }}
-{{ object.description }}
-
-{{ object.skills }}
-{{ object.status }}
-{{ object.category }}
-
-{{ object.city }}
-{{ object.state }}
-
-{{ object.remote }}
-{{ object.featured }}
+{% if object.title %}
+    {{ object.title }}
+{% endif %}
+{% if object.short_blurb %}
+    {{ object.short_blurb }}
+{% endif %}
+{% if object.description %}
+    {{ object.description }}
+{% endif %}
+{% if object.type %}
+    {{ object.type }}
+{% endif %}
+{% if object.skills_str %}
+    {{ object.skills_str }}
+{% endif %}
+{% if object.status %}
+    {{ object.status }}
+{% endif %}
+{% if object.city %}
+    {{ object.city }}
+{% endif %}
+{% if object.state %}
+    {{ object.state }}
+{% endif %}
+{% if object.remote %}
+    remote
+{% endif %}
+{% if object.featured %}
+    featured
+{% endif %}
+{% if object.mix %}
+    mix
+{% endif %}

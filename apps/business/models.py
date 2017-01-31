@@ -312,6 +312,10 @@ class Project(models.Model):
             average_cash = int(round((sum(cash) / float(len(cash)))))
         return { 'cash': average_cash, 'equity': average_equity }
 
+    @property
+    def skills_str(self):
+        return self.skills.get_tag_string()
+
     def active_jobs(self):
         jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
         return jobs

@@ -11,6 +11,7 @@ def expand_query(query_string):
 class FuzzyBackend(ElasticsearchSearchBackend):
     def build_search_kwargs(self, query_string, **kwargs):
         query_string = expand_query(query_string)
+        print query_string, kwargs
         search_kwargs = super(FuzzyBackend, self).build_search_kwargs(
                 query_string, **kwargs)
         return search_kwargs

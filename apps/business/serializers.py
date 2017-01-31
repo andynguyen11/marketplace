@@ -65,6 +65,12 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         parent_key = 'project'
 
 
+class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        index_classes = [ProjectIndex]
+        search_fields = ProjectIndex.Meta.fields
+
+
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
     cash = serializers.IntegerField(required=False, allow_null=True )
@@ -300,13 +306,6 @@ class TermsSerializer(serializers.ModelSerializer):
 
     def get_project(self, obj):
         return { 'title': obj.job.project.title, 'id': obj.job.project.id }
-
-
-class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
-    class Meta(ProjectSerializer.Meta):
-        index_classes = [ProjectIndex]
-        search_fields = ("text", )
-
 
 class EmployeeSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)

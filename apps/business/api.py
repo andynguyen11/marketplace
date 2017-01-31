@@ -161,18 +161,29 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class ProjectSearchView(HaystackViewSet):
+class ProjectSearchViewSet(HaystackViewSet):
     """
     supports [drf-haystack queries](https://drf-haystack.readthedocs.io/en/latest/01_intro.html#query-time):
 
     * Every primary (non-foreign) field on the model is available for explicit query (`featured=true&type=technology`)
-    * Has an additional `text` field defined in a data template `apps/business/templates/search/indexes/business/project_text.txt`
-    * various `__operators` can be used on a field, most pertinantly [`__fuzzy`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_fuzziness), i.e. `text__fuzzy=tytle+txt` matches `"title text"`. The fuzz operator can also be used on a per-word basis in the form `text=tytle\~+txt\~` in the url.
+    * currently excludes deleted, unapproved and unpublished projects from indexing
+    * Has an additional `text` field 
+        * defined in a [haystack data template](http://django-haystack.readthedocs.io/en/v2.5.1/best_practices.html#well-constructed-templates) `apps/business/templates/search/indexes/business/project_text.txt`
+        * currently includes `title, short_blurb, description, type, skills_str, status, city, state, remote, featured, mix`
+        * boolean fields are inlined as `"mix" if mix else ""`
+    * various `__operators` can be used on a field, such as [`__fuzzy`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#_fuzziness), i.e. `text__fuzzy=tytle+txt` matches `"title text"`. The fuzz operator can also be used on a per-word basis in the form `text=tytle\~+txt\~` in the url.
+        * Full list of `__operators`: `contains, exact, gt, gte, lt, lte, in, startswith, endswith, range, fuzzy`
 
     url encoding in general
 
     * `foo+bar #=> foo AND bar`
     * `foo,bar #=> foo OR bar`
+
+    example queries
+
+    * `10 < estimated_cash <= 100 #=> estimated_cash__lte=100&estimated_cash__gt=10`
+    * `skills contains 11 or 16   #=> skills__contains=11,16`
+    * `skills contains 11 or 15   #=> skills__contains=11+15`
 
     example search: [?featured=true&type=technology,finance&text=titleword+descriptionword](http://localhost:8000/api/search/project?featured=true&type=technology,finance&text=titleword+descriptionword)
 
