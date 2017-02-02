@@ -10,7 +10,7 @@
       <div class="projectCard-owner-avatar" style="background-image: url('{{ image.url }}');"></div>
       {% endthumbnail %}
       <div class="projectCard-owner-meta">
-        <div class="projectCard-owner-name">Project by: {{ project.project_manager.first_name }}</div>
+        <div class="projectCard-owner-name">{{ project.project_manager.first_name }}</div>
         <div class="projectCard-owner-location">
           {% if project.company %}
             {{ project.company.city }}{% if project.company.state %}, {{ project.company.state }}{% endif %}
