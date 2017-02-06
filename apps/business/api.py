@@ -1,4 +1,4 @@
-import simplejson
+import simplejson, re
 
 from django.http import HttpResponseForbidden, Http404
 from drf_haystack.viewsets import HaystackViewSet
@@ -8,7 +8,7 @@ from rest_framework.decorators import detail_route, list_route, permission_class
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
-from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, IsProjectOwnerPermission, AuthedCreateRead, IsProfile
+from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile
 from business.models import Job, Employee
 from business.products import products
 from business.serializers import *
@@ -144,7 +144,51 @@ class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = (IsAuthenticated, IsProjectOwnerPermission, )
+    permission_classes = (PublicReadProjectOwnerEditPermission, )
+    lookup_field = 'slug_or_id'
+
+    def get_object(self):
+        slug_or_id = self.kwargs['slug_or_id']
+        project = None
+        if type(slug_or_id) == int or re.match(r'^[0-9]+$', slug_or_id):
+            try:
+                project = Project.objects.get(id=slug_or_id)
+            except (Project.DoesNotExist, ValueError):
+                pass
+        if not project:
+            try:
+                project = Project.objects.get(slug=slug_or_id)
+            except (Project.DoesNotExist, ValueError):
+                pass
+        if not project:
+            chunks = slug_or_id.split('-')
+            if len(chunks) > 1:
+                id = chunks[-1]
+                try:
+                    project = Project.objects.get(id=id)
+                except (Project.DoesNotExist, ValueError):
+                    pass
+        if not project:
+            raise Http404('No such project %s' % slug_or_id)
+        self.check_object_permissions(self.request, project)
+        return project
+
+    def retrieve(self, request, slug_or_id=None):
+        project = self.get_object()
+        if project.approved or request.user == project.project_manager or request.user.is_staff:
+            job = None
+            try:
+                if request.user.is_authenticated():
+                    job = Job.objects.get(project=project, contractor=request.user)
+                    if job:
+                        job = JobSerializer(job).data
+            except Job.DoesNotExist:
+                pass
+            response_data = self.get_serializer(project).data
+            response_data['job'] = job
+            response_data['is_project_manager'] = request.user == project.project_manager
+            return Response(response_data, status=200)
+        else: return Response(status=403)
 
     @list_route(methods=['GET'])
     def summaries(self, request):

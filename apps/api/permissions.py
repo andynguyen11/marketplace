@@ -151,12 +151,14 @@ class IsJobOwnerPermission(permissions.BasePermission):
         return view.action not in ['create'] or request.user.id == view.parent.owner.id
 
 
-class IsProjectOwnerPermission(permissions.BasePermission):
+class PublicReadProjectOwnerEditPermission(permissions.BasePermission):
     """
     Custom permission for project managers to edit project.
     """
+
     def has_object_permission(self, request, view, obj):
-        return request.user.id == obj.project_manager.id
+        return request.user.id == obj.project_manager.id or (
+                request.method in permissions.SAFE_METHODS)
 
 
 class ProductOrderPermission(permissions.BasePermission):
