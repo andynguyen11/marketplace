@@ -51,13 +51,15 @@ class Company(models.Model):
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     zipcode = models.IntegerField(blank=True, null=True)
-    ein = models.CharField(max_length=255, verbose_name='EIN', blank=True, null=True)
+    country = models.CharField(max_length=255, blank=True, null=True)
+    ein = models.CharField(max_length=50, verbose_name='EIN', blank=True, null=True)
     logo = models.ImageField(blank=True, null=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     category = tagulous.models.TagField(to=Category, blank=True)
     type = models.CharField(max_length=100, choices=COMPANY_TYPES, blank=True, null=True)
     filing_location = models.CharField(max_length=100, blank=True, null=True)
+    incorporation_date = models.DateField(blank=True, null=True)
 
     @property
     def get_logo(self):
