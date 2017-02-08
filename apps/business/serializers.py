@@ -214,7 +214,10 @@ class ManagerBidSerializer(serializers.ModelSerializer):
         return contractor
 
     def get_thread_id(self, job):
-        return Message.objects.filter(job=job)[0].thread_id
+        try:
+            return Message.objects.filter(job=job)[0].thread_id
+        except IndexError:
+            return None
 
 class ContractorBidSerializer(serializers.ModelSerializer):
     cash = serializers.IntegerField(required=False, allow_null=True )
@@ -240,6 +243,7 @@ class ProjectSummarySerializer(ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
     bids = serializers.SerializerMethodField()
+    bid_stats = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -251,12 +255,19 @@ class ProjectSummarySerializer(ParentModelSerializer):
                 'estimated_equity_shares', 'mix', 'remote',
                 'status', 'featured', 'published', 'approved',
                 'company', 'project_manager',
-                'bids')
+                'bids', 'bid_stats', )
         parent_key = 'project'
 
     def get_bids(self, obj):
         jobs = Job.objects.filter(project=obj)
         return ManagerBidSerializer(jobs, many=True).data
+
+    def get_bid_stats(self, obj):
+        averages = {}
+        averages['cash'] = obj.average_cash
+        averages['equity'] = obj.average_equity
+        averages['combined'] = obj.average_combined
+        return { 'averages': averages }
 
 
 class DocumentSerializer(ParentModelSerializer):
