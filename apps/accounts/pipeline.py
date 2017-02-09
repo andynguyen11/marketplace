@@ -1,3 +1,5 @@
+from generics.viewsets import assign_crud_permissions
+
 def load_existing_user(user, *args, **kwargs):
     if user:
         return {
@@ -27,3 +29,4 @@ def save_profile(backend, user, response, is_new, *args, **kwargs):
             except:
                 pass
             user.save()
+        assign_crud_permissions(user, user)
