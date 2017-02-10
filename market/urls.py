@@ -75,7 +75,7 @@ urlpatterns = [
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
-    url(r'^project/(?P<project_slug>[-\w]+)/$', business_views.view_project, name='project'),
+    url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/delete/(?P<project_id>[0-9]+)/$', business_views.delete_project, name='delete-project'),
     url(r'^projects/$', business_views.discover_projects, name='project-gallery'),
     url(r'^projects/(?P<type>[\w-]+)/$', business_views.discover_projects, name='project-gallery'),
