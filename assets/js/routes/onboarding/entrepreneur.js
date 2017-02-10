@@ -518,7 +518,7 @@ const EntrepreneurOnboard = React.createClass({
             processData: false,
             contentType: false,
             success: function (result) {
-              window.location = '/profile/dashboard/?signup=entrepreneur';
+              window.location = '/profile/dashboard/entrepreneur/';
             }.bind(this),
             error: (xhr, status, error) => {
               this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });

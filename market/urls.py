@@ -70,6 +70,8 @@ urlpatterns = [
     url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
+    url(r'^profile/dashboard/developer/$', accounts_views.dashboard, name='dashboard'),
+    url(r'^profile/dashboard/entrepreneur/$', accounts_views.dashboard, name='dashboard'),
     url(r'^profile/documents/$', accounts_views.view_documents, name='view-documents'),
     url(r'^profile/settings/$', accounts_views.profile, {'template': 'settings.html'}, name='settings'),
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
