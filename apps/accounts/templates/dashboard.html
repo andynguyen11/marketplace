@@ -137,7 +137,6 @@
                 <span class="text-muted small">Member since {{ request.user.date_joined }}</span>
               </div>
               <div class="flex-right">
-                <a class="flex-align-center btn btn-brand--clear " href="{% url 'company' request.user.company.slug %}">View</a>
                 <a class="flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Edit</a>
               </div>
             {% else %}

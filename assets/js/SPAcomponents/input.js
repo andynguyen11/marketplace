@@ -102,7 +102,7 @@ export const DateInput = React.createClass({
   },
 
   render() {
-    const { className, inputDisabled, config: { name, label, value, error, placeholder, disabled, minDate } } = this.props;
+    const { className, inputDisabled, config: { name, label, value, error, placeholder, disabled, minDate, selectMonth, selectYear } } = this.props;
     const formGroupClass = classNames('form-group', className, { 'has-error': !!error});
     const dateError = error && <InputError>{error}</InputError>;
     const attrPlaceholder = !!placeholder && { placeholder };
@@ -113,7 +113,7 @@ export const DateInput = React.createClass({
     return (
       <div className={formGroupClass}>
         <label className="control-label" htmlFor={name}>{label}</label>
-        <DatePicker className="form-control" name={name} id={name} onChange={this.changeHandler} ref="date" {...attrPlaceholder} {...attrMinDate} {...attrDisabled} {...selectedDate} autoComplete="off"/>
+        <DatePicker className="form-control" peekNextMonth showMonthDropdown showYearDropdown dropdownMode="select" name={name} id={name} onChange={this.changeHandler} ref="date" {...attrPlaceholder} {...attrMinDate} {...attrDisabled} {...selectedDate} autoComplete="off"/>
         {dateError}
       </div>
     );

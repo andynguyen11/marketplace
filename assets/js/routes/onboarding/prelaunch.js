@@ -1,9 +1,27 @@
 import React from 'react';
+import moment from 'moment';
 import AccountForm from './account';
 import CompanyForm from './company';
 import FormHelpers from '../../utils/formHelpers';
 import { objectToFormData } from '../project/utils'
 import Loader from '../../components/loadScreen';
+
+const dateFormatForSave = 'YYYY-MM-DD';
+const dateFormatForDisplay = 'MM/DD/YYYY';
+
+const convertDateForSave = (date) => {
+  const dateMoment = moment(date);
+  const formattedDate = dateMoment.format(dateFormatForSave);
+
+  return formattedDate;
+};
+
+const convertDateForDisplay = (date) => {
+  const dateMoment = moment(date);
+  const formattedDate = dateMoment.format(dateFormatForDisplay);
+
+  return formattedDate;
+};
 
 const PrelaunchOnboarding = React.createClass({
 
@@ -31,7 +49,13 @@ const PrelaunchOnboarding = React.createClass({
         filing_location: '',
         city: '',
         state: '',
-        user_id: ''
+        user_id: '',
+        country: 'United States of America',
+        address1: '',
+        address2: '',
+        zipcode: '',
+        incorporation_date: '',
+        ein: ''
       },
       photo_file: '',
       photo_url: '',
@@ -40,7 +64,8 @@ const PrelaunchOnboarding = React.createClass({
       formError: false,
       formErrorsList: [],
       apiError: false,
-      isCompany: true
+      isCompany: true,
+      isInternational: false
     };
   },
 
@@ -61,6 +86,15 @@ const PrelaunchOnboarding = React.createClass({
 
   componentWillMount() {
     this.setState({ formElements: this.formElements() });
+  },
+
+  componentDidUpdate() {
+    const { isCompany, formElements } = this.state;
+    if (isCompany) {
+      document.getElementById('company-form-header').scrollIntoView();
+    } else {
+      document.getElementById('account-form-header').scrollIntoView();
+    }
   },
 
   formElements() {
@@ -94,6 +128,7 @@ const PrelaunchOnboarding = React.createClass({
       },
       companyName: {
         name: 'companyName',
+        placeholder: 'Awesome Inc.',
         label: 'Company Name',
         errorClass: '',
         value: company.name || '',
@@ -115,14 +150,63 @@ const PrelaunchOnboarding = React.createClass({
           this.setState({ company });
         }
       },
+      companyCountry: {
+        name: 'companyCountry',
+        label: 'Where is you company located?',
+        value: company.country || 'United States of America',
+        errorClass: '',
+        update: (value) => {
+          const { company } = this.state;
+          company.address = value;
+          this.setState({
+            company,
+            isInternational: value == 'United States of America' ? false : true
+          });
+        }
+      },
+      companyAddress: {
+        name: 'companyAddress',
+        label: 'Company Address',
+        placeholder: 'Address 1',
+        value: company.address || '',
+        errorClass: '',
+        validator: (value) => {
+          const { isCompany, formElements, formErrorsList } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyAddress.errorClass = 'has-error';
+            formErrorsList.push('Please add a company address.');
+          } else {
+            formElements.companyAddress.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.address = value;
+          this.setState({ company });
+        }
+      },
+      companyAddress2: {
+        name: 'companyAddress2',
+        placeholder: 'Address 2 - Apartment, Unit, etc.',
+        value: company.address2 || '',
+        errorClass: '',
+        update: (value) => {
+          const { company } = this.state;
+          company.address2 = value;
+          this.setState({ company });
+        }
+      },
       companyState: {
         name: 'companyState',
         label: 'Company State',
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements, formErrorsList } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyState.errorClass = 'has-error';
             formErrorsList.push('Please add a company state.');
@@ -161,59 +245,26 @@ const PrelaunchOnboarding = React.createClass({
           this.setState({ company });
         }
       },
-      companyPhoto: {
+      companyZipcode: {
+        name: 'companyZipcode',
+        label: 'Postal Code',
+        value: company.zipcode || '',
         errorClass: '',
-        validator: () => {
-          const { isCompany, logo_file, formElements, formErrorsList } = this.state;
-          let valid = false;
-
-          if(typeof logo_file !== 'object' && isCompany) {
-            formElements.companyPhoto.errorClass = 'has-error';
-            formErrorsList.push('Please add a company logo.');
-            valid =  false;
-          }else {
-            formElements.companyPhoto.errorClass = '';
-            valid = true;
-          }
-          this.setState({ formElements, formErrorsList });
-          return valid;
-        }
-      },
-      companyDescription: {
-        name: 'companyDescription',
-        errorClass: '',
-        label: 'Company Overview (Limited to 500 characters)',
-        value: company.description || '',
-        placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
           const { isCompany, formElements, formErrorsList } = this.state;
-          const minLen = 1;
-          const maxLen = 500;
-          const valid = isCompany ? value.length >= minLen && value.length <= maxLen : true;
-
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
-            formElements.companyDescription.errorClass = 'has-error';
-            formErrorsList.push('Please add a company overview.');
+            formElements.companyZipcode.errorClass = 'has-error';
+            formErrorsList.push('Please add a postal code.');
           } else {
-            formElements.companyDescription.errorClass = '';
+            formElements.companyZipcode.errorClass = '';
           }
           this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { company } = this.state;
-          company.description = value;
-          this.setState({ company });
-        }
-      },
-      companyBio: {
-        name: 'companyBio',
-        label: 'Company Bio (optional)',
-        value: company.description || '',
-        placeholder: 'This is a long form bio of your company. Tell developers the story of your company, your goals, and all they need to know about working with you.  You can add images in this section to help your story.',
-        update: (value) => {
-          const { company } = this.state;
-          company.long_description = value;
+          company.zipcode = value;
           this.setState({ company });
         }
       },
@@ -266,6 +317,59 @@ const PrelaunchOnboarding = React.createClass({
           this.setState({ company });
         }
       },
+      companyTaxID: {
+        name: 'companyTaxID',
+        label: 'Tax ID',
+        placeholder: '00-0000000',
+        value: company.ein || '',
+        errorClass: '',
+        validator: (value) => {
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyTaxID.errorClass = 'has-error';
+            formErrorsList.push('Please add a tax id.');
+          } else {
+            formElements.companyTaxID.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.ein = value;
+          this.setState({ company });
+        }
+      },
+      companyIncorporationDate: {
+        name: 'companyIncorporationDate',
+        label: 'Company Incorporation Date',
+        placeholder: 'MM/DD/YYYY',
+        value: company.incorporation_date || '',
+        errorClass: '',
+        error: false,
+        validator: (value) => {
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const prettyDate = convertDateForDisplay(value);
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isMomentFormat(prettyDate, dateFormatForDisplay) : true;
+          if (!valid) {
+            formElements.companyIncorporationDate.errorClass = 'has-error';
+            formElements.companyIncorporationDate.error = 'Please enter a valid incorporation date (MM/DD/YYYY).'
+            formErrorsList.push('Please enter a valid incorporation date (MM/DD/YYYY).');
+          } else {
+            formElements.companyIncorporationDate.errorClass = '';
+            formElements.companyIncorporationDate.error = false;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        onChange: (value) => {
+          const { company, formElements } = this.state;
+          company.incorporation_date = convertDateForSave(value);
+          formElements['companyIncorporationDate'].value = convertDateForDisplay(value);
+          this.setState({ company, formElements });
+        }
+      },
       companyFilingLocation: {
         name: 'companyFilingLocation',
         label: 'State Filing Location',
@@ -273,8 +377,8 @@ const PrelaunchOnboarding = React.createClass({
         value: company.filing_location || '',
         placeholder: 'State/Province',
         validator: (value) => {
-          const { isCompany, formElements, formErrorsList } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyFilingLocation.errorClass = 'has-error';
             formErrorsList.push('Please add a company filing location.');
@@ -576,8 +680,10 @@ const PrelaunchOnboarding = React.createClass({
     });
   },
 
-  setCompany() {
-    this.setState({isCompany:!this.state.isCompany});
+  setCompany(e) {
+    const{ formElements } = this.state;
+    let companyFlag = e.currentTarget.getAttribute('data-company') == 'true' ? true : false;
+    this.setState({isCompany:companyFlag});
   },
 
 
@@ -617,22 +723,6 @@ const PrelaunchOnboarding = React.createClass({
     }
   },
 
-  handleLogoChange(e) {
-    e.preventDefault();
-    let reader = new FileReader();
-    let file = e.target.files[0];
-    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
-    if(re.exec(file.name)) {
-      reader.onloadend = () => {
-        this.setState({
-          logo_url: reader.result,
-          logo_file: file
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  },
-
   render() {
     const { formElements, formError, formErrorsList, apiError, profile, company, isCompany, isLoading } = this.state;
     const error = (formError || apiError) && function() {
@@ -652,7 +742,7 @@ const PrelaunchOnboarding = React.createClass({
       }();
 
     const yourTitle = isCompany && (
-      <div className={ 'form-group col-md-8 col-md-offset-2 ' + formElements.title.errorClass }>
+      <div className={ 'form-group col-md-6 col-md-offset-3 ' + formElements.title.errorClass }>
         <label className="control-label" htmlFor={formElements.title.name}>{formElements.title.label}</label>
         <input
             className="form-control"
@@ -673,8 +763,8 @@ const PrelaunchOnboarding = React.createClass({
         <CompanyForm
           formElements={formElements}
           handleChange={this.handleChange}
-          handleLogoChange={this.handleLogoChange}
           isCompany={this.state.isCompany}
+          isInternational={this.state.isInternational}
           setCompany={this.setCompany}
           logo_url={this.state.logo_url}
           handleBio={this.handleBio}
@@ -683,7 +773,7 @@ const PrelaunchOnboarding = React.createClass({
           prelaunch={true}
         />
 
-        <h3 className='brand sub-section col-md-8 col-md-offset-2'>Your Personal Info</h3>
+        <h3 className='brand sub-section col-md-6 col-md-offset-3' id='account-form-header'>Your Personal Info</h3>
 
         {yourTitle}
 
@@ -697,7 +787,7 @@ const PrelaunchOnboarding = React.createClass({
           linkedIn={false}
         />
 
-        <div className='col-md-4 col-md-offset-2'>
+        <div className='col-md-3 col-md-offset-3'>
             <div className={ 'form-group ' + formElements.profileEmail.errorClass }>
                 <label className="control-label" htmlFor={formElements.profileEmail.name}>{formElements.profileEmail.label}</label>
                 <input
@@ -709,7 +799,7 @@ const PrelaunchOnboarding = React.createClass({
                 />
             </div>
         </div>
-        <div className='col-md-4'>
+        <div className='col-md-3'>
             <div className={ 'form-group ' + formElements.password.errorClass }>
                 <label className="control-label" htmlFor={formElements.password.name}>{formElements.password.label}</label>
                 <input
@@ -722,7 +812,7 @@ const PrelaunchOnboarding = React.createClass({
             </div>
         </div>
 
-        <div className='text-center sub-section form-group col-md-8 col-md-offset-2'>
+        <div className='text-center sub-section form-group col-md-6 col-md-offset-3'>
           {error}
 
           <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._createAccount}>

@@ -1,11 +1,28 @@
 import React from 'react';
+import moment from 'moment';
 import AccountForm from '../onboarding/account';
 import CompanyForm from '../onboarding/company';
 import FormHelpers from '../../utils/formHelpers';
 import { objectToFormData } from '../project/utils'
 import Loader from '../../components/loadScreen';
 
-// TODO Create a settings router
+
+const dateFormatForSave = 'YYYY-MM-DD';
+const dateFormatForDisplay = 'MM/DD/YYYY';
+
+const convertDateForSave = (date) => {
+  const dateMoment = moment(date);
+  const formattedDate = dateMoment.format(dateFormatForSave);
+
+  return formattedDate;
+};
+
+const convertDateForDisplay = (date) => {
+  const dateMoment = moment(date);
+  const formattedDate = dateMoment.format(dateFormatForDisplay);
+
+  return formattedDate;
+};
 
 const CompanySettings = React.createClass({
 
@@ -17,12 +34,16 @@ const CompanySettings = React.createClass({
         description: '',
         type: '',
         filing_location: '',
+        country: 'United States of America',
+        address1: '',
+        address2: '',
         city: '',
         state: '',
+        zipcode: '',
+        incorporation_date: '',
+        ein: '',
         user_id: $('#settings').data('id')
       },
-      logo_file: '',
-      logo_url: '',
       formError: false,
       isCompany: true,
       isLoading: true
@@ -39,7 +60,6 @@ const CompanySettings = React.createClass({
       $.get(loom_api.company + $('#settings').data('company') + '/', (result) => {
         this.setState({
           company: result,
-          logo_url: result.logo,
           isLoading: false
         }, () => {
           this.setState({ formElements: this.formElements() });
@@ -55,18 +75,20 @@ const CompanySettings = React.createClass({
     return {
       companyName: {
         name: 'companyName',
+        placeholder: 'Awesome Inc.',
         label: 'Company Name',
         errorClass: '',
         value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyName.errorClass = 'has-error';
+            formErrorsList.push('Please add a company name.');
           } else {
             formElements.companyName.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -75,20 +97,70 @@ const CompanySettings = React.createClass({
           this.setState({ company });
         }
       },
+      companyCountry: {
+        name: 'companyCountry',
+        label: 'Where is you company located?',
+        value: company.country || 'United States of America',
+        errorClass: '',
+        update: (value) => {
+          const { company } = this.state;
+          company.address = value;
+          this.setState({
+            company,
+            isInternational: value == 'United States of America' ? false : true
+          });
+        }
+      },
+      companyAddress: {
+        name: 'companyAddress',
+        label: 'Company Address',
+        placeholder: 'Address 1',
+        value: company.address || '',
+        errorClass: '',
+        validator: (value) => {
+          const { isCompany, formElements, formErrorsList } = this.state;
+          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyAddress.errorClass = 'has-error';
+            formErrorsList.push('Please add a company address.');
+          } else {
+            formElements.companyAddress.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.address = value;
+          this.setState({ company });
+        }
+      },
+      companyAddress2: {
+        name: 'companyAddress2',
+        placeholder: 'Address 2 - Apartment, Unit, etc.',
+        value: company.address2 || '',
+        errorClass: '',
+        update: (value) => {
+          const { company } = this.state;
+          company.address2 = value;
+          this.setState({ company });
+        }
+      },
       companyState: {
         name: 'companyState',
         label: 'Company State',
         errorClass: '',
-        value: company.state || '',
+        value: company.name || '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyState.errorClass = 'has-error';
+            formErrorsList.push('Please add a company state.');
           } else {
             formElements.companyState.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -103,14 +175,15 @@ const CompanySettings = React.createClass({
         value: company.city || '',
         errorClass: '',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyCity.errorClass = 'has-error';
+            formErrorsList.push('Please add a company city.');
           } else {
             formElements.companyCity.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -119,38 +192,26 @@ const CompanySettings = React.createClass({
           this.setState({ company });
         }
       },
-      companyDescription: {
-        name: 'companyDescription',
+      companyZipcode: {
+        name: 'companyZipcode',
+        label: 'Postal Code',
+        value: company.zipcode || '',
         errorClass: '',
-        label: 'Company Overview (Limited to 500 characters)',
-        value: company.description || '',
-        placeholder: 'This is a top-line description of your company.',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
-            formElements.companyDescription.errorClass = 'has-error';
+            formElements.companyZipcode.errorClass = 'has-error';
+            formErrorsList.push('Please add a postal code.');
           } else {
-            formElements.companyDescription.errorClass = '';
+            formElements.companyZipcode.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { company } = this.state;
-          company.description = value;
-          this.setState({ company });
-        }
-      },
-      companyBio: {
-        name: 'companyBio',
-        errorClass: '',
-        label: 'Company Bio (Optional - You can do this later)',
-        value: company.long_description || '',
-        placeholder: 'This is a long form bio of your company. Tell developers the story of your company, your goals, and all they need to know about working with you.  You can add images in this section to help your story.',
-        update: (value) => {
-          const { company } = this.state;
-          company.long_description = value;
+          company.zipcode = value;
           this.setState({ company });
         }
       },
@@ -186,20 +247,74 @@ const CompanySettings = React.createClass({
           }
         ],
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
+          const { isCompany, formElements, formErrorsList } = this.state;
           const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyType.errorClass = 'has-error';
+            formErrorsList.push('Please add a company type.');
           } else {
             formElements.companyType.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
           const { company } = this.state;
           company.type = value;
           this.setState({ company });
+        }
+      },
+      companyTaxID: {
+        name: 'companyTaxID',
+        label: 'Tax ID',
+        placeholder: '00-0000000',
+        value: company.ein || '',
+        errorClass: '',
+        validator: (value) => {
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
+          if (!valid) {
+            formElements.companyTaxID.errorClass = 'has-error';
+            formErrorsList.push('Please add a tax id.');
+          } else {
+            formElements.companyTaxID.errorClass = '';
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        update: (value) => {
+          const { company } = this.state;
+          company.ein = value;
+          this.setState({ company });
+        }
+      },
+      companyIncorporationDate: {
+        name: 'companyIncorporationDate',
+        label: 'Company Incorporation Date',
+        placeholder: 'MM/DD/YYYY',
+        value: company.incorporation_date || '',
+        errorClass: '',
+        error: false,
+        validator: (value) => {
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const prettyDate = convertDateForDisplay(value);
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isMomentFormat(prettyDate, dateFormatForDisplay) : true;
+          if (!valid) {
+            formElements.companyIncorporationDate.errorClass = 'has-error';
+            formElements.companyIncorporationDate.error = 'Please enter a valid incorporation date (MM/DD/YYYY).'
+            formErrorsList.push('Please enter a valid incorporation date (MM/DD/YYYY).');
+          } else {
+            formElements.companyIncorporationDate.errorClass = '';
+            formElements.companyIncorporationDate.error = false;
+          }
+          this.setState({ formElements, formErrorsList });
+          return valid;
+        },
+        onChange: (value) => {
+          const { company, formElements } = this.state;
+          company.incorporation_date = convertDateForSave(value);
+          formElements['companyIncorporationDate'].value = convertDateForDisplay(value);
+          this.setState({ company, formElements });
         }
       },
       companyFilingLocation: {
@@ -209,14 +324,15 @@ const CompanySettings = React.createClass({
         value: company.filing_location || '',
         placeholder: 'State/Province',
         validator: (value) => {
-          const { isCompany, formElements } = this.state;
-          const valid = isCompany ? FormHelpers.checks.isRequired(value) : true;
+          const { isCompany, isInternational, formElements, formErrorsList } = this.state;
+          const valid = isCompany && !isInternational ? FormHelpers.checks.isRequired(value) : true;
           if (!valid) {
             formElements.companyFilingLocation.errorClass = 'has-error';
+            formErrorsList.push('Please add a company filing location.');
           } else {
             formElements.companyFilingLocation.errorClass = '';
           }
-          this.setState({ formElements });
+          this.setState({ formElements, formErrorsList });
           return valid;
         },
         update: (value) => {
@@ -236,7 +352,6 @@ const CompanySettings = React.createClass({
       this.setState({ formElements });
       let company = this.state.company;
       company.user_id = $('#settings').data('id');
-      company.logo = this.state.logo_file;
       if(valid) {
         this.setState({ formError: false });
           $.ajax({
@@ -334,6 +449,7 @@ const CompanySettings = React.createClass({
           formElements={formElements}
           handleChange={this.handleChange}
           isCompany={this.state.isCompany}
+          isInternational={this.state.isInternational}
           handleBio={this.handleBio}
           setCompany={this.setCompany}
           handleLogoChange={this.handleLogoChange}
