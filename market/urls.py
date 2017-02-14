@@ -29,6 +29,7 @@ from accounts.models import Skills
 
 import business.views as business_views
 import accounts.views as accounts_views
+from django.contrib.auth.decorators import login_required
 
 import business.signals
 import accounts.signals
@@ -38,6 +39,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
+    url(r'^confirm-email/$', login_required(TemplateView.as_view(template_name='confirm_email.html')), name='confirm_email'),
     url(r'^company/(?P<company_slug>[-\w]+)/$', business_views.company_profile, name='company'),
     url(r'^welcome/$', TemplateView.as_view(template_name='welcome.html'), name='welcome'),
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),

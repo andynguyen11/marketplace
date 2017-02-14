@@ -48,3 +48,11 @@ def check_token(view_func):
 
         return view_func(request, *args, **kwargs)
     return _wrapped_view_func
+
+
+def email_confirmation_required(view_func):
+    def _wrapped_view_func(request, *args, **kwargs):
+        if not request.user.email_confirmed:
+            return redirect('confirm_email')
+        return view_func(request, *args, **kwargs)
+    return _wrapped_view_func

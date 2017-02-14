@@ -4,6 +4,7 @@ from django import VERSION
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import email_confirmation_required
 try:
     from django.contrib.auth import get_user_model  # Django 1.5
 except ImportError:
@@ -39,6 +40,7 @@ from postman.utils import format_subject, format_body
 from business.models import Job
 
 login_required_m = method_decorator(login_required)
+email_confirmation_m = method_decorator(email_confirmation_required)
 csrf_protect_m = method_decorator(csrf_protect)
 
 
@@ -71,6 +73,7 @@ class FolderMixin(NamespaceMixin, object):
     http_method_names = ['get']
 
     @login_required_m
+    @email_confirmation_m 
     def dispatch(self, *args, **kwargs):
         return super(FolderMixin, self).dispatch(*args, **kwargs)
 
@@ -300,6 +303,7 @@ class ReplyView(ComposeMixin, FormView):
 
     @csrf_protect_m
     @login_required_m
+    @email_confirmation_m 
     def dispatch(self, request, message_id, *args, **kwargs):
         perms = Message.objects.perms(request.user)
         self.parent = get_object_or_404(Message, perms, pk=message_id)
@@ -345,6 +349,7 @@ class DisplayMixin(NamespaceMixin, object):
     template_name = 'postman/view.html'
 
     @login_required_m
+    @email_confirmation_m 
     def dispatch(self, *args, **kwargs):
         return super(DisplayMixin, self).dispatch(*args, **kwargs)
 
@@ -426,6 +431,7 @@ class UpdateMessageMixin(object):
 
     @csrf_protect_m
     @login_required_m
+    @email_confirmation_m 
     def dispatch(self, *args, **kwargs):
         return super(UpdateMessageMixin, self).dispatch(*args, **kwargs)
 

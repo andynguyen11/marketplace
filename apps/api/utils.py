@@ -44,6 +44,7 @@ def jwt_payload_handler(user):
         'username': username,
         'photo': user.get_photo,
         'last_name': user.last_name,
+        'email_confirmed': user.email_confirmed,
         'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
     }
     if isinstance(user.pk, uuid.UUID):

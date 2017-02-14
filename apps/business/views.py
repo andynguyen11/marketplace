@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import email_confirmation_required
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
 from django.http import HttpResponse
@@ -45,6 +46,7 @@ def delete_project(request, project_id):
     return redirect('view-bids')
 
 @login_required
+@email_confirmation_required
 def create_project(request, project_id=None):
     form = InfoForm()
     project = None
@@ -64,6 +66,7 @@ def create_project(request, project_id=None):
 
 
 @login_required
+@email_confirmation_required
 def attach_docs(request):
     return NotImplemented
 
@@ -86,6 +89,7 @@ def projects_by_type(request, type='all'):
     return render(request, 'project_by_type.html', serialized_project_groups(**kwargs))
 
 @login_required(login_url='/signup/')
+@email_confirmation_required
 def discover_projects(request, type='all'):
     # create list of projects types that exist.
     project_types = []
