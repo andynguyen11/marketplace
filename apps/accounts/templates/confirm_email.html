@@ -3,7 +3,23 @@
 
 {% block content %}
 
-<h1 style="text-align: center; padding: 3em;"> CONFIRM YOUR GOSH DARN EMAIL </h1>
+  <div>
+		<div class="emailVerify emailVerify--center">
+			<h2 class="brand-bold sub-section">Check your inbox!</h2>
+			<h4 class="brand-bold h3-large">We sent a verification email to <span class="brand">{{ request.user.email }}</span>.</h4>
+			<h4 class="brand-bold h3-large">You must verify your email to continue.</h4>
+			<p class="emailVerify-fyi text-muted brand thin">FYI: emails may take a few minutes to arrive. Check your spam or junk folder if the email doesn't show up.</p>
+			<button class="btn btn-lg btn-brand btn-brand--attn emailVerify-resend" data-user-id="{{ request.user.id }}">Resend email</button>
+			<div class="emailVerify-footer">
+				Already verified? <a href="{% url 'login' %}"> Login here.</a>
+			</div>
+			<div class="sub-section">&nbsp;</div>
+		</div>
+		<div class="clearfix"></div>
+  </div>
+{% endblock %}
 
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/routes/emailVerify.js' %}"></script>
 {% endblock %}
 

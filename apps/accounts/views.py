@@ -54,7 +54,7 @@ def signup(request):
             user.save()
             assign_crud_permissions(user, user)
             account = authenticate(username=user.username, password=password)
-            response = redirect('signup-type')
+            response = redirect('signup-confirm')
             response = set_jwt_token(response, account)
             login(request, account)
             return response
