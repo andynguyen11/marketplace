@@ -6,9 +6,7 @@
   <div class="row">
     <div class="container">
       <div class="dashboard-tables">
-        {% if bids or projects %}
-        <h2>Manage Your Pending Projects and Bids</h2>
-        {% endif %}
+        <h2>Manage your projects</h2>
 
         {% if projects %}
           {% for project in projects %}
@@ -78,15 +76,15 @@
           </div>
         {% endfor %}
         {% else %}
-          {% if not user.role %}
-          <div class="col-md-12">
-            <h2 class="brand">You don't have any pending projects.</h2>
-            <h3 class="text-skinny sub-section">Post a project. Receive bids.  Keep track of everything here.</h3>
-            <div class="text-center">
-              <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          <div class="section">
+            <div class="section-header section-header--projects">
+              Projects (0)
+            </div>
+            <div class="projectsTab-empty text-center">
+              <p>You don't have any pending projects.</p>
+              <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand">Post your project</a>
             </div>
           </div>
-          {% endif %}
         {% endif %}
       </div>
 
