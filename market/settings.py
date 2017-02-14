@@ -329,12 +329,14 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = True
 SOCIAL_AUTH_LINKEDIN_OAUTH2_SCOPE = ['r_basicprofile', 'r_emailaddress', 'rw_company_admin', ]
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/social/complete/'
 SOCIAL_AUTH_LOGIN_URL = '/'
+USER_FIELDS = ['username', 'email', 'email_confirmed', ]
 SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.social_auth.social_details',
     'social.pipeline.social_auth.social_uid',
     'social.pipeline.social_auth.auth_allowed',
     'social.pipeline.social_auth.social_user',
     'social.pipeline.user.get_username',
+    'accounts.pipeline.confirm_email',
     'accounts.pipeline.load_existing_user',
     'social.pipeline.user.create_user',
     'social.pipeline.social_auth.associate_user',
