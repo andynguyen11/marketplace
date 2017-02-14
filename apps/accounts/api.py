@@ -189,7 +189,7 @@ class ProfileViewSet(ModelViewSet):
             raise PermissionDenied("Users can only request their own confirmation emails")
 
         if not user.email_confirmed:
-            email_confirmation(user=user)
+            email_confirmation(user=user, template='verify-signup-email')
             return Response(status=201)
         else:
             return Response("Already confirmed", status=409)

@@ -19,7 +19,7 @@ def profile_email_update_event(sender, instance, **kwargs):
 @receiver(post_save, sender=Profile)
 def profile_email_confirmation_on_create(sender, instance, created, **kwargs):
     if (created and not instance.email_confirmed):
-        email_confirmation(user=instance)
+        email_confirmation(user=instance, template='verify-signup-email')
 
 @receiver(pre_save, sender=ContactDetails)
 def contact_email_update_event(sender, instance, **kwargs):
