@@ -148,20 +148,20 @@ WSGI_APPLICATION = 'market.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 database_backend = 'django.db.backends.postgresql_psycopg2'
 
-if os.environ.get('LOGGING', 't').lower()[0] not in ('f', '0'):
-    INSTALLED_APPS += ('django_logging',)
-    MIDDLEWARE_CLASSES += ('django_logging.middleware.DjangoLoggingMiddleware',)
-    DJANGO_LOGGING = {
-        "CONSOLE_LOG": False,
-        "SQL_LOG": False,
-        "DISABLE_EXISTING_LOGGERS": False,
-        "ENCODING": "utf-8",
-        "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
-        "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
-            '/api/thread/', '/api/message/', '/api/messages/' ]
-    }
-    if ENVIRONMENT != 'local':
-        DJANGO_LOGGING["LOG_PATH"] = os.environ.get('JSON_LOG_PATH', '/var/log/app-logs')
+#if os.environ.get('LOGGING', 't').lower()[0] not in ('f', '0'):
+#    INSTALLED_APPS += ('django_logging',)
+#    MIDDLEWARE_CLASSES += ('django_logging.middleware.DjangoLoggingMiddleware',)
+#    DJANGO_LOGGING = {
+#        "CONSOLE_LOG": False,
+#        "SQL_LOG": False,
+#        "DISABLE_EXISTING_LOGGERS": False,
+#        "ENCODING": "utf-8",
+#        "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
+#        "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
+#            '/api/thread/', '/api/message/', '/api/messages/' ]
+#    }
+#    if ENVIRONMENT != 'local':
+#        DJANGO_LOGGING["LOG_PATH"] = os.environ.get('JSON_LOG_PATH', '/var/log/app-logs')
 
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
@@ -346,7 +346,7 @@ SOCIAL_AUTH_PIPELINE = (
 ES_ENDPOINTS = {
     'local': 'http://127.0.0.1:9200/',
     'dev': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
-    'prod': '' }
+    'prod': 'http://127.0.0.1:9200/' }
 
 HAYSTACK_CONNECTIONS = {
     'default': {
