@@ -1,0 +1,163 @@
+.projectCards, .plates .projectCards {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  margin: 0 -10px;
+  height: 480px;
+  overflow: hidden;
+
+  .projectCard {
+    flex-basis: 320px;
+    max-width: 360px;
+    min-width: 280px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 20px 10px 0;
+    background: #FFF;
+  }
+
+  &.projectCards-discover {
+    height: auto;
+    overflow: visible;
+
+    .projectCard {
+      flex-basis: 345px;
+      max-width: 345px;
+      flex-shrink: 0;
+
+      @media (max-width: 400px) {
+        flex-shrink: 1;
+      }
+    }
+  }
+}
+
+.projectCard {
+  border: 1px solid @brand-neutral--4;
+  border-radius: @border-radius;
+  color: @brand-neutral--1;
+  overflow: hidden;
+  flex-basis: 32%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  height: 440px;
+
+  &:hover, &:active, &:visited {
+    color: @brand-neutral--1;
+  }
+}
+
+.projectCard-title {
+  background: @brand-neutral--1;
+  color: #FFF;
+  font-family: @brand-font-bold;
+  line-height: 1.4;
+  font-weight: 700;
+  font-size: 24px;
+  flex-basis: 180px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  padding: @gutter;
+}
+
+.projectCard-details {
+  flex-grow: 1;
+  padding: 0 @gutter;
+  display: flex;
+  flex-direction: column;
+}
+
+.projectCard-owner {
+  display: flex;
+  align-items: center;
+  font-family: @brand-font;
+}
+
+.projectCard-owner-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background-color: #FFF;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  border: 4px solid #FFF;
+  margin-top: -15px;
+}
+
+.projectCard-owner-meta {
+  display: flex;
+  flex-direction: column;
+  margin-left: @gutter--medium;
+}
+
+.projectCard-owner-name {
+  font-size: 16px;
+}
+
+.projectCard-owner-location {
+  font-size: 16px;
+  color: @brand-neutral--3;
+}
+
+.projectCard-description {
+  color: @brand-neutral--3;
+  margin-top: @gutter--medium;
+  flex-grow: 1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.projectCard-budget {
+  padding: @gutter--medium @gutter;
+  border-top: 1px solid @brand-neutral--4;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-basis: 75px;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.projectCard-budget-item {
+  font-size: 16px;
+  font-weight: 700;
+  flex-basis: 40%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &.projectCard-budget-item--only {
+    flex-direction: row;
+    font-size: 27px;
+
+    .projectCard-budget-item-type {
+      margin-left: @gutter--medium;
+    }
+  }
+}
+
+.projectCard-budget-item-amount {
+  text-align: center;
+}
+
+.projectCard-budget-item-type {
+  text-transform: uppercase;
+  color: @brand--primary;
+}
+
+.projectCard-budget-andor {
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  color: @brand-neutral--3;
+  border: 1px solid @brand-neutral--3;
+  margin: 0 10px;
+}

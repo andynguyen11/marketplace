@@ -15,13 +15,15 @@ const Bid = React.createClass({
     const {job} = this.props;
     let equity = parseInt(job.equity);
     let cash = parseInt(job.cash);
+
     return {
       wantsCash: cash ? true : false,
       wantsEquity: equity ? true : false,
       newBid: job.hours ? false : true,
       formErrorsList: [],
       formError: false,
-      apiError: false
+      apiError: false,
+      piiError: false
     };
   },
 
@@ -202,6 +204,7 @@ const Bid = React.createClass({
           const {formElements} = this.state;
 
           formElements.hours.value = value;
+          formElements.hours.errorClass = '';
           job.hours = value;
           updateJob(job);
           this.setState({formElements});
@@ -214,24 +217,32 @@ const Bid = React.createClass({
         errorClass: '',
         validator: (value) => {
           const {newBid} = this.state;
-          const valid = (newBid && !job.id) ? FormHelpers.checks.isRequired(value) : true;
+          const hasPii = FormHelpers.doesStringContainPII(value);
+          const valid = (newBid && !job.id) ? FormHelpers.checks.isRequired(value) && !hasPii : true;
           const {formElements, formErrorsList} = this.state;
+
           if (!valid) {
             formElements.message.errorClass = 'has-error';
-            formErrorsList.push('Please enter a message to submit with your bid.');
+
+            if(!hasPii) {
+              formErrorsList.push('Please enter a message to submit with your bid.');
+            }
           } else {
             formElements.message.errorClass = '';
           }
-          this.setState({formElements, formErrorsList});
+
+          this.setState({ formElements, formErrorsList, piiError: hasPii });
+
           return valid;
         },
         update: (value) => {
           const {job, updateJob} = this.props;
           const {formElements} = this.state;
           formElements.message.value = value;
+          formElements.message.errorClass = '';
           job.message = value;
           updateJob(job);
-          this.setState({formElements});
+          this.setState({formElements, piiError: false});
         }
       }
     }
@@ -325,8 +336,17 @@ const Bid = React.createClass({
 
   render() {
     const {job, project, current_user} = this.props;
-    const {formElements, newBid, wantsCash, wantsEquity, formError, formErrorsList, apiError} = this.state;
-    const error = (formError || apiError) && function() {
+    const {formElements, newBid, wantsCash, wantsEquity, formError, formErrorsList, apiError, piiError, isLoading} = this.state;
+    const error = (formError || apiError || piiError) && function() {
+        if(piiError) {
+          return (
+            <div className="alert alert-danger text-left" role="alert">
+              <b>Please remove any personal contact info or external links.</b><br/><br/>
+              You will be able to request a connection and exchange personal information with this user after submitting this bid.
+            </div>
+          );
+        }
+
         let errorsList = formErrorsList.map((thisError, i) => {
           return <span key={i}>{thisError}<br/></span>;
         });
@@ -465,7 +485,7 @@ const Bid = React.createClass({
             </div>
 
             {error}
-            <button onClick={newBid && !job.id ? this.createBid : this.saveBid} disabled={ this.state.isLoading ? 'true': ''} className="btn btn-brand">
+            <button onClick={newBid && !job.id ? this.createBid : this.saveBid} disabled={isLoading || error} className="btn btn-brand">
               <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
                Submit Bid
             </button>

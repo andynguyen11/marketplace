@@ -44,6 +44,10 @@ urlpatterns = [
     url(r'^confirmed/$', TemplateView.as_view(template_name='email_confirmed.html'), name='email_confirmed'),
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
+    url(r'^dashboard/connections/', TemplateView.as_view(template_name='spa.html'), name='connections'),
+    url(r'^profile/projects/$', accounts_views.view_bids, name='view-projects'),
+    url(r'^dashboard/bids/', TemplateView.as_view(template_name='spa.html'), name='view-bids'),
+    url(r'^dashboard/skills/', TemplateView.as_view(template_name='spa.html'), name='view-skills'),
     url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
     url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^login/$', accounts_views.user_login, name='login'),
@@ -65,18 +69,15 @@ urlpatterns = [
     url(r'^signup/prelaunch/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-prelaunch'),
     url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
-    #url(r'^profile/$', accounts_views.view_profile, name='profile'),
-    #url(r'^profile/(?P<user_id>[0-9]+)/$', accounts_views.view_profile, name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
-    url(r'^profile/bids/$', accounts_views.view_bids, name='view-bids'),
-    url(r'^profile/projects/$', accounts_views.view_projects, name='view-projects'),
+    url(r'^profile/dashboard/developer/$', accounts_views.dashboard, name='dashboard'),
+    url(r'^profile/dashboard/entrepreneur/$', accounts_views.dashboard, name='dashboard'),
     url(r'^profile/documents/$', accounts_views.view_documents, name='view-documents'),
-    url(r'^profile/skills/$', accounts_views.profile, {'template': 'skills.html'}, name='view-skills'),
     url(r'^profile/settings/$', accounts_views.profile, {'template': 'settings.html'}, name='settings'),
     url(r'^company/create/$', TemplateView.as_view(template_name='create_company.html'),  name='create-company'),
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
-    url(r'^project/(?P<project_slug>[-\w]+)/$', business_views.view_project, name='project'),
+    url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/delete/(?P<project_id>[0-9]+)/$', business_views.delete_project, name='delete-project'),
     url(r'^projects/$', business_views.discover_projects, name='project-gallery'),
     url(r'^projects/(?P<type>[\w-]+)/$', business_views.discover_projects, name='project-gallery'),
@@ -88,6 +89,9 @@ urlpatterns = [
 if settings.DEBUG and settings.MEDIA_URL :
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns.append(url(r'^docs/', include('rest_framework_docs.urls')))
+
+if settings.DEBUG :
+    urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
 
 handler404 = error404
 handler500 = error500

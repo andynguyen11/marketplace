@@ -2,26 +2,36 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import parseFormat from 'moment-parseformat';
 
-const filters = {
-  "pii": {
-    "error":
-      <span>
-        Message was not sent.  Please remove personal identifiers like email, phone numbers, or external links. <br /> <br />
-        Sharing of personal information prior to engaging in a work contract violates Loom's <a target='_blank' href='/terms-of-service/'>Terms of Service</a>. Sharing personal
-        information to meet outside of Loom is considered an offline hire and is subject to a $3,000.00 recruiting fee.
-        Personal contact information is provided to both parties after a Loom work contract has been paid for.
-      </span>,
-    "list": [
-      /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i,
-      /^[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i,
-	  /\+?\d{2}[- ]?\d{3}[- ]?\d{5}/g,									// Non-formated phone-number with area code
-	  /(twitter|facebook|gmail|skype|upwork|linkedin|angellist)/ig, 	// Site names.
-	  /http(?:s)?:\/\/(?:www\.)?twitter\.com\/([a-zA-Z0-9_]+)/g,		// Twiter urls
-	  /@[a-z0-9_-]{15}/g,												// Twitter usernames.
-	  /https?\:\/\/(?:www\.)?facebook\.com\/(\d+|[A-Za-z0-9\.]+)\/?/, 	// Facebook urls
-    ]
-  }
-}
+const piiFilters = [
+	{
+		regex: /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9:%_\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/ig,
+		description: 'Web links'
+	},
+	{
+		regex: /[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?/ig,
+		description: 'Email addresses'
+	},
+	{
+		regex: /((\+\d{1,4}(-| |\.|.{1,3})?\(?\d\)?(-| |\.|.{1,3})?\d{1,5})|(\(?\d{2,6}\)?))(-| |\.|.{1,3})?(\d{3,6})(-| |\.|.{1,3})?(\d{4,6})(( x| ext)\d{1,5}){0,1}/ig,
+		description: 'Formatted and non-formatted phone numbers with area/country codes'
+	},
+	{
+		regex: /@(\w){1,30}/ig,
+		description: '@ handles'
+	},
+	{
+		regex: /(gmail|hotmail|yahoo)/ig,
+		description: 'Email Site names'
+	},
+	{
+		regex: /(skype|upwork|linkedin|angellist)/ig,
+		description: 'Social Site names'
+	},
+	{
+		regex: /(at .{2,} dot)|(. . . . .)/ig,
+		description: 'Emails or phone numbers with deliberate spaces or spelled out special characters'
+	}
+];
 
 const FormHelpers = {
 	checks: {
@@ -63,17 +73,18 @@ const FormHelpers = {
 
 		callback && callback(formIsValid, elements);
 	},
-  filterInput: function(string) {
-    for (var filter in filters) {
-      for (var i = 0; i < filters[filter]['list'].length; i++) {
-        const searchString = string.toLowerCase().replace(/\s+/g, '').replace(/[,\/#!$%\^&\*;:{}=\-_`~()]/g,"")
-        if (searchString.search(filters[filter]['list'][i]) != -1) {
-          return filters[filter]['error'];
-        }
-      }
-    }
-    return false;
-  }
+  doesStringContainPII(string) {
+		let hasPii = false;
+
+		piiFilters.some((filter) => {
+			if(string.match(filter.regex)) {
+				hasPii = true;
+				return true;
+			}
+		});
+
+		return hasPii;
+	}
 };
 
 export default FormHelpers;

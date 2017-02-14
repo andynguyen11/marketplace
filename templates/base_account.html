@@ -17,28 +17,26 @@
           <a class="{% add_active request 'dashboard' %}" href="{% url 'dashboard' %}">Dashboard</a>
         </li>
         <li>
-        {{ postman_unread }}
+          {{ postman_unread }}
           <a class="{% add_active request 'postman:inbox' %}" href="{% url 'postman:inbox' %}">
             <span class="descriptor">Messages {% if unread_count %}</span>
             <span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
         </li>
         <li>
-          <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Pending Projects</a>
+          <a class="{% add_active request 'view-projects' %}" href="{% url 'view-projects' %}">Projects</a>
         </li>
         <li>
-          <a class="{% add_active request 'view-skills' %}" href="{% url 'view-skills' %}">Your Tests</a>
-        </li>
-        {% comment %}
-        <li>
-          <a class="{% add_active request 'view-projects' %}" href="{% url 'view-projects' %}" >Engaged Projects</a>
+          <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Bids</a>
         </li>
         <li>
-          <a class="{% add_active request 'view-documents' %}" href="{% url 'view-documents' %}">Your Documents</a>
+          <a class="{% add_active request 'view-skills' %}" href="{% url 'view-skills' %}">Skills Tests</a>
         </li>
-        {% endcomment %}
         <li>
           <a class="{% add_active request 'settings' %}" href="{% url 'settings' %}">Settings</a>
+        </li>
+        <li>
+          <a href="{% url 'connections' %}">Connections</a>
         </li>
       </ul>
     </div>

@@ -11,7 +11,7 @@
   <div class="row">
     <div class="container">
       <div class="col-md-12">
-        <h2 class="brand">Welcome to Your Dashboard, {{ user.first_name }}</h2>
+        <h2 class="brand">Welcome to your dashboard{% if user.first_name %}, {{ user.first_name }}{% endif %}</h2>
       </div>
       <div class="col-md-3 dashboard-meta">
         <div class="section profile-snapshot--dashboard text-center">
@@ -156,42 +156,4 @@
 </div>
 
 
-{% endblock %}
-
-{% block scripts %}
-  {% if ENVIRONMENT == 'prod' %}
-    <!-- Start Quantcast Tag -->
-    <script type="text/javascript">
-    var _qevents = _qevents || [];
-
-    function getParam(param) {
-      var vars = {};
-      window.location.href.replace( location.hash, '' ).replace(
-        /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
-        function( m, key, value ) { // callback
-          vars[key] = value !== undefined ? value : '';
-        }
-    );
-
-    if ( param ) {
-      return vars[param] ? vars[param] : '';
-    }
-    return vars;
-  }
-
-    var signup = getParam("signup");
-    if (signup) {
-      (function() {
-        var elem = document.createElement('script');
-        elem.src = (document.location.protocol == "https:" ? "https://secure" : "http://edge") + ".quantserve.com/quant.js";
-        elem.async = true;
-        elem.type = "text/javascript";
-        var scpt = document.getElementsByTagName('script')[0];
-        scpt.parentNode.insertBefore(elem, scpt);
-        })();
-      _qevents.push({qacct:"p-PfwT46_39b1EV",labels:"_fp.event.Sign Up Confirmation,_fp.customer."+signup,event:"refresh"});
-    }
-    </script>
-    <!-- End Quantcast tag -->
-  {% endif %}
 {% endblock %}

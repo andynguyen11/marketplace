@@ -4,7 +4,8 @@ from itertools import chain
 from operator import attrgetter
 
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, F
+from django.shortcuts import get_object_or_404
 from django.utils.encoding import smart_str
 from notifications.signals import notify
 from rest_framework.serializers import ModelSerializer
@@ -14,7 +15,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework.decorators import permission_classes
+from rest_framework.decorators import permission_classes, list_route
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import Profile, Connection
@@ -159,7 +160,9 @@ class MessageAPI(APIView):
         else:
             return Response(status=403)
 
-    def get(self, request, thread_id):
+    def get(self, request, thread_id=None):
+        if thread_id == 'find':
+            thread_id = self.find(request)
         messages = all_interactions(thread_id)
         if(len(messages)):
             mark_read(request.user, thread_id)
@@ -174,6 +177,20 @@ class MessageAPI(APIView):
             except Message.DoesNotExist, e:
                 return Response(status=404)
         return Response(status=403)
+
+    def find(self, request):
+        """
+        wrote this like a viewset, then hacked around the fact that this is an ApiView
+        attempts to get a unique thread_id based on query. 
+        """
+        thread_id = None
+        try:
+            thread_id = Message.objects.get(
+                    interaction_ptr_id=F('interaction_ptr__thread_id'),
+                    **request.query_params.dict()).id
+        except Message.DoesNotExist:
+            raise Http404("No Message matches the given query.")
+        return thread_id
 
     def delete(self, request, thread_id):
         try:

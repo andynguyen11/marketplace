@@ -120,7 +120,7 @@ class ProfileViewSet(ModelViewSet):
         assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
         account = authenticate(username=user.email, password=password[0])
-        response = Response(ProfileSerializer(user).data, status=status.HTTP_201_CREATED)
+        response = Response(ProfileSerializer(user, context={'request': request}).data, status=status.HTTP_201_CREATED)
         response = set_jwt_token(response, account)
         login(request, account)
         return response
@@ -162,7 +162,7 @@ class ProfileViewSet(ModelViewSet):
     @list_route(methods=['get'], url_path="connections")
     def connections(self, request, *args, **kwargs):
         user = request.user
-        connections = ProfileSerializer(user.connections, many=True).data
+        connections = ProfileSerializer(user.connections, context={'request': request}, many=True).data
         fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country', 'contact_details' ]
         return Response([
             { k: v for k, v in connection.items() if k in fields }

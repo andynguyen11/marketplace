@@ -67,7 +67,7 @@ router = DeclarativeRouter({
     },
     'order': ProductOrderViewSet,
     'search/project': {
-        'view': ProjectSearchView,
+        'view': ProjectSearchViewSet,
         'base_name': 'project-search',
     }
 })
@@ -84,7 +84,7 @@ urlpatterns = [
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
-    url(r'^thread/(?P<thread_id>[0-9]+)/$', view=MessageAPI.as_view(), name='view-thread'),
+    url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
    #url(r'^orders/$', view=OrderListCreate.as_view(), name='orders'),

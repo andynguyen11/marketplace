@@ -1,0 +1,50 @@
+{% load thumbnail %}
+
+<a href="{% url 'project' project.slug %}" class="projectCard">
+  <div class="projectCard-title">
+    {{ project.title|truncatechars:70 }}
+  </div>
+  <div class="projectCard-details">
+    <div class="projectCard-owner">
+      {% thumbnail project.project_manager.get_photo "200" as image %}
+      <div class="projectCard-owner-avatar" style="background-image: url('{{ image.url }}');"></div>
+      {% endthumbnail %}
+      <div class="projectCard-owner-meta">
+        <div class="projectCard-owner-name">{{ project.project_manager.first_name }}</div>
+        <div class="projectCard-owner-location">
+          {% if project.company %}
+            {{ project.company.city }}{% if project.company.state %}, {{ project.company.state }}{% endif %}
+          {% else %}
+            {{ project.project_manager.city }}{% if project.project_manager.state %}, {{ project.project_manager.state }}{% else %}, {{ project.project_manager.country }}{% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="projectCard-description">
+      {{ project.short_blurb|truncatechars:140 }}
+    </div>
+  </div>
+  <div class="projectCard-budget">
+    {% if project.estimated_equity_percentage %}
+      <div class="projectCard-budget-item{% if project.estimated_cash == None %} projectCard-budget-item--only{% endif %}">
+        <div class="projectCard-budget-item-amount">{{ project.estimated_equity_percentage }}%</div>
+        <div class="projectCard-budget-item-type">Equity</div>
+      </div>
+    {% endif %}
+    {% if project.estimated_equity_percentage and project.estimated_cash %}
+      <div class="projectCard-budget-andor">
+        {% if project.mix %}
+          and
+        {% else %}
+          or
+        {% endif %}
+      </div>
+    {% endif %}
+    {% if project.estimated_cash %}
+      <div class="projectCard-budget-item{% if project.estimated_equity_percentage == None %} projectCard-budget-item--only{% endif %}">
+        <div class="projectCard-budget-item-amount">${{ project.estimated_cash }}</div>
+        <div class="projectCard-budget-item-type">Cash</div>
+      </div>
+    {% endif %}
+  </div>
+</a>

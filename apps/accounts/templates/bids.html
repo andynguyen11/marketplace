@@ -6,54 +6,7 @@
   <div class="row">
     <div class="container">
       <div class="dashboard-tables">
-        {% if bids or projects %}
-        <h2>Manage Your Pending Projects and Bids</h2>
-        {% endif %}
-        {% if bids %}
-          <div class="section">
-            <div class="section-header">
-              My Bids
-            </div>
-            <table class="dashboard-table dashboard-table-flex">
-              <thead class="hide-mobile">
-                <tr>
-                  <th>Project</th>
-                  <th>Cash</th>
-                  <th>Equity</th>
-                  <th>Hours</th>
-                  <th>Date Submitted</th>
-                  <th></th>
-                </tr>
-              </thead>
-              {% for bid in bids %}
-                <tr>
-                  <td class="dashboard-table-flex-expand">{{ bid.project.title }}</td>
-                  <td class="hide-mobile">{% if bid.cash %}${{ bid.cash }}{% endif %}</td>
-                  <td class="hide-mobile">{% if bid.equity %}{{ bid.equity }}%{% endif %}</td>
-                  <td class="hide-mobile">{{ bid.hours }} hours</td>
-                  <td>{{ bid.date_created }}</td>
-                  <td>
-                    {% if bid.conversation %}
-                      <a href="{% url 'view-conversation' thread_id=bid.conversation.id %}" class="btn btn-brand--clear pull-right">View Messages</a>
-                    {% endif %}
-                  </td>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
-          {% else %}
-            {% if user.role %}
-            <div class="section section-padding">
-              <h2 class="brand">You don't have any pending bids.</h2>
-              <h3 class="text-skinny sub-section">When you start bidding on projects, you can keep track of them here.</h3>
-              <div class="text-center">
-                <a href="{% url 'project-gallery' 'all' %}" class="btn btn-lg btn-brand btn-brand--attn">Discover projects</a>
-              </div>
-              <div class="clearfix"></div>
-            </div>
-            <br/>
-            {% endif %}
-          {% endif %}
+        <h2>Manage your projects</h2>
 
         {% if projects %}
           {% for project in projects %}
@@ -123,15 +76,15 @@
           </div>
         {% endfor %}
         {% else %}
-          {% if not user.role %}
-          <div class="col-md-12">
-            <h2 class="brand">You don't have any pending projects.</h2>
-            <h3 class="text-skinny sub-section">Post a project. Receive bids.  Keep track of everything here.</h3>
-            <div class="text-center">
-              <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          <div class="section">
+            <div class="section-header section-header--projects">
+              Projects (0)
+            </div>
+            <div class="projectsTab-empty text-center">
+              <p>You don't have any pending projects.</p>
+              <a href="{% url 'create-project' %}" class="btn btn-lg btn-brand">Post your project</a>
             </div>
           </div>
-          {% endif %}
         {% endif %}
       </div>
 

@@ -111,6 +111,8 @@ django-fixture-magic==0.0.8
 django-haystack==2.5.dev2
 drf-haystack==1.5.6
 elasticsearch==2.3.0
+requests-aws4auth==0.9
+urllib3==1.20
 
 # frontend
 django-gulp==2.4.0

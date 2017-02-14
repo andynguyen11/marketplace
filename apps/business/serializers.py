@@ -1,4 +1,5 @@
 import simplejson
+from decimal import Decimal
 
 from notifications.signals import notify
 from django.utils.encoding import smart_str
@@ -56,30 +57,48 @@ class InfoSerializer(ParentModelSerializer):
         child_fields = ('attachments',)
 
 
-class ProjectSummarySerializer(serializers.ModelSerializer):
-
-     class Meta:
-         model = Project
-         fields = ('id', 'title', 'slug' , 'type', 'date_created', 'short_blurb', 'company', 'project_manager')
-
-
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
+    project_manager_data = serializers.SerializerMethodField()
+    bid_stats = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         parent_key = 'project'
+
+    def get_project_manager_data(self, obj):
+        return {
+            'photo_url': obj.project_manager.get_photo,
+            'first_name': obj.project_manager.first_name,
+            'city': obj.project_manager.city,
+            'state': obj.project_manager.state,
+            'country': obj.project_manager.country,
+            'location': obj.project_manager.location }
+
+    def get_bid_stats(self, obj):
+        averages = {}
+        averages['cash'] = obj.average_cash
+        averages['equity'] = obj.average_equity
+        averages['combined'] = obj.average_combined
+        return { 'averages': averages }
+
+
+class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
+    class Meta(ProjectSerializer.Meta):
+        index_classes = [ProjectIndex]
+        search_fields = ProjectIndex.Meta.fields
 
 
 class JobSerializer(serializers.ModelSerializer):
     message = serializers.CharField(write_only=True, required=True)
     cash = serializers.IntegerField(required=False, allow_null=True )
     equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
+    thread_id = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
-        fields = field_names(Job) + ('message',)
+        fields = field_names(Job) + ('message', 'thread_id')
 
     def create(self, data):
         msg = data.pop('message')
@@ -172,6 +191,84 @@ class JobSerializer(serializers.ModelSerializer):
         )
         return super(JobSerializer, self).update(instance, validated_data)
 
+    def get_thread_id(self, job):
+        return Message.objects.filter(job=job)[0].thread_id
+
+# TODO DRY: ManagerBidSerializer and ContractorBidSerializer can inherit from a base BidSummarySerializer
+class ManagerBidSerializer(serializers.ModelSerializer):
+    " bid serializer for summarizing details a project manager cares about "
+    cash = serializers.IntegerField(required=False, allow_null=True )
+    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
+    contractor = serializers.SerializerMethodField()
+    thread_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = field_names(Job) + ('thread_id', )
+
+    def get_contractor(self, obj):
+        contractor = { k: getattr(obj.contractor, k) for k in [
+            'first_name', 'capacity', 'role'
+        ]}
+        contractor['photo_url'] = obj.contractor.get_photo
+        return contractor
+
+    def get_thread_id(self, job):
+        try:
+            return Message.objects.filter(job=job)[0].thread_id
+        except IndexError:
+            return None
+
+class ContractorBidSerializer(serializers.ModelSerializer):
+    cash = serializers.IntegerField(required=False, allow_null=True )
+    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
+    project = serializers.SerializerMethodField()
+    thread_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Job
+        fields = field_names(Job) + ('thread_id', )
+
+    def get_project(self, obj):
+        return { k: getattr(obj.project, k) for k in [
+             'id','title',
+        ]}
+
+    def get_thread_id(self, job):
+        return Message.objects.filter(job=job)[0].thread_id
+
+
+class ProjectSummarySerializer(ParentModelSerializer):
+    " serializer for the project tab "
+    slug = serializers.CharField(read_only=True)
+    published = serializers.BooleanField(default=False)
+    bids = serializers.SerializerMethodField()
+    bid_stats = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Project
+        fields = ('id', 'title', 'slug', 'short_blurb',
+                'type', 'category', 'skills',
+                'date_created', 'start_date', 'end_date',
+                'estimated_hours', 'estimated_cash',
+                'estimated_equity_percentage',
+                'estimated_equity_shares', 'mix', 'remote',
+                'status', 'featured', 'published', 'approved',
+                'company', 'project_manager',
+                'bids', 'bid_stats', )
+        parent_key = 'project'
+
+    def get_bids(self, obj):
+        jobs = Job.objects.filter(project=obj)
+        return ManagerBidSerializer(jobs, many=True).data
+
+    def get_bid_stats(self, obj):
+        averages = {}
+        averages['cash'] = obj.average_cash
+        averages['equity'] = obj.average_equity
+        averages['combined'] = obj.average_combined
+        return { 'averages': averages }
+
 
 class DocumentSerializer(ParentModelSerializer):
     template = serializers.PrimaryKeyRelatedField(required=False, write_only=True, queryset=Template.objects.all())
@@ -243,13 +340,6 @@ class TermsSerializer(serializers.ModelSerializer):
 
     def get_project(self, obj):
         return { 'title': obj.job.project.title, 'id': obj.job.project.id }
-
-
-class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
-    class Meta(ProjectSerializer.Meta):
-        index_classes = [ProjectIndex]
-        search_fields = ("text", )
-
 
 class EmployeeSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)

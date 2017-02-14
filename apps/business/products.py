@@ -214,7 +214,9 @@ class ConnectJob(Product):
         return {"thread_id": Message.objects.get(job=order.related_object).id}
 
     def clear_notifications(self, thread, type):
-        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":type})
+        clear_alerts = Notification.objects.filter(
+                action_object_content_type = content_type(Message),
+                action_object_object_id=thread.id, data={"type":type})
         for alert in clear_alerts:
             alert.unread = False
             alert.save()
