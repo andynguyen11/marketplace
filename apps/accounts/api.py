@@ -1,6 +1,7 @@
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, get_object_or_404
+from django.utils.decorators import method_decorator
 from notifications.models import Notification
 from rest_condition import Not
 from rest_framework import status, generics
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
+from accounts.decorators import check_token
 from business.models import Job, Project
 from payment.models import ProductOrder
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
@@ -25,6 +27,8 @@ from postman.serializers import ConversationSerializer
 from generics.utils import parse_signature
 from django.shortcuts import redirect, get_object_or_404
 
+
+check_token_m = method_decorator(check_token)
 
 class SkillViewSet(ModelViewSet):
     queryset = Skills.objects.all()
@@ -101,6 +105,7 @@ class ContactDetailsViewSet(ModelViewSet):
             return Response("Already confirmed", status=409)
 
     @detail_route(permission_classes=tuple())
+    @check_token_m
     def confirm_email(self, request, pk, *args, **kwargs):
         signature = request.query_params.get('signature', None)
         contact_details = ContactDetails.objects.get(profile_id=pk)
@@ -195,6 +200,7 @@ class ProfileViewSet(ModelViewSet):
             return Response("Already confirmed", status=409)
 
     @detail_route(permission_classes=tuple())
+    @check_token_m
     def confirm_email(self, request, *args, **kwargs):
         signature = request.query_params.get('signature', None)
         profile = self.get_object() 
