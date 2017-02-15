@@ -424,6 +424,8 @@ GULP_DEVELOP_COMMAND = 'gulp dist-dev' if ENVIRONMENT == 'dev' else 'gulp'
 
 NOTIFICATIONS_USE_JSONFIELD = True
 
+NOTIFICATIONS_USE_JSONFIELD = True
+
 try:
     from local_settings import *
 except ImportError:

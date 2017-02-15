@@ -93,6 +93,8 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
 
     contact_details = serializers.SerializerMethodField()
 
+    contact_details = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Profile

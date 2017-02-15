@@ -1,5 +1,6 @@
 from generics.viewsets import assign_crud_permissions
 
+
 def confirm_email(strategy, details, backend, user=None, *args, **kwargs):
     """
     The pipeline saves multiple times, and the first time it's impossible to tell it's from linkedin
@@ -8,7 +9,7 @@ def confirm_email(strategy, details, backend, user=None, *args, **kwargs):
     """
     return {'email_confirmed': True}
 
-
+  
 def load_existing_user(user, *args, **kwargs):
     if user:
         return {

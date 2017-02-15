@@ -143,6 +143,7 @@ gulp.task('spa-dev', function(){
 	del('./static/spa/**/*.*').then(function() {
 		return gulp.src('./SPA/**/*.*')
 			.pipe(replace('static/spa/.', 'static-dev/spa', { skipBinary: true }))
+    //.pipe(replace('https://dev.loom.co/api', 'http://localhost:8000/api', { skipBinary: true }))
 			.on('error', gutil.log)
 			.pipe(gulp.dest('./static/spa/'));
 	})
