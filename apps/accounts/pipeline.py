@@ -1,5 +1,15 @@
 from generics.viewsets import assign_crud_permissions
 
+
+def confirm_email(strategy, details, backend, user=None, *args, **kwargs):
+    """
+    The pipeline saves multiple times, and the first time it's impossible to tell it's from linkedin
+    so we set email_confirmed here and add it to `settings.USER_FIELDS`
+    to avoid email_confirmation in the pre_save signal.
+    """
+    return {'email_confirmed': True}
+
+  
 def load_existing_user(user, *args, **kwargs):
     if user:
         return {

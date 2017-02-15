@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
+{% block nav %}{% endblock %}
+
+{% block bodyid %}login{% endblock %}
+
+{% block content %}
+  <div>
+    <div class="login-hero hide-mobile">
+      <div class="login-overlay"></div>
+    </div>
+      <div class="emailVerify">
+				<h2 class="brand-bold sub-section">Check your inbox!</h2>
+				<h3 class="brand-bold h3-large">We sent a verification email to <span class="brand">{{ request.user.email }}</span>. Verify your email to continue creating your account.</h3>
+				<p class="emailVerify-fyi text-muted brand thin">FYI: emails may take a few minutes to arrive. Check your spam or junk folder if the email doesn't show up.</p>
+				<button class="btn btn-lg btn-brand btn-brand--attn emailVerify-resend" data-user-id="{{ request.user.id }}">Resend email</button>
+				<div class="emailVerify-footer">
+					Already verified? <a href="{% url 'login' %}"> Login here.</a>
+				</div>
+				<div class="sub-section">&nbsp;</div>
+			</div>
+			<div class="clearfix"></div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="{% static 'js/routes/emailVerify.js' %}"></script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

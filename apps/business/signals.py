@@ -95,7 +95,7 @@ def new_account(sender, instance, **kwargs):
         return
     old_profile = Profile.objects.get(pk=instance.id)
 
-    if not old_profile.country and instance.country:
+    if not old_profile.country and instance.country and instance.email_confirmed:
         account_confirmation.delay(
                 instance.id,
                 instance.role

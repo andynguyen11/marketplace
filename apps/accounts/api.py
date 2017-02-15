@@ -41,6 +41,16 @@ class VerificationTestViewSet(NestedModelViewSet):
     permission_classes = ( ReadOnlyOrIsAdminUser, )
 
 
+def cross_pollinate_email(instance, key):
+    "set and confirm email on related model if appropriate"
+    if instance.email_confirmed:
+        related = getattr(instance, key)
+        if not related.email:
+            related.email = instance.email
+        if instance.email == related.email:
+            related.email_confirmed = True
+            related.save()
+
 class ContactDetailsViewSet(ModelViewSet):
     serializer_class = ContactDetailsSerializer
     permission_classes = ( IsAuthenticated, )
@@ -95,12 +105,12 @@ class ContactDetailsViewSet(ModelViewSet):
         signature = request.query_params.get('signature', None)
         contact_details = ContactDetails.objects.get(profile_id=pk)
         validate_confirmation_signature(contact_details, signature)
+        cross_pollinate_email(contact_details, 'profile')
+
         if contact_details.email_confirmed:
             self.update_orders_for_user(contact_details, 'freelancer')
             self.update_orders_for_user(contact_details, 'entrepreneur')
-            if contact_details.profile.email == contact_details.email:
-                contact_details.profile.email_confirmed = True
-                contact_details.profile.save()
+
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 
@@ -179,7 +189,7 @@ class ProfileViewSet(ModelViewSet):
             raise PermissionDenied("Users can only request their own confirmation emails")
 
         if not user.email_confirmed:
-            email_confirmation(user=user)
+            email_confirmation(user=user, template='verify-signup-email')
             return Response(status=201)
         else:
             return Response("Already confirmed", status=409)
@@ -189,9 +199,12 @@ class ProfileViewSet(ModelViewSet):
         signature = request.query_params.get('signature', None)
         profile = self.get_object() 
         validate_confirmation_signature(profile , signature)
-        if profile.email == profile.contact_details.email:
-            profile.contact_details.email_confirmed = True
-            profile.contact_details.save()
+        cross_pollinate_email(profile, 'contact_details')
+
+        if (not profile.first_name or not profile.last_name): # signup incomplete
+            return HttpResponseRedirect(request.query_params.get('next', '/signup/type/'))
+        elif (not profile.role): # is entrepreneur
+            return HttpResponseRedirect(request.query_params.get('next', '/project/create/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 class SkillTestViewSet(NestedModelViewSet):

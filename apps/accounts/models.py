@@ -212,6 +212,10 @@ class Profile(AbstractUser):
     @property
     def contact_details(self):
         details, created = ContactDetails.objects.get_or_create(profile=self)
+        if(created):
+            details.email = self.email
+            details.email_confirmed = self.email_confirmed
+            details.save()
         return details
 
     def get_skills(self):

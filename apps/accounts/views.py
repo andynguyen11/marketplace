@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from accounts.decorators import email_confirmation_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
 from django.views.decorators.cache import cache_page
@@ -53,7 +54,7 @@ def signup(request):
             user.save()
             assign_crud_permissions(user, user)
             account = authenticate(username=user.username, password=password)
-            response = redirect('signup-type')
+            response = redirect('signup-confirm')
             response = set_jwt_token(response, account)
             login(request, account)
             return response
@@ -97,6 +98,7 @@ def view_profile(request, user_id=None):
 
 
 @login_required
+@email_confirmation_required
 def edit_profile(request):
     user = request.user
     social = user.social_auth.get(provider='linkedin-oauth2')
@@ -104,6 +106,7 @@ def edit_profile(request):
 
 
 @login_required
+@email_confirmation_required
 def dashboard(request):
     user = Profile.objects.get(id=request.user.id)
     social = user.social_auth.filter(provider='linkedin-oauth2')
@@ -113,6 +116,7 @@ def dashboard(request):
 
 
 @login_required
+@email_confirmation_required
 def view_bids(request):
     projects = Project.objects.filter(project_manager=request.user)
     bids = Job.objects.filter(contractor=request.user)
@@ -120,18 +124,21 @@ def view_bids(request):
 
 
 @login_required
+@email_confirmation_required
 def view_projects(request):
     projects = Project.objects.filter(project_manager=request.user)
     return render(request, 'projects.html', {'projects': projects})
 
 
 @login_required
+@email_confirmation_required
 def view_documents(request):
     projects = Project.objects.filter(project_manager=request.user)
     return render_to_response('documents.html', {'projects': projects, }, context_instance=RequestContext(request))
 
 
 @login_required
+@email_confirmation_required
 def profile(request, template='account-settings.html'):
     form = ProfileForm()
     if request.method == 'POST':

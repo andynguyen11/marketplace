@@ -24,11 +24,13 @@ from django.conf.urls import handler404, handler500
 from django.views.generic.base import TemplateView
 import rest_framework.urls
 
+from accounts.decorators import email_confirmation_required
 from accounts.views import error404, error500
 from accounts.models import Skills
 
 import business.views as business_views
 import accounts.views as accounts_views
+from django.contrib.auth.decorators import login_required
 
 import business.signals
 import accounts.signals
@@ -38,6 +40,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
+    url(r'^signup/confirm/$', login_required(TemplateView.as_view(template_name='signup-confirm.html')), name='signup-confirm'),
+    url(r'^confirm-email/$', login_required(TemplateView.as_view(template_name='confirm_email.html')), name='confirm_email'),
     url(r'^company/(?P<company_slug>[-\w]+)/$', business_views.company_profile, name='company'),
     url(r'^welcome/$', TemplateView.as_view(template_name='welcome.html'), name='welcome'),
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
@@ -63,9 +67,9 @@ urlpatterns = [
     url(r'^terms-of-service/$', TemplateView.as_view(template_name='terms.html'), name='terms'),
     url(r'^dmca/$', TemplateView.as_view(template_name='dmca.html'), name='dmca'),
     url(r'^prelaunch/$', TemplateView.as_view(template_name='prelaunch_router.html'), name='prelaunch-router'),
-    url(r'^signup/type/$', TemplateView.as_view(template_name='onboarding/confirm.html'), name='signup-type'),
-    url(r'^signup/developer/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-developer'),
-    url(r'^signup/entrepreneur/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-entrepreneur'),
+    url(r'^signup/type/$', email_confirmation_required(TemplateView.as_view(template_name='onboarding/confirm.html')), name='signup-type'),
+    url(r'^signup/developer/$', email_confirmation_required(TemplateView.as_view(template_name='onboarding/base.html')), name='signup-developer'),
+    url(r'^signup/entrepreneur/$', email_confirmation_required(TemplateView.as_view(template_name='onboarding/base.html')), name='signup-entrepreneur'),
     url(r'^signup/prelaunch/$', TemplateView.as_view(template_name='onboarding/base.html'), name='signup-prelaunch'),
     url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
