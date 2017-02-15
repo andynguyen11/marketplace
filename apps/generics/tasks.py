@@ -14,7 +14,7 @@ from accounts.models import Profile
 from business.models import Job, Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
-from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
+from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
 from postman.models import Message
 
 
@@ -49,6 +49,7 @@ def generate_confirmation_url(user, instance, field,
     if not base_name:
         base_name = instance._meta.model_name
     kwargs['signature'] = generate_confirmation_signature(user, instance, field=field)
+    kwargs['token'] = create_auth_token(user)
     url = reverse(reverse_pattern % base_name, args=(instance.id,))
     return absolute_url(url, kwargs)
 
