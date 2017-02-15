@@ -65,6 +65,7 @@ const PrelaunchOnboarding = React.createClass({
       formErrorsList: [],
       apiError: false,
       isCompany: true,
+      accountType: '',
       isInternational: false
     };
   },
@@ -88,12 +89,15 @@ const PrelaunchOnboarding = React.createClass({
     this.setState({ formElements: this.formElements() });
   },
 
-  componentDidUpdate() {
-    const { isCompany, formElements } = this.state;
-    if (isCompany) {
-      document.getElementById('company-form-header').scrollIntoView();
-    } else {
-      document.getElementById('account-form-header').scrollIntoView();
+  componentDidUpdate(prevProps, prevState) {
+    const { accountType } = this.state;
+    if (prevState.accountType != accountType) {
+      if (accountType ==  'company') {
+        document.getElementById('company-form-header').scrollIntoView({ behavior: 'smooth'});
+      }
+      else if (accountType == 'individual') {
+        document.getElementById('account-form-header').scrollIntoView({ behavior: 'smooth'});
+      }
     }
   },
 
@@ -666,7 +670,7 @@ const PrelaunchOnboarding = React.createClass({
                 this._createCompany();
               }
               else {
-                window.location = '/prelaunch/';
+                window.location = '/confirm-email/';
               }
             }.bind(this),
             error: (xhr, status, error) => {
@@ -681,9 +685,11 @@ const PrelaunchOnboarding = React.createClass({
   },
 
   setCompany(e) {
-    const{ formElements } = this.state;
-    let companyFlag = e.currentTarget.getAttribute('data-company') == 'true' ? true : false;
-    this.setState({isCompany:companyFlag});
+    let companyFlag = e.currentTarget.getAttribute('data-account') == 'company' ? true : false;
+    this.setState({
+      isCompany: companyFlag,
+      accountType: e.currentTarget.getAttribute('data-account')
+    });
   },
 
 

@@ -66,6 +66,7 @@ const EntrepreneurOnboard = React.createClass({
       formErrorsList: [],
       apiError: false,
       isCompany: true,
+      accountType: '',
       isInternational: false,
       isLoading: false
     };
@@ -92,12 +93,15 @@ const EntrepreneurOnboard = React.createClass({
     });
   },
 
-  componentDidUpdate() {
-    const { isCompany, formElements } = this.state;
-    if (isCompany) {
-      document.getElementById('company-form-header').scrollIntoView();
-    } else {
-      document.getElementById('account-form-header').scrollIntoView();
+  componentDidUpdate(prevProps, prevState) {
+    const { accountType } = this.state;
+    if (prevState.accountType != accountType) {
+      if (accountType ==  'company') {
+        document.getElementById('company-form-header').scrollIntoView({ behavior: 'smooth'});
+      }
+      else if (accountType == 'individual') {
+        document.getElementById('account-form-header').scrollIntoView({ behavior: 'smooth'});
+      }
     }
   },
 
@@ -638,9 +642,11 @@ const EntrepreneurOnboard = React.createClass({
   },
 
   setCompany(e) {
-    const{ formElements } = this.state;
-    let companyFlag = e.currentTarget.getAttribute('data-company') == 'true' ? true : false;
-    this.setState({isCompany:companyFlag});
+    let companyFlag = e.currentTarget.getAttribute('data-account') == 'company' ? true : false;
+    this.setState({
+      isCompany: companyFlag,
+      accountType: e.currentTarget.getAttribute('data-account')
+    });
   },
 
   handleChange(event) {

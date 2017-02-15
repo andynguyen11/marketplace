@@ -215,6 +215,7 @@ class Profile(AbstractUser):
         if(created):
             details.email = self.email
             details.email_confirmed = self.email_confirmed
+            details.save()
         return details
 
     def get_skills(self):

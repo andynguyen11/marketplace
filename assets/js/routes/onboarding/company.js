@@ -43,12 +43,12 @@ const CompanyForm = React.createClass({
                   )
                 }
                 <div className="pickers">
-                    <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"} onClick={setCompany} data-company='true'>
+                    <div className={ isCompany ? "text-center picker company active"  : "text-center picker company"} onClick={setCompany} data-account='company'>
                         <div className="picker-image"></div>
                         <h4><span className="text-accent">Company</span></h4>
                         <p>A company can get work made for cash, equity, or a mix of both.</p>
                     </div>
-                    <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"} onClick={setCompany} data-company='false'>
+                    <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"} onClick={setCompany} data-account='individual'>
                         <div className="picker-image"></div>
                         <h4><span className="text-brand">Individual</span></h4>
                         <p>Individual Entrepreneurs can get work made for cash only.</p>
