@@ -106,10 +106,32 @@
 
   &.emailVerify--center {
     margin: auto;
+    max-width: 440px;
+    min-width: 280px;
+    width: 100%;
+    padding: 16px @gutter 0;
+  }
+
+  @media (max-width: @screen-sm) {
+    margin: auto;
+    max-width: 440px;
+    min-width: 280px;
+    width: 100%;
+    padding: 16px @gutter 0;
   }
 
   h2 {
     font-size: 40px;
+
+    @media (max-width: @screen-sm) {
+      font-size: 28px;
+      margin-top: 0;
+    }
+
+    @media (max-width: @screen-sm) {
+      font-size: 28px;
+      margin-top: 0;
+    }
   }
 
   h3 {
@@ -118,6 +140,10 @@
 
     .brand {
       color: @brand--primary;
+    }
+
+    @media (max-width: @screen-sm) {
+      font-size: 24px;
     }
   }
 
@@ -128,12 +154,21 @@
     .brand {
       color: @brand--primary;
     }
+
+    @media (max-width: @screen-sm) {
+      font-size: 20px;
+    }
   }
 }
 
 .emailVerify-fyi {
   margin: 50px 0 20px;
   font-size: @font-size-h4;
+
+  @media (max-width: @screen-sm) {
+    margin-top: 30px;
+    font-size: 16px;
+  }
 }
 
 .emailVerify-resend {
