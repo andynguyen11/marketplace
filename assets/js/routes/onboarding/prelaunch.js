@@ -621,7 +621,6 @@ const PrelaunchOnboarding = React.createClass({
           this.setState({ formError: false });
 
           let company = this.state.company;
-          company.logo = this.state.logo_file ? this.state.logo_file : '';
           company.user_id = this.state.profile.id;
 
           $.ajax({

@@ -6,8 +6,8 @@
   <div>
 		<div class="emailVerify emailVerify--center">
 			<h2 class="brand-bold sub-section">Check your inbox!</h2>
-			<h4 class="brand-bold h3-large">We sent a verification email to <span class="brand">{{ request.user.email }}</span>.</h4>
-			<h4 class="brand-bold h3-large">You must verify your email to continue.</h4>
+			<h3 class="brand-bold h3-large">We sent a verification email to <span class="brand">{{ request.user.email }}</span>.</h3>
+			<h3 class="brand-bold h3-large">You must verify your email to continue.</h3>
 			<p class="emailVerify-fyi text-muted brand thin">FYI: emails may take a few minutes to arrive. Check your spam or junk folder if the email doesn't show up.</p>
 			<button class="btn btn-lg btn-brand btn-brand--attn emailVerify-resend" data-user-id="{{ request.user.id }}">Resend email</button>
 			<div class="emailVerify-footer">
