@@ -381,7 +381,6 @@ const CompanySettings = React.createClass({
         this.setState({ formError: false });
         let company = this.state.company;
         company.user_id = $('#settings').data('id');
-        company.logo = this.state.logo_file;
           $.ajax({
             url: loom_api.company,
             method: 'POST',
@@ -422,22 +421,6 @@ const CompanySettings = React.createClass({
     this.setState({ formElements, formError: false });
   },
 
-  handleLogoChange(e) {
-    e.preventDefault();
-    let reader = new FileReader();
-    let file = e.target.files[0];
-    let re = /(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i;
-    if(re.exec(file.name)) {
-      reader.onloadend = () => {
-        this.setState({
-          logo_url: reader.result,
-          logo_file: file
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  },
-
   render() {
     const { formElements, formError, profile, isCompany, isLoading } = this.state;
     const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
@@ -452,8 +435,6 @@ const CompanySettings = React.createClass({
           isInternational={this.state.isInternational}
           handleBio={this.handleBio}
           setCompany={this.setCompany}
-          handleLogoChange={this.handleLogoChange}
-          logo_url={this.state.logo_url}
           settings={true}
           prelaunch={false}
         />
