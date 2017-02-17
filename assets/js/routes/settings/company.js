@@ -44,6 +44,8 @@ const CompanySettings = React.createClass({
         ein: '',
         user_id: $('#settings').data('id')
       },
+      formErrorsList: [],
+      apiError: false,
       formError: false,
       isCompany: true,
       isLoading: true
@@ -371,11 +373,11 @@ const CompanySettings = React.createClass({
   },
 
   _createCompany() {
-    const { formElements, isCompany } = this.state;
+    const { formElements, isCompany, apiError } = this.state;
     this.setState({ isLoading: true });
 
     FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
+      this.setState({formElements, apiError: false});
 
       if(valid) {
         this.setState({ formError: false });
@@ -393,7 +395,10 @@ const CompanySettings = React.createClass({
                 company: result,
                 isLoading: false
               });
-            }.bind(this)
+            }.bind(this),
+            error: (xhr, status, error) => {
+              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+            }
           });
       } else {
         this.setState({ formError: 'Please fill out all fields.', isLoading: false });
@@ -422,8 +427,22 @@ const CompanySettings = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, isCompany, isLoading } = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const { formElements, formError, profile, isCompany, apiError, formErrorsList, isLoading } = this.state;
+    const error = (formError || apiError) && function() {
+        let errorsList = formErrorsList.map((thisError, i) => {
+          return <span key={i}>{thisError}<br/></span>;
+        });
+
+        if(!formErrorsList.length){
+          errorsList = formError;
+        }
+
+        if(apiError) {
+          errorsList = apiError;
+        }
+
+        return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+      }();
 
     return (
       <div>
