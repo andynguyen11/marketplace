@@ -348,61 +348,63 @@ const CompanySettings = React.createClass({
 
   _saveCompany() {
     const { formElements, isCompany } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
-      let company = this.state.company;
-      company.user_id = $('#settings').data('id');
-      if(valid) {
-        this.setState({ formError: false });
-          $.ajax({
-            url: loom_api.company + this.state.company.id + '/',
-            method: 'PATCH',
-            data: objectToFormData(company),
-            contentType: false,
-            processData: false,
-            success: function (result) {
-              window.location = '/profile/dashboard/';
-            }.bind(this)
-          });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {      
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({ formElements });
+        let company = this.state.company;
+        company.user_id = $('#settings').data('id');
+        if(valid) {
+          this.setState({ formError: false });
+            $.ajax({
+              url: loom_api.company + this.state.company.id + '/',
+              method: 'PATCH',
+              data: objectToFormData(company),
+              contentType: false,
+              processData: false,
+              success: function (result) {
+                window.location = '/profile/dashboard/';
+              }.bind(this)
+            });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.', isLoading: false });
+        }
+      });
     });
   },
 
   _createCompany() {
     const { formElements, isCompany, apiError } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({formElements, apiError: false});
+    this.setState({ isLoading: true, formErrorsList: [], apiError: false }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      if(valid) {
-        this.setState({ formError: false });
-        let company = this.state.company;
-        company.user_id = $('#settings').data('id');
-          $.ajax({
-            url: loom_api.company,
-            method: 'POST',
-            data: objectToFormData(company),
-            contentType: false,
-            processData: false,
-            success: function (result) {
-              // TODO We should make this one post
-              this.setState({
-                company: result,
-                isLoading: false
-              });
-            }.bind(this),
-            error: (xhr, status, error) => {
-              this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
-            }
-          });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+        if(valid) {
+          this.setState({ formError: false });
+          let company = this.state.company;
+          company.user_id = $('#settings').data('id');
+            $.ajax({
+              url: loom_api.company,
+              method: 'POST',
+              data: objectToFormData(company),
+              contentType: false,
+              processData: false,
+              success: function (result) {
+                // TODO We should make this one post
+                this.setState({
+                  company: result,
+                  isLoading: false
+                });
+              }.bind(this),
+              error: (xhr, status, error) => {
+                this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+              }
+            });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.', isLoading: false });
+        }
+      });
     });
   },
 
