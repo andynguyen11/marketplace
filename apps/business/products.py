@@ -290,8 +290,8 @@ class ConnectJob(Product):
         order_context = {
             'date': datetime.now().strftime("%m-%d-%Y"),
             'order_id': order.id,
-            'connection_fee': order.price,
-            'total': order.price,
+            'connection_fee': order.final_price,
+            'total': order.final_price,
             'full_name': '{0} {1}'.format(job.contractor.first_name, job.contractor.last_name)
         }
         connection_made.delay(job.owner.id, job.contractor.id, thread.id, order_context)
