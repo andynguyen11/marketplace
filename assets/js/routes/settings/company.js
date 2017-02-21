@@ -44,6 +44,8 @@ const CompanySettings = React.createClass({
         ein: '',
         user_id: $('#settings').data('id')
       },
+      formErrorsList: [],
+      apiError: false,
       formError: false,
       isCompany: true,
       isLoading: true
@@ -346,58 +348,63 @@ const CompanySettings = React.createClass({
 
   _saveCompany() {
     const { formElements, isCompany } = this.state;
-    this.setState({ isLoading: true });
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
-      let company = this.state.company;
-      company.user_id = $('#settings').data('id');
-      if(valid) {
-        this.setState({ formError: false });
-          $.ajax({
-            url: loom_api.company + this.state.company.id + '/',
-            method: 'PATCH',
-            data: objectToFormData(company),
-            contentType: false,
-            processData: false,
-            success: function (result) {
-              window.location = '/profile/dashboard/';
-            }.bind(this)
-          });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+    this.setState({ isLoading: true, formErrorsList: [] }, () => {      
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({ formElements });
+        let company = this.state.company;
+        company.user_id = $('#settings').data('id');
+        if(valid) {
+          this.setState({ formError: false });
+            $.ajax({
+              url: loom_api.company + this.state.company.id + '/',
+              method: 'PATCH',
+              data: objectToFormData(company),
+              contentType: false,
+              processData: false,
+              success: function (result) {
+                window.location = '/profile/dashboard/';
+              }.bind(this)
+            });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.', isLoading: false });
+        }
+      });
     });
   },
 
   _createCompany() {
-    const { formElements, isCompany } = this.state;
-    this.setState({ isLoading: true });
+    const { formElements, isCompany, apiError } = this.state;
 
-    FormHelpers.validateForm(formElements, (valid, formElements) => {
-      this.setState({ formElements });
+    this.setState({ isLoading: true, formErrorsList: [], apiError: false }, () => {
+      FormHelpers.validateForm(formElements, (valid, formElements) => {
+        this.setState({formElements});
 
-      if(valid) {
-        this.setState({ formError: false });
-        let company = this.state.company;
-        company.user_id = $('#settings').data('id');
-          $.ajax({
-            url: loom_api.company,
-            method: 'POST',
-            data: objectToFormData(company),
-            contentType: false,
-            processData: false,
-            success: function (result) {
-              // TODO We should make this one post
-              this.setState({
-                company: result,
-                isLoading: false
-              });
-            }.bind(this)
-          });
-      } else {
-        this.setState({ formError: 'Please fill out all fields.', isLoading: false });
-      }
+        if(valid) {
+          this.setState({ formError: false });
+          let company = this.state.company;
+          company.user_id = $('#settings').data('id');
+            $.ajax({
+              url: loom_api.company,
+              method: 'POST',
+              data: objectToFormData(company),
+              contentType: false,
+              processData: false,
+              success: function (result) {
+                // TODO We should make this one post
+                this.setState({
+                  company: result,
+                  isLoading: false
+                });
+              }.bind(this),
+              error: (xhr, status, error) => {
+                this.setState({ apiError: 'unknown error: ' + xhr.responseText, isLoading: false });
+              }
+            });
+        } else {
+          this.setState({ formError: 'Please fill out all fields.', isLoading: false });
+        }
+      });
     });
   },
 
@@ -422,8 +429,22 @@ const CompanySettings = React.createClass({
   },
 
   render() {
-    const { formElements, formError, profile, isCompany, isLoading } = this.state;
-    const error = formError && <div className="alert alert-danger" role="alert">{formError}</div>;
+    const { formElements, formError, profile, isCompany, apiError, formErrorsList, isLoading } = this.state;
+    const error = (formError || apiError) && function() {
+        let errorsList = formErrorsList.map((thisError, i) => {
+          return <span key={i}>{thisError}<br/></span>;
+        });
+
+        if(!formErrorsList.length){
+          errorsList = formError;
+        }
+
+        if(apiError) {
+          errorsList = apiError;
+        }
+
+        return <div className="alert alert-danger text-left" role="alert">{errorsList}</div>;
+      }();
 
     return (
       <div>
