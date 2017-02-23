@@ -3,7 +3,7 @@ import factory
 from generics.factories import GenericModelFactory, image_factory, zip_factory
 from generics.models import Attachment
 from accounts.models import Profile
-from business.models import Company, Employee, Project, ProjectInfo, Job, Terms, Category
+from business.models import Company, Employee, Project, Job, Terms, Category
 import business.enums as enums
 from notifications.signals import notify
 
@@ -44,30 +44,6 @@ class EmployeeFactory(GenericModelFactory):
     company = factory.SubFactory(CompanyFactory)
     profile = factory.SubFactory(ProfileFactory)
     primary = True
-
-
-class ProjectInfoAttachmentFactory(GenericModelFactory):
-    class Meta:
-        model = Attachment
-
-    tag = 'image'
-    file = image_factory()
-
-
-class DetailsFactory(GenericModelFactory):
-    class Meta:
-        model = ProjectInfo
-
-    class Params:
-        aliases = {
-            'description': 'paragraph'
-        }
-
-    @factory.post_generation
-    def create_attachments(self, create, extracted, **kwargs):
-        if not create:
-            return
-        ProjectInfoAttachmentFactory.create(content_object=self)
 
 
 class ProjectFactory(GenericModelFactory):

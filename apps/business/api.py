@@ -133,13 +133,6 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsPrimary)
 
 
-class InfoViewSet(NestedModelViewSet):
-    ""
-    queryset = ProjectInfo.objects.all()
-    serializer_class = InfoSerializer
-    parent_key = 'project'
-
-
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
