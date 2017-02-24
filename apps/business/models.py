@@ -255,7 +255,6 @@ class Project(models.Model):
     milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
-    project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
 

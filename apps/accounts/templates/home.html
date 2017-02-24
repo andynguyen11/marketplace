@@ -163,7 +163,7 @@
 
       {% for project in new %}
       <a class="plate" href="{% url 'project' project.slug %}">
-        <div class="plate-image"{% if MEDIA_URL and project.image %} style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=650&url={{ MEDIA_URL }}{{ project.image.file }}');"{% endif %}></div>
+        <div class="plate-image"></div>
         <div class="plate-info">
           <div class="plate-info-profile">
             {% if project.project_manager.get_photo %}<div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>{% endif %}
