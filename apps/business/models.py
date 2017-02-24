@@ -93,6 +93,9 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = 'companies'
 
@@ -116,6 +119,9 @@ class Job(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
+        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
+
+    def __unicode__(self):
         return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
 
     @property
@@ -256,6 +262,9 @@ class Project(models.Model):
     objects = ProjectManager()
 
     def __str__(self):
+        return self.title
+
+    def __unicode__(self):
         return self.title
 
     class Meta:
