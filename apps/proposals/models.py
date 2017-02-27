@@ -10,7 +10,7 @@ class Proposal(models.Model):
     cash = models.IntegerField(blank=True, null=True)
     hourly_rate = models.IntegerField(blank=True, null=True)
     hours = models.IntegerField(blank=True, null=True)
-    status = models.CharField(default='pending')
+    status = models.CharField(default='pending', max_length=100)
 
     @property
     def answers(self):
