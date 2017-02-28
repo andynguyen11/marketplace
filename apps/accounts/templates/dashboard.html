@@ -65,7 +65,7 @@
               {% for notification in notifications|slice:":50" %}
               {% comment %} Handle legacy notifications without targets {% endcomment %}
               {% if notification.target %}
-                <li>
+                <li onclick="location.href='{% url 'view-conversation' notification.action_object.id %}'">
                   <a href="{% url 'public-profile' user_id=notification.actor.id %}">{{ notification.actor.first_name }}</a>
                   {{ notification.verb }}
                   <a href="{% url 'view-conversation' notification.action_object.id %}">{{ notification.target.title }}</a>
