@@ -2,17 +2,23 @@
   margin: 0 0 30px;
 
   h2 {
-    font-size: 48px;
+    font-size: 32px;
     margin: 20px 0;
 
     @media (max-width: @screen-md) {
-      font-size: 34px;
+      font-size: 30px;
     }
 
     @media (max-width: @screen-sm) {
       font-size: 24px;
     }
 
+    @media (max-width: @screen-xs) {
+      font-size: 17px;
+    }
+  }
+
+  h3 {
     @media (max-width: @screen-xs) {
       font-size: 17px;
     }
@@ -57,6 +63,9 @@
       padding: 0;
     }
     h4 {
+      @media (min-width: @screen-sm) {
+        white-space: nowrap;
+      }
       @media (max-width: @screen-sm) {
         font-size: 14px;
       }

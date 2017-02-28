@@ -9,18 +9,21 @@
     <div class="container">
       <div class="col-md-10 col-md-offset-1 text-center">
         <h2 class="brand text-center">
-          Pick the one that describes you
+            Welcome to <span class="text-brand">Loom</span>! Let's get your account set up.
+        </h2>
+        <h2 class="brand text-center">
+            First, pick the one that best describes you.
         </h2>
         <div class="pickers">
           <a class="text-center picker dev" href="{% url 'signup-developer' %}">
             <div class="picker-image"></div>
-            <h4>I’m a <span class="text-accent">Developer</span> looking for projects</h4>
-            <p>And I’m looking for work building quality projects.</p>
+            <h4>I’m a <span class="text-accent">Freelance Developer</span> looking for work</h4>
+            <p>I want to help bring amazing ideas to life</p>
           </a>
           <a class="text-center picker ent" href="{% url 'signup-entrepreneur' %}">
             <div class="picker-image"></div>
-            <h4>I’m an <span class="text-brand">Entrepreneur</span> looking for a developer</h4>
-            <p>I have a web project that I want to hire a quality developer for.</p>
+            <h4>I’m an <span class="text-brand">Entrepreneur</span> looking for a <span class="text-accent">freelancer</span></h4>
+            <p>I need to hire a quality web developer for my project</p>
           </a>
         </div>
       </div>
