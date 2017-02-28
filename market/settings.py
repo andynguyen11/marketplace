@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'expertratings',
     'payment',
     'postman',
+    'proposals',
     'reviews',
     'fixture_magic',
     'django_extensions'

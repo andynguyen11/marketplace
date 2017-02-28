@@ -10,7 +10,7 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
+from business.models import Company, Document, Project, Job, Employee, Document, Terms
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
@@ -42,19 +42,6 @@ class CompanySerializer(serializers.ModelSerializer):
     def update(self, instance, data):
         update_instance(instance, data)
         return instance
-
-
-class InfoSerializer(ParentModelSerializer):
-    attachments = AttachmentSerializer(many=True, required=False)
-    title = serializers.CharField(required=False)
-    type = serializers.CharField(required=False)
-    project = serializers.PrimaryKeyRelatedField(required=False, queryset=Project.objects.all())
-
-    class Meta:
-        model = ProjectInfo
-        fields = field_names(ProjectInfo) + ('attachments',)
-        parent_key = 'info'
-        child_fields = ('attachments',)
 
 
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):

@@ -148,24 +148,6 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
 
 
-#TODO Deprecated
-class ProjectInfo(models.Model):
-    type = models.CharField(max_length=100, choices=INFO_TYPES)
-    project = models.ForeignKey('business.Project')
-    title = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    attachments = GenericRelation(Attachment, related_query_name='projectinfo')
-
-    def tagged(self, tag):
-        return Attachment.objects.get(projectinfo=self, tag=tag)
-
-    def safe_tagged(self, tag):
-        try:
-            return self.tagged(tag)
-        except Attachment.DoesNotExist, e:
-            return None
-
-
 class Document(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     job = models.ForeignKey(Job)
@@ -286,13 +268,6 @@ class Project(models.Model):
         return self.details.description if self.details else None
 
     @property
-    def details(self):
-        try:
-            return ProjectInfo.objects.get(project=self, type='primary')
-        except ProjectInfo.DoesNotExist:
-            return ProjectInfo(project=self, type='primary')
-
-    @property
     def average_equity(self):
         average = None
         bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(equity=0).exclude(cash__isnull=False)
@@ -329,10 +304,6 @@ class Project(models.Model):
     def active_jobs(self):
         jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
         return jobs
-
-    def info(self, type=None):
-        rest = {'type': type} if type else {}
-        return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
 
     def documents(self):
         documents = Document.objects.filter(project=self)
@@ -378,4 +349,6 @@ class Terms(models.Model):
             #self.milestones = self.job.project.milestones
             #self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
+
+
 

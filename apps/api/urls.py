@@ -10,12 +10,17 @@ from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, Or
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount, ConnectThreadAPI
+from proposals.api import QuestionViewSet
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
 router = DeclarativeRouter({
     'attachment': AttachmentViewSet,
+    'contactdetails': {
+        'view': ContactDetailsViewSet,
+        'base_name': 'contactdetails'
+    },
     'jobs': JobViewSet,
     'profile': {
         'view': ProfileViewSet,
@@ -26,20 +31,6 @@ router = DeclarativeRouter({
             }
         }
     },
-    'contactdetails': {
-        'view': ContactDetailsViewSet,
-        'base_name': 'contactdetails'
-    },
-    'skills': {
-        'view': SkillViewSet,
-        'nested': {
-            'lookup': 'skill',
-            'routes': {
-                'verificationtest': VerificationTestViewSet
-            }
-        }
-    },
-    'skilltest': ERSkillTestViewSet,
     'project': {
         'view': ProjectViewSet,
         'nested': {
@@ -61,15 +52,25 @@ router = DeclarativeRouter({
             }
         }
     },
+    'order': ProductOrderViewSet,
     'product': {
         'view': ProductViewSet,
         'base_name': 'product',
     },
-    'order': ProductOrderViewSet,
     'search/project': {
         'view': ProjectSearchViewSet,
         'base_name': 'project-search',
-    }
+    },
+    'skills': {
+        'view': SkillViewSet,
+        'nested': {
+            'lookup': 'skill',
+            'routes': {
+                'verificationtest': VerificationTestViewSet
+            }
+        }
+    },
+    'skilltest': ERSkillTestViewSet
 })
 
 urlpatterns = [
@@ -84,6 +85,10 @@ urlpatterns = [
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
+    url(r'^questions/$', view=QuestionViewSet.as_view({
+        'post': 'create',
+        'patch': 'partial_update'
+    }), name='questions'),
     url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
