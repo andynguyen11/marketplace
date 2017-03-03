@@ -22,6 +22,9 @@ class Proposal(models.Model):
             answers.append(answer)
         return answers
 
+    class Meta:
+        unique_together = ('submitter', 'project')
+
 
 class Question(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)

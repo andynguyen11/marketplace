@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from postman.models import Message
 from generics.models import Attachment
 from business.enums import *
+from accounts.enums import ROLE_TYPES
 
 
 class Category(tagulous.models.TagModel):
@@ -93,6 +94,9 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = 'companies'
 
@@ -116,6 +120,9 @@ class Job(models.Model):
     end_date = models.DateField(blank=True, null=True)
 
     def __str__(self):
+        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
+
+    def __unicode__(self):
         return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
 
     @property
@@ -231,13 +238,16 @@ class Project(models.Model):
     milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
-    project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
+    role = models.CharField(max_length=100, choices=ROLE_TYPES, blank=True, null=True)
 
     objects = ProjectManager()
 
     def __str__(self):
+        return self.title
+
+    def __unicode__(self):
         return self.title
 
     class Meta:

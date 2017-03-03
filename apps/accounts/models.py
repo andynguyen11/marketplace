@@ -15,6 +15,7 @@ from social.apps.django_app.default.models import UserSocialAuth
 from expertratings.models import SkillTestResult
 
 from business.models import Employee
+from accounts.enums import ROLE_TYPES
 
 
 # TODO Hacky way to bypass makemigrations error
@@ -160,7 +161,7 @@ class Profile(AbstractUser):
     skills = tagulous.models.TagField(to=Skills, blank=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
-    role = models.CharField(max_length=100, blank=True, null=True)
+    role = models.CharField(max_length=100, choices=ROLE_TYPES, blank=True, null=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)

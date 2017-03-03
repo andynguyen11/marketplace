@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from proposals.models import Question, Proposal
-from proposals.serializers import QuestionSerializer, ProposalSerializer
+from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -58,7 +58,10 @@ class ProposalViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         answers = request.data.pop('answers')
+        for answer in answers:
+            answer['answerer'] = request.user.id
         answer_serializer = AnswerSerializer(data=answers, many=True)
-        answer_serializer.is_valid(raise_exception=True)
+        answer_serializer.is_valid(raise_exception=False)
         self.perform_create(answer_serializer)
+        request.data['submitter'] = request.user.id
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
