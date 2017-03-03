@@ -242,7 +242,7 @@ class ProjectSummarySerializer(ParentModelSerializer):
                 'estimated_equity_shares', 'mix', 'remote',
                 'status', 'featured', 'published', 'approved',
                 'company', 'project_manager',
-                'bids', 'bid_stats', )
+                'bids', 'bid_stats', 'role')
         parent_key = 'project'
 
     def get_bids(self, obj):

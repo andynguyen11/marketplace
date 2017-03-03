@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from postman.models import Message
 from generics.models import Attachment
 from business.enums import *
+from accounts.enums import ROLE_TYPES
 
 
 class Category(tagulous.models.TagModel):
@@ -239,6 +240,7 @@ class Project(models.Model):
     private_info = models.TextField(blank=True, null=True)
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
+    role = models.CharField(max_length=100, choices=ROLE_TYPES, blank=True, null=True)
 
     objects = ProjectManager()
 
