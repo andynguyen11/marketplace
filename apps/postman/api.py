@@ -23,7 +23,7 @@ from business.models import Project, Job, Terms, Document
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
-from payment.models import ProductOrder
+from payment.models import ProductOrder, Promo
 from payment.serializers import ProductOrderSerializer, ensure_order_is_payable, default_error_details
 from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
@@ -216,7 +216,7 @@ class ConnectThreadAPI(APIView):
 
     def get_or_create_order(self, request, thread):
         try:
-            return ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id)
+            return (True, ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id))
         except ProductOrder.DoesNotExist:
             serializer = ProductOrderSerializer(data=dict(
                 requester=request.user.id,
@@ -225,7 +225,7 @@ class ConnectThreadAPI(APIView):
                 promo=request.data.pop('promoCode', None),
                 related_object_id=thread.job.id))
             serializer.is_valid()
-            return serializer.save()
+            return (False, serializer.save())
 
     def validate_order(self, request, order):
         if order.status == 'failed':
@@ -244,7 +244,11 @@ class ConnectThreadAPI(APIView):
         return order
 
     def update_order(self, request, thread):
-        order = self.get_or_create_order(request, thread)
+        created, order = self.get_or_create_order(request, thread)
+        promo = request.data.pop('promoCode', None)
+        if created and promo:
+            order._promo = Promo.objects.get(code=promo)
+            order.save()
         self.validate_order(request, order)
         if order.requester != request.user:
             order.product.change_status('accepted', order, request.user)
