@@ -2,14 +2,14 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from proposals.models import Question
-from proposals.serializers import QuestionSerializer
+from proposals.models import Question, Proposal
+from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """
-    Only Contractors can create Jobs/Bids.
-    Subsequently Project Managers create Terms based on them
+    Create questions
+    Patch will mark changed question as inactive and create change as a new question for project
     """
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
@@ -49,3 +49,19 @@ class QuestionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=False)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=200, headers=headers)
+
+
+class ProposalViewSet(viewsets.ModelViewSet):
+    queryset = Proposal.objects.all()
+    serializer_class = ProposalSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def create(self, request, *args, **kwargs):
+        answers = request.data.pop('answers')
+        for answer in answers:
+            answer['answerer'] = request.user.id
+        answer_serializer = AnswerSerializer(data=answers, many=True)
+        answer_serializer.is_valid(raise_exception=False)
+        self.perform_create(answer_serializer)
+        request.data['submitter'] = request.user.id
+        return super(ProposalViewSet, self).create(request, *args, **kwargs)

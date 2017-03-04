@@ -10,7 +10,7 @@ from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, Or
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount, ConnectThreadAPI
-from proposals.api import QuestionViewSet
+from proposals.api import QuestionViewSet, ProposalViewSet
 from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
@@ -57,6 +57,7 @@ router = DeclarativeRouter({
         'view': ProductViewSet,
         'base_name': 'product',
     },
+    'proposals': ProposalViewSet,
     'search/project': {
         'view': ProjectSearchViewSet,
         'base_name': 'project-search',

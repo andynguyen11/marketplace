@@ -1,6 +1,7 @@
 from django.db import models
 
 
+#TODO Support jobs when transitioning project to jobs model
 class Proposal(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
     submitter = models.ForeignKey('accounts.Profile')
@@ -20,6 +21,9 @@ class Proposal(models.Model):
             answer = Answer.objects.get(question=question, answerer=self.submitter)
             answers.append(answer)
         return answers
+
+    class Meta:
+        unique_together = ('submitter', 'project')
 
 
 class Question(models.Model):
