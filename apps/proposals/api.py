@@ -5,6 +5,28 @@ from rest_framework.response import Response
 from proposals.models import Question, Proposal
 from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
 
+def add_ordering(questions):
+    if not isinstance(questions, list):
+        questions['ordering'] = 0
+        return questions
+    for index, question in enumerate(questions):
+        question['ordering'] = index
+    return questions
+
+def is_update(user, old_question, question):
+    return (old_question.text != question['text'] and 
+            old_question.project.id == question['project'] and 
+            old_question.project.project_manager == user )
+
+def apply_update(old_question, question):
+    old_question.active = False
+    old_question.save()
+    if question['text']:
+        new_question = {
+                'text': question['text'],
+                'project': question['project'],
+                'ordering': old_question.ordering }
+        return new_question
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """
@@ -16,10 +38,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data, many=isinstance(request.data,list))
+        serializer = self.get_serializer(data=add_ordering(request.data), many=isinstance(request.data,list))
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
+        print serializer.data
         return Response(serializer.data, status=201, headers=headers)
 
     def update(self, request, *args, **kwargs):
@@ -29,17 +52,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
             return Response(status=403)
         project_id = project[0]
         for question in request.data:
+            # TODO I think it might be better to key off of active=True && ordering=index, instead of having always changing id
             old_question = Question.objects.get(id=question['id'])
-            if old_question.text != question['text'] and old_question.project.id == question['project'] and old_question.project.project_manager == request.user:
-                old_question.active = False
-                old_question.save()
-                if question['text']:
-                    new_question = {
-                        'text': question['text'],
-                        'project': question['project']
-                    }
-                    question['text'] = old_question.text
-                    new_questions.append(new_question)
+            if is_update(request.user, old_question, question):
+                new_question = apply_update(old_question, question)
+                new_questions.append(new_question)
         if new_questions:
             create_serializer = self.get_serializer(data=new_questions, many=isinstance(new_questions,list))
             create_serializer.is_valid(raise_exception=True)

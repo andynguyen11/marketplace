@@ -29,6 +29,7 @@ class Proposal(models.Model):
 class Question(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
+    ordering = models.IntegerField()
     project = models.ForeignKey('business.Project')
     text = models.TextField()
 
