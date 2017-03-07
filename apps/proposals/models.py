@@ -1,4 +1,5 @@
 from django.db import models
+from proposals.enums import PROPOSAL_STATUS
 
 
 #TODO Support jobs when transitioning project to jobs model
@@ -11,7 +12,7 @@ class Proposal(models.Model):
     cash = models.IntegerField(blank=True, null=True)
     hourly_rate = models.IntegerField(blank=True, null=True)
     hours = models.IntegerField(blank=True, null=True)
-    status = models.CharField(default='pending', max_length=100)
+    status = models.CharField(max_length=100, default='pending', choices=PROPOSAL_STATUS)
 
     @property
     def answers(self):

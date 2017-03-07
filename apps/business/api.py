@@ -191,11 +191,13 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['GET'])
-    def summary(self, request, pk=None):
+    def summary(self, request, **kwargs):
         " summarizes and organizes project details for a project manager "
-        project = Project.objects.get(project_manager=request.user, id=pk)
-        serializer = ProjectSummarySerializer(project)
-        return Response(serializer.data)
+        project = self.get_object()
+        if project.project_manager == request.user:
+            serializer = ProjectSummarySerializer(project)
+            return Response(serializer.data)
+        else: return Response(403)
 
 
 class ProjectSearchViewSet(HaystackViewSet):

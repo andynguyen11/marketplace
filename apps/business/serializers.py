@@ -14,6 +14,7 @@ from business.models import Company, Document, Project, Job, Employee, Document,
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
+from proposals.serializers import ProposalSummarySerializer
 from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
@@ -231,6 +232,7 @@ class ProjectSummarySerializer(ParentModelSerializer):
     published = serializers.BooleanField(default=False)
     bids = serializers.SerializerMethodField()
     bid_stats = serializers.SerializerMethodField()
+    proposals = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -242,12 +244,15 @@ class ProjectSummarySerializer(ParentModelSerializer):
                 'estimated_equity_shares', 'mix', 'remote',
                 'status', 'featured', 'published', 'approved',
                 'company', 'project_manager',
-                'bids', 'bid_stats', 'role')
+                'bids', 'bid_stats', 'role', 'proposals')
         parent_key = 'project'
 
     def get_bids(self, obj):
         jobs = Job.objects.filter(project=obj)
         return ManagerBidSerializer(jobs, many=True).data
+
+    def get_proposals(self, obj):
+        return ProposalSummarySerializer(obj.proposals, many=True).data
 
     def get_bid_stats(self, obj):
         averages = {}
