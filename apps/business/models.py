@@ -12,7 +12,7 @@ from django.utils.encoding import smart_str
 from django.contrib.contenttypes.models import ContentType
 
 from postman.models import Message
-from proposals.models import Proposal
+from proposals.models import Proposal, Question
 from generics.models import Attachment
 from business.enums import *
 from accounts.enums import ROLE_TYPES
@@ -311,6 +311,10 @@ class Project(models.Model):
     @property
     def proposals(self):
         return Proposal.objects.filter(project=self).exclude(status__exact='declined')
+
+    @property
+    def questions(self):
+        return Question.objects.filter(project=self, active=True)
 
     def documents(self):
         documents = Document.objects.filter(project=self)

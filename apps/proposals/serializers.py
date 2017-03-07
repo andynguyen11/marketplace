@@ -21,6 +21,7 @@ class ProposalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proposal
 
+
 class ProposalSummarySerializer(serializers.ModelSerializer):
 
     submitter = serializers.SerializerMethodField()

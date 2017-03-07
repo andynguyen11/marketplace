@@ -14,7 +14,7 @@ from business.models import Company, Document, Project, Job, Employee, Document,
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
-from proposals.serializers import ProposalSummarySerializer
+from proposals.serializers import ProposalSummarySerializer, QuestionSerializer
 from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
@@ -45,11 +45,13 @@ class CompanySerializer(serializers.ModelSerializer):
         return instance
 
 
+#TODO Do we need 2 project serializers?  May go away with switch to jobs model.
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
     project_manager_data = serializers.SerializerMethodField()
     bid_stats = serializers.SerializerMethodField()
+    questions = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -70,6 +72,9 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         averages['equity'] = obj.average_equity
         averages['combined'] = obj.average_combined
         return { 'averages': averages }
+
+    def get_questions(self, obj):
+        return QuestionSerializer(obj.questions, many=True).data
 
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
@@ -226,6 +231,7 @@ class ContractorBidSerializer(serializers.ModelSerializer):
         return Message.objects.filter(job=job)[0].thread_id
 
 
+#TODO Do we need 2 project serializers?
 class ProjectSummarySerializer(ParentModelSerializer):
     " serializer for the project tab "
     slug = serializers.CharField(read_only=True)
