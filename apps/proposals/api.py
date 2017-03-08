@@ -38,6 +38,8 @@ class QuestionViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
     def update(self, request, *args, **kwargs):
+        if not request.data:
+            return Response(status=200)
         new_questions = []
         project = list(set(question['project'] for question in request.data))
         if len(project) != 1:
