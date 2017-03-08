@@ -42,7 +42,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        print serializer.data
         return Response(serializer.data, status=201, headers=headers)
 
     def update(self, request, *args, **kwargs):
@@ -53,10 +52,19 @@ class QuestionViewSet(viewsets.ModelViewSet):
         project_id = project[0]
         for question in request.data:
             # TODO I think it might be better to key off of active=True && ordering=index, instead of having always changing id
-            old_question = Question.objects.get(id=question['id'])
-            if is_update(request.user, old_question, question):
-                new_question = apply_update(old_question, question)
-                new_questions.append(new_question)
+            try:
+                old_question = Question.objects.get(id=question['id'])
+                if is_update(request.user, old_question, question):
+                    new_question = apply_update(old_question, question)
+                    new_questions.append(new_question)
+            except Question.DoesNotExist:
+                if question['text']:
+                    new_question = {
+                        'text': question['text'],
+                        'project': question['project'],
+                        'ordering': question['ordering']
+                    }
+                    new_questions.append(new_question)
         if new_questions:
             create_serializer = self.get_serializer(data=new_questions, many=isinstance(new_questions,list))
             create_serializer.is_valid(raise_exception=True)
