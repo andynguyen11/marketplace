@@ -37,13 +37,6 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = (IsAuthenticated, )
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=add_ordering(request.data), many=isinstance(request.data,list))
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
-
     def update(self, request, *args, **kwargs):
         new_questions = []
         project = list(set(question['project'] for question in request.data))
@@ -57,7 +50,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 if is_update(request.user, old_question, question):
                     new_question = apply_update(old_question, question)
                     new_questions.append(new_question)
-            except Question.DoesNotExist:
+            except KeyError:
                 if question['text']:
                     new_question = {
                         'text': question['text'],
