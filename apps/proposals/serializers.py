@@ -4,6 +4,7 @@ from proposals.models import Question, Answer, Proposal
 
 
 class QuestionSerializer(serializers.ModelSerializer):
+    text = serializers.CharField(required=False)
 
     class Meta:
         model = Question
