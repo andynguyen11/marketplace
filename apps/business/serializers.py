@@ -10,16 +10,16 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Document, Project, Job, Employee, Document, Terms
+from business.models import Company, Document, Project, Job, Employee, Document, Terms, NDA
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
-from proposals.serializers import ProposalSummarySerializer, QuestionSerializer
 from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
 from postman.models import Message
-
+from proposals.models import Proposal
+from proposals.serializers import ProposalSerializer, QuestionSerializer
 
 class CompanySerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(write_only=True)
@@ -52,10 +52,26 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     project_manager_data = serializers.SerializerMethodField()
     bid_stats = serializers.SerializerMethodField()
     questions = serializers.SerializerMethodField()
+    proposal = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         parent_key = 'project'
+
+    def get_proposal(self, obj):
+        try:
+            proposal = Proposal.objects.get(project=obj)
+            return proposal.id
+        except Proposal.DoesNotExist:
+            return None
+
+    def get_message(self, obj):
+        if self.get_proposal(obj):
+            proposal = Proposal.objects.get(project=obj)
+            return proposal.message.id
+        else:
+            return None
 
     def get_project_manager_data(self, obj):
         return {
@@ -258,7 +274,7 @@ class ProjectSummarySerializer(ParentModelSerializer):
         return ManagerBidSerializer(jobs, many=True).data
 
     def get_proposals(self, obj):
-        return ProposalSummarySerializer(obj.proposals, many=True).data
+        return ProposalSerializer(obj.proposals, many=True).data
 
     def get_bid_stats(self, obj):
         averages = {}
@@ -373,3 +389,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return work_history
+
+
+class NDASerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NDA

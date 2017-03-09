@@ -8,12 +8,12 @@ from rest_framework import serializers
 
 from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
-from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer
-from business.models import Document
-from payment.models import ProductOrder
-from docusign.models import DocumentSigner
+from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer, NDASerializer
+from business.models import Document, NDA
 from generics.serializers import AttachmentSerializer
+from payment.models import ProductOrder
 from postman.models import Message, AttachmentInteraction
+from proposals.models import Proposal
 
 
 class Interaction(object):
@@ -89,22 +89,23 @@ def serialize_interaction(message):
 
 
 
-def free_messages(thread, user):
-    total = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.project.project_manager == user \
-            else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
+def free_messages(thread, user, legacy=True):
+    if legacy:
+        total = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.job.project.project_manager == user \
+                else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
+    else:
+        total = settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1 if thread.job.project.project_manager == user \
+                else settings.UNCONNECTED_THREAD_REPLY_LIMIT
     remaining = total - thread.get_participant_replies_count(user)
     if remaining < 0:
         remaining = 0
     return dict(total=total, remaining=remaining)
 
 class ConversationSerializer(serializers.ModelSerializer):
+    is_legacy = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
-    nda = DocumentSerializer()
-    terms = TermsSerializer()
-    job = JobSerializer()
-    signing_url = serializers.SerializerMethodField()
+    nda = serializers.SerializerMethodField()
     current_user = serializers.SerializerMethodField()
-    attachments = AttachmentSerializer(many=True)
     interactions = serializers.SerializerMethodField()
     sender = serializers.SerializerMethodField()
     recipient = serializers.SerializerMethodField()
@@ -117,9 +118,6 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        exclude = ('email', 'sent_at', 'read_at', 'replied_at', 'sender_bookmarked', 'recipient_bookmarked',
-                   'sender_archived', 'recipient_archived', 'sender_deleted_at', 'recipient_deleted_at',
-                   'moderation_status', 'moderation_date', 'moderation_reason', 'parent', 'moderation_by')
 
     # Helpers used in SerializerMethodFields
     def requesting_user(self, obj):
@@ -168,13 +166,6 @@ class ConversationSerializer(serializers.ModelSerializer):
         )
         return MessageAlertSerializer(alerts, many=True).data
 
-    def get_signing_url(self, obj):
-        try:
-            document = Document.objects.get(job=obj.job, type='MSA')
-            return document.docusign_document.get_signer_url(self.requesting_user(obj))
-        except Document.DoesNotExist:
-            return None
-
     def get_interactions(self, obj):
         mark_read(self.requesting_user(obj), obj.id)
         interactions = sorted(chain(*[
@@ -195,4 +186,25 @@ class ConversationSerializer(serializers.ModelSerializer):
             pass
 
     def get_free_messages(self, obj):
-        return free_messages(obj, self.requesting_user(obj))
+        return free_messages(obj, self.requesting_user(obj), self.get_is_legacy(obj))
+
+    def get_is_legacy(self, obj):
+        try:
+            proposal = Proposal.objects.get(interaction=obj)
+            return False
+        except Proposal.DoesNotExist:
+            return True
+
+    def get_nda(self, obj):
+        if self.get_is_legacy(obj):
+            serializer = DocumentSerializer(obj.nda)
+            return serializer.data
+        else:
+            proposal = Proposal.objects.get(interaction=obj)
+            nda, created = NDA.objects.get_or_create(
+                sender=proposal.receiver,
+                receiver=proposal.submitter,
+                proposal=proposal
+            )
+            serializer = NDASerializer(nda)
+            return serializer.data

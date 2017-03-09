@@ -17,18 +17,10 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class ProposalSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Proposal
-
-
-class ProposalSummarySerializer(serializers.ModelSerializer):
-
     submitter = serializers.SerializerMethodField()
 
     class Meta:
         model = Proposal
-        fields = ('submitter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'create_date')
 
     def get_submitter(self, obj):
         submitter = { k: getattr(obj.submitter, k) for k in [

@@ -167,3 +167,12 @@ class ProductOrderPermission(permissions.BasePermission):
                 view.action == 'update_status') and (
                 request.user in order.involved_users)
 
+
+class IsSenderReceiver(permissions.BasePermission):
+    """
+    Custom permission to only allow sender / receiver to update
+    """
+    def has_object_permission(self, request, view, obj):
+        return request.user.id == obj.receiver.id or \
+               request.user.id == obj.sender.id
+

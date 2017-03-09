@@ -150,6 +150,14 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
 
 
+class NDA(models.Model):
+    date_created = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey('accounts.Profile', related_name='sender')
+    receiver = models.ForeignKey('accounts.Profile', related_name='reciever')
+    status = models.CharField(default='new', max_length=30, null=True)
+    proposal = models.ForeignKey('proposals.Proposal', blank=True, null=True)
+
+
 class Document(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     job = models.ForeignKey(Job)
@@ -314,7 +322,7 @@ class Project(models.Model):
 
     @property
     def questions(self):
-        return Question.objects.filter(project=self, active=True)
+        return Question.objects.filter(project=self, active=True).order_by('ordering')
 
     def documents(self):
         documents = Document.objects.filter(project=self)

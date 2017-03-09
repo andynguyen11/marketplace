@@ -1,5 +1,5 @@
 PROPOSAL_STATUS = (
     (u'pending', u'Pending'),
-    (u'accepted', u'Accepted'),
+    (u'responded', u'Responded'),
     (u'declined', u'Declined'),
 )

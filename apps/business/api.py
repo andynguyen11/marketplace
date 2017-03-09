@@ -8,7 +8,7 @@ from rest_framework.decorators import detail_route, list_route, permission_class
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
-from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile
+from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
 from business.models import Job, Employee
 from business.products import products
 from business.serializers import *
@@ -62,7 +62,7 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
+# DEPRECATE
 class NestedJobViewSet(NestedModelViewSet):
     """
     Only Contractors can create Jobs/Bids.
@@ -74,11 +74,19 @@ class NestedJobViewSet(NestedModelViewSet):
     parent_key = 'project'
 
 
+# DEPRECATE
 class DocumentViewSet(NestedModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = (IsAuthenticated, BidPermission, IsJobOwnerPermission)
     parent_key = 'job'
+
+
+# TODO Permissions update
+class NDAUpdate(generics.UpdateAPIView):
+    queryset = NDA.objects.all()
+    serializer_class = NDASerializer
+    permision_classes = (IsAuthenticated, IsSenderReceiver)
 
 
 # this isn't too insecure due to `self.contractee = ...` in `Terms.save`
@@ -168,6 +176,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, slug_or_id=None):
         project = self.get_object()
+        #TODO Add to serializer and permissions?
         if project.approved or request.user == project.project_manager or request.user.is_staff:
             job = None
             try:

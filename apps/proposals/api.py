@@ -1,7 +1,10 @@
 from rest_framework import generics, viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from business.models import Job
+from postman.models import Message
 from proposals.models import Question, Proposal
 from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
 
@@ -72,9 +75,11 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 
 class ProposalViewSet(viewsets.ModelViewSet):
-    queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
     permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        return Proposal.objects.filter(project__project_manager=self.request.user)
 
     def create(self, request, *args, **kwargs):
         answers = request.data.pop('answers')
@@ -85,3 +90,28 @@ class ProposalViewSet(viewsets.ModelViewSet):
         self.perform_create(answer_serializer)
         request.data['submitter'] = request.user.id
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
+
+    @detail_route(methods=['POST'])
+    def respond(self, request, *args, **kwargs):
+        proposal = self.get_object()
+        if proposal.status == 'pending' and proposal.receiver == request.user:
+            bid = Job.objects.create(
+                contractor = proposal.submitter,
+                project = proposal.project
+            )
+            conversation = Message.objects.create(
+                sender = proposal.receiver,
+                recipient = proposal.submitter,
+                subject = proposal.project.title,
+                body = request.data.message,
+                job = bid
+            )
+            conversation.thread = conversation
+            conversation.save()
+            proposal.interaction = conversation
+            proposal.status = 'responded'
+            proposal.save()
+        serializer = self.get_serializer(data=proposal)
+        serializer.is_valid(raise_exception=False)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=200, headers=headers)

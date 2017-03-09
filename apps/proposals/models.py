@@ -1,4 +1,7 @@
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
+
 from proposals.enums import PROPOSAL_STATUS
 
 
@@ -13,6 +16,7 @@ class Proposal(models.Model):
     hourly_rate = models.IntegerField(blank=True, null=True)
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, default='pending', choices=PROPOSAL_STATUS)
+    message = models.ForeignKey('postman.Message', blank=True, null=True)
 
     @property
     def answers(self):
@@ -22,6 +26,10 @@ class Proposal(models.Model):
             answer = Answer.objects.get(question=question, answerer=self.submitter)
             answers.append(answer)
         return answers
+
+    @property
+    def receiver(self):
+        return self.project.project_manager
 
     class Meta:
         unique_together = ('submitter', 'project')

@@ -57,7 +57,10 @@ router = DeclarativeRouter({
         'view': ProductViewSet,
         'base_name': 'product',
     },
-    'proposals': ProposalViewSet,
+    'proposals': {
+        'view': ProposalViewSet,
+        'base_name': 'proprosals',
+    },
     'search/project': {
         'view': ProjectSearchViewSet,
         'base_name': 'project-search',
@@ -85,6 +88,7 @@ urlpatterns = [
     url(r'^employee/(?P<pk>[0-9]+)/$', view=EmployeeDetail.as_view(), name='employee-detail'),
     url(r'^message/$', view=MessageAPI.as_view(), name='send-message'),
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
+    url(r'^nda/(?P<pk>[0-9]+)/$', view=NDAUpdate.as_view(), name='nda-update'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
     url(r'^questions/$', view=QuestionViewSet.as_view({
         'post': 'create',
