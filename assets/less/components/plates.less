@@ -14,7 +14,7 @@
     }
 
     @media (max-width: @screen-sm) {
-      padding: (@gutter * 2) @gutter--medium 0;
+      padding: (@gutter * 2) @gutter 0;
 
       .btn {
         padding: 6px 12px;
@@ -44,6 +44,12 @@
     flex-wrap: wrap;
     justify-content: space-between;
     padding: 0 @gutter--medium;
+
+    &.projectCards {
+      @media (max-width: @screen-sm) {
+        margin: 0;
+      }
+    }
   }
 
   .plate {
