@@ -3,6 +3,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from apps.api.permissions import ProposalPermission
 from business.models import Job
 from postman.models import Message
 from proposals.models import Question, Proposal
@@ -80,9 +81,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 class ProposalViewSet(viewsets.ModelViewSet):
     serializer_class = ProposalSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated, ProposalPermission, )
 
     def get_queryset(self):
+        # TODO Support multi role
         if not self.request.user.role or self.request.user.role == 'entrepreneur':
             return Proposal.objects.filter(project__project_manager=self.request.user)
         else:
