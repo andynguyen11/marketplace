@@ -61,15 +61,17 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_proposal(self, obj):
         try:
-            proposal = Proposal.objects.get(project=obj)
-            return proposal.id
+            if self.context['request'].user.is_authenticated():
+                proposal = Proposal.objects.get(project=obj, submitter=self.context['request'].user)
+                return proposal.id
+            return None
         except Proposal.DoesNotExist:
             return None
 
     def get_message(self, obj):
         if self.get_proposal(obj):
             proposal = Proposal.objects.get(project=obj)
-            return proposal.message
+            return proposal.message.id if proposal.message else None
         else:
             return None
 
@@ -104,6 +106,7 @@ class JobSerializer(serializers.ModelSerializer):
     cash = serializers.IntegerField(required=False, allow_null=True )
     equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
     thread_id = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -202,6 +205,15 @@ class JobSerializer(serializers.ModelSerializer):
 
     def get_thread_id(self, job):
         return Message.objects.filter(job=job)[0].thread_id
+
+    def get_project(self, obj):
+        project = obj.project
+        return {
+            'title': project.title,
+            'id': project.id,
+            'company': project.company.name if project.company else None
+        }
+
 
 # TODO DRY: ManagerBidSerializer and ContractorBidSerializer can inherit from a base BidSummarySerializer
 class ManagerBidSerializer(serializers.ModelSerializer):

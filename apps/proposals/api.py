@@ -21,15 +21,17 @@ def is_update(user, old_question, question):
             old_question.project.id == question['project'] and 
             old_question.project.project_manager == user )
 
-def apply_update(old_question, question):
+def apply_update(old_question, question, order):
     old_question.active = False
     old_question.save()
     if question['text']:
         new_question = {
                 'text': question['text'],
                 'project': question['project'],
-                'ordering': old_question.ordering }
+                'ordering': order
+        }
         return new_question
+    return None
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """
@@ -48,26 +50,28 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if len(project) != 1:
             return Response(status=403)
         project_id = project[0]
-        for question in request.data:
+        for order, question in enumerate(request.data):
             # TODO I think it might be better to key off of active=True && ordering=index, instead of having always changing id
             try:
                 old_question = Question.objects.get(id=question['id'])
                 if is_update(request.user, old_question, question):
-                    new_question = apply_update(old_question, question)
-                    new_questions.append(new_question)
+                    new_question = apply_update(old_question, question, order)
+                    if new_question:
+                        new_questions.append(new_question)
             except KeyError:
                 if question['text']:
                     new_question = {
                         'text': question['text'],
                         'project': question['project'],
-                        'ordering': question['ordering']
+                        'ordering': order,
+                        'active': True
                     }
                     new_questions.append(new_question)
         if new_questions:
             create_serializer = self.get_serializer(data=new_questions, many=isinstance(new_questions,list))
             create_serializer.is_valid(raise_exception=True)
             self.perform_create(create_serializer)
-        questions = Question.objects.filter(project=project_id, active=True)
+        questions = Question.objects.filter(project=project_id, active=True).order_by('ordering')
         serializer = self.get_serializer(data=questions, many=True)
         serializer.is_valid(raise_exception=False)
         headers = self.get_success_headers(serializer.data)
@@ -79,7 +83,10 @@ class ProposalViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return Proposal.objects.filter(project__project_manager=self.request.user)
+        if not self.request.user.role or self.request.user.role == 'entrepreneur':
+            return Proposal.objects.filter(project__project_manager=self.request.user)
+        else:
+            return Proposal.objects.filter(submitter=self.request.user)
 
     def create(self, request, *args, **kwargs):
         answers = request.data.pop('answers')
@@ -95,7 +102,8 @@ class ProposalViewSet(viewsets.ModelViewSet):
     def respond(self, request, *args, **kwargs):
         proposal = self.get_object()
         if proposal.status == 'pending' and proposal.receiver == request.user:
-            bid = Job.objects.create(
+            # Deprecate
+            bid, created = Job.objects.get_or_create(
                 contractor = proposal.submitter,
                 project = proposal.project
             )
@@ -103,15 +111,15 @@ class ProposalViewSet(viewsets.ModelViewSet):
                 sender = proposal.receiver,
                 recipient = proposal.submitter,
                 subject = proposal.project.title,
-                body = request.data.message,
+                body = request.data['message'],
                 job = bid
             )
             conversation.thread = conversation
             conversation.save()
-            proposal.interaction = conversation
+            proposal.message = conversation
             proposal.status = 'responded'
             proposal.save()
-        serializer = self.get_serializer(data=proposal)
-        serializer.is_valid(raise_exception=False)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=200, headers=headers)
+            serializer = self.get_serializer(data=proposal)
+            serializer.is_valid(raise_exception=False)
+            return Response({'status': 'responded'}, status=200)
+        return Response(status=403)

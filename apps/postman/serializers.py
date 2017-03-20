@@ -105,6 +105,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     is_legacy = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
     nda = serializers.SerializerMethodField()
+    job = JobSerializer()
     current_user = serializers.SerializerMethodField()
     interactions = serializers.SerializerMethodField()
     sender = serializers.SerializerMethodField()
@@ -190,7 +191,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_is_legacy(self, obj):
         try:
-            proposal = Proposal.objects.get(interaction=obj)
+            proposal = Proposal.objects.get(message=obj)
             return False
         except Proposal.DoesNotExist:
             return True
@@ -200,7 +201,7 @@ class ConversationSerializer(serializers.ModelSerializer):
             serializer = DocumentSerializer(obj.nda)
             return serializer.data
         else:
-            proposal = Proposal.objects.get(interaction=obj)
+            proposal = Proposal.objects.get(message=obj)
             nda, created = NDA.objects.get_or_create(
                 sender=proposal.receiver,
                 receiver=proposal.submitter,

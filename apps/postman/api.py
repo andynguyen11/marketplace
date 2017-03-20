@@ -56,7 +56,7 @@ class MessageCount(APIView):
 
 
 class ConversationDetail(generics.RetrieveAPIView):
-    queryset = Interaction.objects.all().order_by('sent_at')
+    queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
     permission_classes = (IsAuthenticated, IsPartOfConversation)
     #renderer_classes = (JSONRenderer, )

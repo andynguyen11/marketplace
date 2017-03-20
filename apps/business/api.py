@@ -206,7 +206,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
         if project.project_manager == request.user:
             serializer = ProjectSummarySerializer(project)
             return Response(serializer.data)
-        else: return Response(403)
+        else:
+            return Response(status=403)
 
 
 class ProjectSearchViewSet(HaystackViewSet):
