@@ -70,7 +70,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_message(self, obj):
         if self.get_proposal(obj):
-            proposal = Proposal.objects.get(project=obj)
+            proposal = Proposal.objects.get(project=obj, submitter=self.context['request'].user)
             return proposal.message.id if proposal.message else None
         else:
             return None
