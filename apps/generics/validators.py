@@ -1,4 +1,4 @@
-import magic
+#import magic
 
 from django.conf import settings
 from django.template.defaultfilters import filesizeformat
