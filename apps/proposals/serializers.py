@@ -17,15 +17,28 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
 
 
+class QASerializer(serializers.ModelSerializer):
+    question = serializers.StringRelatedField()
+    answer = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Answer
+        fields = ('create_date', 'answerer', 'question', 'answer', )
+
+    def get_answer(self, obj):
+        return obj.text
+
+
 class ProposalSerializer(serializers.ModelSerializer):
-    project = serializers.SerializerMethodField()
+    project_details = serializers.SerializerMethodField()
     submitter_profile = serializers.SerializerMethodField()
+    questions_and_answers = serializers.SerializerMethodField()
 
     class Meta:
         model = Proposal
-        fields = ('submitter', 'submitter_profile', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message')
+        fields = ('submitter', 'submitter_profile', 'project_details', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message', 'questions_and_answers')
 
-    def get_project(self, obj):
+    def get_project_details(self, obj):
         return { 'title': obj.project.title, 'id': obj.project.id }
 
     def get_submitter_profile(self, obj):
@@ -34,4 +47,9 @@ class ProposalSerializer(serializers.ModelSerializer):
         ]}
         submitter['photo_url'] = obj.submitter.get_photo
         return submitter
+
+    def get_questions_and_answers(self, obj):
+        answers = obj.answers
+        serializer = QASerializer(answers, many=True)
+        return serializer.data
 

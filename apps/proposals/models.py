@@ -20,11 +20,7 @@ class Proposal(models.Model):
 
     @property
     def answers(self):
-        questions = Question.objects.filter(project=self, active=True)
-        answers = []
-        for question in questions:
-            answer = Answer.objects.get(question=question, answerer=self.submitter)
-            answers.append(answer)
+        answers = Answer.objects.filter(answerer=self.submitter)
         return answers
 
     @property
@@ -41,6 +37,9 @@ class Question(models.Model):
     ordering = models.IntegerField()
     project = models.ForeignKey('business.Project')
     text = models.TextField()
+
+    def __unicode__(self):
+        return self.text
 
 
 class Answer(models.Model):

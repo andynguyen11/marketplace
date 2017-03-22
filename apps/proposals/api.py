@@ -91,12 +91,13 @@ class ProposalViewSet(viewsets.ModelViewSet):
             return Proposal.objects.filter(submitter=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        answers = request.data.pop('answers')
-        for answer in answers:
-            answer['answerer'] = request.user.id
-        answer_serializer = AnswerSerializer(data=answers, many=True)
-        answer_serializer.is_valid(raise_exception=False)
-        self.perform_create(answer_serializer)
+        if request.data.get('answers', None):
+            answers = request.data.pop('answers')
+            for answer in answers:
+                answer['answerer'] = request.user.id
+            answer_serializer = AnswerSerializer(data=answers, many=True)
+            answer_serializer.is_valid(raise_exception=False)
+            self.perform_create(answer_serializer)
         request.data['submitter'] = request.user.id
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
 
