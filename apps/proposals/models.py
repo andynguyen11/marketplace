@@ -20,7 +20,7 @@ class Proposal(models.Model):
 
     @property
     def answers(self):
-        answers = Answer.objects.filter(answerer=self.submitter)
+        answers = Answer.objects.filter(answerer=self.submitter, question__project=self.project)
         return answers
 
     @property
