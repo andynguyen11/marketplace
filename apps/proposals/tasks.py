@@ -1,6 +1,7 @@
 from celery import shared_task
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from proposals.models import Proposal
 from generics.utils import send_mail
