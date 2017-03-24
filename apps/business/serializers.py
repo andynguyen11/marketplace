@@ -18,7 +18,7 @@ from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
 from postman.models import Message
-from proposals.models import Proposal
+from proposals.models import Proposal, Question
 from proposals.serializers import ProposalSerializer, QuestionSerializer
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -92,7 +92,8 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         return { 'averages': averages }
 
     def get_questions(self, obj):
-        return QuestionSerializer(obj.questions, many=True).data
+        questions = Question.objects.filter(project=obj, active=True).order_by('ordering')
+        return QuestionSerializer(questions, many=True).data
 
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
@@ -286,7 +287,8 @@ class ProjectSummarySerializer(ParentModelSerializer):
         return ManagerBidSerializer(jobs, many=True).data
 
     def get_proposals(self, obj):
-        return ProposalSerializer(obj.proposals, many=True).data
+        proposals = Proposal.objects.filter(project=obj).exclude(status__exact='declined')
+        return ProposalSerializer(proposals, many=True).data
 
     def get_bid_stats(self, obj):
         averages = {}

@@ -203,7 +203,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         else:
             proposal = Proposal.objects.get(message=obj)
             nda, created = NDA.objects.get_or_create(
-                sender=proposal.receiver,
+                sender=proposal.recipient,
                 receiver=proposal.submitter,
                 proposal=proposal
             )

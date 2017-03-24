@@ -5,14 +5,12 @@ from datetime import datetime, timedelta
 import tagulous.models
 from django.db import models
 from django.conf import settings
-from django.dispatch import Signal
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
 from django.contrib.contenttypes.models import ContentType
 
 from postman.models import Message
-from proposals.models import Proposal, Question
 from generics.models import Attachment
 from business.enums import *
 from accounts.enums import ROLE_TYPES
@@ -318,14 +316,6 @@ class Project(models.Model):
     def active_jobs(self):
         jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
         return jobs
-
-    @property
-    def proposals(self):
-        return Proposal.objects.filter(project=self).exclude(status__exact='declined')
-
-    @property
-    def questions(self):
-        return Question.objects.filter(project=self, active=True).order_by('ordering')
 
     def documents(self):
         documents = Document.objects.filter(project=self)

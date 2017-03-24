@@ -24,7 +24,7 @@ class Proposal(models.Model):
         return answers
 
     @property
-    def receiver(self):
+    def recipient(self):
         return self.project.project_manager
 
     class Meta:

@@ -11,7 +11,6 @@ from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_sign
     terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills,\
     post_a_project, complete_project
 from postman.models import Message
-from proposals.models import Proposal
 
 
 @receiver(pre_save, sender=Document)

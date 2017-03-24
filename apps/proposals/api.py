@@ -3,10 +3,10 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.api.permissions import ProposalPermission
 from business.models import Job
 from postman.models import Message
 from proposals.models import Question, Proposal
+from proposals.permissions import ProposalPermission
 from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
 
 def add_ordering(questions):
@@ -104,14 +104,14 @@ class ProposalViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['POST'])
     def respond(self, request, *args, **kwargs):
         proposal = self.get_object()
-        if proposal.status == 'pending' and proposal.receiver == request.user:
+        if proposal.status == 'pending' and proposal.recipient == request.user:
             # Deprecate
             bid, created = Job.objects.get_or_create(
                 contractor = proposal.submitter,
                 project = proposal.project
             )
             conversation = Message.objects.create(
-                sender = proposal.receiver,
+                sender = proposal.recipient,
                 recipient = proposal.submitter,
                 subject = proposal.project.title,
                 body = request.data['message'],
