@@ -33,6 +33,7 @@ FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
 ALLOWED_HOSTS = ['*']
 
 ADMINS = ()
+INTERNAL_IPS = ('127.0.0.1',)
 SERVER_EMAIL = 'info@loom.co'
 
 AUTH_USER_MODEL = 'accounts.Profile'
@@ -49,6 +50,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'debug_toolbar',
     'sorl.thumbnail',
     'guardian',
     'easy_timezones',
@@ -93,6 +95,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'easy_timezones.middleware.EasyTimezoneMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
 )
 
 AUTHENTICATION_BACKENDS = (

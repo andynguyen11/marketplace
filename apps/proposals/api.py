@@ -80,15 +80,20 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
 
 class ProposalViewSet(viewsets.ModelViewSet):
+    queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
     permission_classes = (IsAuthenticated, ProposalPermission, )
 
-    def get_queryset(self):
-        # TODO Support multi role
-        if not self.request.user.role or self.request.user.role == 'entrepreneur':
-            return Proposal.objects.filter(project__project_manager=self.request.user)
-        else:
-            return Proposal.objects.filter(submitter=self.request.user)
+    def list(self, request, *args, **kwargs):
+        queryset = Proposal.objects.filter(submitter=self.request.user)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         if request.data.get('answers', None):

@@ -100,6 +100,12 @@ if settings.DEBUG and settings.MEDIA_URL :
 if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
 
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
+
 handler404 = error404
 handler500 = error500
 
