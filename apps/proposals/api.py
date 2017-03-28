@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from business.models import Job
+from generics.tasks import new_message_notification
 from postman.models import Message
 from proposals.models import Question, Proposal
 from proposals.permissions import ProposalPermission
@@ -129,5 +130,6 @@ class ProposalViewSet(viewsets.ModelViewSet):
             proposal.save()
             serializer = self.get_serializer(data=proposal)
             serializer.is_valid(raise_exception=False)
+            new_message_notification.delay(proposal.submitter.id, conversation.id)
             return Response({'status': 'responded'}, status=200)
         return Response(status=403)

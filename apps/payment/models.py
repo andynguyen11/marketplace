@@ -141,7 +141,7 @@ class ProductOrder(models.Model):
 
     stripe_charge_id = models.CharField(max_length=50, null=True)
     details = models.CharField(max_length=250, null=True)
-    result = models.CharField(max_length=100, null=True)
+    result = models.CharField(max_length=250, null=True)
 
     @property
     def product(self):
