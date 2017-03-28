@@ -8,8 +8,7 @@
     "test": "source venv/bin/activate && python -W ignore::DeprecationWarning manage.py test api -k",
     "generate_fixtures": "source venv/bin/activate && mkdir -p ./fixtures && GENERATE_TEST_FIXTURES=True python -W ignore::DeprecationWarning manage.py test api -k && npm run merge_fixtures",
     "merge_fixtures": "rm -f ./fixtures/all_fixtures.json && source venv/bin/activate && python -W ignore::DeprecationWarning manage.py merge_fixtures ./fixtures/* > fixtures/all_fixtures.json",
-    "testserver": "source venv/bin/activate && python manage.py testserver ./fixtures/all_fixtures.json",
-    "//": "dist_prod - polypacker --preset DJANGO_REACT --entry ./assets/js/main.js --out ./static/js/main.js --env PRODUCTION"
+    "testserver": "source venv/bin/activate && python manage.py testserver ./fixtures/all_fixtures.json"
   },
   "repository": {
     "type": "git",
@@ -34,11 +33,10 @@
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.3",
-    "gulp-uglifycss": "^1.0.6",
+    "gulp-uglifycss": "1.0.6",
     "gulp-util": "^3.0.7",
     "less-plugin-autoprefix": "^1.5.1",
     "path": "^0.12.7",
-    "polypacker": "0.1.11-alpha0-django",
     "react-dropzone": "^3.5.3",
     "react-slick": "^0.12.3",
     "vinyl-buffer": "^1.0.0",
