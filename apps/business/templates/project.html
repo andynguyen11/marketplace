@@ -20,9 +20,6 @@
       </h4>
     </div>
     <div class="col-md-7 project-header-left">
-      {% thumbnail project.project_image "650" as image %}
-      <div class="project-image" style="background-image: url('{{ image.url }}')"></div>
-      {% endthumbnail %}
       <div class="sub-section">{{ project.short_blurb }}</div>
       <ul class="project-meta sub-section">
         <li><img class="icon" src="{% static 'images/icon-location.png' %}" />

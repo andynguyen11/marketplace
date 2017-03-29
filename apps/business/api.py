@@ -8,7 +8,7 @@ from rest_framework.decorators import detail_route, list_route, permission_class
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
-from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile
+from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
 from business.models import Job, Employee
 from business.products import products
 from business.serializers import *
@@ -62,7 +62,7 @@ class JobViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-
+# DEPRECATE
 class NestedJobViewSet(NestedModelViewSet):
     """
     Only Contractors can create Jobs/Bids.
@@ -74,11 +74,19 @@ class NestedJobViewSet(NestedModelViewSet):
     parent_key = 'project'
 
 
+# DEPRECATE
 class DocumentViewSet(NestedModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = (IsAuthenticated, BidPermission, IsJobOwnerPermission)
     parent_key = 'job'
+
+
+# TODO Permissions update
+class NDAUpdate(generics.UpdateAPIView):
+    queryset = NDA.objects.all()
+    serializer_class = NDASerializer
+    permision_classes = (IsAuthenticated, IsSenderReceiver)
 
 
 # this isn't too insecure due to `self.contractee = ...` in `Terms.save`
@@ -133,13 +141,6 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsPrimary)
 
 
-class InfoViewSet(NestedModelViewSet):
-    ""
-    queryset = ProjectInfo.objects.all()
-    serializer_class = InfoSerializer
-    parent_key = 'project'
-
-
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
     queryset = Project.objects.all()
@@ -175,6 +176,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, slug_or_id=None):
         project = self.get_object()
+        #TODO Add to serializer and permissions?
         if project.approved or request.user == project.project_manager or request.user.is_staff:
             job = None
             try:
@@ -198,11 +200,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['GET'])
-    def summary(self, request, pk=None):
+    def summary(self, request, **kwargs):
         " summarizes and organizes project details for a project manager "
-        project = Project.objects.get(project_manager=request.user, id=pk)
-        serializer = ProjectSummarySerializer(project)
-        return Response(serializer.data)
+        project = self.get_object()
+        if project.project_manager == request.user:
+            serializer = ProjectSummarySerializer(project)
+            return Response(serializer.data)
+        else:
+            return Response(status=403)
 
 
 class ProjectSearchViewSet(HaystackViewSet):

@@ -10,7 +10,7 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Document, Project, ProjectInfo, Job, Employee, Document, Terms
+from business.models import Company, Document, Project, Job, Employee, Document, Terms, NDA
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
@@ -18,7 +18,8 @@ from generics.utils import update_instance, field_names, send_mail
 from payment.models import Order
 from postman.helpers import pm_write
 from postman.models import Message
-
+from proposals.models import Proposal, Question
+from proposals.serializers import ProposalSerializer, QuestionSerializer
 
 class CompanySerializer(serializers.ModelSerializer):
     user_id = serializers.CharField(write_only=True)
@@ -44,28 +45,35 @@ class CompanySerializer(serializers.ModelSerializer):
         return instance
 
 
-class InfoSerializer(ParentModelSerializer):
-    attachments = AttachmentSerializer(many=True, required=False)
-    title = serializers.CharField(required=False)
-    type = serializers.CharField(required=False)
-    project = serializers.PrimaryKeyRelatedField(required=False, queryset=Project.objects.all())
-
-    class Meta:
-        model = ProjectInfo
-        fields = field_names(ProjectInfo) + ('attachments',)
-        parent_key = 'info'
-        child_fields = ('attachments',)
-
-
+#TODO Do we need 2 project serializers?  May go away with switch to jobs model.
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
     project_manager_data = serializers.SerializerMethodField()
     bid_stats = serializers.SerializerMethodField()
+    questions = serializers.SerializerMethodField()
+    proposal = serializers.SerializerMethodField()
+    message = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         parent_key = 'project'
+
+    def get_proposal(self, obj):
+        try:
+            if self.context['request'].user.is_authenticated():
+                proposal = Proposal.objects.get(project=obj, submitter=self.context['request'].user)
+                return proposal.id
+            return None
+        except Proposal.DoesNotExist:
+            return None
+
+    def get_message(self, obj):
+        if self.get_proposal(obj):
+            proposal = Proposal.objects.get(project=obj, submitter=self.context['request'].user)
+            return proposal.message.id if proposal.message else None
+        else:
+            return None
 
     def get_project_manager_data(self, obj):
         return {
@@ -83,6 +91,10 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         averages['combined'] = obj.average_combined
         return { 'averages': averages }
 
+    def get_questions(self, obj):
+        questions = Question.objects.filter(project=obj, active=True).order_by('ordering')
+        return QuestionSerializer(questions, many=True).data
+
 
 class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
     class Meta(ProjectSerializer.Meta):
@@ -95,6 +107,7 @@ class JobSerializer(serializers.ModelSerializer):
     cash = serializers.IntegerField(required=False, allow_null=True )
     equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
     thread_id = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
 
     class Meta:
         model = Job
@@ -194,6 +207,15 @@ class JobSerializer(serializers.ModelSerializer):
     def get_thread_id(self, job):
         return Message.objects.filter(job=job)[0].thread_id
 
+    def get_project(self, obj):
+        project = obj.project
+        return {
+            'title': project.title,
+            'id': project.id,
+            'company': project.company.name if project.company else None
+        }
+
+
 # TODO DRY: ManagerBidSerializer and ContractorBidSerializer can inherit from a base BidSummarySerializer
 class ManagerBidSerializer(serializers.ModelSerializer):
     " bid serializer for summarizing details a project manager cares about "
@@ -238,12 +260,14 @@ class ContractorBidSerializer(serializers.ModelSerializer):
         return Message.objects.filter(job=job)[0].thread_id
 
 
+#TODO Do we need 2 project serializers?
 class ProjectSummarySerializer(ParentModelSerializer):
     " serializer for the project tab "
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
     bids = serializers.SerializerMethodField()
     bid_stats = serializers.SerializerMethodField()
+    proposals = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -255,12 +279,16 @@ class ProjectSummarySerializer(ParentModelSerializer):
                 'estimated_equity_shares', 'mix', 'remote',
                 'status', 'featured', 'published', 'approved',
                 'company', 'project_manager',
-                'bids', 'bid_stats', )
+                'bids', 'bid_stats', 'role', 'proposals')
         parent_key = 'project'
 
     def get_bids(self, obj):
         jobs = Job.objects.filter(project=obj)
         return ManagerBidSerializer(jobs, many=True).data
+
+    def get_proposals(self, obj):
+        proposals = Proposal.objects.filter(project=obj).exclude(status__exact='declined')
+        return ProposalSerializer(proposals, many=True).data
 
     def get_bid_stats(self, obj):
         averages = {}
@@ -375,3 +403,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return work_history
+
+
+class NDASerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = NDA

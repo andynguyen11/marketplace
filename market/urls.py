@@ -49,8 +49,10 @@ urlpatterns = [
     url(r'^api/', include('api.urls', namespace='api')),
     url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
     url(r'^dashboard/connections/', TemplateView.as_view(template_name='spa.html'), name='connections'),
-    url(r'^profile/projects/$', accounts_views.view_bids, name='view-projects'),
-    url(r'^dashboard/bids/', TemplateView.as_view(template_name='spa.html'), name='view-bids'),
+    url(r'^dashboard/project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-project'),
+    url(r'^dashboard/projects/$', TemplateView.as_view(template_name='spa.html'), name='view-projects'),
+    url(r'^dashboard/proposal/(?P<proposal_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-proposal'),
+    url(r'^dashboard/proposals/', TemplateView.as_view(template_name='spa.html'), name='view-bids'),
     url(r'^dashboard/skills/', TemplateView.as_view(template_name='spa.html'), name='view-skills'),
     url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
     url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
@@ -82,6 +84,7 @@ urlpatterns = [
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
     url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
+    url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal'),
     url(r'^project/delete/(?P<project_id>[0-9]+)/$', business_views.delete_project, name='delete-project'),
     url(r'^projects/$', business_views.discover_projects, name='project-gallery'),
     url(r'^projects/(?P<type>[\w-]+)/$', business_views.discover_projects, name='project-gallery'),
@@ -96,6 +99,12 @@ if settings.DEBUG and settings.MEDIA_URL :
 
 if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
 
 handler404 = error404
 handler500 = error500

@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 import tagulous.models
 from django.db import models
 from django.conf import settings
-from django.dispatch import Signal
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
@@ -14,6 +13,7 @@ from django.contrib.contenttypes.models import ContentType
 from postman.models import Message
 from generics.models import Attachment
 from business.enums import *
+from accounts.enums import ROLE_TYPES
 
 
 class Category(tagulous.models.TagModel):
@@ -93,6 +93,9 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
     class Meta:
         verbose_name_plural = 'companies'
 
@@ -115,7 +118,13 @@ class Job(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
+    class Meta:
+        unique_together = ("project", "contractor")
+
     def __str__(self):
+        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
+
+    def __unicode__(self):
         return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
 
     @property
@@ -142,22 +151,12 @@ class Job(models.Model):
         super(Job, self).save(*args, **kwargs)
 
 
-#TODO Deprecated
-class ProjectInfo(models.Model):
-    type = models.CharField(max_length=100, choices=INFO_TYPES)
-    project = models.ForeignKey('business.Project')
-    title = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    attachments = GenericRelation(Attachment, related_query_name='projectinfo')
-
-    def tagged(self, tag):
-        return Attachment.objects.get(projectinfo=self, tag=tag)
-
-    def safe_tagged(self, tag):
-        try:
-            return self.tagged(tag)
-        except Attachment.DoesNotExist, e:
-            return None
+class NDA(models.Model):
+    date_created = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey('accounts.Profile', related_name='sender')
+    receiver = models.ForeignKey('accounts.Profile', related_name='reciever')
+    status = models.CharField(default='new', max_length=30, null=True)
+    proposal = models.ForeignKey('proposals.Proposal', blank=True, null=True)
 
 
 class Document(models.Model):
@@ -249,13 +248,16 @@ class Project(models.Model):
     milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
-    project_image = models.ImageField(blank=True, null=True, upload_to=path_and_rename)
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
+    role = models.CharField(max_length=100, choices=ROLE_TYPES, blank=True, null=True)
 
     objects = ProjectManager()
 
     def __str__(self):
+        return self.title
+
+    def __unicode__(self):
         return self.title
 
     class Meta:
@@ -276,13 +278,6 @@ class Project(models.Model):
     @property
     def description(self):
         return self.details.description if self.details else None
-
-    @property
-    def details(self):
-        try:
-            return ProjectInfo.objects.get(project=self, type='primary')
-        except ProjectInfo.DoesNotExist:
-            return ProjectInfo(project=self, type='primary')
 
     @property
     def average_equity(self):
@@ -321,10 +316,6 @@ class Project(models.Model):
     def active_jobs(self):
         jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
         return jobs
-
-    def info(self, type=None):
-        rest = {'type': type} if type else {}
-        return ProjectInfo.objects.filter(project=self, **rest).exclude(type='primary')
 
     def documents(self):
         documents = Document.objects.filter(project=self)
@@ -370,4 +361,6 @@ class Terms(models.Model):
             #self.milestones = self.job.project.milestones
             #self.deliverables = self.job.project.specs
         super(Terms, self).save(*args, **kwargs)
+
+
 

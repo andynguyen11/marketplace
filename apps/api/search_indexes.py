@@ -10,7 +10,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
     class Meta:
         model = Project
-        fields = field_names(Project, exclude=("video_url", "private_info", "project_image", "deleted", "approved", "published")) + ("text", "skills")
+        fields = field_names(Project, exclude=("video_url", "private_info", "deleted", "approved", "published")) + ("text", "skills")
 
     @staticmethod
     def prepare_skills(obj):

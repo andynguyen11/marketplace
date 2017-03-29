@@ -23,25 +23,64 @@
 	
 
 	
-	<link href="{% static 'spa/styles.dae8111b74f53d760bf3.css' %}" rel="stylesheet">
+	<link href="{% static 'spa/styles.ac8c641f280d56a1eb92.css' %}" rel="stylesheet">
 	
 
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 
 	<!-- Zendesk -->
 	<script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(e){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","joinloom.zendesk.com");/*]]>*/</script>
+
+	<style type="text/css">
+		@-webkit-keyframes sk-rotate {
+			100% {
+				-webkit-transform: rotate(360deg);
+			}
+		}
+		@keyframes sk-rotate {
+			100% {
+				transform: rotate(360deg);
+				-webkit-transform: rotate(360deg);
+			}
+		}
+
+		.preloader {
+			position: relative;
+			width: 25px;
+			height: 25px;
+			margin: 100px auto;
+		}
+
+		.preloader::before {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			content: '';
+			border: 2px solid #FF7B5C;
+			border-radius: 50%;
+			border-right-color: transparent;
+			-webkit-animation: sk-rotate 2.0s infinite linear;
+			animation: sk-rotate 2.0s infinite linear;
+		}
+
+		.preloader.loader--noPadding {
+			margin: 0 auto;
+		}
+	</style>
 </head>
 <body>
 
 <!-- HAVE FUN: Your app lives here -->
 <span id="app">
-	<div class="loader"></div>
+	<div class="preloader"></div>
 </span>
 
 
-<script src="{% static 'spa/vendor.5340ab8d4ceb9db597eb.js' %}"></script>
+<script src="{% static 'spa/vendor.ab2cd33ba12fbe37dcfb.js' %}"></script>
 
-<script src="{% static 'spa/app.dae8111b74f53d760bf3.js' %}"></script>
+<script src="{% static 'spa/app.ac8c641f280d56a1eb92.js' %}"></script>
 
 <script src="https://use.fontawesome.com/3cdb773842.js"></script>
 </body>

@@ -25,7 +25,7 @@ from generics.tasks import new_message_notification
 from generics.validators import file_validator
 from payment.models import ProductOrder, Promo
 from payment.serializers import ProductOrderSerializer, ensure_order_is_payable, default_error_details
-from postman.models import Message, AttachmentInteraction, STATUS_PENDING, STATUS_ACCEPTED
+from postman.models import Message, AttachmentInteraction, Interaction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction, free_messages
 
@@ -123,7 +123,8 @@ class MessageAPI(APIView):
         }
 
     def passed_limit(self, thread, user):
-        return (thread.job.status == 'pending') and not free_messages(thread, user)['remaining']
+        legacy = thread.nda
+        return (thread.job.status == 'pending') and not free_messages(thread, user, legacy )['remaining']
 
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])

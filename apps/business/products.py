@@ -264,7 +264,7 @@ class ConnectJob(Product):
         job.owner.connect(job.contractor)
         job.status = 'connected'
         job.save()
-        order.result = "%s, status: '%s'" % (job.__str__(), job.status)
+        order.result = "%s, status: '%s'" % (job.__str__()[:225], job.status)
         order.save()
         thread = Message.objects.get(job=job)
         if order.requester != job.contractor:

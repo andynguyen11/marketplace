@@ -30,7 +30,7 @@ const CompanyForm = React.createClass({
                       Welcome to Loom!
                     </h2>
                     <h3 className="brand text-center">
-                      Let's quickly get your account set up.
+                      Do you want to post a project for a company or an individual?
                     </h3>
                   </div>
                   ) :
@@ -50,7 +50,7 @@ const CompanyForm = React.createClass({
                     </div>
                     <div className={ isCompany ? "text-center picker individual-ent"  : "text-center picker individual-ent active"} onClick={setCompany} data-account='individual'>
                         <div className="picker-image"></div>
-                        <h4><span className="text-brand">Individual</span></h4>
+                        <h4><span className="text-brand">Individual Entrepreneur</span></h4>
                         <p>Individual Entrepreneurs can get work made for cash only.</p>
                     </div>
                 </div>
