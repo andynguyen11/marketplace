@@ -29,6 +29,7 @@ class Proposal(models.Model):
 
     class Meta:
         unique_together = ('submitter', 'project')
+        ordering = ('-create_date', )
 
 
 class Question(models.Model):
