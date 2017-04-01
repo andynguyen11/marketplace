@@ -11,7 +11,7 @@ from generics.utils import send_mail
 def proposal_declined_email(proposal_id):
     proposal = Proposal.objects.get(id=proposal_id)
     pm_context = {
-        'entrepreneur_first_name': proposal.project.project_manager.first_name,
+        'fname': proposal.project.project_manager.first_name,
         'project': proposal.project.title
     }
     send_mail('proposal-declined', [proposal.submitter], pm_context)
