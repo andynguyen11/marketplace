@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os, sys, datetime
 import security_settings, configure_haystack
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
@@ -153,21 +154,6 @@ WSGI_APPLICATION = 'market.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 database_backend = 'django.db.backends.postgresql_psycopg2'
 
-#if os.environ.get('LOGGING', 't').lower()[0] not in ('f', '0'):
-#    INSTALLED_APPS += ('django_logging',)
-#    MIDDLEWARE_CLASSES += ('django_logging.middleware.DjangoLoggingMiddleware',)
-#    DJANGO_LOGGING = {
-#        "CONSOLE_LOG": False,
-#        "SQL_LOG": False,
-#        "DISABLE_EXISTING_LOGGERS": False,
-#        "ENCODING": "utf-8",
-#        "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
-#        "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
-#            '/api/thread/', '/api/message/', '/api/messages/' ]
-#    }
-#    if ENVIRONMENT != 'local':
-#        DJANGO_LOGGING["LOG_PATH"] = os.environ.get('JSON_LOG_PATH', '/var/log/app-logs')
-
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
@@ -207,9 +193,20 @@ if 'RDS_DB_NAME' in os.environ:
                     'level': 'DEBUG',
                     'class': 'logging.StreamHandler',
                     'formatter': 'verbose'
-                }
+                },
+                'SysLog': {
+                    'level': 'DEBUG',
+                    'class': 'logging.handlers.SysLogHandler',
+                    'formatter': 'verbose',
+                    'address': ('logs5.papertrailapp.com', 40740)
+                },
             },
             'loggers': {
+                'django': {
+                    'handlers': ['SysLog', 'console'],
+                    'level': 'INFO',
+                    'propagate': True,
+                },
                 'django.db.backends': {
                     'level': 'ERROR',
                     'handlers': ['console'],
@@ -227,7 +224,6 @@ if 'RDS_DB_NAME' in os.environ:
                 },
             },
         }
-
 
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
@@ -353,7 +349,8 @@ SOCIAL_AUTH_PIPELINE = (
 ES_ENDPOINTS = {
     'local': 'http://127.0.0.1:9200/',
     'dev': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
-    'prod': 'http://127.0.0.1:9200/' }
+    'prod': 'http://127.0.0.1:9200/'
+}
 
 HAYSTACK_CONNECTIONS = {
     'default': {

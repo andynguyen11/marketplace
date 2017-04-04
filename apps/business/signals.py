@@ -9,7 +9,7 @@ from accounts.models import Profile
 from business.models import Document, Terms, Project, NDA, Job
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
     terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history, verify_skills,\
-    post_a_project, complete_project
+    post_a_project, complete_project, project_approved_email
 from postman.models import Message
 
 
@@ -145,3 +145,14 @@ def new_account(sender, instance, **kwargs):
         else:
             today = datetime.utcnow()
             post_a_project.apply_async((instance.id, ), eta=today + timedelta(days=5))
+
+
+@receiver(pre_save, sender=Project)
+def project_approved(sender, instance, **kwargs):
+    if not hasattr(instance, 'id') or instance.id is None:
+        return
+    old_project = Project.objects.get(pk=instance.id)
+    if not old_project.approved and instance.approved:
+        project_approved_email.delay(
+            instance.id
+        )

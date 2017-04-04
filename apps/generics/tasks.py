@@ -284,3 +284,11 @@ def connection_made(this_id, that_id, thread_id, order_context=None):
         context.update(order_context)
         template = 'connection-made-entrepreneur'
     send_mail(template, [this_user], context)
+
+@shared_task
+def project_approved_email(project_id):
+    project = Project.objects.get(id=project_id)
+    send_mail('project-approved', [project.project_manager], {
+        'fname': project.project_manager.first_name,
+        'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+    })
