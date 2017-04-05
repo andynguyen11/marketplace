@@ -5,16 +5,24 @@ from datetime import datetime
 from generics.utils import field_names
 
 class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
-
     skills = indexes.MultiValueField()
+    first_name = indexes.CharField(model_attr='project_manager__first_name')
+    photo = indexes.CharField(model_attr='project_manager__get_photo')
+    city = indexes.CharField()
+    state = indexes.CharField()
 
     class Meta:
         model = Project
-        fields = field_names(Project, exclude=("video_url", "private_info", "deleted", "approved", "published")) + ("text", "skills")
+        fields = ("title", "slug", "skills", "description", "role", "city",
+                  "state", "remote", "first_name", "photo",
+                  "estimated_cash", "estimated_equity_percentage", "mix" )
 
-    @staticmethod
-    def prepare_skills(obj):
-       return [s.id for s in obj.skills.all()]
+    def prepare(self, obj):
+        self.prepared_data = super(ProjectIndex, self).prepare(obj)
+        self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
+        self.prepared_data['city'] = obj.company.city if obj.company else obj.project_manager.city
+        self.prepared_data['state'] = obj.company.state if obj.company else obj.project_manager.state
+        return self.prepared_data
 
     def index_queryset(self, using=None):
        return Project.objects.filter(
