@@ -247,6 +247,7 @@ REST_FRAMEWORK = {
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'PAGE_SIZE': 12
 }
 
 JWT_AUTH = {
@@ -357,6 +358,8 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'generics.search_backend.FuzzyElasticSearchEngine',
         'URL': ES_ENDPOINTS[ENVIRONMENT],
         'INDEX_NAME': 'haystack',
+        'BATCH_SIZE': 50,
+        'HAYSTACK_SEARCH_RESULTS_PER_PAGE': 12,
         'KWARGS': configure_haystack.kwargs(
             ENVIRONMENT , AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
     }

@@ -5,6 +5,7 @@ from drf_haystack.viewsets import HaystackViewSet
 from rest_framework import generics, viewsets, authentication, permissions
 from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
@@ -240,6 +241,7 @@ class ProjectSearchViewSet(HaystackViewSet):
     """
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
+    pagination_class = PageNumberPagination
 
 
 class EmployeeListCreate(generics.ListCreateAPIView):
