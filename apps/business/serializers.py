@@ -106,7 +106,7 @@ class ProjectSearchSerializer(HaystackSerializer):
         fields = [
             "title", "slug", "skills", "description", "role", "city",
             "state", "remote", "first_name", "photo",
-            "estimated_cash", "estimated_equity_percentage", "mix"
+            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb"
         ]
 
 
