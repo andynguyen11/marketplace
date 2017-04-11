@@ -4,19 +4,20 @@ import pytz
 import simplejson
 
 from celery import shared_task
+from celery.schedules import crontab
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
+from market.celery import app as celery_app
 from accounts.models import Profile
 from business.models import Job, Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
 from postman.models import Message
-
 
 utc=pytz.UTC
 
@@ -292,3 +293,7 @@ def project_approved_email(project_id):
         'fname': project.project_manager.first_name,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
     })
+
+@celery_app.task
+def test():
+    print('TESTING')

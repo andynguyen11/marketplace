@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'django_celery_beat',
     'debug_toolbar',
     'sorl.thumbnail',
     'guardian',
@@ -358,7 +359,7 @@ HAYSTACK_CONNECTIONS = {
         'ENGINE': 'generics.search_backend.FuzzyElasticSearchEngine',
         'URL': ES_ENDPOINTS[ENVIRONMENT],
         'INDEX_NAME': 'haystack',
-        'BATCH_SIZE': 50,
+        'BATCH_SIZE': 25,
         'HAYSTACK_SEARCH_RESULTS_PER_PAGE': 12,
         'KWARGS': configure_haystack.kwargs(
             ENVIRONMENT , AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
