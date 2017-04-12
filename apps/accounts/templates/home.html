@@ -94,7 +94,7 @@
 <div class="plates plates--home page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header brand-bold">Featured Projects</h3>
-    <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
+    <a href="{% url 'project-gallery' %}" class="btn btn--clear btn-lg">View all</a>
   </div>
   <div class="plates-inner projectCards">
     {% for project in featured %}
@@ -108,7 +108,7 @@
 <div class="plates plates--home page-content--medium">
   <div class="plates-headcap">
     <h3 class="plates-header brand-bold">Recent Projects</h3>
-    <a href="{% url 'project-gallery' type='all'%}" class="btn btn--clear btn-lg">View all</a>
+    <a href="{% url 'project-gallery' %}" class="btn btn--clear btn-lg">View all</a>
   </div>
   <div class="plates-inner projectCards">
     {% for project in new %}

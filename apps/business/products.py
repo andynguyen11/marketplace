@@ -8,10 +8,10 @@ from django.db import models
 from notifications.models import Notification
 from notifications.signals import notify
 
+from accounts.tasks import pm_contact_card_email, connection_request, connection_made
 from business.models import Terms, Job
 from docusign.models import Document as DocusignDocument
 from generics.utils import percentage
-from generics.tasks import pm_contact_card_email, connection_request, connection_made
 from postman.forms import build_payload
 from postman.models import Message
 
