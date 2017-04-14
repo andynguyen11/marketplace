@@ -67,6 +67,7 @@ urlpatterns = [
     url(r'^privacy/$', TemplateView.as_view(template_name='privacy.html'), name='privacy'),
     url(r'^nda/$', TemplateView.as_view(template_name='nda.html'), name='nda'),
     url(r'^terms-of-service/$', TemplateView.as_view(template_name='terms.html'), name='terms'),
+    url(r'^diversity/$', TemplateView.as_view(template_name='diversity.html'), name='diversity'),
     url(r'^dmca/$', TemplateView.as_view(template_name='dmca.html'), name='dmca'),
     url(r'^prelaunch/$', TemplateView.as_view(template_name='prelaunch_router.html'), name='prelaunch-router'),
     url(r'^signup/type/$', email_confirmation_required(TemplateView.as_view(template_name='onboarding/confirm.html')), name='signup-type'),

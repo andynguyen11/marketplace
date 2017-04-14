@@ -211,6 +211,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(status=403)
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12
+
+
 class ProjectSearchViewSet(HaystackViewSet):
     """
     supports [drf-haystack queries](https://drf-haystack.readthedocs.io/en/latest/01_intro.html#query-time):
@@ -241,7 +245,7 @@ class ProjectSearchViewSet(HaystackViewSet):
     """
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = StandardResultsSetPagination
 
 
 class EmployeeListCreate(generics.ListCreateAPIView):
