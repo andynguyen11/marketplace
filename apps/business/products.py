@@ -197,7 +197,8 @@ class ConnectJob(Product):
     def change_status(self, status, order, user):
         if status == order.request_status:
             return
-        if(status in self.valid_statuses(order, user)):
+        # TODO This stuff is pretty brittle, revisit when refactoring for pay to respond to proposal
+        if(status in self.valid_statuses(order, user)) or order._promo.percent_off == 100:
             order.set_status(status)
             order.save()
             return order

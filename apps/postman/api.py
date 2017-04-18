@@ -246,10 +246,17 @@ class ConnectThreadAPI(APIView):
 
     def update_order(self, request, thread):
         created, order = self.get_or_create_order(request, thread)
-        promo = request.data.pop('promoCode', None)
-        if created and promo:
-            order._promo = Promo.objects.get(code=promo)
-            order.save()
+        promo_code = request.data.pop('promoCode', None)
+        # TODO This stuff is pretty brittle, revisit when refactoring for pay to respond to proposal
+        if promo_code:
+            promo = Promo.objects.get(code=promo_code)
+            if created:
+                order._promo = promo
+                order.save()
+            if promo.percent_off == 100:
+                if order.requester != request.user:
+                    order.product.change_status('paid', order, request.user)
+                return
         self.validate_order(request, order)
         if order.requester != request.user:
             order.product.change_status('accepted', order, request.user)

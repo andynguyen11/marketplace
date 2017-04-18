@@ -2,7 +2,7 @@ import json
 from rest_framework import serializers
 
 from business.serializers import JobSerializer
-from payment.models import Order, ProductOrder
+from payment.models import Order, ProductOrder, Promo
 from accounts.models import Profile
 from payment.helpers import stripe_helpers 
 from stripe.error import StripeError
@@ -54,10 +54,15 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         stripe_token = data.pop('stripe_token', None)
-        promo = data.pop('promo', None)
-        order = ProductOrder.objects.create(**data)
-        order.promo = promo
+        promo_code = data.pop('promo', None)
         payable = False
+        order = ProductOrder.objects.create(**data)
+        # TODO This stuff is pretty brittle, revisit when refactoring for pay to respond to proposal
+        if promo_code:
+            promo = Promo.objects.get(code=promo_code)
+            order.promo = promo_code
+            if promo.percent_off == 100:
+                payable = True
         if(stripe_token):
             payable, order.details = ensure_order_is_payable(order, stripe_token)
 
