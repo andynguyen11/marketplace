@@ -86,6 +86,7 @@ urlpatterns = [
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
     url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal'),
+    url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal-confirmation'),
     url(r'^project/delete/(?P<project_id>[0-9]+)/$', business_views.delete_project, name='delete-project'),
     url(r'^projects/$',  TemplateView.as_view(template_name='spa.html'), name='project-gallery'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
