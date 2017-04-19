@@ -101,6 +101,7 @@ urlpatterns = [
    #url(r'^order/(?P<pk>[0-9]+)/$', view=OrderDetail.as_view(), name='order-detail'),
     url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),
+    url(r'^search/skills/', view=skills_autocomplete, name='autocomplete'),
     url(r'^skilltest/webhook$', view=ExpertRatingsXMLWebhook.as_view(), name='skilltest-webhook'),
     url(r'^terms/$', view=TermsListCreate.as_view(), name='term'),
     url(r'^terms/agree/$', view=AgreeTerms.as_view(), name='term-agree'),

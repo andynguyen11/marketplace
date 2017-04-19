@@ -31,7 +31,7 @@ from django.shortcuts import redirect, get_object_or_404
 check_token_m = method_decorator(check_token)
 
 class SkillViewSet(ModelViewSet):
-    queryset = Skills.objects.all()
+    queryset = Skills.objects.filter(protected=True)
     serializer_class = SkillsSerializer
 
     permission_classes = ( ReadOnlyOrIsAdminUser, )

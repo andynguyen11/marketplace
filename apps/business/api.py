@@ -1,7 +1,9 @@
-import simplejson, re
+import re
+import simplejson as json
 
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpResponseForbidden, Http404, HttpResponse
 from drf_haystack.viewsets import HaystackViewSet
+from haystack.query import SearchQuerySet
 from rest_framework import generics, viewsets, authentication, permissions
 from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
@@ -246,6 +248,20 @@ class ProjectSearchViewSet(HaystackViewSet):
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
     pagination_class = StandardResultsSetPagination
+
+
+def skills_autocomplete(request):
+    try:
+        search_results = SearchQuerySet().autocomplete(skill_auto=request.GET.get('q', ''))[:5]
+        suggestions = [result.name for result in search_results]
+    except TypeError:
+        suggestions = []
+    # Make sure you return a JSON object, not a bare list.
+    # Otherwise, you could be vulnerable to an XSS attack.
+    the_data = json.dumps({
+        'results': suggestions
+    })
+    return HttpResponse(the_data, content_type='application/json')
 
 
 class EmployeeListCreate(generics.ListCreateAPIView):

@@ -1,8 +1,24 @@
-# haystack automatically updates indexes in search_index.py files
-from business.models import Project
-from haystack import indexes
 from datetime import datetime
+
+from haystack import indexes
+
+from accounts.models import Skills
+from business.models import Project
 from generics.utils import field_names
+
+
+class SkillsIndex(indexes.SearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
+    name = indexes.CharField(model_attr='name')
+    skill_auto = indexes.EdgeNgramField(model_attr='name')
+
+    def get_model(self):
+        return Skills
+
+    def index_queryset(self, using=None):
+        """Used when the entire index for model is updated."""
+        return Skills.objects.filter(protected=True)
+
 
 class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
     skills = indexes.MultiValueField()
