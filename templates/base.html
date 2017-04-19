@@ -5,6 +5,7 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load postman_tags %}
+{% load active_tag %}
 
 {% postman_unread as unread_count %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -54,7 +55,7 @@
       <div class="header-nav">
 
         <ul class="header-links hide-mobile">
-          <li><a href="{% url 'how' %}">How it Works</a></li>
+          <li><a class="{% add_active request 'how' %}" href="{% url 'how' %}">How it Works</a></li>
           <li><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
           <li><a href="{% url 'create-project' %}">Post a Project</a></li>
         </ul>
@@ -90,7 +91,7 @@
         {% else %}
 
       <ul class="header-links">
-        <li class="hide-mobile"><a href="{% url 'how' %}">How it Works</a></li>
+        <li class="hide-mobile {% add_active request 'how' %}"><a href="{% url 'how' %}">How it Works</a></li>
         <li class="hide-mobile"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
         <li class="hide-mobile"><a href="/signup/prelaunch/">Post a Project</a></li>
         <li class="hide-medium"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
