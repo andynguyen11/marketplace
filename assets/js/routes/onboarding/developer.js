@@ -64,24 +64,52 @@ const DeveloperOnboard = React.createClass({
     return {
       role: {
         name: 'role',
-        label: 'I am a',
+        label: 'Role',
         value: profile.role || '',
         options: [
           {
-            label: 'full-stack',
+            label: 'Full-stack Developer',
             value: 'full-stack'
           },
           {
-            label: 'mobile',
-            value: 'mobile'
-          },
-          {
-            label: 'front-end',
+            label: 'Front-end Developer',
             value: 'front-end'
           },
           {
-            label: 'back-end',
+            label: 'Back-end Developer',
             value: 'back-end'
+          },
+          {
+            label: 'Mobile Developer',
+            value: 'mobile'
+          },
+          {
+            label: 'iOS Developer',
+            value: 'ios'
+          },
+          {
+            label: 'Android Developer',
+            value: 'android'
+          },
+          {
+            label: 'Software Developer',
+            value: 'software'
+          },
+          {
+            label: 'Game Developer',
+            value: 'game'
+          },
+          {
+            label: 'DevOps Engineer',
+            value: 'devops'
+          },
+          {
+            label: 'Database Engineer',
+            value: 'database'
+          },
+          {
+            label: 'QA Engineer',
+            value: 'qa'
           }
         ],
         validator: FormHelpers.checks.isRequired,
@@ -415,102 +443,95 @@ const DeveloperOnboard = React.createClass({
     return (
       <div>
         { isLoading && <Loader /> }
-        <div id="basics" className="text-center form-fancy bootstrap-material col-md-8 col-md-offset-2">
-          <div className="form-group">
-            {/*TODO: replace this with the BigSelect component*/}
-            {/*<BigSelect onSelect={this.handleChange} options={formElements.role.options} selectedOptionIndex={0} name="role" id="role" prefix="I am a" suffix={<span>developer <span className="text-yellow">looking for incredible projects.</span></span>}/>*/}
-            <div className="bigSelect">
-              <div className="bigSelect-prefix">I am a</div>
-              <div className="bigSelect-options">
-                <div className="bigSelect-selector">{profile.role}</div>
-                <i className="fa fa-angle-down"></i>
-                <select name="role" id="role" value={profile.role} onChange={this.handleChange}>
-                  {roleOptions}
-                </select>
-              </div>
-              <div className="bigSelect-suffix">developer</div>
-              {/*<div className="bigSelect-suffix">developer <span className="text-yellow">looking for incredible projects.</span></div>*/}
+        <div id="basics">
+
+          <AccountForm
+              photo_url={this.state.photo_url}
+              profile={profile}
+              handleImageChange={this.handleImageChange}
+              formElements={formElements}
+              handleChange={this.handleChange}
+              linkedIn={true}
+          />
+
+          <div className='form-group col-md-6 col-md-offset-3'>
+            <div className={ 'form-group ' + formElements.role.errorClass }>
+              <label className="control-label" htmlFor={formElements.role.name}>{formElements.role.label}</label>
+              <select className={ 'form-control ' + formElements.role.errorClass } name="role" id="role" value={profile.role} onChange={this.handleChange}>
+                {roleOptions}
+              </select>
             </div>
           </div>
+
+          {skillsComponent}
+
+          <div>
+            <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
+
+            <div className="hours-selector">
+            <div className="col-sm-offset-2 col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                10hrs<br />
+                Week
+              </h3>
+            </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                20hrs<br />
+                Week
+              </h3>
+            </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                30hrs<br />
+                Week
+              </h3>
+            </button>
+            </div>
+
+            <div className="col-sm-2 text-center">
+            <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
+              <h3>
+                40hrs<br />
+                Week
+              </h3>
+            </button>
+            </div>
+            </div>
+            <div className="clearfix"></div>
+          </div>
+          <div className={ 'form-group form-inline text-center col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
+            <br/>
+            <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
+            <input
+              className={ 'form-control ' + formElements.capacity.errorClass }
+              type='text'
+              name={formElements.capacity.name}
+              id={formElements.capacity.name}
+              placeholder={formElements.capacity.placeholder}
+              value={formElements.capacity.value}
+              onChange={this.handleChange}
+            />
+            <div className="clearfix"></div>
+          </div>
+
+          <div className='text-center form-group col-md-8 col-md-offset-2'>
+            {error}
+
+            <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}  >
+              <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
+              Sign Up
+            </a>
+          </div>
+
         </div>
-
-        <AccountForm
-            photo_url={this.state.photo_url}
-            profile={profile}
-            handleImageChange={this.handleImageChange}
-            formElements={formElements}
-            handleChange={this.handleChange}
-            linkedIn={true}
-        />
-
-        {skillsComponent}
-
-        <div>
-        <h4 className="text-center col-md-12 sub-section">Select an average weekly availability (hours)</h4>
-
-          <div className="hours-selector">
-          <div className="col-sm-offset-2 col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='10' className={ formElements.capacity.value == '10' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              10hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='20' className={ formElements.capacity.value == '20' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              20hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='30' className={ formElements.capacity.value == '30' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              30hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-
-          <div className="col-sm-2 text-center">
-          <button onClick={this.setHours} data-hours='40' className={ formElements.capacity.value == '40' ? 'btn btn-hours active' : 'btn btn-hours' }>
-            <h3>
-              40hrs<br />
-              Week
-            </h3>
-          </button>
-          </div>
-          </div>
-          <div className="clearfix"></div>
-        </div>
-        <div className={ 'form-group form-inline text-center col-md-8 col-md-offset-2 ' + formElements.capacity.errorClass } >
-          <br/>
-          <label className="control-label" htmlFor={formElements.capacity.name}>{formElements.capacity.label}</label>
-          <input
-            className={ 'form-control ' + formElements.capacity.errorClass }
-            type='text'
-            name={formElements.capacity.name}
-            id={formElements.capacity.name}
-            placeholder={formElements.capacity.placeholder}
-            value={formElements.capacity.value}
-            onChange={this.handleChange}
-          />
-          <div className="clearfix"></div>
-        </div>
-
-        <div className='text-center form-group col-md-8 col-md-offset-2'>
-          {error}
-
-          <a type='submit' disabled={ this.state.isLoading ? 'true': ''} className='btn btn-brand btn-brand--attn' onClick={this._saveAccount}  >
-            <i className={ this.state.isLoading ? "fa fa-circle-o-notch fa-spin fa-fw" : "hidden" }></i>
-            Sign Up
-          </a>
-        </div>
-
       </div>
     );
   }
