@@ -350,7 +350,7 @@ SOCIAL_AUTH_PIPELINE = (
 ES_ENDPOINTS = {
     'local': 'http://127.0.0.1:9200/',
     'dev': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
-    'prod': 'http://127.0.0.1:9200/'
+    'prod': 'https://search-loom-bhz6d5p4ezqukmsdfielynd7wi.us-west-2.es.amazonaws.com/'
 }
 
 HAYSTACK_CONNECTIONS = {
