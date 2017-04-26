@@ -5,6 +5,7 @@ from django.http import HttpResponseForbidden, Http404, HttpResponse
 from drf_haystack.viewsets import HaystackViewSet
 from haystack.query import SearchQuerySet
 from rest_framework import generics, viewsets, authentication, permissions
+from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
 from rest_framework.pagination import PageNumberPagination
@@ -248,6 +249,9 @@ class ProjectSearchViewSet(HaystackViewSet):
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
     pagination_class = StandardResultsSetPagination
+    filter_backends = (OrderingFilter,)
+    ordering_fields = ('date_created')
+    ordering = ('-date_created')
 
 
 def skills_autocomplete(request):
