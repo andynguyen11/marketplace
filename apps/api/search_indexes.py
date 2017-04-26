@@ -46,4 +46,4 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
            approved=True,
            published=True,
            #end_date__gt=datetime.now()
-       )
+       ).order_by('-date_created')
