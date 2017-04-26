@@ -30,7 +30,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
         model = Project
         fields = ("title", "slug", "skills", "description", "role", "city",
-                  "state", "remote", "first_name", "photo",
+                  "state", "remote", "first_name", "photo", "date_created",
                   "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb" )
 
     def prepare(self, obj):
