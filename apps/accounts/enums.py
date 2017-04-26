@@ -12,6 +12,5 @@ ROLE_TYPES = (
     ('devops', 'DevOps Engineer'),
     ('database', 'Database Engineer'),
     ('qa', 'QA Engineer'),
-
 )
 

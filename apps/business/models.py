@@ -118,6 +118,9 @@ class Job(models.Model):
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
 
+    class Meta:
+        unique_together = ("project", "contractor")
+
     def __str__(self):
         return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
 
