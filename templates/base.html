@@ -5,6 +5,7 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load postman_tags %}
+{% load active_tag %}
 
 {% postman_unread as unread_count %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -54,8 +55,8 @@
       <div class="header-nav">
 
         <ul class="header-links hide-mobile">
-          <li><a href="{% url 'how' %}">How it Works</a></li>
-          <li><a href="{% url 'project-gallery' type='all'%}">Discover Projects</a></li>
+          <li><a class="{% add_active request 'how' %}" href="{% url 'how' %}">How it Works</a></li>
+          <li><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
           <li><a href="{% url 'create-project' %}">Post a Project</a></li>
         </ul>
 
@@ -80,7 +81,7 @@
             <li><a href="{% url 'settings' %}">Settings</a></li>
             <li><a href="{% url 'connections' %}">Connections</a></li>
             <li class="hide-desktop"><a href="{% url 'how' %}">How it Works</a></li>
-            <li class="hide-desktop"><a href="{% url 'project-gallery' type='all'%}">Discover Projects</a></li>
+            <li class="hide-desktop"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
             <li class="hide-desktop"><a href="/signup/prelaunch/">Post a Project</a></li>
             <li><a href="{% url 'logout' %}">Log Out</a></li>
           </ul>
@@ -90,8 +91,8 @@
         {% else %}
 
       <ul class="header-links">
-        <li class="hide-mobile"><a href="{% url 'how' %}">How it Works</a></li>
-        <li class="hide-mobile"><a href="{% url 'project-gallery' type='all'%}">Discover Projects</a></li>
+        <li class="hide-mobile {% add_active request 'how' %}"><a href="{% url 'how' %}">How it Works</a></li>
+        <li class="hide-mobile"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
         <li class="hide-mobile"><a href="/signup/prelaunch/">Post a Project</a></li>
         <li class="hide-medium"><a href="{% url 'signup' %}">Become a Freelancer</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
@@ -138,6 +139,8 @@
             <li><a target="_blank" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
             <li><a href="/privacy/">Privacy Policy</a></li>
             <li><a href="/terms-of-service/">Terms of Service</a></li>
+            <li><a href="/dmca/">DMCA Policy</a></li>
+            <li><a href="/diversity/">Diversity Policy</a></li>
             <li><a href="/contact/">Contact</a></li>
           </ul>
         </div>

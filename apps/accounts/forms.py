@@ -47,6 +47,16 @@ class LoginForm(forms.ModelForm):
 
 class SignupForm(LoginForm):
 
+    def __init__(self, *args, **kwargs):
+        super(LoginForm, self).__init__(*args, **kwargs)
+        self.helper = FormHelper(self)
+        self.helper.form_show_labels = False
+        self.helper.form_tag = False
+        self.helper.layout = Layout(
+            Field('email', placeholder='Email address', required=True),
+            Field('password', placeholder='Create password', required=True)
+        )
+
     def clean_email(self):
         email = self.cleaned_data['email']
         email_query = Profile.objects.filter(email=email)

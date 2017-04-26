@@ -8,10 +8,10 @@ from django.db import models
 from notifications.models import Notification
 from notifications.signals import notify
 
+from accounts.tasks import pm_contact_card_email, connection_request, connection_made
 from business.models import Terms, Job
 from docusign.models import Document as DocusignDocument
 from generics.utils import percentage
-from generics.tasks import pm_contact_card_email, connection_request, connection_made
 from postman.forms import build_payload
 from postman.models import Message
 
@@ -197,7 +197,8 @@ class ConnectJob(Product):
     def change_status(self, status, order, user):
         if status == order.request_status:
             return
-        if(status in self.valid_statuses(order, user)):
+        # TODO This stuff is pretty brittle, revisit when refactoring for pay to respond to proposal
+        if(status in self.valid_statuses(order, user)) or order._promo.percent_off == 100:
             order.set_status(status)
             order.save()
             return order

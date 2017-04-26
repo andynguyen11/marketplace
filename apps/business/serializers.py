@@ -5,7 +5,7 @@ from notifications.signals import notify
 from django.utils.encoding import smart_str
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
-from drf_haystack.serializers import HaystackSerializerMixin
+from drf_haystack.serializers import HaystackSerializer
 from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile
@@ -98,12 +98,16 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_skill_names(self, obj):
         return [skill.name for skill in obj.skills.all()]
-    
 
-class ProjectSearchSerializer(HaystackSerializerMixin, ProjectSerializer):
+
+class ProjectSearchSerializer(HaystackSerializer):
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
-        search_fields = ProjectIndex.Meta.fields
+        fields = [
+            "title", "slug", "skills", "description", "role", "city",
+            "state", "remote", "first_name", "photo",
+            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb"
+        ]
 
 
 class JobSerializer(serializers.ModelSerializer):

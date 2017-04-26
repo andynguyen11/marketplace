@@ -4,19 +4,23 @@ import pytz
 import simplejson
 
 from celery import shared_task
+from celery.schedules import crontab
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
+from django.db.models import Avg
 from django.utils.http import urlencode
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
+from market.celery import app as celery_app
 from accounts.models import Profile
 from business.models import Job, Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
+from payment.models import ProductOrder
+from proposals.models import Proposal
 from postman.models import Message
-
 
 utc=pytz.UTC
 
@@ -99,21 +103,6 @@ def new_message_notification(recipient_id, thread_id):
         else:
             thread.last_emailed_owner = datetime.now()
         thread.save()
-
-@shared_task
-def pm_contact_card_email(job_id):
-    job = Job.objects.get(id=job_id)
-    document = Document.objects.get(job=job, type='MSA')
-    pm_context = {
-        'fname': job.contractor.first_name,
-        'lname': job.contractor.last_name,
-        'email': job.contractor.email,
-        'document': document.docusign_document.id,
-        'project': job.project.title,
-    }
-    pm_context['phone'] = job.contractor.phone if job.contractor.phone else ''
-    pm_context['role'] = job.contractor.role if job.contractor.role else ''
-    send_mail('new-contract-entrepreneur', [job.project.project_manager], pm_context)
 
 @shared_task
 def dev_contact_card_email(job_id):
@@ -255,15 +244,6 @@ def complete_project(project_id):
         })
 
 @shared_task
-def connection_request(this_id, that_id, thread_id, template):
-    this_user = Profile.objects.get(id=this_id)
-    that_user = Profile.objects.get(id=that_id)
-    send_mail(template, [this_user], {
-        'fname': that_user.first_name,
-        'thread_id': thread_id,
-    })
-
-@shared_task
 def connection_made_freelancer(entrepreneur_id, thread_id):
     entrepreneur = Profile.objects.get(id=entrepreneur_id)
     send_mail('connection-made-freelancer', [entrepreneur], {
@@ -272,15 +252,41 @@ def connection_made_freelancer(entrepreneur_id, thread_id):
     })
 
 @shared_task
-def connection_made(this_id, that_id, thread_id, order_context=None):
-    template = 'connection-made-freelancer'
-    this_user = Profile.objects.get(id=this_id)
-    that_user = Profile.objects.get(id=that_id)
+def project_approved_email(project_id):
+    project = Project.objects.get(id=project_id)
+    send_mail('project-approved', [project.project_manager], {
+        'fname': project.project_manager.first_name,
+        'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+    })
+
+@celery_app.task
+def loom_stats_email():
+    admins = Profile.objects.filter(is_superuser=True)
+    mix = Project.objects.filter(estimated_cash__isnull=False, estimated_equity_percentage__isnull=False).aggregate(Avg('estimated_cash'), Avg('estimated_equity_percentage'))
+    equity = Project.objects.filter(estimated_cash__isnull=True, estimated_equity_percentage__isnull=False).aggregate(Avg('estimated_equity_percentage'))
+    cash = Project.objects.filter(estimated_cash__isnull=False, estimated_equity_percentage__isnull=True).aggregate(Avg('estimated_cash'))
+    rate = Proposal.objects.filter(hourly_rate__isnull=False).aggregate(Avg('hourly_rate'))
+    hours = Proposal.objects.all().aggregate(Avg('hours'))
     context = {
-        'fname': that_user.first_name,
-        'thread_id': thread_id,
+        'DEVELOPERS': Profile.objects.filter(role__isnull=False).count(),
+        'ENTREPRENEURS': Profile.objects.filter(role__isnull=True, biography__isnull=False).count(),
+        'COMPANIES': Employee.objects.filter(primary=True).count(),
+        'PROJECTS': Project.objects.filter(approved=True, deleted=False).count(),
+        'CASHPROJECTS': Project.objects.filter(estimated_cash__isnull=False, estimated_equity_percentage__isnull=True).count(),
+        'EQUITYPROJECTS': Project.objects.filter(estimated_cash__isnull=True, estimated_equity_percentage__isnull=False).count(),
+        'MIXPROJECTS': Project.objects.filter(estimated_cash__isnull=False, estimated_equity_percentage__isnull=False).count(),
+        'EQUITY': '{0}%'.format(equity['estimated_equity_percentage__avg']),
+        'CASH': '${0}'.format(cash['estimated_cash__avg']),
+        'MIX': '${0}, {1}%'.format(mix['estimated_cash__avg'], mix['estimated_equity_percentage__avg']),
+        'MESSAGES': Message.objects.all().count(),
+        'REQUESTS': ProductOrder.objects.all().count(),
+        'CONNECTIONS': ProductOrder.objects.filter(status='paid').count(),
+        'PROPOSALS': Proposal.objects.all().count(),
+        'MIXPROPOSALS': Proposal.objects.filter(cash=True, equity=True).count(),
+        'CASHPROPOSALS': Proposal.objects.filter(cash=True, equity=False).count(),
+        'EQUITYPROPOSALS': Proposal.objects.filter(cash=False, equity=True).count(),
+        'HOURLYRATE': '${0}/hour'.format(rate['hourly_rate__avg']),
+        'HOURS': hours['hours__avg'],
     }
-    if order_context:
-        context.update(order_context)
-        template = 'connection-made-entrepreneur'
-    send_mail(template, [this_user], context)
+    send_mail('loom-stats', [admin for admin in admins], context)
+    

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os, sys, datetime
 import security_settings, configure_haystack
 
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'django_celery_beat',
     'debug_toolbar',
     'sorl.thumbnail',
     'guardian',
@@ -153,21 +155,6 @@ WSGI_APPLICATION = 'market.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 database_backend = 'django.db.backends.postgresql_psycopg2'
 
-#if os.environ.get('LOGGING', 't').lower()[0] not in ('f', '0'):
-#    INSTALLED_APPS += ('django_logging',)
-#    MIDDLEWARE_CLASSES += ('django_logging.middleware.DjangoLoggingMiddleware',)
-#    DJANGO_LOGGING = {
-#        "CONSOLE_LOG": False,
-#        "SQL_LOG": False,
-#        "DISABLE_EXISTING_LOGGERS": False,
-#        "ENCODING": "utf-8",
-#        "RESPONSE_FIELDS": ( 'status', 'reason', 'content' ), #'charset', 'headers',
-#        "IGNORED_PATHS": [ '/admin', '/static', '/favicon.ico',
-#            '/api/thread/', '/api/message/', '/api/messages/' ]
-#    }
-#    if ENVIRONMENT != 'local':
-#        DJANGO_LOGGING["LOG_PATH"] = os.environ.get('JSON_LOG_PATH', '/var/log/app-logs')
-
 if 'RDS_DB_NAME' in os.environ:
     DATABASES = {
         'default': {
@@ -207,9 +194,20 @@ if 'RDS_DB_NAME' in os.environ:
                     'level': 'DEBUG',
                     'class': 'logging.StreamHandler',
                     'formatter': 'verbose'
-                }
+                },
+                'SysLog': {
+                    'level': 'DEBUG',
+                    'class': 'logging.handlers.SysLogHandler',
+                    'formatter': 'verbose',
+                    'address': ('logs5.papertrailapp.com', 40740)
+                },
             },
             'loggers': {
+                'django': {
+                    'handlers': ['SysLog', 'console'],
+                    'level': 'INFO',
+                    'propagate': True,
+                },
                 'django.db.backends': {
                     'level': 'ERROR',
                     'handlers': ['console'],
@@ -227,7 +225,6 @@ if 'RDS_DB_NAME' in os.environ:
                 },
             },
         }
-
 
 
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', '')
@@ -250,7 +247,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ),
+    )
 }
 
 JWT_AUTH = {
@@ -353,13 +350,16 @@ SOCIAL_AUTH_PIPELINE = (
 ES_ENDPOINTS = {
     'local': 'http://127.0.0.1:9200/',
     'dev': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
-    'prod': 'http://127.0.0.1:9200/' }
+    'prod': 'https://search-loom-bhz6d5p4ezqukmsdfielynd7wi.us-west-2.es.amazonaws.com/'
+}
 
 HAYSTACK_CONNECTIONS = {
     'default': {
         'ENGINE': 'generics.search_backend.FuzzyElasticSearchEngine',
         'URL': ES_ENDPOINTS[ENVIRONMENT],
         'INDEX_NAME': 'haystack',
+        'BATCH_SIZE': 25,
+        'HAYSTACK_SEARCH_RESULTS_PER_PAGE': 12,
         'KWARGS': configure_haystack.kwargs(
             ENVIRONMENT , AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
     }

@@ -156,7 +156,7 @@ const PrelaunchOnboarding = React.createClass({
       },
       companyCountry: {
         name: 'companyCountry',
-        label: 'Where is you company located?',
+        label: 'Where is your company located?',
         value: company.country || 'United States of America',
         errorClass: '',
         update: (value) => {

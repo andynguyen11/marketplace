@@ -268,18 +268,6 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     @property
-    def image(self):
-        return self.details.safe_tagged('image') if self.details else None
-
-    @property
-    def video(self):
-        return self.details.safe_tagged('video') if self.details else None
-
-    @property
-    def description(self):
-        return self.details.description if self.details else None
-
-    @property
     def average_equity(self):
         average = None
         bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(equity=0).exclude(cash__isnull=False)
