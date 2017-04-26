@@ -3,6 +3,7 @@ import simplejson as json
 
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from drf_haystack.viewsets import HaystackViewSet
+from drf_haystack.filters import HaystackFilter
 from haystack.query import SearchQuerySet
 from rest_framework import generics, viewsets, authentication, permissions
 from rest_framework.filters import OrderingFilter
@@ -249,7 +250,7 @@ class ProjectSearchViewSet(HaystackViewSet):
     index_models = [Project]
     serializer_class = ProjectSearchSerializer
     pagination_class = StandardResultsSetPagination
-    filter_backends = (OrderingFilter,)
+    filter_backends = (HaystackFilter, OrderingFilter,)
     ordering_fields = ('date_created')
     ordering = ('-date_created')
 
