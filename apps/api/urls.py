@@ -1,6 +1,6 @@
 import tagulous
 
-from django.conf.urls import patterns, url
+from django.conf.urls import include, patterns, url
 from rest_framework_nested import routers
 from rest_framework_jwt.views import refresh_jwt_token
 
@@ -15,40 +15,24 @@ from reviews.api import ReviewListCreate
 from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
-router = DeclarativeRouter({
+
+default_router = routers.DefaultRouter()
+default_router.register(r'project', ProjectViewSet, base_name='project')
+default_router.register(r'questions', QuestionViewSet)
+
+declared_router = DeclarativeRouter({
     'attachment': AttachmentViewSet,
     'contactdetails': {
         'view': ContactDetailsViewSet,
         'base_name': 'contactdetails'
     },
-    'jobs': JobViewSet,
     'profile': {
         'view': ProfileViewSet,
+        'base_name': 'profile',
         'nested': {
             'lookup': 'profile',
             'routes': {
                 'skilltest': SkillTestViewSet,
-            }
-        }
-    },
-    'project': {
-        'view': ProjectViewSet,
-        'nested': {
-            'lookup': 'project',
-            'routes': {
-                'job': {
-                    'view': NestedJobViewSet,
-                    'base_name': 'project-job',
-                    'nested': {
-                        'lookup': 'job',
-                        'routes': {
-                            'document': {
-                                'view': DocumentViewSet,
-                                'base_name': 'project-job-documents'
-                            }
-                        }
-                    }
-                }
             }
         }
     },
@@ -90,15 +74,13 @@ urlpatterns = [
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^nda/(?P<pk>[0-9]+)/$', view=NDAUpdate.as_view(), name='nda-update'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
-    url(r'^questions/$', view=QuestionViewSet.as_view({
-        'post': 'create',
-        'patch': 'partial_update'
-    }), name='questions'),
+    #url(r'^questions/$', view=QuestionViewSet.as_view({
+    #    'post': 'create',
+    #    'patch': 'partial_update'
+    #}), name='questions'),
     url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
-   #url(r'^orders/$', view=OrderListCreate.as_view(), name='orders'),
-   #url(r'^order/(?P<pk>[0-9]+)/$', view=OrderDetail.as_view(), name='order-detail'),
     url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),
     url(r'^search/skills/', view=skills_autocomplete, name='autocomplete'),
@@ -106,4 +88,6 @@ urlpatterns = [
     url(r'^terms/$', view=TermsListCreate.as_view(), name='term'),
     url(r'^terms/agree/$', view=AgreeTerms.as_view(), name='term-agree'),
     url(r'^terms/(?P<pk>[0-9]+)/$', view=TermsRetrieveUpdate.as_view(), name='term-detail'),
-] + router.urls 
+    url(r'^', include(default_router.urls)),
+    url(r'^', include(declared_router.urls)),
+]
