@@ -4,7 +4,6 @@ import pytz
 import simplejson
 
 from celery import shared_task
-from celery.schedules import crontab
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -217,14 +216,6 @@ def add_work_history(profile_id):
     if not history:
         profile = Profile.objects.get(id=profile_id)
         send_mail('add-work-history', [profile], {})
-
-
-@shared_task
-def verify_skills(profile_id):
-    results = SkillTestResult.objects.filter(user=profile_id)
-    if not results:
-        profile = Profile.objects.get(id=profile_id)
-        send_mail('verify-skills', [profile], {})
 
 
 @shared_task

@@ -3,6 +3,7 @@ from celery import shared_task
 from accounts.models import Profile
 from business.models import Job, Document
 from generics.utils import send_mail
+from market.celery import app as celery_app
 
 
 @shared_task
@@ -42,3 +43,7 @@ def connection_made(this_id, that_id, thread_id, order_context=None):
         context.update(order_context)
         template = 'connection-made-entrepreneur'
     send_mail(template, [this_user], context)
+
+@celery_app.task
+def freelancer_project_matching():
+    pass
