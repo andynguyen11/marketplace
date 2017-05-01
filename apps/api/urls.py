@@ -18,7 +18,7 @@ from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERS
 
 default_router = routers.DefaultRouter()
 default_router.register(r'project', ProjectViewSet, base_name='project')
-default_router.register(r'questions', QuestionViewSet)
+#default_router.register(r'questions', QuestionViewSet)
 
 declared_router = DeclarativeRouter({
     'attachment': AttachmentViewSet,
@@ -74,10 +74,10 @@ urlpatterns = [
     url(r'^message/count/$', view=MessageCount.as_view(), name='message-count'),
     url(r'^nda/(?P<pk>[0-9]+)/$', view=NDAUpdate.as_view(), name='nda-update'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
-    #url(r'^questions/$', view=QuestionViewSet.as_view({
-    #    'post': 'create',
-    #    'patch': 'partial_update'
-    #}), name='questions'),
+    url(r'^questions/$', view=QuestionViewSet.as_view({
+        'post': 'create',
+        'patch': 'partial_update'
+    }), name='questions'),
     url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
     url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
