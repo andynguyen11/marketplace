@@ -5,7 +5,7 @@ from django.http import HttpResponseForbidden, Http404, HttpResponse
 from drf_haystack.viewsets import HaystackViewSet
 from drf_haystack.filters import HaystackFilter
 from haystack.query import SearchQuerySet
-from rest_framework import generics, viewsets, authentication, permissions
+from rest_framework import generics, viewsets, authentication, permissions, status
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
 from rest_framework.decorators import detail_route, list_route, permission_classes
@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, 
 from rest_framework.response import Response
 
 from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
+from accounts.models import Skills
 from business.models import Job, Employee
 from business.products import products
 from business.serializers import *
@@ -39,52 +40,6 @@ class AgreeTerms(APIView): # TODO this and other terms views can be folded into 
             serializer = TermsSerializer(terms)
             return Response(serializer.data)
         return Response(status=403)
-
-
-# Bids are Jobs - only contractors should be able to edit
-class JobViewSet(viewsets.ModelViewSet):
-    """
-    Only Contractors can create Jobs/Bids.
-    Subsequently Project Managers create Terms based on them
-    """
-    queryset = Job.objects.all()
-    serializer_class = JobSerializer
-    permission_classes = (IsAuthenticated, ContractorBidPermission)
-
-    def create(self, request, *args, **kwargs):
-        # DRF doesn't recognize blank strings as null values, replace with None
-        cash = request.data['cash']
-        equity = request.data['equity']
-        request.data['cash'] = cash if cash else None
-        request.data['equity'] = equity if equity else None
-        return super(JobViewSet, self).create(request, *args, **kwargs)
-
-    @list_route(methods=['GET'])
-    def summaries(self, request):
-        " summarizes and organizes bids for a contractor "
-        jobs = Job.objects.filter(contractor=request.user, status='pending')
-        serializer = ContractorBidSerializer(jobs, many=True)
-        return Response(serializer.data)
-
-
-# DEPRECATE
-class NestedJobViewSet(NestedModelViewSet):
-    """
-    Only Contractors can create Jobs/Bids.
-    Subsequently Project Managers create Terms based on them
-    """
-    queryset = Job.objects.all()
-    serializer_class = JobSerializer
-    permission_classes = (IsAuthenticated, ContractorBidPermission)
-    parent_key = 'project'
-
-
-# DEPRECATE
-class DocumentViewSet(NestedModelViewSet):
-    queryset = Document.objects.all()
-    serializer_class = DocumentSerializer
-    permission_classes = (IsAuthenticated, BidPermission, IsJobOwnerPermission)
-    parent_key = 'job'
 
 
 # TODO Permissions update
@@ -148,10 +103,14 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
-    queryset = Project.objects.all()
+    #queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (PublicReadProjectOwnerEditPermission, )
     lookup_field = 'slug_or_id'
+
+    def get_queryset(self):
+        queryset = Project.objects.filter(project_manager=self.request.user)
+        return queryset
 
     def get_object(self):
         slug_or_id = self.kwargs['slug_or_id']
@@ -196,6 +155,18 @@ class ProjectViewSet(viewsets.ModelViewSet):
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)
         else: return Response(status=403)
+
+    # TODO Uncomment when autocomplete UI component implemented
+    #def create(self, request):
+    #    skills = request.data.pop('skills')
+    #    serializer = self.get_serializer(data=request.data)
+    #    serializer.is_valid(raise_exception=True)
+    #    self.perform_create(serializer)
+    #    headers = self.get_success_headers(serializer.data)
+    #    project = Project.objects.get(id=serializer.data['id'])
+    #    project.skills = skills
+    #    project.save()
+    #    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @list_route(methods=['GET'])
     def summaries(self, request):

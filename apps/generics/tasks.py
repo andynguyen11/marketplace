@@ -220,14 +220,6 @@ def add_work_history(profile_id):
 
 
 @shared_task
-def verify_skills(profile_id):
-    results = SkillTestResult.objects.filter(user=profile_id)
-    if not results:
-        profile = Profile.objects.get(id=profile_id)
-        send_mail('verify-skills', [profile], {})
-
-
-@shared_task
 def post_a_project(profile_id):
     user = Profile.objects.get(id=profile_id)
     project = Project.objects.filter(project_manager=user)
