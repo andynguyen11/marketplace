@@ -156,17 +156,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(response_data, status=200)
         else: return Response(status=403)
 
-    # TODO Uncomment when autocomplete UI component implemented
-    #def create(self, request):
-    #    skills = request.data.pop('skills')
-    #    serializer = self.get_serializer(data=request.data)
-    #    serializer.is_valid(raise_exception=True)
-    #    self.perform_create(serializer)
-    #    headers = self.get_success_headers(serializer.data)
-    #    project = Project.objects.get(id=serializer.data['id'])
-    #    project.skills = skills
-    #    project.save()
-    #    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def create(self, request):
+        skills = request.data.pop('skills')
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        project = Project.objects.get(id=serializer.data['id'])
+        project.skills = skills
+        project.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @list_route(methods=['GET'])
     def summaries(self, request):
