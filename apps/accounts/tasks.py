@@ -57,7 +57,7 @@ def email_confirmation(user, instance=None, email_field='email', template='verif
     })
 
 @shared_task
-def password_updated(user_id)
+def password_updated(user_id):
     user = Profile.objects.get(id=user_id)
     send_mail('password-updated', [user], context={})
 

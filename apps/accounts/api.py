@@ -13,6 +13,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
+from accounts.tasks import email_confirmation
 from business.models import Job, Project
 from payment.models import ProductOrder
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
@@ -21,7 +22,7 @@ from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
         ReadOrIsOwnedByCurrentUser, ReadOnlyOrIsAdminUser, SkillTestPermission )
 from expertratings.utils import nicely_serialize_verification_tests
-from generics.tasks import account_confirmation, email_confirmation, validate_confirmation_signature
+from generics.tasks import validate_confirmation_signature
 from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from postman.serializers import ConversationSerializer
 from generics.utils import parse_signature
