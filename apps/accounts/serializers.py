@@ -41,7 +41,6 @@ class VerificationTestSerializer(serializers.ModelSerializer):
 
 
 class SkillsSerializer(serializers.ModelSerializer):
-    verification_tests = VerificationTestSerializer(source='verificationtest_set', many=True, read_only=True)
 
     class Meta:
         model = Skills

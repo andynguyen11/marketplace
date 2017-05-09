@@ -22,68 +22,11 @@ from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
 
 
-class AgreeTerms(APIView): # TODO this and other terms views can be folded into a viewset
-    """
-    View to update terms to agreed
-    Only Contractors can agree to Terms, but they cannot edit them
-    """
-    permission_classes = (IsAuthenticated, )
-
-    def post(self, request):
-        """
-        Update to agreed on post
-        """
-        terms = Terms.objects.get(id=request.data['terms_id'])
-        if request.user == terms.job.contractor: # SECURED
-            terms.status = 'agreed'
-            terms.save()
-            serializer = TermsSerializer(terms)
-            return Response(serializer.data)
-        return Response(status=403)
-
-
 # TODO Permissions update
 class NDAUpdate(generics.UpdateAPIView):
     queryset = NDA.objects.all()
     serializer_class = NDASerializer
     permision_classes = (IsAuthenticated, IsSenderReceiver)
-
-
-# this isn't too insecure due to `self.contractee = ...` in `Terms.save`
-class TermsListCreate(generics.ListCreateAPIView):
-    """
-    Only Contractees can generate Terms based on a Job/Bid.
-    They should not be able to edit critical aspects of a Bid, such as compensation.
-    """
-    serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        try:
-            _ = (e for e in queryset)
-            serializer = self.get_serializer(queryset, many=True)
-        except TypeError:
-            serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
-
-
-    def get_queryset(self):
-        queryset = Terms.objects.all()
-        bid_id = self.request.query_params.get('bid', None)
-        if bid_id is not None:
-            bid = Job.objects.get(id=bid_id)
-            queryset, created = Terms.objects.get_or_create(bid=bid)
-        return queryset
-
-class TermsRetrieveUpdate(generics.RetrieveUpdateAPIView):
-    """
-    Only Contractees can edit  Terms based on a Job/Bid.
-    They should not be able to edit critical aspects of a Bid, such as compensation.
-    """
-    queryset = Terms.objects.all()
-    serializer_class = TermsSerializer
-    permission_classes = (IsAuthenticated, ContracteeTermsPermission)
 
 
 class CompanyListCreate(generics.ListCreateAPIView):
@@ -103,13 +46,12 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
-    #queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     permission_classes = (PublicReadProjectOwnerEditPermission, )
     lookup_field = 'slug_or_id'
 
     def get_queryset(self):
-        queryset = Project.objects.filter(project_manager=self.request.user)
+        queryset = Project.objects.filter(project_manager=self.request.user, deleted=False)
         return queryset
 
     def get_object(self):
@@ -155,34 +97,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)
         else: return Response(status=403)
-
-    def create(self, request):
-        skills = request.data.pop('skills')
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        project = Project.objects.get(id=serializer.data['id'])
-        project.skills = skills
-        project.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-    @list_route(methods=['GET'])
-    def summaries(self, request):
-        " summarizes and organizes project details for a project manager "
-        projects = Project.objects.filter(project_manager=request.user, deleted=False)
-        serializer = ProjectSummarySerializer(projects, many=True)
-        return Response(serializer.data)
-
-    @detail_route(methods=['GET'])
-    def summary(self, request, **kwargs):
-        " summarizes and organizes project details for a project manager "
-        project = self.get_object()
-        if project.project_manager == request.user:
-            serializer = ProjectSummarySerializer(project)
-            return Response(serializer.data)
-        else:
-            return Response(status=403)
 
 
 class StandardResultsSetPagination(PageNumberPagination):
