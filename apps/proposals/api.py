@@ -9,6 +9,7 @@ from postman.models import Message
 from proposals.models import Question, Proposal
 from proposals.permissions import ProposalPermission
 from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
+from proposals.tasks import proposal_reminder
 
 def add_ordering(questions):
     if not isinstance(questions, list):
@@ -105,6 +106,7 @@ class ProposalViewSet(viewsets.ModelViewSet):
             answer_serializer.is_valid(raise_exception=False)
             self.perform_create(answer_serializer)
         request.data['submitter'] = request.user.id
+        proposal_reminder.apply_async((instance.id, ), eta=today + timedelta(days=2))
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
 
     @detail_route(methods=['POST'])

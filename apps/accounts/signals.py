@@ -1,7 +1,7 @@
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from accounts.models import Profile, ContactDetails
-from generics.tasks import email_confirmation
+from accounts.tasks import email_confirmation, password_updated
 
 def field_changed(instance, field, id_field='id'):
     try:
@@ -27,5 +27,11 @@ def contact_email_update_event(sender, instance, **kwargs):
             instance.email == instance.profile.email):
         instance.email_confirmed = False
         email_confirmation(user=instance.profile, instance=instance)
+
+@receiver(pre_save, sender=Profile)
+def profile_email_update_event(sender, instance, **kwargs):
+    "linkedin emails are auto-verified on creation"
+    if instance.id and field_changed(instance, 'password'):
+        password_changed(user=instance)
 
 

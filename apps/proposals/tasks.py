@@ -3,6 +3,7 @@ from celery import shared_task
 from django.conf import settings
 from django.core.urlresolvers import reverse
 
+from accounts.models import Profile
 from proposals.models import Proposal
 from generics.utils import send_mail
 
@@ -24,3 +25,10 @@ def proposal_received_email(proposal_id):
         'url': '{0}{1}'.format(settings.BASE_URL, reverse('view-proposal', kwargs={'proposal_id': proposal_id}))
     }
     send_mail('proposal-received', [proposal.project.project_manager], pm_context)
+
+@shared_task
+def proposal_reminder(user_id):
+    user = Profile.objects.get(id=user_id)
+    proposals = Proposal.objects.filter(project__project_manager=user, status='pending')
+    if proposals:
+        send_mail('pending-proposals', [user], context={})
