@@ -26,6 +26,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
     photo = indexes.CharField(model_attr='project_manager__get_photo')
     city = indexes.CharField()
     state = indexes.CharField()
+    country = indexes.CharField()
 
     class Meta:
         model = Project
@@ -38,6 +39,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
         self.prepared_data['city'] = obj.company.city if obj.company else obj.project_manager.city
         self.prepared_data['state'] = obj.company.state if obj.company else obj.project_manager.state
+        self.prepared_data['country'] = obj.company.country if obj.company else obj.project_manager.country
         return self.prepared_data
 
     def index_queryset(self, using=None):
