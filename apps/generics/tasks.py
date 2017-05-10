@@ -24,8 +24,6 @@ from postman.models import Message
 
 utc=pytz.UTC
 
-def generate_confirmation_signature(user, instance, field):
-    return sign_data(user_id=user.id, id=instance.id, field=field, value=getattr(instance, field))
 
 def validate_confirmation_signature(instance, signature, confirm_on_success='%s_confirmed'):
     """
@@ -42,20 +40,6 @@ def validate_confirmation_signature(instance, signature, confirm_on_success='%s_
         instance.save()
     return token_data
 
-
-def absolute_url(url, query):
-    base_url = settings.BASE_URL if settings.BASE_URL.startswith('http') else (
-            ('http://' if settings.DEBUG else 'https://') + settings.BASE_URL)
-    return '%s%s?%s' % (base_url, url, urlencode(query))
-
-def generate_confirmation_url(user, instance, field,
-        base_name=None, reverse_pattern='api:%s-confirm-email', **kwargs):
-    if not base_name:
-        base_name = instance._meta.model_name
-    kwargs['signature'] = generate_confirmation_signature(user, instance, field=field)
-    kwargs['token'] = create_auth_token(user)
-    url = reverse(reverse_pattern % base_name, args=(instance.id,))
-    return absolute_url(url, kwargs)
 
 @shared_task
 def account_confirmation(user_id, role=None):
