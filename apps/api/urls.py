@@ -85,9 +85,6 @@ urlpatterns = [
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),
     url(r'^search/skills/', view=skills_autocomplete, name='autocomplete'),
     url(r'^skilltest/webhook$', view=ExpertRatingsXMLWebhook.as_view(), name='skilltest-webhook'),
-    url(r'^terms/$', view=TermsListCreate.as_view(), name='term'),
-    url(r'^terms/agree/$', view=AgreeTerms.as_view(), name='term-agree'),
-    url(r'^terms/(?P<pk>[0-9]+)/$', view=TermsRetrieveUpdate.as_view(), name='term-detail'),
     url(r'^', include(default_router.urls)),
     url(r'^', include(declared_router.urls)),
 ]

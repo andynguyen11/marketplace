@@ -67,19 +67,6 @@ def account_confirmation(user_id, role=None):
     })
 
 @shared_task
-def send_email_confirmation(template, email, context):
-    send_to_emails(template, emails=[email], context=context)
-
-def email_confirmation(user, instance=None, email_field='email', template='verify-email'):
-    if not instance:
-        instance = user
-    send_email_confirmation.delay(template, email=getattr(instance, email_field), context={
-        'fname': user.first_name,
-        'url': generate_confirmation_url(user, instance, field=email_field)
-    })
-
-
-@shared_task
 def new_message_notification(recipient_id, thread_id):
     recipient = Profile.objects.get(id=recipient_id)
     unread_messages = Message.objects.filter(

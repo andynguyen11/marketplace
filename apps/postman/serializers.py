@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
-from business.serializers import DocumentSerializer, TermsSerializer, JobSerializer, ProjectSummarySerializer, NDASerializer
+from business.serializers import DocumentSerializer, JobSerializer, NDASerializer
 from business.models import Document, NDA
 from generics.serializers import AttachmentSerializer
 from payment.models import ProductOrder

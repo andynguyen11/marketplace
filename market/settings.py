@@ -367,7 +367,7 @@ HAYSTACK_CONNECTIONS = {
 
 # We can afford realtime due to low load. This may change later.
 # Scaling out the cluster is probably preferable to out of sync search
-HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_SIGNAL_PROCESSOR = 'search.signals.RealtimeRemoveSignalProcessor'
 
 POSTMAN_DISALLOW_ANONYMOUS = True
 POSTMAN_DISALLOW_MULTIRECIPIENTS = True
