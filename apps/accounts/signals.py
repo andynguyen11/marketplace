@@ -32,6 +32,6 @@ def contact_email_update_event(sender, instance, **kwargs):
 def profile_email_update_event(sender, instance, **kwargs):
     "linkedin emails are auto-verified on creation"
     if instance.id and field_changed(instance, 'password'):
-        password_updated(user=instance)
+        password_updated(instance.id)
 
 
