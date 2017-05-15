@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from rest_framework import generics, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
@@ -106,7 +108,8 @@ class ProposalViewSet(viewsets.ModelViewSet):
             answer_serializer.is_valid(raise_exception=False)
             self.perform_create(answer_serializer)
         request.data['submitter'] = request.user.id
-        proposal_reminder.apply_async((instance.id, ), eta=today + timedelta(days=2))
+        today = datetime.utcnow()
+        proposal_reminder.apply_async((request.data['project'], ), eta=today + timedelta(days=2))
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
 
     @detail_route(methods=['POST'])

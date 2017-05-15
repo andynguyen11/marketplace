@@ -220,7 +220,7 @@ class ProductOrderViewSet(ImmutableModelViewSet):
         return dict(id=self.kwargs.get('id', self.kwargs.get('pk', None)))
 
     def list(self, request, **kwargs):
-        user_orders = self.get_queryset().filter(payer=request.user, **self.request.query_params)
+        user_orders = self.get_queryset().filter(payer=request.user, status='paid', **self.request.query_params)
         return Response(self.serializer_class(user_orders, many=True).data)
 
     def create(self, request, **kwargs):

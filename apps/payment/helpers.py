@@ -88,13 +88,19 @@ def create_account(user):
             email=user.email)
 
 
+def get_charge_info(charge_id):
+    return stripe.Charge.retrieve(charge_id)
+
+
 stripe_helpers = Bunch(
-        get_source=get_source,
-        add_source=add_source,
-        charge_source=charge_source,
-        capture_charge=capture_charge,
-        connect_customer=connect_customer,
-        get_customer=get_customer,
-        create_account=create_account,
-        get_customer_and_card=get_customer_and_card)
+    get_source=get_source,
+    add_source=add_source,
+    charge_source=charge_source,
+    capture_charge=capture_charge,
+    connect_customer=connect_customer,
+    get_customer=get_customer,
+    create_account=create_account,
+    get_customer_and_card=get_customer_and_card,
+    get_charge_info=get_charge_info,
+)
 

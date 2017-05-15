@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from accounts.models import Profile
+from business.models import Project
 from proposals.models import Proposal
 from generics.utils import send_mail
 
@@ -27,8 +28,8 @@ def proposal_received_email(proposal_id):
     send_mail('proposal-received', [proposal.project.project_manager], pm_context)
 
 @shared_task
-def proposal_reminder(user_id):
-    user = Profile.objects.get(id=user_id)
-    proposals = Proposal.objects.filter(project__project_manager=user, status='pending')
+def proposal_reminder(project_id):
+    project = Project.objects.get(id=project_id)
+    proposals = Proposal.objects.filter(project__project_manager=project.project_manager, status='pending')
     if proposals:
         send_mail('pending-proposals', [user], context={})
