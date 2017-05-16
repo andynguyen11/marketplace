@@ -54,7 +54,7 @@ class StripePaymentSourceView(APIView):
         return self.add_card(request)
 
     def patch(self, request):
-        card = stripe_helpers.get_source(request.user, request.data.pop('source_id'))
+        card = stripe_helpers.get_source(user=request.user, source_id=request.data.pop('source_id'))
         for k, v in request.data.items():
             if k in self.update_fields:
                 setattr(card, k, v)
