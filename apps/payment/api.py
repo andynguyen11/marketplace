@@ -61,7 +61,7 @@ class StripePaymentSourceView(APIView):
         return Response(status=200, data=card.save())
 
     def delete(self, request):
-        data = stripe_helpers.get_source(request.user, request.data.pop('source_id')).delete()
+        data = stripe_helpers.get_source(user=request.user, source_id=request.data.pop('source_id')).delete()
         return Response(status=202, data=data)
 
     def get(self, request):
