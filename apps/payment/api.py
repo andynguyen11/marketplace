@@ -54,14 +54,14 @@ class StripePaymentSourceView(APIView):
         return self.add_card(request)
 
     def patch(self, request):
-        card = stripe_helpers.get_source(request.user, request.data.pop('source_id'))
+        card = stripe_helpers.get_source(user=request.user, source_id=request.data.pop('source_id'))
         for k, v in request.data.items():
             if k in self.update_fields:
                 setattr(card, k, v)
         return Response(status=200, data=card.save())
 
     def delete(self, request):
-        data = stripe_helpers.get_source(request.user, request.data.pop('source_id')).delete()
+        data = stripe_helpers.get_source(user=request.user, source_id=request.data.pop('source_id')).delete()
         return Response(status=202, data=data)
 
     def get(self, request):
@@ -220,7 +220,7 @@ class ProductOrderViewSet(ImmutableModelViewSet):
         return dict(id=self.kwargs.get('id', self.kwargs.get('pk', None)))
 
     def list(self, request, **kwargs):
-        user_orders = self.get_queryset().filter(payer=request.user, **self.request.query_params)
+        user_orders = self.get_queryset().filter(payer=request.user, status='paid', **self.request.query_params)
         return Response(self.serializer_class(user_orders, many=True).data)
 
     def create(self, request, **kwargs):

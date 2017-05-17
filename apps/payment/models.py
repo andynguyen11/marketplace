@@ -142,6 +142,8 @@ class ProductOrder(models.Model):
     stripe_charge_id = models.CharField(max_length=50, null=True)
     details = models.CharField(max_length=250, null=True)
     result = models.CharField(max_length=250, null=True)
+    brand = models.CharField(max_length=25, null=True)
+    last4 =  models.CharField(max_length=10, null=True)
 
     @property
     def product(self):
@@ -243,6 +245,8 @@ class ProductOrder(models.Model):
         charge = stripe_helpers.charge_source(**payload)
 
         self.stripe_charge_id = charge.id
+        self.brand = charge.source.brand
+        self.last4 = charge.source.last4
         self.save()
         return self.stripe_charge_id
 
