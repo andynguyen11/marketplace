@@ -121,12 +121,9 @@ class ContactDetailsViewSet(ModelViewSet):
 
 
 class ProfileViewSet(ModelViewSet):
+    queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
     permission_classes = ( CreateReadOrIsCurrentUser, )
-
-    def get_queryset(self):
-        queryset = Profile.objects.filter(id=self.request.user.id)
-        return queryset
 
     def create(self, request, *args, **kwargs):
         password = request.data.pop('password')
