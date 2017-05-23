@@ -113,7 +113,7 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         return serializer.data
 
     def get_all_skills(self, obj):
-        serializer = SkillsSerializer(Skills.objects.all(), many=True)
+        serializer = SkillsSerializer(Skills.objects.filter(protected=True), many=True)
         return serializer.data
 
     def get_skills_test(self, obj):
