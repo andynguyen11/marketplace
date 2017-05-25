@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.contrib.auth import logout as auth_logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from accounts.decorators import email_confirmation_required
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.context import RequestContext
@@ -160,6 +161,7 @@ def profile(request, template='account-settings.html'):
     return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
 
 
+@staff_member_required
 def discover_developers(request, role=None):
     all = Profile.objects.all().exclude(capacity=None).exclude(role=None)
     if role != 'all':
