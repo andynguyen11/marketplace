@@ -28,10 +28,10 @@ def contact_email_update_event(sender, instance, **kwargs):
         instance.email_confirmed = False
         email_confirmation(user=instance.profile, instance=instance)
 
-@receiver(pre_save, sender=Profile)
-def profile_email_update_event(sender, instance, **kwargs):
-    "linkedin emails are auto-verified on creation"
-    if instance.id and field_changed(instance, 'password'):
-        password_updated(instance.id)
+#@receiver(pre_save, sender=Profile)
+#def profile_email_update_event(sender, instance, **kwargs):
+#    "linkedin emails are auto-verified on creation"
+#    if instance.id and field_changed(instance, 'password'):
+#        password_updated(instance.id)
 
 
