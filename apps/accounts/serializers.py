@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from notifications.models import Notification
 
-from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
+from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest, Role
 from business.models import Employee
 from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
@@ -44,7 +44,18 @@ class SkillsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skills
-        exclude = ('protected', 'slug', )
+        fields = ('name', )
+        extra_kwargs = {
+            'name': {
+                'validators': [],
+            }
+        }
+
+
+class RoleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Role
 
 
 class ContactDetailsSerializer(RelationalModelSerializer):
@@ -70,28 +81,23 @@ class ObfuscatedProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('id', 'first_name', 'photo_url', 'role', 'capacity', 'city', 'state', 'country', 'location')
+        fields = ('id', 'first_name', 'photo_url', 'roles', 'capacity', 'city', 'state', 'country', 'location')
 
     def get_photo_url(self, obj):
         return obj.get_photo
 
 
-class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
+class ProfileSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(write_only=True, max_length=settings.MAX_FILE_SIZE, validators=[image_validator],
                                    allow_empty_file=False, required=False, allow_null=True)
     photo_url = serializers.SerializerMethodField()
-    linkedin = serializers.SerializerMethodField()
+    skills = SkillsSerializer(many=True, required=False)
+    roles = RoleSerializer(many=True, required=False)
     all_skills = serializers.SerializerMethodField()
-    my_skills = serializers.SerializerMethodField()
     skills_test = serializers.SerializerMethodField()
-    password = serializers.CharField(write_only=True, required=False)
-    signup = serializers.BooleanField(write_only=True, required=False)
     work_history = serializers.SerializerMethodField()
     work_examples = serializers.SerializerMethodField()
     is_connected = serializers.SerializerMethodField()
-
-    contact_details = serializers.SerializerMethodField()
-
     contact_details = serializers.SerializerMethodField()
 
 
@@ -100,17 +106,16 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
         exclude = ('is_superuser', 'last_login', 'date_joined', 'is_staff', 'is_active', 'stripe', 'signup_code', 'groups', 'user_permissions',)
         public_fields = ( # this is just used in the view atm
                 'first_name', 'location', 'country', 'city', 'state',
-                'title', 'role', 'biography', 'capacity',
+                'title', 'roles', 'biography', 'capacity',
                 'work_history', 'work_examples', 'long_description',
                 'photo_url', 'photo' 'featured', 'skills', 'id',
                 'my_skills', 'skills_test', 'is_connected')
+        extra_kwargs = {
+            'password': {'write_only': True, 'required': False},
+        }
 
     def get_photo_url(self, obj):
         return obj.get_photo
-
-    def get_linkedin(self, obj):
-        serializer = SocialSerializer(obj.linkedin)
-        return serializer.data
 
     def get_all_skills(self, obj):
         serializer = SkillsSerializer(Skills.objects.filter(protected=True), many=True)
@@ -129,12 +134,6 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
                 results.append(st)
         summary['testsTaken'] = results
         return summary
-
-    def get_my_skills(self, obj):
-        return [dict(
-                    verified = skill.is_verified(obj),
-                    **SkillsSerializer(skill).data
-                    ) for skill in obj.skills.all()]
 
     def get_work_history(self, obj):
         serializer = EmployeeSerializer(Employee.objects.filter(profile=obj), many=True)
@@ -163,18 +162,41 @@ class ProfileSerializer(JSONFormSerializer, ParentModelSerializer):
             return False
         return bool(user and len(user.connections.filter(id=obj.id)))
 
+    def update_roles(self, roles, instance):
+        instance.roles.clear()
+        for role in roles:
+            if 'years' not in role:
+                role['years'] = None
+            new_role, created = Role.objects.get_or_create(**role)
+            instance.roles.add(new_role)
+        return instance
+
+    def create(self, validated_data):
+        if 'roles' in validated_data:
+            roles = validated_data.pop('roles')
+        profile = Profile.objects.create(**validated_data)
+        profile = self.update_roles(roles, profile)
+        profile.save()
+        return profile
+
     def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        if 'photo' in validated_data: #Hacky way to resolve empty roles/skills when passing form data
+            validated_data.pop('roles')
+            validated_data.pop('skills')
+        if validated_data.get('skills', None):
+            skills = validated_data.pop('skills')
+            instance.skills = [skill['name'] for skill in skills]
+        if validated_data.get('roles', None):
+            roles = validated_data.pop('roles')
+            instance = self.update_roles(roles, instance)
         email = validated_data.get('email', None)
         if email and instance.email != email:
             instance.username = email
-        password = validated_data.get('password', None)
-        if password:
+        if validated_data.get('password', None):
+            password = validated_data.pop('password')
             instance.set_password(password)
-        #if not ((instance.get_photo and instance.linkedin) or validated_data.get('photo', None)):
-        #    raise ValidationError({'photo': ['photo required without a linkedin photo']})
-
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
         instance.save()
         return instance
 

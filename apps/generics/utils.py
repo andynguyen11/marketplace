@@ -4,6 +4,7 @@ import logging
 import pytz
 from decimal import Decimal
 from datetime import datetime, timedelta
+from simplejson import JSONDecodeError
 
 from django.conf import settings
 from django.core import signing
@@ -104,7 +105,7 @@ def send_to_emails(template_name, emails=[], context={}):
             for k, v in context.iteritems()] }
     try:
         mandrill_client.messages.send_template(template_name, [], message)
-    except mandrill.Error, e:
+    except (mandrill.Error, JSONDecodeError) as e:
         logger.error('Mandrill Error | %s - %s' % (e.__class__, e))
 
 def send_mail(template_name, users, context):

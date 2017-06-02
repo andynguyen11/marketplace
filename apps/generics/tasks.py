@@ -42,9 +42,9 @@ def validate_confirmation_signature(instance, signature, confirm_on_success='%s_
 
 
 @shared_task
-def account_confirmation(user_id, role=None):
+def account_confirmation(user_id, roles=None):
     user = Profile.objects.get(id=user_id)
-    email_template = 'welcome-developer' if role else 'welcome-entrepreneur'
+    email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
     send_mail(email_template, [user], {
         'fname': user.first_name,
         'email': user.email
@@ -231,8 +231,8 @@ def loom_stats_email():
     rate = Proposal.objects.filter(hourly_rate__isnull=False).aggregate(Avg('hourly_rate'))
     hours = Proposal.objects.all().aggregate(Avg('hours'))
     context = {
-        'DEVELOPERS': Profile.objects.filter(role__isnull=False).count(),
-        'ENTREPRENEURS': Profile.objects.filter(role__isnull=True, biography__isnull=False).count(),
+        'DEVELOPERS': Profile.objects.exclude(roles=None).count(),
+        'ENTREPRENEURS': Profile.objects.filter(roles=None, biography__isnull=False).count(),
         'COMPANIES': Employee.objects.filter(primary=True).count(),
         'PROJECTS': Project.objects.filter(approved=True, deleted=False).count(),
         'CASHPROJECTS': Project.objects.filter(estimated_cash__isnull=False, estimated_equity_percentage__isnull=True).count(),

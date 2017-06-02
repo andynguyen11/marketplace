@@ -134,10 +134,10 @@ def new_account(sender, instance, **kwargs):
     if not old_profile.country and instance.country and instance.email_confirmed:
         account_confirmation.delay(
                 instance.id,
-                instance.role
+                instance.roles
             )
 
-        if instance.role:
+        if instance.roles:
             today = datetime.utcnow()
             add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
             add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))

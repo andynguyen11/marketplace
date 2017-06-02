@@ -38,7 +38,7 @@ def pm_contact_card_email(job_id):
         'project': job.project.title,
     }
     pm_context['phone'] = job.contractor.phone if job.contractor.phone else ''
-    pm_context['role'] = job.contractor.role if job.contractor.role else ''
+    pm_context['role'] = job.contractor.roles if job.contractor.roles else ''
     send_mail('new-contract-entrepreneur', [job.project.project_manager], pm_context)
 
 @shared_task

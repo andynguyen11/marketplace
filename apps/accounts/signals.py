@@ -9,13 +9,6 @@ def field_changed(instance, field, id_field='id'):
     except type(instance).DoesNotExist:
         return False
 
-@receiver(pre_save, sender=Profile)
-def profile_email_update_event(sender, instance, **kwargs):
-    "linkedin emails are auto-verified on creation"
-    if instance.id and field_changed(instance, 'email'):
-        instance.email_confirmed = False
-        email_confirmation(user=instance)
-
 @receiver(post_save, sender=Profile)
 def profile_email_confirmation_on_create(sender, instance, created, **kwargs):
     if (created and not instance.email_confirmed):
@@ -27,11 +20,4 @@ def contact_email_update_event(sender, instance, **kwargs):
             instance.email == instance.profile.email):
         instance.email_confirmed = False
         email_confirmation(user=instance.profile, instance=instance)
-
-@receiver(pre_save, sender=Profile)
-def profile_email_update_event(sender, instance, **kwargs):
-    "linkedin emails are auto-verified on creation"
-    if instance.id and field_changed(instance, 'password'):
-        password_updated(instance.id)
-
 

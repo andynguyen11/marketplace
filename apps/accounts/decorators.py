@@ -54,5 +54,7 @@ def email_confirmation_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
         if not request.user.email_confirmed:
             return redirect('confirm_email')
+        if not request.user.tos:
+            return redirect('onboard-entry')
         return view_func(request, *args, **kwargs)
     return _wrapped_view_func
