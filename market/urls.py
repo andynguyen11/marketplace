@@ -84,6 +84,14 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^discover/developers/(?P<role>[-\w]+)/$', accounts_views.discover_developers,name='discover-developers'),
     url(r'^social/complete/$', accounts_views.psa_redirect, name='social-redirect'),
+    url(r'^onboard/$', TemplateView.as_view(template_name='spa.html'), name='onboard-entry'),
+    url(r'^onboard/role/$', TemplateView.as_view(template_name='spa.html'), name='onboard-roles'),
+    url(r'^onboard/skills/$', TemplateView.as_view(template_name='spa.html'), name='onboard-skills'),
+    url(r'^onboard/profile/$', TemplateView.as_view(template_name='spa.html'), name='onboard-profile'),
+    url(r'^onboard/about/$', TemplateView.as_view(template_name='spa.html'), name='onboard-about'),
+    url(r'^onboard/company/$', TemplateView.as_view(template_name='spa.html'), name='onboard-company'),
+    url(r'^onboard/employment/$', TemplateView.as_view(template_name='spa.html'), name='onboard-employment'),
+    url(r'^onboard/terms/$', TemplateView.as_view(template_name='spa.html'), name='onboard-terms')
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
@@ -93,15 +101,7 @@ if settings.DEBUG and settings.MEDIA_URL :
 if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
     urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
-    urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history')),
-    urlpatterns.append(url(r'^onboard/$', TemplateView.as_view(template_name='spa.html'), name='onboard-entry')),
-    urlpatterns.append(url(r'^onboard/role/$', TemplateView.as_view(template_name='spa.html'), name='onboard-roles')),
-    urlpatterns.append(url(r'^onboard/skills/$', TemplateView.as_view(template_name='spa.html'), name='onboard-skills')),
-    urlpatterns.append(url(r'^onboard/profile/$', TemplateView.as_view(template_name='spa.html'), name='onboard-profile')),
-    urlpatterns.append(url(r'^onboard/about/$', TemplateView.as_view(template_name='spa.html'), name='onboard-about')),
-    urlpatterns.append(url(r'^onboard/company/$', TemplateView.as_view(template_name='spa.html'), name='onboard-company')),
-    urlpatterns.append(url(r'^onboard/employment/$', TemplateView.as_view(template_name='spa.html'), name='onboard-employment')),
-    urlpatterns.append(url(r'^onboard/terms/$', TemplateView.as_view(template_name='spa.html'), name='onboard-terms'))
+    urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
 
 if settings.DEBUG:
     import debug_toolbar
