@@ -68,6 +68,7 @@ mandrill==1.0.57
 ndg-httpsclient==0.4.0
 oauthlib==1.0.3
 pathspec==0.3.3
+pendulum==1.2.1
 psutil==4.1.0
 psycopg2==2.6.1
 pyOpenSSL==16.0.0
