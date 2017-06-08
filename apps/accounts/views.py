@@ -79,6 +79,7 @@ def dashboard(request):
     messages = Message.objects.inbox(request.user, {'is_new': True, })[:5]
     return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, 'messages': messages, }, context_instance=RequestContext(request))
 
+  
 @staff_member_required
 def discover_developers(request, role=None):
     all = Profile.objects.all().exclude(capacity=None).exclude(role=None)
