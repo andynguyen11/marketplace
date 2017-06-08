@@ -220,10 +220,10 @@ class ProfileViewSet(ModelViewSet):
         validate_confirmation_signature(profile , signature)
         cross_pollinate_email(profile, 'contact_details')
 
-        if (not profile.first_name or not profile.last_name): # signup incomplete
-            return HttpResponseRedirect(request.query_params.get('next', '/signup/type/'))
+        if (not profile.long_description): # signup incomplete
+            return HttpResponseRedirect(request.query_params.get('next', '/onboard/'))
         elif (not profile.roles): # is entrepreneur
-            return HttpResponseRedirect(request.query_params.get('next', '/project/create/'))
+            return HttpResponseRedirect(request.query_params.get('next', '/onboard/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 class SkillTestViewSet(NestedModelViewSet):
