@@ -27,4 +27,3 @@ def contact_email_update_event(sender, instance, **kwargs):
             instance.email == instance.profile.email):
         instance.email_confirmed = False
         email_confirmation(user=instance.profile, instance=instance)
-
