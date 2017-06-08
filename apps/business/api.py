@@ -96,7 +96,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
             response_data['job'] = job
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)
-        else: return Response(status=403)
+        else:
+            return Response(status=403)
 
 
 class StandardResultsSetPagination(PageNumberPagination):

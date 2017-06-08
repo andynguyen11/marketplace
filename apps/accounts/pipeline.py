@@ -18,7 +18,6 @@ def load_existing_user(user, *args, **kwargs):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'biography': user.biography,
-            'role': user.role,
             'capacity': user.capacity,
             'photo': user.photo,
         }

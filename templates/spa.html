@@ -21,7 +21,7 @@
 	
 	<link rel="shortcut icon" href="{% static 'spa/favicon.ico' %}">
 	
-	<link href="{% static 'spa/styles.1c81f8f37bc95c563c3a.css' %}" rel="stylesheet">
+	<link href="{% static 'spa/styles.c69678f819b2a037e32a.css' %}" rel="stylesheet">
 	
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -76,11 +76,13 @@
 </span>
 
 
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyd78XYiY4lLjVmmq3bBSq7nH1RE919TE&libraries=places"></script>
+
 {% if ENVIRONMENT == 'local' %}
 <script src="http://localhost:8001/bundle.js"></script>
 {% else %}
-<script src="{% static 'spa/vendor.54e6ab89a68e5d5a951a.js' %}"></script>
-<script src="{% static 'spa/app.1c81f8f37bc95c563c3a.js' %}"></script>
+<script src="{% static 'spa/vendor.a1d19d516cd570770d7c.js' %}"></script>
+<script src="{% static 'spa/app.c69678f819b2a037e32a.js' %}"></script>
 {% endif %}
 
 <script src="https://use.fontawesome.com/3cdb773842.js"></script>

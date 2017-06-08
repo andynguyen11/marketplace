@@ -146,6 +146,11 @@ class Connection(models.Model):
     to_profile = models.ForeignKey('accounts.Profile', related_name='to_profile')
 
 
+class Role(models.Model):
+    name = models.CharField(max_length=100)
+    years = models.IntegerField(null=True)
+
+
 class Profile(AbstractUser):
 
     address = models.CharField(max_length=255, blank=True, null=True)
@@ -153,6 +158,7 @@ class Profile(AbstractUser):
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
     country = models.CharField(max_length=100, blank=True, null=True)
+    country_code = models.CharField(max_length=100, blank=True, null=True)
     zipcode = models.IntegerField(blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     capacity = models.IntegerField(blank=True, null=True)
@@ -161,7 +167,7 @@ class Profile(AbstractUser):
     skills = tagulous.models.TagField(to=Skills, blank=True)
     signup_code = models.CharField(max_length=25, blank=True, null=True)
     title = models.CharField(max_length=100, blank=True, null=True)
-    role = models.CharField(max_length=100, choices=ROLE_TYPES, blank=True, null=True)
+    roles = models.ManyToManyField(Role, blank=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
@@ -169,6 +175,7 @@ class Profile(AbstractUser):
     email_notifications = models.BooleanField(default=True)
     email_confirmed = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
+    tos = models.BooleanField(default=False)
 
     connections = models.ManyToManyField('self', through='Connection', symmetrical=False, related_name='reverse_connections+')
 

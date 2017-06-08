@@ -26,7 +26,7 @@
   </div>
   <div class="projectCard-budget">
     {% if project.estimated_equity_percentage %}
-      <div class="projectCard-budget-item{% if project.estimated_cash == None %} projectCard-budget-item--only{% endif %}">
+      <div class="projectCard-budget-item{% if not project.estimated_cash %} projectCard-budget-item--only{% endif %}">
         <div class="projectCard-budget-item-amount">{{ project.estimated_equity_percentage }}%</div>
         <div class="projectCard-budget-item-type">Equity</div>
       </div>

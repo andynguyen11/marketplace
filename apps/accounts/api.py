@@ -130,16 +130,28 @@ class ProfileViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        user.username = user.email
-        user.set_password(password[0])
+        user.set_password(password)
         user.save()
         assign_crud_permissions(user, user)
         headers = self.get_success_headers(serializer.data)
-        account = authenticate(username=user.email, password=password[0])
+        account = authenticate(username=user.email, password=password)
         response = Response(ProfileSerializer(user, context={'request': request}).data, status=status.HTTP_201_CREATED)
         response = set_jwt_token(response, account)
         login(request, account)
         return response
+
+    def update(self, request, *args, **kwargs):
+        new_password = request.data.get('password', None)
+        email = request.data.get('email', None)
+        if (email and request.user.email != email) or new_password:
+            try:
+                password = request.data.pop('current_password')
+                authorized = authenticate(username=request.user.email, password=password)
+                if not authorized:
+                    return Response(status=403)
+            except KeyError:
+                return Response(status=403)
+        return super(ProfileViewSet, self).update(request, *args, **kwargs)
 
     def public_view(self, profile_dict):
         return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }
@@ -210,7 +222,7 @@ class ProfileViewSet(ModelViewSet):
 
         if (not profile.first_name or not profile.last_name): # signup incomplete
             return HttpResponseRedirect(request.query_params.get('next', '/signup/type/'))
-        elif (not profile.role): # is entrepreneur
+        elif (not profile.roles): # is entrepreneur
             return HttpResponseRedirect(request.query_params.get('next', '/project/create/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 

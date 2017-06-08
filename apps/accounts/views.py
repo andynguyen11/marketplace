@@ -10,20 +10,25 @@ from django.utils.datastructures import MultiValueDictKeyError
 from generics.viewsets import assign_crud_permissions
 
 from postman.models import Message
-from accounts.forms import ProfileForm, LoginForm, DeveloperOnboardForm, ManagerOnboardForm, SignupForm
+from accounts.forms import LoginForm
 from accounts.models import Profile
 from business.models import Project, Job, Terms, PROJECT_TYPES
-from business.views import project_groups
 from apps.api.utils import set_jwt_token
 
+
+def project_groups(**kwargs):
+    new = Project.objects.filter(published=True, approved=True, **kwargs).order_by('-date_created')[:3]
+    try:
+        featured = Project.objects.filter(featured=1, published=True, approved=True, **kwargs)[:3]
+    except Project.DoesNotExist, e:
+        featured = new[0]
+    return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
 
 def error404(request):
     return render(request, '404.html')
 
-
 def error500(request):
     return render(request, '500.html')
-
 
 def user_login(request):
     form = LoginForm()
@@ -42,69 +47,28 @@ def user_login(request):
                 form.add_error(None, 'Your email or password is incorrect.')
     return render(request, 'login.html', {'form': form, 'next': next})
 
-
-def signup(request):
-    form = SignupForm()
-    if request.method == 'POST':
-        form = SignupForm(request.POST or None)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.username = form.cleaned_data.get('email')
-            password = form.cleaned_data.get('password')
-            user.set_password(password)
-            user.save()
-            assign_crud_permissions(user, user)
-            account = authenticate(username=user.username, password=password)
-            response = redirect('signup-confirm')
-            response = set_jwt_token(response, account)
-            login(request, account)
-            return response
-    return render(request, 'signup.html', {'form': form})
-
-
 def psa_redirect(request):
     """
     Hijacks the Python Social Auth redirect to set the JWT
     """
-    if request.user.title or request.user.role:
+    if request.user.title or request.user.roles:
         next = request.GET.get('next', 'dashboard')
         response = redirect(next)
     else:
-        response = redirect('signup-type')
+        response = redirect('onboard-entry')
     response = set_jwt_token(response, request.user)
     return response
 
-
 def home(request):
     context = project_groups()
-    context['developers'] = Profile.objects.filter(featured=1).exclude(role__isnull=True)[:4]
+    context['developers'] = Profile.objects.filter(featured=1)
     return render_to_response('home.html', context, context_instance=RequestContext(request))
-
 
 def logout(request):
     response = redirect('/')
     response.delete_cookie('loom_token')
     auth_logout(request)
     return response
-
-
-def view_profile(request, user_id=None):
-    if user_id:
-        user = Profile.objects.get(id=user_id)
-    else:
-        user = request.user
-    projects = Project.objects.filter(project_manager=user)
-    jobs = Terms.objects.filter(job__contractor=user, status='agreed')
-    return render_to_response('profile.html', {'user': user, 'social': user.linkedin, 'jobs': jobs, 'projects': projects }, context_instance=RequestContext(request))
-
-
-@login_required
-@email_confirmation_required
-def edit_profile(request):
-    user = request.user
-    social = user.social_auth.get(provider='linkedin-oauth2')
-    return render_to_response('edit-profile.html', {'user': user, 'social': social, }, context_instance=RequestContext(request))
-
 
 @login_required
 @email_confirmation_required
@@ -115,52 +79,7 @@ def dashboard(request):
     messages = Message.objects.inbox(request.user, {'is_new': True, })[:5]
     return render_to_response('dashboard.html', {'user': user, 'social': social, 'notifications': notifications, 'messages': messages, }, context_instance=RequestContext(request))
 
-
-@login_required
-@email_confirmation_required
-def view_bids(request):
-    projects = Project.objects.filter(project_manager=request.user)
-    bids = Job.objects.filter(contractor=request.user)
-    return render_to_response('bids.html', {'projects': projects, 'bids': bids }, context_instance=RequestContext(request))
-
-
-@login_required
-@email_confirmation_required
-def view_projects(request):
-    projects = Project.objects.filter(project_manager=request.user)
-    return render(request, 'projects.html', {'projects': projects})
-
-
-@login_required
-@email_confirmation_required
-def view_documents(request):
-    projects = Project.objects.filter(project_manager=request.user)
-    return render_to_response('documents.html', {'projects': projects, }, context_instance=RequestContext(request))
-
-
-@login_required
-@email_confirmation_required
-def profile(request, template='account-settings.html'):
-    form = ProfileForm()
-    if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            request.user.first_name = form.cleaned_data['first_name']
-            request.user.last_name = form.cleaned_data['last_name']
-            request.user.capacity = form.cleaned_data['capacity']
-            request.user.location = form.cleaned_data['location']
-            request.user.biography = form.cleaned_data['biography']
-            try:
-                request.user.photo = request.FILES['photo']
-            except MultiValueDictKeyError:
-                pass
-
-            request.user.save()
-            return redirect('profile')
-        return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
-    return render_to_response(template, {'form': form, }, context_instance=RequestContext(request))
-
-
+  
 @staff_member_required
 def discover_developers(request, role=None):
     all = Profile.objects.all().exclude(capacity=None).exclude(role=None)
