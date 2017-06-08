@@ -55,7 +55,7 @@ def psa_redirect(request):
         next = request.GET.get('next', 'dashboard')
         response = redirect(next)
     else:
-        response = redirect('signup-type')
+        response = redirect('onboard-entry')
     response = set_jwt_token(response, request.user)
     return response
 

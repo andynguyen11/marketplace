@@ -405,6 +405,5 @@ def loom_stats_email():
         'HOURLYRATE': '${0}/hour'.format(rate['hourly_rate__avg']),
         'HOURS': hours['hours__avg'],
     }
-    print(context)
-    #send_mail('loom-stats', [admin for admin in admins], context)
+    send_mail('loom-stats', [admin for admin in admins], context)
     
