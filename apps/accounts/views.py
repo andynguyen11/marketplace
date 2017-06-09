@@ -52,7 +52,7 @@ def psa_redirect(request):
     Hijacks the Python Social Auth redirect to set the JWT
     """
     if request.user.tos:
-        next = request.GET.get('next', 'dashboard')
+        next = request.GET.get('next', 'profile/dashboard')
         response = redirect(next)
     else:
         response = redirect('onboard-entry')
