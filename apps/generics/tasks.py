@@ -245,7 +245,7 @@ def loom_stats_email():
     month = yesterday.subtract(months=1)
     days_in_month = month.days_in_month
     start_month = month.start_of('month')
-    end_month = month.start_of('month').add(days=1)
+    end_month = month.end_of('month').add(days=1)
 
     date_joined = calculate_date_ranges('date_joined', yesterday, today)
     date_created = calculate_date_ranges('date_created', yesterday, today)
@@ -261,7 +261,7 @@ def loom_stats_email():
     month_date_created = calculate_date_ranges('date_created', start_month, end_month)
     month_sent_at = calculate_date_ranges('sent_at', start_month, end_month)
     month_create_date = calculate_date_ranges('create_date', start_month, end_month)
-    
+
     admins = Profile.objects.filter(is_superuser=True)
     developers = Profile.objects.exclude(roles=None)
     entrepreneurs = Profile.objects.filter(roles=None, biography__isnull=False)
@@ -350,41 +350,41 @@ def loom_stats_email():
         'DAILY_CASHPROJECTS': daily_projects_cash,
         'DAILY_EQUITYPROJECTS': daily_projects_equity,
         'DAILY_MIXPROJECTS': daily_projects_mix,
-        'DAILY_EQUITY': daily_messages,
-        'DAILY_CASH': daily_requests,
-        'DAILY_MIX': daily_connections,
-        'DAILY_MESSAGES': daily_proposals,
-        'DAILY_REQUESTS': daily_proposals_mix,
-        'DAILY_CONNECTIONS': daily_proposals_cash,
-        'DAILY_PROPOSALS': daily_proposals_equity,
-        'WOW_DEVELOPERS': week_developers,
-        'WOW_ENTREPRENEURS': week_entrepreneurs,
-        'WOW_COMPANIES':  week_company,
-        'WOW_PROJECTS': week_projects,
-        'WOW_CASHPROJECTS': week_projects_cash,
-        'WOW_EQUITYPROJECTS': week_projects_equity,
-        'WOW_MIXPROJECTS': week_projects_mix,
-        'WOW_EQUITY': week_messages,
-        'WOW_CASH': week_requests,
-        'WOW_MIX': week_connections,
-        'WOW_MESSAGES':  week_proposals,
-        'WOW_REQUESTS':  week_proposals_mix,
-        'WOW_CONNECTIONS': week_proposals_cash,
-        'WOW_PROPOSALS': week_proposals_equity,
-        'MOM_DEVELOPERS': month_developers,
-        'MOM_ENTREPRENEURS': month_entrepreneurs,
-        'MOM_COMPANIES':  month_company,
-        'MOM_PROJECTS': month_projects,
-        'MOM_CASHPROJECTS': month_projects_cash,
-        'MOM_EQUITYPROJECTS': month_projects_equity,
-        'MOM_MIXPROJECTS': month_projects_mix,
-        'MOM_EQUITY': month_messages,
-        'MOM_CASH': month_requests,
-        'MOM_MIX': month_connections,
-        'MOM_MESSAGES':  month_proposals,
-        'MOM_REQUESTS':  month_proposals_mix,
-        'MOM_CONNECTIONS': month_proposals_cash,
-        'MOM_PROPOSALS': month_proposals_equity,
+        'DAILY_MESSAGES': daily_messages,
+        'DAILY_REQUESTS': daily_requests,
+        'DAILY_CONNECTIONS': daily_connections,
+        'DAILY_PROPOSALS': daily_proposals,
+        'DAILY_MIXPROPOSALS': daily_proposals_mix,
+        'DAILY_CASHPROPOSALS': daily_proposals_cash,
+        'DAILY_EQUITYPROPOSALS': daily_proposals_equity,
+        'WOW_DEVELOPERS': round(week_developers, 2),
+        'WOW_ENTREPRENEURS': round(week_entrepreneurs, 2),
+        'WOW_COMPANIES':  round(week_company, 2),
+        'WOW_PROJECTS': round(week_projects, 2),
+        'WOW_CASHPROJECTS': round(week_projects_cash, 2),
+        'WOW_EQUITYPROJECTS': round(week_projects_equity, 2),
+        'WOW_MIXPROJECTS': round(week_projects_mix, 2),
+        'WOW_MESSAGES':  round(week_messages, 2),
+        'WOW_REQUESTS':  round(week_requests, 2),
+        'WOW_CONNECTIONS': round(week_connections, 2),
+        'WOW_PROPOSALS': round(week_proposals, 2),
+        'WOW_CASHPROPOSALS': round(week_proposals_cash, 2),
+        'WOW_EQUITYPROPOSALS': round(week_proposals_equity, 2),
+        'WOW_MIXPROPOSALS': round(week_proposals_mix, 2),
+        'MOM_DEVELOPERS': round(month_developers, 2),
+        'MOM_ENTREPRENEURS': round(month_entrepreneurs, 2),
+        'MOM_COMPANIES':  round(month_company, 2),
+        'MOM_PROJECTS': round(month_projects, 2),
+        'MOM_CASHPROJECTS': round(month_projects_cash, 2),
+        'MOM_EQUITYPROJECTS': round(month_projects_equity, 2),
+        'MOM_MIXPROJECTS': round(month_projects_mix, 2),
+        'MOM_MESSAGES': round(month_messages, 2),
+        'MOM_REQUESTS': round(month_requests, 2),
+        'MOM_CONNECTIONS': round(month_connections, 2),
+        'MOM_PROPOSALS':  round(month_proposals, 2),
+        'MOM_MIXPROPOSALS':  round(month_proposals_mix, 2),
+        'MOM_CASHPROPOSALS': round(month_proposals_cash, 2),
+        'MOM_EQUITYPROPOSALS': round(month_proposals_equity, 2),
         'DEVELOPERS': developers.count(),
         'ENTREPRENEURS': entrepreneurs.count(),
         'COMPANIES': companies.count(),
@@ -406,4 +406,4 @@ def loom_stats_email():
         'HOURS': hours['hours__avg'],
     }
     send_mail('loom-stats', [admin for admin in admins], context)
-    
+
