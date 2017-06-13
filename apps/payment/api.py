@@ -4,6 +4,7 @@ from requests.exceptions import ConnectionError
 from django.shortcuts import redirect
 from rest_framework import generics
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
@@ -255,5 +256,9 @@ class ProductOrderViewSet(ImmutableModelViewSet):
             raise PermissionDenied(detail='user not involved in order')
 
         return self._update_status(order, user, request.data)
+
+
+class InvoiceViewSet(ModelViewSet):
+    pass
 
 

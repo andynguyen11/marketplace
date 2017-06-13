@@ -274,3 +274,28 @@ class ProductOrder(models.Model):
         return self
 
 
+class Invoice(models.Model):
+    sender = models.ForeignKey('accounts.Profile', related_name='invoice_sender')
+    recipient = models.ForeignKey('accounts.Profile', related_name='invoice_recipient')
+    date_created = models.DateTimeField(auto_now_add=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+    status = models.CharField(max_length=100, default='pending')
+    title = models.CharField(max_length=255, blank=True, null=True)
+    logo = models.ImageField(blank=True, null=True, upload_to='invoice/logo')
+    sender_name = models.CharField(max_length=255, blank=True, null=True)
+    sender_address = models.CharField(max_length=255, blank=True, null=True)
+    sender_address2 = models.CharField(max_length=255, blank=True, null=True)
+    sender_location = models.CharField(max_length=255, blank=True, null=True)
+    recipient_name = models.CharField(max_length=255, blank=True, null=True)
+    recipient_address = models.CharField(max_length=255, blank=True, null=True)
+    recipient_address2 = models.CharField(max_length=255, blank=True, null=True)
+    recipient_location = models.CharField(max_length=255, blank=True, null=True)
+
+
+class InvoiceItem(models.Model):
+    invoice = models.ForeignKey(Invoice)
+    description = models.CharField(max_length=255)
+    hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    rate = models.IntegerField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
