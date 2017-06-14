@@ -15,16 +15,18 @@ from apps.api.permissions import ProductOrderPermission
 from django.conf import settings
 
 from accounts.models import Profile
+from accounts.serializers import ObfuscatedProfileSerializer
 from accounts.tasks import pm_contact_card_email
 from generics.viewsets import ImmutableModelViewSet
 from business.models import Job, Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
-from payment.models import ProductOrder, Order, Promo, get_promo
-from payment.serializers import OrderSerializer, ProductOrderSerializer, ensure_order_is_payable
+from payment.models import ProductOrder, Order, Promo, get_promo, Invoice, InvoiceItem
+from payment.serializers import OrderSerializer, ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
 from payment.helpers import stripe_helpers
 from postman.forms import build_payload
+from proposals.models import Proposal
 
 stripe.api_key = settings.STRIPE_KEY
 
@@ -259,6 +261,22 @@ class ProductOrderViewSet(ImmutableModelViewSet):
 
 
 class InvoiceViewSet(ModelViewSet):
-    pass
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+    permission_classes = (IsAuthenticated, ) #TODO add custom invoice permission
 
+    def list(self, request, **kwargs):
+        invoices = self.get_queryset().filter(recipient=request.user)
+        return Response(self.serializer_class(invoices, many=True).data)
+
+
+class InvoiceRecipientsView(generics.ListAPIView):
+    serializer_class = ObfuscatedProfileSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        user = self.request.user
+        proposals = Proposal.objects.filter(submitter=user, status='responded')
+        recipients = [proposal.project.project_manager for proposal in proposals]
+        return set(recipients)
 

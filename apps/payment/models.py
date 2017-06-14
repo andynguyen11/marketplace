@@ -278,6 +278,8 @@ class Invoice(models.Model):
     sender = models.ForeignKey('accounts.Profile', related_name='invoice_sender')
     recipient = models.ForeignKey('accounts.Profile', related_name='invoice_recipient')
     date_created = models.DateTimeField(auto_now_add=True)
+    sent_date = models.DateField(blank=True, null=True)
+    due_date = models.DateField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     status = models.CharField(max_length=100, default='pending')
@@ -294,7 +296,7 @@ class Invoice(models.Model):
 
 
 class InvoiceItem(models.Model):
-    invoice = models.ForeignKey(Invoice)
+    invoice = models.ForeignKey(Invoice, related_name='invoice_items')
     description = models.CharField(max_length=255)
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     rate = models.IntegerField(blank=True, null=True)

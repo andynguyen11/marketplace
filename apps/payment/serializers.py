@@ -1,11 +1,12 @@
 import json
+
 from rest_framework import serializers
+from stripe.error import StripeError
 
 from business.serializers import JobSerializer
-from payment.models import Order, ProductOrder, Promo
 from accounts.models import Profile
-from payment.helpers import stripe_helpers 
-from stripe.error import StripeError
+from payment.helpers import stripe_helpers
+from payment.models import Order, ProductOrder, Promo, Invoice, InvoiceItem
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -75,3 +76,49 @@ class ProductOrderSerializer(serializers.ModelSerializer):
     def get_product(self, obj):
         return obj.product.id
 
+
+class InvoiceItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = InvoiceItem
+        exclude = ('invoice', )
+
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    # TODO add sender and recipient
+    # check to make sure recipient is valid
+    hourly_items = serializers.SerializerMethodField()
+    fixed_items = serializers.SerializerMethodField()
+    invoice_items = InvoiceItemSerializer(many=True)
+
+    class Meta:
+        model = Invoice
+        fields = ('id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
+                  'invoice_items', 'sender_name', 'sender_address', 'sender_address2', 'sender_location',
+                  'recipient_name', 'recipient_address', 'recipient_address2', 'recipient_location', 'status',
+                  'logo', "recipient", "sender", )
+
+    def get_hourly_items(self, obj):
+        serializer = InvoiceItemSerializer(InvoiceItem.objects.filter(invoice=obj).exclude(rate__isnull=True), many=True)
+        return serializer.data
+
+    def get_fixed_items(self, obj):
+        serializer = InvoiceItemSerializer(InvoiceItem.objects.filter(invoice=obj).exclude(rate__isnull=False), many=True)
+        return serializer.data
+
+    def create(self, validated_data):
+        invoice_items = validated_data.pop('invoice_items')
+        invoice = Invoice.objects.create(**validated_data)
+        for invoice_item in invoice_items:
+            item = InvoiceItem.objects.create(invoice=invoice, **invoice_item)
+            item.save()
+        return invoice
+
+    def update(self, instance, validated_data):
+        invoice_items = validated_data.pop('invoice_items')
+        for invoice_item in invoice_items:
+            item, created = InvoiceItem.objects.update_or_create(invoice=instance, **invoice_item)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
