@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block content %}
+  <div id="discover">
+
+    <!-- main header -->
+    <h1>
+      Find the developer<br>
+      of your digital dreams.
+    </h1>
+
+    <!-- discover nav -->
+    <div class="discover-nav">
+      <h2>
+        show me
+        <div class="dropdown">
+          <button onclick="dropdown()" class="dropbtn">
+            <span class="discover-underline">{{ role }}</span>
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <div id="myDropdown" class="dropdown-content">
+            <a class="text-lowercase" href="{% url 'discover-developers' 'front-end' %}">Front-end developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'back-end' %}">Back-end developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'full-stack' %}">Full-stack developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'mobile' %}">Mobile developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'ios' %}">iOS developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'android' %}">Android developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'software' %}">Software developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'game' %}">Game developer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'devops' %}">DevOps engineer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'database' %}">Database engineer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'qa' %}">QA engineer</a>
+            <a class="text-lowercase" href="{% url 'discover-developers' 'all' %}">All</a>
+          </div>
+        </div>
+        <br class="visible-xs"/>
+        <span class="after-caret">developers</span>
+      </h2>
+    </div>
+
+    {% if featured %}
+      <div class="page-content page-content--alternate">
+        <div class="devs page-content--medium">
+          <div class='plates page-content--medium'>
+            <div class="plates-headcap">
+              {% if role == 'all' %}
+                <h3 class="plates-header brand-bold">Featured developers</h3>
+              {% else %}
+                <h3 class="plates-header brand-bold">Featured {{ role }} developers</h3>
+              {% endif %}
+            </div>
+            <div class='plates-inner plates-inner--dev'>
+              {% for developer in featured %}
+                <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
+                  <div class='plate--dev-profile-overlay' style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=400&url={{ developer.get_photo }}')"></div>
+                  <div class='plate--dev-info'>
+                    <div class="plate--dev-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ developer.get_photo }}')"></div>
+                    <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
+                    <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
+                    <div class="plate--dev-info-hire-button btn btn-white--clear">View Profile</div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    {% if developers %}
+      {% if role == 'all' %}
+        <div class="devs page-content--medium">
+          <div class='plates page-content--medium'>
+            <div class="plates-headcap">
+              <h3 class="plates-header brand-bold">Meet your developers</h3>
+            </div>
+            <div class='plates-inner plates-inner--dev'>
+              {% for developer in all %}
+                <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
+                  <div class='plate--dev-profile-overlay' style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=400&url={{ developer.get_photo }}')"></div>
+                  <div class='plate--dev-info'>
+                    <div class="plate--dev-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ developer.get_photo }}')"></div>
+                    <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
+                    <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
+                    <div class="plate--dev-info-hire-button btn btn-white--clear">View Profile</div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% else %}
+        <div class="devs page-content--medium">
+          <div class='plates page-content--medium'>
+            <div class="plates-headcap">
+              <h3 class="plates-header brand-bold">Meet your {{ role }} developers</h3>
+            </div>
+            <div class='plates-inner plates-inner--dev'>
+              {% for developer in developers %}
+                <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
+                  <div class='plate--dev-profile-overlay' style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=400&url={{ developer.get_photo }}')"></div>
+                  <div class='plate--dev-info'>
+                    <div class="plate--dev-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ developer.get_photo }}')"></div>
+                    <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
+                    <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
+                    <div class="plate--dev-info-hire-button btn btn-white--clear">View Profile</div>
+                  </div>
+                </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    function dropdown() { document.getElementById("myDropdown").classList.toggle("show"); }
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show'))
+            openDropdown.classList.remove('show');
+        }
+      }
+    }
+  </script>
+{% endblock %}
