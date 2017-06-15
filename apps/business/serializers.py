@@ -80,11 +80,12 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         return project
 
     def update(self, instance, validated_data):
-        skills = validated_data.pop('skills')
+        if 'skills' in validated_data:
+            skills = validated_data.pop('skills')
+            instance.skills = [skill['name'] for skill in skills]
         info = model_meta.get_field_info(instance)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.skills = [skill['name'] for skill in skills]
         instance.save()
         return instance
 
