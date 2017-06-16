@@ -3,7 +3,7 @@ import factory
 from generics.factories import GenericModelFactory, image_factory, zip_factory
 from generics.models import Attachment
 from accounts.models import Profile
-from business.models import Company, Employee, Project, Job, Terms, Category
+from business.models import Company, Employee, Project, Job, Job, Terms, Category
 import business.enums as enums
 from notifications.signals import notify
 

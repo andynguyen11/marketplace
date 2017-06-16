@@ -23,8 +23,9 @@ from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
 from payment.models import ProductOrder, Order, Promo, get_promo, Invoice, InvoiceItem
-from payment.serializers import OrderSerializer, ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
 from payment.helpers import stripe_helpers
+from payment.permissions import InvoicePermissions
+from payment.serializers import OrderSerializer, ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
 from postman.forms import build_payload
 from proposals.models import Proposal
 
@@ -263,10 +264,14 @@ class ProductOrderViewSet(ImmutableModelViewSet):
 class InvoiceViewSet(ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
-    permission_classes = (IsAuthenticated, ) #TODO add custom invoice permission
+    permission_classes = (IsAuthenticated, InvoicePermissions)
 
     def list(self, request, **kwargs):
-        invoices = self.get_queryset().filter(recipient=request.user)
+        action = request.query_params.get('action', 'received')
+        if action == 'sent':
+            invoices = self.get_queryset().filter(sender=request.user)
+        if action == 'received':
+            invoices = self.get_queryset().filter(recipient=request.user)
         return Response(self.serializer_class(invoices, many=True).data)
 
 
