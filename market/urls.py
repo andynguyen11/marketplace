@@ -102,6 +102,16 @@ if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
     urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
     urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^invoices/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
+    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
+    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[\d]+)/edit/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
+    urlpatterns.append(url(r'^invoices/received/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
+    urlpatterns.append(url(r'^invoices/sent/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
+    urlpatterns.append(url(r'^invoices/new/$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
+    urlpatterns.append(url(r'^invoices/new/type/$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
+    urlpatterns.append(url(r'^invoices/new/recipient/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
+    urlpatterns.append(url(r'^invoices/new/invoice/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
+    urlpatterns.append(url(r'^invoices/new/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
 
 if settings.DEBUG:
     import debug_toolbar
