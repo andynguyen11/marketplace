@@ -96,7 +96,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         fields = ('id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
                   'invoice_items', 'sender_name', 'sender_address', 'sender_address2', 'sender_location',
                   'recipient_name', 'recipient_address', 'recipient_address2', 'recipient_location', 'status',
-                  'logo', "recipient", "sender", )
+                  'logo', 'recipient', 'sender', 'viewed', )
 
     def get_hourly_items(self, obj):
         serializer = InvoiceItemSerializer(InvoiceItem.objects.filter(invoice=obj).exclude(rate__isnull=True), many=True)
@@ -116,6 +116,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         invoice_items = validated_data.pop('invoice_items')
+        instance.invoice_items_set.clear()
         for invoice_item in invoice_items:
             item, created = InvoiceItem.objects.update_or_create(invoice=instance, **invoice_item)
         for attr, value in validated_data.items():

@@ -297,6 +297,7 @@ class Invoice(models.Model):
     recipient_address = models.CharField(max_length=255, blank=True, null=True)
     recipient_address2 = models.CharField(max_length=255, blank=True, null=True)
     recipient_location = models.CharField(max_length=255, blank=True, null=True)
+    viewed = models.BooleanField(default=False)
 
 
 class InvoiceItem(models.Model):
@@ -305,3 +306,8 @@ class InvoiceItem(models.Model):
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     rate = models.IntegerField(blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
+
+    def save(self, *args, **kwargs):
+        if self.hours and self.rate and not self.amount:
+            self.amount = self.hours * self.rate
+        super(InvoiceItem, self).save(*args, **kwargs)
