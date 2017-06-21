@@ -19,7 +19,7 @@ class InvoicePermissions(permissions.BasePermission):
 
     def has_permission(self, request, view, **kwargs):
         recipient = request.data.get('recipient', None)
-        if recipient and recipient not in self.is_valid_recipient(request):
+        if recipient and int(recipient) not in self.is_valid_recipient(request):
             return False
         return True
 
