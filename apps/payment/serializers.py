@@ -78,10 +78,11 @@ class ProductOrderSerializer(serializers.ModelSerializer):
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=InvoiceItem()._meta.get_field('id'))
 
     class Meta:
         model = InvoiceItem
-        exclude = ('invoice', )
+        fields = ('id', 'description', 'hours', 'rate', 'amount',)
 
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -116,7 +117,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         invoice_items = validated_data.pop('invoice_items')
-        instance.invoice_items_set.clear()
+        current_items = [item.id for item in instance.invoice_items.all()]
+        new_items = [int(item['id']) for item in invoice_items if 'id' in invoice_items]
+        delete_items = list(set(current_items) - set(new_items))
+        for item_id in delete_items:
+            item = InvoiceItem.objects.get(id=item_id)
+            item.delete()
         for invoice_item in invoice_items:
             item, created = InvoiceItem.objects.update_or_create(invoice=instance, **invoice_item)
         for attr, value in validated_data.items():
