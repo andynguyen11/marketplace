@@ -98,9 +98,9 @@ class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = ('id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
-                  'invoice_items', 'sender_name', 'sender_address', 'sender_address2', 'sender_location',
-                  'recipient_name', 'recipient_address', 'recipient_address2', 'recipient_location', 'status',
-                  'logo', 'recipient', 'sender', 'viewed', )
+                  'invoice_items', 'sender_name', 'sender_email', 'sender_phone', 'sender_address', 'sender_address2', 'sender_location',
+                  'recipient_name', 'recipient_email', 'recipient_phone', 'recipient_address', 'recipient_address2', 'recipient_location',
+                  'status', 'logo', 'recipient', 'sender', 'viewed', )
 
     def get_hourly_items(self, obj):
         serializer = InvoiceItemSerializer(InvoiceItem.objects.filter(invoice=obj).exclude(rate__isnull=True), many=True)

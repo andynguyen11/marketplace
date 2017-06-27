@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='project',
             name='role',
-            field=models.CharField(blank=True, choices=[(b'full-stack', b'Fullstack Developer'), (b'front-end', b'Frontend Developer'), (b'back-end', b'Backend Developer'), (b'mobile', b'Mobile Developer'), (b'entrepreneur', b'Entrepreneur')], max_length=100, null=True),
+            field=models.CharField(blank=True, max_length=100, null=True),
         ),
     ]
