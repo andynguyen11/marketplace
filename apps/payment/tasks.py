@@ -98,3 +98,19 @@ def begin_loop(sender=None, conf=None, **kwargs):
     if not is_scheduled('payment.tasks.expire_orders', or_running=True):
         expire_orders.delay()
 
+@shared_task
+def invoice_notification_email(template, name, email, invoice_id):
+    send_to_emails(
+        template,
+        emails=[email],
+        context={
+            'name': name,
+            'invoice': invoice_id
+        }
+    )
+
+def invoice_due():
+    pass
+
+def invoice_overdue():
+    pass
