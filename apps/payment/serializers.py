@@ -5,6 +5,7 @@ from stripe.error import StripeError
 
 from business.serializers import JobSerializer
 from accounts.models import Profile
+from accounts.serializers import ObfuscatedProfileSerializer
 from payment.helpers import stripe_helpers
 from payment.models import Order, ProductOrder, Promo, Invoice, InvoiceItem
 
@@ -88,6 +89,8 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     # TODO add sender and recipient
     # check to make sure recipient is valid
+    recipient = ObfuscatedProfileSerializer()
+    sender = ObfuscatedProfileSerializer()
     hourly_items = serializers.SerializerMethodField()
     fixed_items = serializers.SerializerMethodField()
     invoice_items = InvoiceItemSerializer(many=True)
@@ -109,6 +112,8 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         invoice_items = validated_data.pop('invoice_items')
+        validated_data['sender'] = Profile.objects.get(id=validated_data['sender']['id'])
+        validated_data['recipient'] = Profile.objects.get(id=validated_data['recipient']['id'])
         invoice = Invoice.objects.create(**validated_data)
         for invoice_item in invoice_items:
             item = InvoiceItem.objects.create(invoice=invoice, **invoice_item)
@@ -116,15 +121,16 @@ class InvoiceSerializer(serializers.ModelSerializer):
         return invoice
 
     def update(self, instance, validated_data):
-        invoice_items = validated_data.pop('invoice_items')
-        current_items = [item.id for item in instance.invoice_items.all()]
-        new_items = [int(item['id']) for item in invoice_items if 'id' in invoice_items]
-        delete_items = list(set(current_items) - set(new_items))
-        for item_id in delete_items:
-            item = InvoiceItem.objects.get(id=item_id)
-            item.delete()
-        for invoice_item in invoice_items:
-            item, created = InvoiceItem.objects.update_or_create(invoice=instance, **invoice_item)
+        if 'invoice_items' in validated_data:
+            invoice_items = validated_data.pop('invoice_items')
+            current_items = [item.id for item in instance.invoice_items.all()]
+            new_items = [int(item['id']) for item in invoice_items if 'id' in invoice_items]
+            delete_items = list(set(current_items) - set(new_items))
+            for item_id in delete_items:
+                item = InvoiceItem.objects.get(id=item_id)
+                item.delete()
+            for invoice_item in invoice_items:
+                item, created = InvoiceItem.objects.update_or_create(invoice=instance, **invoice_item)
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()

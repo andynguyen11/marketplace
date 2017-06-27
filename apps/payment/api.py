@@ -271,7 +271,7 @@ class InvoiceViewSet(ModelViewSet):
         if action == 'sent':
             invoices = self.get_queryset().filter(sender=request.user)
         if action == 'received':
-            invoices = self.get_queryset().filter(recipient=request.user)
+            invoices = self.get_queryset().filter(recipient=request.user).exclude(status='draft')
         return Response(self.serializer_class(invoices, many=True).data)
 
 

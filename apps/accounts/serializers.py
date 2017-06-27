@@ -77,6 +77,7 @@ class ContactDetailsSerializer(RelationalModelSerializer):
 
 
 class ObfuscatedProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=Profile()._meta.get_field('id'))
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
