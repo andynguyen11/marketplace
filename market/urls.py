@@ -103,8 +103,6 @@ if settings.DEBUG :
     urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
     urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
     urlpatterns.append(url(r'^invoices/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
-    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
-    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[\d]+)/edit/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
     urlpatterns.append(url(r'^invoices/received/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
     urlpatterns.append(url(r'^invoices/sent/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
     urlpatterns.append(url(r'^invoices/new/$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
@@ -112,6 +110,9 @@ if settings.DEBUG :
     urlpatterns.append(url(r'^invoices/new/recipient/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
     urlpatterns.append(url(r'^invoices/new/invoice/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
     urlpatterns.append(url(r'^invoices/new/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
+    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='invoice-detail'))
+    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/$', TemplateView.as_view(template_name='spa.html'), name='invoice-edit'))
+    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='invoice-edit-confirm'))
 
 if settings.DEBUG:
     import debug_toolbar
