@@ -105,7 +105,7 @@ def invoice_notification_email(template, name, email, invoice_id):
         emails=[email],
         context={
             'name': name,
-            'invoice': invoice_id
+            'url': '{0}/invoices/{1}/'.format(settings.BASE_URL, invoice_id)
         }
     )
 
