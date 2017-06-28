@@ -18,6 +18,7 @@ from tagulous.views import autocomplete
 from django.conf.urls import include, url, patterns
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin.views.decorators import staff_member_required
 from django.conf.urls.static import static
 from django.contrib.flatpages import views
 from django.conf.urls import handler404, handler500
@@ -66,6 +67,17 @@ urlpatterns = [
     url(r'^terms-of-service/$', TemplateView.as_view(template_name='terms.html'), name='terms'),
     url(r'^diversity/$', TemplateView.as_view(template_name='diversity.html'), name='diversity'),
     url(r'^dmca/$', TemplateView.as_view(template_name='dmca.html'), name='dmca'),
+    url(r'^invoices/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices'),
+    url(r'^invoices/received/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices'),
+    url(r'^invoices/sent/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices'),
+    url(r'^invoices/new/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
+    url(r'^invoices/new/type/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
+    url(r'^invoices/new/recipient/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
+    url(r'^invoices/new/invoice/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
+    url(r'^invoices/new/confirmation/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
+    url(r'^invoices/(?P<invoice_id>[0-9]+)/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-detail'),
+    url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit'),
+    url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/confirmation/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit-confirm'),
     url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
@@ -102,17 +114,6 @@ if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
     urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
     urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^invoices/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
-    urlpatterns.append(url(r'^invoices/received/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
-    urlpatterns.append(url(r'^invoices/sent/$', TemplateView.as_view(template_name='spa.html'), name='invoices'))
-    urlpatterns.append(url(r'^invoices/new/$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
-    urlpatterns.append(url(r'^invoices/new/type/$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
-    urlpatterns.append(url(r'^invoices/new/recipient/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
-    urlpatterns.append(url(r'^invoices/new/invoice/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
-    urlpatterns.append(url(r'^invoices/new/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='invoices-new'))
-    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='invoice-detail'))
-    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/$', TemplateView.as_view(template_name='spa.html'), name='invoice-edit'))
-    urlpatterns.append(url(r'^invoices/(?P<invoice_id>[0-9]+)/edit/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='invoice-edit-confirm'))
 
 if settings.DEBUG:
     import debug_toolbar
