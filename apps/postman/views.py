@@ -37,7 +37,6 @@ from postman.fields import autocompleter_app
 from postman.forms import WriteForm, AnonymousWriteForm, QuickReplyForm, FullReplyForm
 from postman.models import Message, get_order_by
 from postman.utils import format_subject, format_body
-from business.models import Job
 
 login_required_m = method_decorator(login_required)
 email_confirmation_m = method_decorator(email_confirmation_required)

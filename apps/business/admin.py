@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from business.models import Company, Job, Project, Document
+from business.models import Company, Project, Document
 from generics.admin import AttachmentInline
 
 @admin.register(Company)
@@ -15,12 +15,7 @@ class ProjectAdmin(admin.ModelAdmin):
     search_fields = ('title', 'company__name', 'project_manager__email', 'project_manager__first_name', 'project_manager__last_name',  )
 
 
-@admin.register(Job)
-class JobAdmin(admin.ModelAdmin):
-    list_display = ('project', 'contractor', 'date_created', 'status', )
-
-
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ('job', 'type', 'status', )
+    list_display = ('type', 'status', )
 

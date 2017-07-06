@@ -4,18 +4,11 @@ import uuid
 from rest_framework import serializers
 from stripe.error import StripeError
 
-from business.serializers import JobSerializer
 from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
 from payment.helpers import stripe_helpers
-from payment.models import Order, ProductOrder, Promo, Invoice, InvoiceItem
+from payment.models import ProductOrder, Promo, Invoice, InvoiceItem
 
-
-class OrderSerializer(serializers.ModelSerializer):
-    job = JobSerializer()
-
-    class Meta:
-        model = Order
 
 def ensure_order_is_payable(order, stripe_token=None):
     try: 

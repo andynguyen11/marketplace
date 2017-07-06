@@ -11,12 +11,11 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Document, Project, Job, Employee, Document, NDA
+from business.models import Company, Document, Project, Employee, Document, NDA
 from docusign.models import Template
 from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
 from generics.utils import update_instance, field_names, send_mail
-from payment.models import Order
 from postman.models import Message
 from proposals.models import Proposal, Question
 from proposals.serializers import ProposalSerializer, QuestionSerializer
@@ -136,29 +135,6 @@ class ProjectSearchSerializer(HaystackSerializer):
         ]
 
 
-class JobSerializer(serializers.ModelSerializer):
-    message = serializers.CharField(write_only=True, required=True)
-    cash = serializers.IntegerField(required=False, allow_null=True )
-    equity = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True )
-    thread_id = serializers.SerializerMethodField()
-    project = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Job
-        fields = field_names(Job) + ('message', 'thread_id')
-
-    def get_thread_id(self, job):
-        return Message.objects.filter(job=job)[0].thread_id
-
-    def get_project(self, obj):
-        project = obj.project
-        return {
-            'title': project.title,
-            'id': project.id,
-            'company': project.company.name if project.company else None
-        }
-
-
 class DocumentSerializer(ParentModelSerializer):
     template = serializers.PrimaryKeyRelatedField(required=False, write_only=True, queryset=Template.objects.all())
     signers = SignerSerializer(many=True, required=False)
@@ -196,15 +172,6 @@ class DocumentSerializer(ParentModelSerializer):
         if not data.has_key('docusign_document'):
             template = data.pop('template', self.default_template(data['type']))
             if template:
-                if not data['job'].owner.stripe:
-                    order = Order.objects.get(job=data['job'].id)
-                    #TODO This check needs to be more dynamic when promos are variable
-                    if order.status != 'paid':
-                        raise PermissionDenied({
-                            "message": "NO_PAYMENT_METHOD",
-                            "profile": data['job'].owner.id,
-                            "job": data['job'].id })
-                    
                 signers = data.pop('signers', [
                     self.signer(data, 'contractor'),
                     self.signer(data, 'owner')])

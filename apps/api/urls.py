@@ -6,10 +6,10 @@ from rest_framework_jwt.views import refresh_jwt_token
 
 from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate
 from business.api import *
-from payment.api import CreditCardView, StripePaymentSourceView, OrderDetail, OrderListCreate, PromoCheck, ProductOrderViewSet, InvoiceViewSet, InvoiceRecipientsView
+from payment.api import StripePaymentSourceView, PromoCheck, ProductOrderViewSet, InvoiceViewSet, InvoiceRecipientsView
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
-from postman.api import ConversationDetail, MessageAPI, MessageCount, ConnectThreadAPI
+from postman.api import ConversationDetail, MessageAPI, MessageCount
 from proposals.api import QuestionViewSet, ProposalViewSet
 from reviews.api import ReviewListCreate
 from business.models import Category
@@ -64,7 +64,6 @@ declared_router = DeclarativeRouter({
 
 urlpatterns = [
     url(r'^jwt/$', refresh_jwt_token),
-    url(r'^creditcard/$', view=CreditCardView.as_view()),
     url(r'^paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
     url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
@@ -81,7 +80,6 @@ urlpatterns = [
         'patch': 'partial_update'
     }), name='questions'),
     url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
-    url(r'^thread/(?P<thread_id>[0-9]+)/connect/$', view=ConnectThreadAPI.as_view(), name='connect-thread'),
     url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
     url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),

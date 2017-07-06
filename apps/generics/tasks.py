@@ -15,7 +15,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from market.celery import app as celery_app
 from accounts.models import Profile
-from business.models import Job, Document, Project, Employee
+from business.models import Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
@@ -43,7 +43,7 @@ def validate_confirmation_signature(instance, signature, confirm_on_success='%s_
 
 
 @shared_task
-def account_confirmation(user_id, roles=None):
+def account_confirmation(user_id, roles=True):
     user = Profile.objects.get(id=user_id)
     email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
     send_mail(email_template, [user], {
@@ -78,51 +78,39 @@ def new_message_notification(recipient_id, thread_id):
 
 @shared_task
 def dev_contact_card_email(job_id):
-    job = Job.objects.get(id=job_id)
-    document = Document.objects.get(job=job, type='MSA')
-    dev_context = {
-        'fname': job.project.project_manager.first_name,
-        'lname': job.project.project_manager.last_name,
-        'email': job.project.project_manager.email,
-        'document': document.docusign_document.id,
-        'project': job.project.title,
-    }
-    dev_context['phone'] = job.project.project_manager.phone if job.project.project_manager.phone else ''
-    dev_context['title'] = job.project.project_manager.title if job.project.project_manager.title else ''
-    dev_context['company'] = job.project.company.name if job.project.company else ''
-    send_mail('new-contract', [job.contractor], dev_context)
+    Pass
 
 @shared_task
 def nda_sent_email(job_id):
-    job = Job.objects.get(id=job_id)
-    thread = Message.objects.get(job=job)
+    # TODO REFACTOR TO PASS IN PROPOSAL OR MESSAGE
+    #thread = Message.objects.get(job=job)
     merge_vars = {
-        'fname': job.project.project_manager.first_name,
-        'project': job.project.title,
-        'email': job.contractor.email,
-        'thread': thread.id,
+        'fname': 'first name',
+        'project': 'project title',
+        'email': 'freelancer email',
+        'thread': 'thread id',
     }
-    send_mail('nda-sent', [job.contractor], merge_vars)
+    #send_mail('nda-sent', [job.contractor], merge_vars)
 
 @shared_task
 def nda_signed_entrepreneur_email(job_id):
-    job = Job.objects.get(id=job_id)
+    #TODO REFACTOR
     merge_vars = {
-        'fname': job.contractor.first_name,
-        'project': job.project.title,
-        'email': job.project.project_manager.email,
+        'fname': 'first name',
+        'project': 'project title',
+        'email': 'project manager email',
     }
-    send_mail('nda-signed-entrepreneur', [job.project.project_manager], merge_vars)
+    #send_mail('nda-signed-entrepreneur', [job.project.project_manager], merge_vars)
 
 @shared_task
 def nda_signed_freelancer_email(job_id):
-    job = Job.objects.get(id=job_id)
+    #TODO REFACTOR
     merge_vars = {
-        'fname': job.project.project_manager.first_name,
-        'project': job.project.title,
-        'email': job.contractor.email,
+        'fname': 'first name',
+        'project': 'project title',
+        'email': 'freelancer email',
     }
-    send_mail('nda-signed-freelancer', [job.contractor], merge_vars)
+    #send_mail('nda-signed-freelancer', [job.contractor], merge_vars)
 
 @shared_task
 def terms_sent_email(job_id):
@@ -142,15 +130,15 @@ def terms_sent_email(job_id):
 
 @shared_task
 def terms_approved_email(job_id):
-    job = Job.objects.get(id=job_id)
-    thread = Message.objects.get(job=job)
+    #TODO REFACTOR
+    #thread = Message.objects.get(job=job)
     merge_vars = {
-        'fname': job.contractor.first_name,
-        'project': job.project.title,
-        'email': job.project.project_manager.email,
-        'thread': thread.id,
+        'fname': 'first name',
+        'project': 'project title',
+        'email': 'project manager email',
+        'thread': 'thread id',
     }
-    send_mail('terms-approved', [job.project.project_manager], merge_vars)
+    #send_mail('terms-approved', [job.project.project_manager], merge_vars)
 
 
 @shared_task

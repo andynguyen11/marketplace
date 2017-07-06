@@ -12,7 +12,7 @@ from generics.viewsets import assign_crud_permissions
 from postman.models import Message
 from accounts.forms import LoginForm
 from accounts.models import Profile
-from business.models import Project, Job, Terms, PROJECT_TYPES
+from business.models import Project, Terms, PROJECT_TYPES
 from apps.api.utils import set_jwt_token
 
 

@@ -593,12 +593,8 @@ class Message(Interaction):
 
     subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
     body = models.TextField(_("body"), blank=True)
-    job = models.ForeignKey('business.Job', blank=True, null=True)
-    project = models.ForeignKey('business.Project', blank=True, null=True)
-    msa = models.ForeignKey('business.Document', blank=True, null=True)
     attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
     nda = models.ForeignKey('business.Document', blank=True, null=True, related_name='nda')
-    terms = models.ForeignKey('business.Terms', blank=True, null=True)
     last_emailed_owner = models.DateTimeField(null=True, blank=True)
     last_emailed_bidder = models.DateTimeField(null=True, blank=True)
 

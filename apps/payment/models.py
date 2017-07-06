@@ -72,56 +72,6 @@ def get_promo(code):
         return None
 
 
-class Order(models.Model):
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_charged = models.DateTimeField(blank=True, null=True)
-    _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
-    job = models.OneToOneField('business.Job')
-    promo = models.ForeignKey(Promo, blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.CharField(max_length=20, default='pending', choices=ORDER_STATUSES)
-
-    def __str__(self):
-        return 'Transaction: {0}'.format(self.job)
-
-    def save(self, *args, **kwargs):
-        if not self.price:
-            self.price = self.job.hours * settings.LOOM_FEE
-        super(Order, self).save(*args, **kwargs)
-
-    @property
-    def payer(self):
-        return self.job.project.project_manager
-
-    @property
-    def final_price(self):
-        return self.promo.apply_to(self.price) if self.promo else self.price
-
-    def add_promo(self, code): # TODO: Should an incorrect promo fail silently like this?
-        if code:
-            promo = get_promo(code)
-            if promo and promo.is_valid(self.payer):
-                self.promo = promo
-            else:
-                return False
-
-    def can_pay(self, user):
-        return user == self.payer
-
-    def pay(self, customer, card):
-        stripe_helpers.charge_source(
-            amount=self.final_price,
-            source=card,
-            customer=customer,
-            description='Loom fee for "{0}"'.format(self.job.project.title)
-        )
-        if self.promo:
-            self.promo.mark_used_by(self.payer)
-        self.date_charged = datetime.now()
-        self.status = 'paid'
-        self.save()
-
-
 class ProductOrder(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     date_charged = models.DateTimeField(blank=True, null=True)

@@ -16,16 +16,15 @@ from django.conf import settings
 
 from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
-from accounts.tasks import pm_contact_card_email
 from generics.viewsets import ImmutableModelViewSet
-from business.models import Job, Document, Terms
+from business.models import Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
-from payment.models import ProductOrder, Order, Promo, get_promo, Invoice, InvoiceItem
+from payment.models import ProductOrder, Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
-from payment.serializers import OrderSerializer, ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
+from payment.serializers import ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
 from postman.forms import build_payload
 from proposals.models import Proposal
 
@@ -71,126 +70,6 @@ class StripePaymentSourceView(APIView):
     def get(self, request):
         cards = stripe.Customer.retrieve(request.user.stripe).sources.data if request.user.stripe else []
         return Response(status=200, data=cards)
-
-
-class CreditCardView(APIView):
-    """
-    API view handling creating and updating credit cards
-    """
-
-    def post(self, request):
-
-        stripe_customer = None
-        card = request.data['stripeToken']
-
-        if request.data['saveCard']:
-            if request.user.stripe:
-                try:
-                    stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-                    card = stripe_customer.sources.create(source=card)
-                except stripe.error.CardError, e:
-                    body = e.json_body
-                    error = body['error']['message']
-                    return Response(status=500, data={"error": error})
-            else:
-                try:
-                    # Create a Customer
-                    stripe_customer = stripe.Customer.create(
-                        source=card,
-                        description="{0}, {1} - {2}".format(
-                            request.user.last_name,
-                            request.user.first_name,
-                            request.user.company
-                        )
-                    )
-                    card=stripe_customer.sources.data[0].id
-                except stripe.error.CardError, e:
-                    body = e.json_body
-                    error = body['error']['message']
-                    return Response(status=500, data={"error": error})
-            user = request.user
-            user.stripe = stripe_customer.id
-            user.save()
-        message, url = self.send_payment(request, card, stripe_customer)
-        return Response(status=200, data={"message": message, "url": url})
-
-    def patch(self, request):
-        stripe.api_key = settings.STRIPE_KEY
-        stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-        if stripe_customer.id == request.data['customer']:
-            message, url = self.send_payment(request, request.data['card'], request.data['customer'])
-            return Response(status=200, data={"message": message, "url": url})
-        return Response(status=403)
-
-    def send_payment(self, request, card, customer=None):
-        order = self.build_order(request)
-
-        if order.status == 'paid':
-            return ("Already Paid", "/profile/dashboard/")
-
-        if order.can_pay(request.user):
-            order.pay(customer, card)
-            signer_url = self.generate_contract(request, order.job)
-            order.job.status = 'connected'
-            order.job.save()
-            return ("Success", signer_url)
-
-        return ("There was a problem processing your payment.", "/profile/dashboard/")
-
-    def build_order(self, request):
-        job = Job.objects.get(id=request.data['job'])
-        order, created = Order.objects.get_or_create(job=job)
-        order.add_promo(request.data.get('promo', None))
-        return order
-
-    def generate_contract(self, request, job):
-        terms = Terms.objects.get(job=job)
-        payload = build_payload(request.user, terms.job.contractor, terms)
-        serializer = DocumentSerializer(data=payload)
-        serializer.is_valid(raise_exception=True)
-        new_document = serializer.create(serializer.validated_data)
-        signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
-        pm_contact_card_email.delay(job.id)
-        return signer_url
-
-    def get(self, request):
-        stripe.api_key = settings.STRIPE_KEY
-        cards = []
-        if request.user.stripe:
-            stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-            cards = stripe_customer.sources.data
-        return Response(status=200, data=cards)
-
-
-class OrderListCreate(generics.ListCreateAPIView):
-    serializer_class = OrderSerializer
-    renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, )
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        try:
-            _ = (e for e in queryset)
-            serializer = self.get_serializer(queryset, many=True)
-        except TypeError:
-            serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
-
-    def get_queryset(self):
-        profile = self.request.user
-        queryset = Order.objects.filter(job__project__project_manager=profile)
-        job_id = self.request.query_params.get('job', None)
-        if job_id is not None:
-            job = Job.objects.get(id=job_id)
-            queryset, created = Order.objects.get_or_create(job=job)
-        return queryset
-
-
-class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-    renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, )
 
 
 class PromoCheck(APIView):

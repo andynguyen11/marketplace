@@ -6,45 +6,12 @@ from notifications.models import Notification
 from notifications.signals import notify
 
 from accounts.models import Profile
-from business.models import Document, Terms, Project, NDA, Job
+from business.models import Document, Terms, Project, NDA
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, terms_sent_email,\
     terms_approved_email, project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history,\
     post_a_project, complete_project, project_approved_email
 from postman.models import Message
 
-
-@receiver(pre_save, sender=Document)
-def legacy_nda_update_event(sender, instance, **kwargs):
-    if not hasattr(instance, 'id') or instance.id is None or instance.type != 'NDA':
-        return
-    old_status = Document.objects.get(id=instance.id).status
-    thread = Message.objects.get(nda=instance)
-    if instance.status != old_status and instance.status.lower() == 'sent':
-        notify.send(
-            instance.manager,
-            recipient=instance.contractor,
-            verb=u'sent a non-disclosure agreement for',
-            action_object=thread,
-            target=instance.job.project,
-            type=u'ndaRequest'
-        )
-        nda_sent_email.delay(thread.job.id)
-
-    if instance.status != old_status and instance.status.lower() == 'signed':
-        notify.send(
-            instance.contractor,
-            recipient=instance.manager,
-            verb=u'signed a non-disclosure agreement for',
-            action_object=thread,
-            target=instance.job.project,
-            type=u'ndaSigned'
-        )
-        clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"ndaRequest"})
-        for alert in clear_alerts:
-            alert.unread = False
-            alert.save()
-        nda_signed_freelancer_email.delay(thread.job.id)
-        nda_signed_entrepreneur_email.delay(thread.job.id)
 
 @receiver(pre_save, sender=NDA)
 def nda_update_event(sender, instance, **kwargs):
@@ -53,7 +20,6 @@ def nda_update_event(sender, instance, **kwargs):
 
     old_status = NDA.objects.get(id=instance.id).status
     thread = instance.proposal.message
-    job = Job.objects.get(project=instance.proposal.project, contractor=instance.receiver)
 
     if instance.status != old_status and instance.status.lower() == 'sent':
         notify.send(
@@ -64,7 +30,8 @@ def nda_update_event(sender, instance, **kwargs):
             target=instance.proposal.project,
             type=u'ndaRequest'
         )
-        nda_sent_email.delay(job.id)
+        #TODO Refactor
+        #nda_sent_email.delay(job.id)
 
     if instance.status != old_status and instance.status.lower() == 'signed':
         notify.send(
@@ -72,41 +39,17 @@ def nda_update_event(sender, instance, **kwargs):
             recipient=instance.sender,
             verb=u'signed a non-disclosure agreement for',
             action_object=thread,
-            target=job.project,
+            target=instance.proposal.project,
             type=u'ndaSigned'
         )
         clear_alerts = Notification.objects.filter(action_object_object_id=thread.id, data={"type":"ndaRequest"})
         for alert in clear_alerts:
             alert.unread = False
             alert.save()
-        nda_signed_freelancer_email.delay(job.id)
-        nda_signed_entrepreneur_email.delay(job.id)
+        #TODO Refactor
+        #nda_signed_freelancer_email.delay(job.id)
+        #nda_signed_entrepreneur_email.delay(job.id)
 
-@receiver(pre_save, sender=Terms)
-def terms_update_event(sender, instance, **kwargs):
-    if not hasattr(instance, 'id') or instance.id is None:
-        return
-    old_status = Terms.objects.get(id=instance.id).status
-    thread = Message.objects.get(terms=instance)
-    if instance.status != old_status and instance.status.lower() == 'sent':
-        notify.send(
-            instance.job.project.project_manager,
-            recipient=instance.job.contractor,
-            verb=u'sent contract terms to preview and approve for',
-            action_object=thread,
-            target=instance.job.project
-        )
-        terms_sent_email.delay(thread.job.id)
-
-    if instance.status != old_status and instance.status.lower() == 'agreed':
-        notify.send(
-            instance.job.contractor,
-            recipient=instance.job.project.project_manager,
-            verb=u'agreed to contract terms for',
-            action_object=thread,
-            target=instance.job.project
-        )
-        terms_approved_email.delay(thread.job.id)
 
 @receiver(pre_save, sender=Project)
 def new_project_posted(sender, instance, **kwargs):
@@ -134,7 +77,7 @@ def new_account(sender, instance, **kwargs):
     if not old_profile.tos and instance.tos and instance.email_confirmed:
         account_confirmation.delay(
                 instance.id,
-                instance.roles
+                bool(instance.roles)
             )
 
         if instance.roles:
