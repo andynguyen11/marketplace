@@ -265,6 +265,7 @@ class InvoiceViewSet(ModelViewSet):
     queryset = Invoice.objects.all()
     serializer_class = InvoiceSerializer
     permission_classes = (IsAuthenticated, InvoicePermissions)
+    lookup_field = 'reference_id'
 
     def list(self, request, **kwargs):
         action = request.query_params.get('action', 'received')

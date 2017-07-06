@@ -1,14 +1,18 @@
+import uuid
 from datetime import datetime, date
+from decimal import Decimal
+
 from django.db import models
 from django.conf import settings
-from rest_framework.exceptions import ValidationError
-from payment.helpers import stripe_helpers
-from payment.enums import *
-from business.products import products, ProductType, PRODUCT_CHOICES
-from generics.utils import percentage
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from decimal import Decimal
+from rest_framework.exceptions import ValidationError
+
+from business.products import products, ProductType, PRODUCT_CHOICES
+from generics.utils import percentage
+from payment.helpers import stripe_helpers
+from payment.enums import *
+
 
 def noop(*args, **kwargs):
     pass
@@ -275,6 +279,7 @@ class ProductOrder(models.Model):
 
 
 class Invoice(models.Model):
+    reference_id = models.UUIDField(default=uuid.uuid4, editable=False)
     sender = models.ForeignKey('accounts.Profile', related_name='invoice_sender')
     recipient = models.ForeignKey('accounts.Profile', related_name='invoice_recipient')
     date_created = models.DateTimeField(auto_now_add=True)
@@ -304,7 +309,7 @@ class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='invoice_items')
     description = models.CharField(max_length=255)
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    rate = models.IntegerField(blank=True, null=True)
+    rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
 
     def save(self, *args, **kwargs):
