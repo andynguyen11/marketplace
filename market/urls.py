@@ -75,9 +75,9 @@ urlpatterns = [
     url(r'^invoices/new/recipient/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
     url(r'^invoices/new/invoice/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
     url(r'^invoices/new/confirmation/?$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoices-new'),
-    url(r'^invoices/(?P<invoice_id>[-\w]+)/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-detail'),
-    url(r'^invoices/(?P<invoice_id>[-\w]+)/edit/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit'),
-    url(r'^invoices/(?P<invoice_id>[-\w]+)/edit/confirmation/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit-confirm'),
+    url(r'^invoices/(?P<invoice_id>[-\w\d]+)/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-detail'),
+    url(r'^invoices/(?P<invoice_id>[-\w\d]+)/edit/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit'),
+    url(r'^invoices/(?P<invoice_id>[-\w\d]+)/edit/confirmation/$', staff_member_required(TemplateView.as_view(template_name='spa.html')), name='invoice-edit-confirm'),
     url(r'^profile/$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
     url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
@@ -114,6 +114,14 @@ if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
     urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
     urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/type/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/identity/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/company/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/account/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/review/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
+    urlpatterns.append(url(r'^profile/settings/bank/setup/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
 
 if settings.DEBUG:
     import debug_toolbar
