@@ -1,10 +1,11 @@
-import datetime, stripe
+import datetime
+import stripe
 from requests.exceptions import ConnectionError
 
 from django.shortcuts import redirect
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
@@ -25,11 +26,11 @@ from payment.models import ProductOrder, Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
 from payment.serializers import ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
-from postman.forms import build_payload
 from proposals.models import Proposal
 
 stripe.api_key = settings.STRIPE_KEY
 
+#refactor
 class StripePaymentSourceView(APIView):
     """
     API view handling create, update, and delete on stripe payment sources
@@ -71,7 +72,7 @@ class StripePaymentSourceView(APIView):
         cards = stripe.Customer.retrieve(request.user.stripe).sources.data if request.user.stripe else []
         return Response(status=200, data=cards)
 
-
+#refactor
 class PromoCheck(APIView):
     " Simple Promo checking view "
     permission_classes = (IsAuthenticated, )
@@ -92,7 +93,7 @@ class PromoCheck(APIView):
     def post(self, request):
         return self.get(request, code=request.data.get('promo', None))
 
-
+#deprecated
 class ProductOrderViewSet(ImmutableModelViewSet):
     queryset = ProductOrder.objects.all()
     serializer_class = ProductOrderSerializer
@@ -165,3 +166,63 @@ class InvoiceRecipientsView(generics.ListAPIView):
         recipients = [proposal.project.project_manager for proposal in proposals]
         return set(recipients)
 
+
+class StripeViewSet(ViewSet):
+    """ Generic API StripeView """
+    permission_classes = (IsAuthenticated, )
+
+    @detail_route(methods=['get'])
+    def countryspec(self, request, pk=None):
+        spec = stripe.CountrySpec.retrieve(pk)
+        return Response(spec, status=status.HTTP_200_OK)
+
+    def validate_webhook(self, webhook_data):
+        webhook_id = webhook_data.get('id', None)
+        webhook_type = webhook_data.get('type', None)
+        webhook_livemode = webhook_data.get('livemode', None)
+        is_valid = False
+
+        if webhook_id and webhook_type and webhook_livemode:
+            is_valid = True
+        return is_valid, webhook_id, webhook_type, webhook_livemode
+
+    @list_route(methods=['post'])
+    def webhook(self, request, *args, **kwargs):
+        try:
+            serializer = WebhookSerializer(data=request.data)
+
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+                webhook_data = validated_data.get('data', None)
+
+                is_webhook_valid, webhook_id, webhook_type, webhook_livemode = self.validate_webhook(webhook_data)
+
+                if is_webhook_valid:
+                    if Event.objects.filter(stripe_id=webhook_id).exists():
+                        obj = EventProcessingException.objects.create(
+                            data=validated_data,
+                            message="Duplicate event record",
+                            traceback=""
+                        )
+
+                        event_processing_exception_serializer = EventProcessingExceptionSerializer(obj)
+                        return Response(event_processing_exception_serializer.data, status=status.HTTP_200_OK)
+                    else:
+                        event = Event.objects.create(
+                            stripe_id=webhook_id,
+                            kind=webhook_type,
+                            livemode=webhook_livemode,
+                            webhook_message=validated_data
+                        )
+                        event.validate()
+                        event.process()
+                        event_serializer = EventSerializer(event)
+                        return Response(event_serializer.data, status=status.HTTP_200_OK)
+                else:
+                    error_data = {u'error': u'Webhook must contain id, type and livemode.'}
+                    return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except stripe.StripeError as e:
+            error_data = {u'error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)

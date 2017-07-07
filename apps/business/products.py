@@ -12,7 +12,6 @@ from accounts.tasks import connection_request, connection_made
 from business.models import Terms
 from docusign.models import Document as DocusignDocument
 from generics.utils import percentage
-from postman.forms import build_payload
 from postman.models import Message
 
 def content_type(model):
