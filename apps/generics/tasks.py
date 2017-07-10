@@ -19,7 +19,6 @@ from business.models import Document, Project, Employee
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
-from payment.models import ProductOrder
 from proposals.models import Proposal
 from postman.models import Message
 
@@ -274,7 +273,6 @@ def loom_stats_email():
 
     messages = Message.objects.all()
     requests = ProductOrder.objects.all()
-    connections = ProductOrder.objects.filter(status='paid')
 
     proposals = Proposal.objects.all()
     proposals_mix = Proposal.objects.filter(cash=True, equity=True)

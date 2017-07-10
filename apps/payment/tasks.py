@@ -4,7 +4,6 @@ from celery import shared_task, signals
 import time
 
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
-from payment.models import ProductOrder
 from payment.utils import only_one, is_scheduled
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature
 

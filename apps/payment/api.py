@@ -3,6 +3,9 @@ import stripe
 from requests.exceptions import ConnectionError
 
 from django.shortcuts import redirect
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.utils.encoding import smart_str
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ViewSet
@@ -12,7 +15,6 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, viewsets
-from apps.api.permissions import ProductOrderPermission
 from django.conf import settings
 
 from accounts.models import Profile
@@ -22,10 +24,10 @@ from business.models import Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
-from payment.models import ProductOrder, Promo, get_promo, Invoice, InvoiceItem
+from payment.models import Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
-from payment.serializers import ProductOrderSerializer, InvoiceSerializer, ensure_order_is_payable
+from payment.serializers import InvoiceSerializer, StripeJSONSerializer
 from proposals.models import Proposal
 
 stripe.api_key = settings.STRIPE_KEY
@@ -93,53 +95,6 @@ class PromoCheck(APIView):
     def post(self, request):
         return self.get(request, code=request.data.get('promo', None))
 
-#deprecated
-class ProductOrderViewSet(ImmutableModelViewSet):
-    queryset = ProductOrder.objects.all()
-    serializer_class = ProductOrderSerializer
-    permission_classes = (IsAuthenticated, ProductOrderPermission)
-
-    @property
-    def keys(self):
-        return dict(id=self.kwargs.get('id', self.kwargs.get('pk', None)))
-
-    def list(self, request, **kwargs):
-        user_orders = self.get_queryset().filter(payer=request.user, status='paid', **self.request.query_params)
-        return Response(self.serializer_class(user_orders, many=True).data)
-
-    def create(self, request, **kwargs):
-        request.data['requester'] = self.request.user.id
-        return super(ProductOrderViewSet, self).create(request, **kwargs)
-
-    def _update_status(self, order, user, data):
-        status = data.get('status', None)
-        stripe_token = data.get('stripe_token', None)
-        if(order.payer == user):
-            payable, details = ensure_order_is_payable(order, stripe_token=stripe_token)
-            if not payable:
-                return Response(status=400, data={'stripe_token': [
-                    'Payer has not specified a payment source for this Order',
-                    details ]})
-
-        updated = order.change_status(status, user)
-        data = ProductOrderSerializer(updated).data
-        return Response(status=204, data=data)
-
-    @detail_route(methods=['post'], permission_classes=(IsAuthenticated, ProductOrderPermission))
-    def update_status(self, request, **kwargs):
-        return self._update_status(order=self.get_object(), user=request.user, data=request.data)
-
-    @list_route(methods=['post'], permission_classes=(IsAuthenticated,))
-    def find_and_update_status(self, request, **kwargs):
-        related_object_id = request.data.get('related_object_id', None)
-        order = ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=related_object_id)
-        user = request.user
-
-        if not (user in order.involved_users):
-            raise PermissionDenied(detail='user not involved in order')
-
-        return self._update_status(order, user, request.data)
-
 
 class InvoiceViewSet(ModelViewSet):
     queryset = Invoice.objects.all()
@@ -167,14 +122,31 @@ class InvoiceRecipientsView(generics.ListAPIView):
         return set(recipients)
 
 
-class StripeViewSet(ViewSet):
+class StripeConnectViewSet(ViewSet):
     """ Generic API StripeView """
     permission_classes = (IsAuthenticated, )
 
-    @detail_route(methods=['get'])
-    def countryspec(self, request, pk=None):
-        spec = stripe.CountrySpec.retrieve(pk)
-        return Response(spec, status=status.HTTP_200_OK)
+    def create(self, request):
+        try:
+            serializer = StripeJSONSerializer(data=request.data)
+            if serializer.is_valid():
+                stripe_account = stripe.Account.create(
+                    type='custom',
+                    email=request.user.email,
+                    **serializer.data['data']
+                )
+                request.user.stripe_connect = stripe_account.id
+                request.user.save()
+                return Response(stripe_account, status=201)
+            else:
+                return Response(serializer.errors, status=400)
+        except stripe.StripeError as e:
+            error_data = {u'error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=400)
+
+    def list(self, request):
+        account = stripe.Account.retrieve(request.user.stripe_connect)
+        return Response(status=200, data=account)
 
     def validate_webhook(self, webhook_data):
         webhook_id = webhook_data.get('id', None)
@@ -186,10 +158,16 @@ class StripeViewSet(ViewSet):
             is_valid = True
         return is_valid, webhook_id, webhook_type, webhook_livemode
 
+    @detail_route(methods=['get'])
+    def countryspec(self, request, pk=None):
+        spec = stripe.CountrySpec.retrieve(pk)
+        return Response(spec, status=status.HTTP_200_OK)
+
+    @method_decorator(csrf_exempt)
     @list_route(methods=['post'])
     def webhook(self, request, *args, **kwargs):
         try:
-            serializer = WebhookSerializer(data=request.data)
+            serializer = StripeJSONSerializer(data=request.data)
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
@@ -217,12 +195,12 @@ class StripeViewSet(ViewSet):
                         event.validate()
                         event.process()
                         event_serializer = EventSerializer(event)
-                        return Response(event_serializer.data, status=status.HTTP_200_OK)
+                        return Response(event_serializer.data, status=200)
                 else:
                     error_data = {u'error': u'Webhook must contain id, type and livemode.'}
-                    return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+                    return Response(error_data, status=400)
             else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                return Response(serializer.errors, status=400)
         except stripe.StripeError as e:
             error_data = {u'error': smart_str(e) or u'Unknown error'}
-            return Response(error_data, status=status.HTTP_400_BAD_REQUEST)
+            return Response(error_data, status=400)

@@ -1,21 +1,24 @@
+import json
 import uuid
+import traceback
 from datetime import datetime, date
 from decimal import Decimal
 
+import six
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.postgres.fields import JSONField
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from payment.helpers import stripe_helpers
 from payment.enums import *
+from payment.signals import webhook_processing_error, WEBHOOK_SIGNALS
 
-
-def noop(*args, **kwargs):
-    pass
 
 class Promo(models.Model):
     code = models.CharField(max_length=15)
@@ -72,162 +75,6 @@ def get_promo(code):
         return None
 
 
-class ProductOrder(models.Model):
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_charged = models.DateTimeField(blank=True, null=True)
-
-    _product = models.CharField(max_length=20, choices=PRODUCT_CHOICES)
-
-    requester = models.ForeignKey('accounts.Profile', related_name='requester')
-    payer = models.ForeignKey('accounts.Profile', related_name='payer')
-    recipient = models.ForeignKey('accounts.Profile', related_name='recipient', null=True)
-
-    related_model = models.ForeignKey(ContentType)
-    related_object = GenericForeignKey('related_model', 'related_object_id')
-    related_object_id = models.PositiveIntegerField()
-
-    _promo = models.ForeignKey(Promo, blank=True, null=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    fee = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-
-    status = models.CharField(max_length=20, default='pending', choices=ORDER_STATUSES)
-    request_status = models.CharField(max_length=50, null=True)
-
-    stripe_charge_id = models.CharField(max_length=50, null=True)
-    details = models.CharField(max_length=250, null=True)
-    result = models.CharField(max_length=250, null=True)
-    brand = models.CharField(max_length=25, null=True)
-    last4 =  models.CharField(max_length=10, null=True)
-
-    @property
-    def product(self):
-        return products[self._product]
-
-    @product.setter
-    def product(self, product):
-        self._product = product.id
-
-    @property
-    def promo(self):
-        return self._promo
-
-    @promo.setter
-    def promo(self, code):
-        if code:
-            promo = get_promo(code)
-            if not promo:
-                raise ValidationError({"promo": ["This promo code is invalid."]})
-            if promo.is_valid(self.payer):
-                self._promo = promo
-        else: self._promo = None
-
-    @property
-    def final_price(self):
-        return self.promo.apply_to(self.price) if self.promo else self.price
-
-    def set_status(self, status):
-        """
-        This allows Products to implement logic that is stored in request_status.
-        request_statuses are usually substatuses of pending.
-        Products can implement on_{status} hooks for ORDER_STATUSES and request_statuses
-        """
-        valid_order_status = status in { t[0] for t in ORDER_STATUSES }
-        valid_request_status = status in self.product.status_flow
-
-        if valid_order_status:
-            self.status = status
-        if valid_request_status:
-            self.request_status = status
-        if not (valid_order_status or valid_request_status):
-            raise TypeError('status "%s" is not an ORDER_STATUS or defined by product %s' % (status, self.product))
-        return getattr(self.product, 'on_%s' % status, noop)(self)
-
-    def change_status(self, status, user):
-        return self.product.change_status(status, self, user)
-
-    @property
-    def full_status(self):
-        return '%s.%s' % (self.status, self.request_status)
-
-    def __str__(self):
-        return 'Product {0}, Order #{1} on {2}'.format(self.product, self.id, self.related_object)
-
-    @property
-    def involved_users(self):
-        if hasattr(self.product, 'involved_users'):
-            return self.product.involved_users(self)
-        return { self.payer, self.requester, self.recipient }
-
-    def resolve_product_fields(self):
-        if not hasattr(self, 'related_model'):
-            self.related_model = self.product.related_model
-        self.price, self.fee = self.product.calculate_costs(self)
-        self.product.validate_order(self)
-
-    def save(self, *args, **kwargs):
-        self.resolve_product_fields()
-        return super(ProductOrder, self).save(*args, **kwargs)
-
-    def apply_promo(self, amount):
-        return self.promo.apply_to(amount) if self.promo else amount
-
-    @property
-    def final_costs(self):
-        if(self.product.type == ProductType.percentage):
-            return self.price, self.apply_promo(self.fee)
-        return self.apply_promo(self.price), None
-
-    def prepare_payment(self, customer=None, source=None):
-        if self.stripe_charge_id:
-            return self.stripe_charge_id
-
-        if not (customer and source):
-            customer, source = stripe_helpers.get_customer_and_card(
-                    self.payer, source)
-        amount, fee = self.final_costs
-        payload = dict(
-            capture=False,
-            amount=amount,
-            source=source,
-            customer=customer,
-            description= 'Loom fee for {0}'.format(self),
-            metadata={'order': self.id})
-
-        if(self.product.type == ProductType.percentage):
-            payload['amount'] = fee # amount is the fee until connect integration
-
-        charge = stripe_helpers.charge_source(**payload)
-
-        self.stripe_charge_id = charge.id
-        self.brand = charge.source.brand
-        self.last4 = charge.source.last4
-        self.save()
-        return self.stripe_charge_id
-
-    def pay(self, customer=None, source=None):
-        self.prepare_payment(customer, source)
-        self.product.can_pay(self, self.payer)
-
-        charge = stripe_helpers.capture_charge(self.stripe_charge_id)
-
-        self.set_status('paid' if charge.paid else charge.status)
-
-        if self.status == 'paid':
-            if self.promo:
-                self.promo.mark_used_by(self.payer)
-            self.details = self.product.display_value
-            self.date_charged = datetime.now()
-
-        if self.status == 'failed':
-            self.details = '''
-            failure_code: %s,
-            failure_message: %s
-            ''' % (charge.failure_code, charge.failure_message)
-
-        self.save()
-        return self
-
-
 class Invoice(models.Model):
     reference_id = models.UUIDField(default=uuid.uuid4, editable=False)
     sender = models.ForeignKey('accounts.Profile', related_name='invoice_sender')
@@ -266,3 +113,161 @@ class InvoiceItem(models.Model):
         if self.hours and self.rate and not self.amount:
             self.amount = self.hours * self.rate
         super(InvoiceItem, self).save(*args, **kwargs)
+
+
+class StripeObject(models.Model):
+    stripe_id = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:  # pylint: disable=E0012,C1001
+        abstract = True
+
+
+class EventProcessingException(models.Model):
+    event = models.ForeignKey("Event", null=True)
+    data = models.TextField()
+    message = models.CharField(max_length=500)
+    traceback = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    @classmethod
+    def log(cls, data, exception, event):
+        cls.objects.create(
+            event=event,
+            data=data or "",
+            message=str(exception),
+            traceback=traceback.format_exc()
+        )
+
+    def __unicode__(self):
+        return six.u("<{}, pk={}, Event={}>").format(self.message, self.pk, self.event)
+
+
+class Event(StripeObject):
+    kind = models.CharField(max_length=250)
+    livemode = models.BooleanField(default=False)
+    #customer = models.ForeignKey("Customer", null=True)
+    webhook_message = JSONField()
+    validated_message = JSONField(null=True)
+    valid = models.NullBooleanField(null=True)
+    processed = models.BooleanField(default=False)
+
+    @property
+    def message(self):
+        return self.validated_message
+
+    def __unicode__(self):
+        return "%s - %s" % (self.kind, self.stripe_id)
+
+    def link_customer(self):
+        cus_id = None
+        customer_crud_events = [
+            "customer.created",
+            "customer.updated",
+            "customer.deleted"
+        ]
+        if self.kind in customer_crud_events:
+            cus_id = self.message["data"]["object"]["id"]
+        else:
+            cus_id = self.message["data"]["object"].get("customer", None)
+
+        #if cus_id is not None:
+        #    try:
+        #        self.customer = Customer.objects.get(stripe_id=cus_id)
+        #        self.save()
+        #    except Customer.DoesNotExist:
+        #        pass
+
+    def validate(self):
+        evt = stripe.Event.retrieve(self.stripe_id)
+        self.validated_message = json.loads(
+            json.dumps(
+                evt.to_dict(),
+                sort_keys=True,
+                cls=stripe.StripeObjectEncoder
+            )
+        )
+        if self.webhook_message["data"] == self.validated_message["data"]:
+            self.valid = True
+        else:
+            self.valid = False
+        self.save()
+
+    def process(self):  # @@@ to complex, fix later  # noqa
+        """
+            "account.updated",
+            "account.application.deauthorized",
+            "charge.succeeded",
+            "charge.failed",
+            "charge.refunded",
+            "charge.dispute.created",
+            "charge.dispute.updated",
+            "charge.dispute.closed",
+            "customer.created",
+            "customer.updated",
+            "customer.deleted",
+            "customer.subscription.created",
+            "customer.subscription.updated",
+            "customer.subscription.deleted",
+            "customer.subscription.trial_will_end",
+            "customer.discount.created",
+            "customer.discount.updated",
+            "customer.discount.deleted",
+            "invoice.created",
+            "invoice.updated",
+            "invoice.payment_succeeded",
+            "invoice.payment_failed",
+            "invoiceitem.created",
+            "invoiceitem.updated",
+            "invoiceitem.deleted",
+            "plan.created",
+            "plan.updated",
+            "plan.deleted",
+            "coupon.created",
+            "coupon.updated",
+            "coupon.deleted",
+            "transfer.created",
+            "transfer.updated",
+            "transfer.failed",
+            "ping"
+        """
+        if not self.valid or self.processed:
+            return
+        try:
+            if not self.kind.startswith("plan.") and not self.kind.startswith("transfer."):
+                self.link_customer()
+            #if self.kind.startswith("invoice."):
+            #    Invoice.handle_event(self)
+            #elif self.kind.startswith("charge."):
+            #    self.customer.record_charge(
+            #        self.message["data"]["object"]["id"]
+            #    )
+            elif self.kind.startswith("transfer."):
+                Transfer.process_transfer(
+                    self,
+                    self.message["data"]["object"]
+                )
+            #elif self.kind.startswith("customer.subscription."):
+            #    if self.customer:
+            #        self.customer.sync_current_subscription()
+            #elif self.kind == "customer.deleted":
+            #    self.customer.purge()
+            self.send_signal()
+            self.processed = True
+            self.save()
+        except stripe.StripeError as e:
+            EventProcessingException.log(
+                data=e.http_body,
+                exception=e,
+                event=self
+            )
+            webhook_processing_error.send(
+                sender=Event,
+                data=e.http_body,
+                exception=e
+            )
+
+    def send_signal(self):
+        signal = WEBHOOK_SIGNALS.get(self.kind)
+        if signal:
+            return signal.send(sender=Event, event=self)

@@ -11,7 +11,6 @@ from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSeri
 from business.serializers import DocumentSerializer, NDASerializer
 from business.models import Document, NDA
 from generics.serializers import AttachmentSerializer
-from payment.models import ProductOrder
 from postman.models import Message, AttachmentInteraction
 from proposals.models import Proposal
 

@@ -6,17 +6,6 @@ from django.db import migrations, models
 
 from payment.helpers import stripe_helpers
 
-def add_payment_source(apps, schema_editor):
-    ProductOrder = apps.get_model('payment', 'ProductOrder')
-    for order in ProductOrder.objects.filter(status='paid'):
-        try:
-            charge = stripe_helpers.get_charge_info(order.stripe_charge_id)
-            order.brand = charge.source.brand
-            order.last4 = charge.source.last4
-            order.save()
-        except:
-            pass
-
 
 class Migration(migrations.Migration):
 
@@ -35,5 +24,4 @@ class Migration(migrations.Migration):
             name='last4',
             field=models.CharField(max_length=10, null=True),
         ),
-        migrations.RunPython(add_payment_source),
     ]

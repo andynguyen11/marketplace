@@ -128,13 +128,6 @@ class PublicReadProjectOwnerEditPermission(permissions.BasePermission):
                 request.method in permissions.SAFE_METHODS)
 
 
-class ProductOrderPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, order):
-        return (request.method in permissions.SAFE_METHODS or
-                view.action == 'update_status') and (
-                request.user in order.involved_users)
-
-
 class IsSenderReceiver(permissions.BasePermission):
     """
     Custom permission to only allow sender / receiver to update

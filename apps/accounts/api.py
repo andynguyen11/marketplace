@@ -15,7 +15,6 @@ from accounts.models import Profile, ContactDetails, Skills, SkillTest, Verifica
 from accounts.decorators import check_token
 from accounts.tasks import email_confirmation
 from business.models import Project
-from payment.models import ProductOrder
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (

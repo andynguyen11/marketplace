@@ -169,6 +169,7 @@ class Profile(AbstractUser):
     title = models.CharField(max_length=100, blank=True, null=True)
     roles = models.ManyToManyField(Role, blank=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
+    stripe_connect = models.CharField(max_length=255, blank=True, null=True)
     biography = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
