@@ -126,6 +126,12 @@ class StripeConnectViewSet(ViewSet):
     """ Generic API StripeView """
     permission_classes = (IsAuthenticated, )
 
+    def update_stripe_account(self, user):
+        user.stripe_connect = stripe_account.id
+        user.verification = stripe_account.verification.status
+        user.payouts_enabled = stripe_account.payouts_enabled
+        user.save()
+
     def create(self, request):
         try:
             serializer = StripeJSONSerializer(data=request.data)
@@ -135,8 +141,7 @@ class StripeConnectViewSet(ViewSet):
                     email=request.user.email,
                     **serializer.data['data']
                 )
-                request.user.stripe_connect = stripe_account.id
-                request.user.save()
+                self.update_stripe_account(request.user)
                 return Response(stripe_account, status=201)
             else:
                 return Response(serializer.errors, status=400)
@@ -147,6 +152,21 @@ class StripeConnectViewSet(ViewSet):
     def list(self, request):
         account = stripe.Account.retrieve(request.user.stripe_connect)
         return Response(status=200, data=account)
+
+    #def partial_update(self, request):
+    #    try:
+    #        serializer = StripeJSONSerializer(data=request.data)
+    #        if serializer.is_valid():
+    #            stripe_account = stripe.Account.update(
+    #                **serializer.data['data']
+    #            )
+    #            self.update_stripe_account(request.user)
+    #            return Response(stripe_account, status=200)
+    #        else:
+    #            return Response(serializer.errors, status=400)
+    #    except stripe.StripeError as e:
+    #        error_data = {u'error': smart_str(e) or u'Unknown error'}
+    #        return Response(error_data, status=400)
 
     def validate_webhook(self, webhook_data):
         webhook_id = webhook_data.get('id', None)

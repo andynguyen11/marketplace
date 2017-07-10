@@ -170,6 +170,8 @@ class Profile(AbstractUser):
     roles = models.ManyToManyField(Role, blank=True)
     stripe = models.CharField(max_length=255, blank=True, null=True)
     stripe_connect = models.CharField(max_length=255, blank=True, null=True)
+    verification = models.CharField(max_length=255, default='unverified')
+    payouts_enabled = models.BooleanField(default=False)
     biography = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
     objects = CustomUserManager()
