@@ -157,8 +157,11 @@ class StripeConnectViewSet(ViewSet):
             return Response(error_data, status=400)
 
     def list(self, request):
-        account = stripe.Account.retrieve(request.user.stripe_connect)
-        return Response(status=200, data=account)
+        if request.user.stripe_connect:
+            account = stripe.Account.retrieve(request.user.stripe_connect)
+            return Response(status=200, data=account)
+        else:
+            return Response(status=200)
 
     #def partial_update(self, request):
     #    try:
@@ -206,7 +209,7 @@ class StripeWebhookView(APIView):
                     stripe_account = validated_data['data']['object']
                     profile = Profile.objects.get(stripe_connect=stripe_account['id'])
                     profile.payouts_enabled = stripe_account['payouts_enabled']
-                    profile.verification = stripe_account['legal_entity']['verifification']['status']
+                    profile.verification = stripe_account['legal_entity']['verification']['status']
                     profile.save()
                     return Response(status=200)
                 else:
