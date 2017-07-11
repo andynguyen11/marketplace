@@ -130,25 +130,27 @@ class StripeConnectViewSet(ViewSet):
     def update_stripe_account(self, user, stripe_account):
         user.stripe_connect = stripe_account.id
         user.verification = stripe_account.legal_entity.verification.status
+        if 'payouts_enabled' in stripe_account:
+            user.payouts_enabled = stripe_account.payouts_enabled
         user.save()
 
     def create(self, request):
         try:
             serializer = StripeJSONSerializer(data=request.data)
             if serializer.is_valid():
-                #stripe_token = serializer.data['data'].pop('external_account')
+                stripe_token = serializer.data['data'].pop('external_account')
                 # Need to create, fetch, then update in order to trigger Stripe account update webhook
                 stripe_response = stripe.Account.create(
                     type='custom',
                     email=request.user.email,
                     **serializer.data['data']
                 )
-                #stripe_account = stripe.Account.retrieve(
-                #    id=stripe_response.id
-                #)
-                #stripe_account.external_account = stripe_token
-                #stripe_response = stripe_account.save()
-                self.update_stripe_account(request.user, stripe_response)
+                stripe_account = stripe.Account.retrieve(
+                    id=stripe_response.id
+                )
+                stripe_account.external_account = stripe_token
+                stripe_account = stripe_account.save()
+                self.update_stripe_account(request.user, stripe_account)
                 return Response(stripe_response, status=201)
             else:
                 return Response(serializer.errors, status=400)
