@@ -8,7 +8,7 @@ from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
 from generics.serializers import JSONSerializerField
 from payment.helpers import stripe_helpers
-from payment.models import Promo, Invoice, InvoiceItem, EventProcessingException, Event
+from payment.models import Promo, Invoice, InvoiceItem
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
@@ -75,13 +75,7 @@ class StripeJSONSerializer(serializers.Serializer):
     data = JSONSerializerField(required=True, allow_null=False)
 
 
-class EventProcessingExceptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EventProcessingException
-
-
-class EventSerializer(serializers.ModelSerializer):
-    event_processing_exceptions = EventProcessingExceptionSerializer(source='event_processing_exception_serializer_set', many=True, read_only=True)
-
-    class Meta:
-        model = Event
+class StripeWebhookSerializer(StripeJSONSerializer):
+    livemode = serializers.CharField()
+    id = serializers.CharField()
+    type = serializers.CharField()

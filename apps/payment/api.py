@@ -1,5 +1,6 @@
 import datetime
 import stripe
+import json
 from requests.exceptions import ConnectionError
 
 from django.shortcuts import redirect
@@ -27,7 +28,7 @@ from business.products import products
 from payment.models import Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
-from payment.serializers import InvoiceSerializer, StripeJSONSerializer
+from payment.serializers import InvoiceSerializer, StripeJSONSerializer, StripeWebhookSerializer
 from proposals.models import Proposal
 
 stripe.api_key = settings.STRIPE_KEY
@@ -126,23 +127,29 @@ class StripeConnectViewSet(ViewSet):
     """ Generic API StripeView """
     permission_classes = (IsAuthenticated, )
 
-    def update_stripe_account(self, user):
+    def update_stripe_account(self, user, stripe_account):
         user.stripe_connect = stripe_account.id
-        user.verification = stripe_account.verification.status
-        user.payouts_enabled = stripe_account.payouts_enabled
+        user.verification = stripe_account.legal_entity.verification.status
         user.save()
 
     def create(self, request):
         try:
             serializer = StripeJSONSerializer(data=request.data)
             if serializer.is_valid():
-                stripe_account = stripe.Account.create(
+                #stripe_token = serializer.data['data'].pop('external_account')
+                # Need to create, fetch, then update in order to trigger Stripe account update webhook
+                stripe_response = stripe.Account.create(
                     type='custom',
                     email=request.user.email,
                     **serializer.data['data']
                 )
-                self.update_stripe_account(request.user)
-                return Response(stripe_account, status=201)
+                #stripe_account = stripe.Account.retrieve(
+                #    id=stripe_response.id
+                #)
+                #stripe_account.external_account = stripe_token
+                #stripe_response = stripe_account.save()
+                self.update_stripe_account(request.user, stripe_response)
+                return Response(stripe_response, status=201)
             else:
                 return Response(serializer.errors, status=400)
         except stripe.StripeError as e:
@@ -168,6 +175,14 @@ class StripeConnectViewSet(ViewSet):
     #        error_data = {u'error': smart_str(e) or u'Unknown error'}
     #        return Response(error_data, status=400)
 
+    @detail_route(methods=['get'])
+    def countryspec(self, request, pk=None):
+        spec = stripe.CountrySpec.retrieve(pk)
+        return Response(spec, status=status.HTTP_200_OK)
+
+class StripeWebhookView(APIView):
+    serializer_class = StripeWebhookSerializer
+
     def validate_webhook(self, webhook_data):
         webhook_id = webhook_data.get('id', None)
         webhook_type = webhook_data.get('type', None)
@@ -178,44 +193,22 @@ class StripeConnectViewSet(ViewSet):
             is_valid = True
         return is_valid, webhook_id, webhook_type, webhook_livemode
 
-    @detail_route(methods=['get'])
-    def countryspec(self, request, pk=None):
-        spec = stripe.CountrySpec.retrieve(pk)
-        return Response(spec, status=status.HTTP_200_OK)
-
     @method_decorator(csrf_exempt)
-    @list_route(methods=['post'])
-    def webhook(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         try:
-            serializer = StripeJSONSerializer(data=request.data)
+            serializer = self.serializer_class(data=request.data)
 
             if serializer.is_valid():
                 validated_data = serializer.validated_data
-                webhook_data = validated_data.get('data', None)
-
-                is_webhook_valid, webhook_id, webhook_type, webhook_livemode = self.validate_webhook(webhook_data)
+                is_webhook_valid, webhook_id, webhook_type, webhook_livemode = self.validate_webhook(validated_data)
 
                 if is_webhook_valid:
-                    if Event.objects.filter(stripe_id=webhook_id).exists():
-                        obj = EventProcessingException.objects.create(
-                            data=validated_data,
-                            message="Duplicate event record",
-                            traceback=""
-                        )
-
-                        event_processing_exception_serializer = EventProcessingExceptionSerializer(obj)
-                        return Response(event_processing_exception_serializer.data, status=status.HTTP_200_OK)
-                    else:
-                        event = Event.objects.create(
-                            stripe_id=webhook_id,
-                            kind=webhook_type,
-                            livemode=webhook_livemode,
-                            webhook_message=validated_data
-                        )
-                        event.validate()
-                        event.process()
-                        event_serializer = EventSerializer(event)
-                        return Response(event_serializer.data, status=200)
+                    stripe_account = validated_data['data']['object']
+                    profile = Profile.objects.get(stripe_connect=stripe_account['id'])
+                    profile.payouts_enabled = stripe_account['payouts_enabled']
+                    profile.verification = stripe_account['legal_entity']['verifification']['status']
+                    profile.save()
+                    return Response(status=200)
                 else:
                     error_data = {u'error': u'Webhook must contain id, type and livemode.'}
                     return Response(error_data, status=400)
