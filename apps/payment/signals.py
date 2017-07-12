@@ -1,6 +1,7 @@
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import Signal, receiver
 
+from payment.models import Invoice
 from payment.tasks import invoice_notification_email
 
 
@@ -24,46 +25,3 @@ def invoice_notifications(sender, instance, created, **kwargs):
 
     if old_instance.status == 'sent' and instance.status == 'sent':
         invoice_notification_email('invoice-updated', instance.sender_name, instance.recipient_email, instance.id)
-
-webhook_processing_error = Signal(providing_args=["data", "exception"])
-
-WEBHOOK_SIGNALS = dict([
-    (hook, Signal(providing_args=["event"]))
-    for hook in [
-        "account.application.deauthorized",
-        "account.updated",
-        "charge.dispute.closed",
-        "charge.dispute.created",
-        "charge.dispute.updated",
-        "charge.failed",
-        "charge.refunded",
-        "charge.succeeded",
-        "coupon.created",
-        "coupon.deleted",
-        "coupon.updated",
-        "customer.created",
-        "customer.deleted",
-        "customer.discount.created",
-        "customer.discount.deleted",
-        "customer.discount.updated",
-        "customer.subscription.created",
-        "customer.subscription.deleted",
-        "customer.subscription.trial_will_end",
-        "customer.subscription.updated",
-        "customer.updated",
-        "invoice.created",
-        "invoice.payment_failed",
-        "invoice.payment_succeeded",
-        "invoice.updated",
-        "invoiceitem.created",
-        "invoiceitem.deleted",
-        "invoiceitem.updated",
-        "ping",
-        "plan.created",
-        "plan.deleted",
-        "plan.updated",
-        "transfer.created",
-        "transfer.failed",
-        "transfer.updated",
-    ]
-])

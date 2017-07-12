@@ -101,6 +101,27 @@ class Invoice(models.Model):
     recipient_location = models.CharField(max_length=255, blank=True, null=True)
     viewed = models.BooleanField(default=False)
 
+    @property
+    def total_amount(self):
+        """
+        :return: Invoice total in cents
+        """
+        total = 0
+        for item in self.invoice_items.all():
+            total += item.amount
+        total = int(round(total, 2)*100)
+        return total
+
+    @property
+    def total_net(self):
+        """
+        :return: Invoice fee in cents
+        """
+        net = self.total_amount - int(self.total_amount * .1)
+        return net
+
+
+
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='invoice_items')

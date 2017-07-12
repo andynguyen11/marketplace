@@ -123,8 +123,34 @@ class InvoiceRecipientsView(generics.ListAPIView):
         return set(recipients)
 
 
+class InvoicePaymentViewset(ViewSet):
+    permission_classes = (IsAuthenticated, )
+
+    def create(self, request):
+        invoice = Invoice.objects.get(id=request.data['invoice'])
+        try:
+            charge = stripe.Charge.create(
+                amount = invoice.total_amount,
+                currency = "usd",
+                source = request.data['token'],
+                destination = {
+                    'amount': invoice.total_net,
+                    'account': invoice.sender.stripe_connect
+                }
+            )
+        except stripe.StripeError as e:
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=400)
+        invoice.status = 'paid'
+        invoice.save()
+        serializer = InvoiceSerializer(data=invoice)
+        return Response(serializer.data, status=200)
+
+
 class StripeConnectViewSet(ViewSet):
-    """ Generic API StripeView """
+    """
+    Stripe Connect view that handles account creation and listing country spec
+    """
     permission_classes = (IsAuthenticated, )
 
     def update_stripe_account(self, user, stripe_account):
@@ -155,7 +181,7 @@ class StripeConnectViewSet(ViewSet):
             else:
                 return Response(serializer.errors, status=400)
         except stripe.StripeError as e:
-            error_data = {u'error': smart_str(e) or u'Unknown error'}
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
             return Response(error_data, status=400)
 
     def list(self, request):
@@ -165,29 +191,16 @@ class StripeConnectViewSet(ViewSet):
         else:
             return Response(status=200)
 
-    #def partial_update(self, request):
-    #    try:
-    #        serializer = StripeJSONSerializer(data=request.data)
-    #        if serializer.is_valid():
-    #            stripe_account = stripe.Account.update(
-    #                **serializer.data['data']
-    #            )
-    #            self.update_stripe_account(request.user)
-    #            return Response(stripe_account, status=200)
-    #        else:
-    #            return Response(serializer.errors, status=400)
-    #    except stripe.StripeError as e:
-    #        error_data = {u'error': smart_str(e) or u'Unknown error'}
-    #        return Response(error_data, status=400)
-
     @detail_route(methods=['get'])
     def countryspec(self, request, pk=None):
         spec = stripe.CountrySpec.retrieve(pk)
-        return Response(spec, status=status.HTTP_200_OK)
+        return Response(spec, status=200)
+
 
 class StripeWebhookView(APIView):
     serializer_class = StripeWebhookSerializer
 
+    #TODO update to Stripe standard - https://stripe.com/docs/webhooks#signatures
     def validate_webhook(self, webhook_data):
         webhook_id = webhook_data.get('id', None)
         webhook_type = webhook_data.get('type', None)
@@ -215,10 +228,10 @@ class StripeWebhookView(APIView):
                     profile.save()
                     return Response(status=200)
                 else:
-                    error_data = {u'error': u'Webhook must contain id, type and livemode.'}
+                    error_data = {u'Error': u'Webhook must contain id, type and livemode.'}
                     return Response(error_data, status=400)
             else:
                 return Response(serializer.errors, status=400)
         except stripe.StripeError as e:
-            error_data = {u'error': smart_str(e) or u'Unknown error'}
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
             return Response(error_data, status=400)
