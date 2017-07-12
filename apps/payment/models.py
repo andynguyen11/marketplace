@@ -17,7 +17,6 @@ from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from payment.helpers import stripe_helpers
 from payment.enums import *
-from payment.signals import webhook_processing_error, WEBHOOK_SIGNALS
 
 
 class Promo(models.Model):
