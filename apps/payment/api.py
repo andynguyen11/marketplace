@@ -187,7 +187,7 @@ class StripeConnectViewSet(ViewSet):
     def list(self, request):
         if request.user.stripe_connect:
             account = stripe.Account.retrieve(request.user.stripe_connect)
-            return Response(status=200, data=account)
+            return Response(status=200, data=json.loads(json.dumps(account, indent=2)))
         else:
             return Response(status=200)
 
