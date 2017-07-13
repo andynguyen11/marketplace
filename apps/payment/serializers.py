@@ -35,7 +35,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         fields = ('reference_id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
                   'invoice_items', 'sender_name', 'sender_email', 'sender_phone', 'sender_address', 'sender_address2', 'sender_location',
                   'recipient_name', 'recipient_email', 'recipient_phone', 'recipient_address', 'recipient_address2', 'recipient_location',
-                  'status', 'logo', 'recipient', 'sender', 'viewed', 'total_amount', 'application_fee', )
+                  'status', 'logo', 'recipient', 'sender', 'viewed', 'total_amount', 'loom_fee', )
         lookup_field = 'reference_id'
 
     def get_hourly_items(self, obj):
