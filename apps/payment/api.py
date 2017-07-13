@@ -129,7 +129,7 @@ class InvoicePaymentViewset(ViewSet):
     def create(self, request):
         invoice = Invoice.objects.get(reference_id=request.data['invoice'])
         if invoice.status == 'paid':
-            return Response({u'Error': u'This invoice has already been paid.'})
+            return Response({u'Error': u'This invoice has already been paid.'}, status=400)
         if invoice.recipient != request.user:
             return Response(status=403)
         try:
