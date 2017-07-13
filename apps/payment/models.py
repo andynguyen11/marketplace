@@ -130,7 +130,7 @@ class Invoice(models.Model):
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, related_name='invoice_items')
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True, null=True)
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
