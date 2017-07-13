@@ -127,26 +127,31 @@ class InvoicePaymentViewset(ViewSet):
     permission_classes = (IsAuthenticated, )
 
     def create(self, request):
-        invoice = Invoice.objects.get(id=request.data['invoice'])
+        invoice = Invoice.objects.get(reference_id=request.data['invoice'])
+        if invoice.status == 'paid':
+            return Response({u'Error': u'This invoice has already been paid.'})
+        if invoice.recipient != request.user:
+            return Response(status=403)
         try:
+            token = stripe.Token.create(
+              customer = invoice.recipient.stripe,
+              stripe_account = invoice.sender.stripe_connect,
+            )
             charge = stripe.Charge.create(
-                amount = invoice.total_amount,
+                amount = int(invoice.total_amount * 100),
+                application_fee = int(invoice.application_fee * 100),
                 currency = "usd",
-                source = request.data['token'],
-                destination = {
-                    'amount': invoice.total_net,
-                    'account': invoice.sender.stripe_connect
-                }
+                source = token.id,
+                stripe_account = invoice.sender.stripe_connect
             )
         except stripe.StripeError as e:
             error_data = {u'Error': smart_str(e) or u'Unknown error'}
             return Response(error_data, status=400)
         invoice.status = 'paid'
         invoice.save()
-        serializer = InvoiceSerializer(data=invoice)
-        return Response(serializer.data, status=200)
+        return Response(status=200)
 
-
+      
 class StripeConnectViewSet(ViewSet):
     """
     Stripe Connect view that handles account creation and listing country spec

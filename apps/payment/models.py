@@ -103,23 +103,29 @@ class Invoice(models.Model):
     @property
     def total_amount(self):
         """
-        :return: Invoice total in cents
+        :return: Invoice total
         """
         total = 0
         for item in self.invoice_items.all():
             total += item.amount
-        total = int(round(total, 2)*100)
         return total
 
     @property
-    def total_net(self):
+    def loom_fee(self):
         """
-        :return: Invoice fee in cents
+        :return: Invoice Loom fee
         """
-        net = self.total_amount - int(self.total_amount * .1)
-        return net
+        fee = round((float(self.total_amount) * settings.LOOM_FEE), 2)
+        return fee
 
-
+    @property
+    def application_fee(self):
+        """
+        :return: Invoice app fee
+        """
+        stripe_fee = (float(self.total_amount) * .029) + .30
+        application_fee = round((self.loom_fee - stripe_fee), 2)
+        return application_fee
 
 
 class InvoiceItem(models.Model):
@@ -128,16 +134,3 @@ class InvoiceItem(models.Model):
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
-
-    def save(self, *args, **kwargs):
-        if self.hours and self.rate and not self.amount:
-            self.amount = self.hours * self.rate
-        super(InvoiceItem, self).save(*args, **kwargs)
-
-
-class StripeObject(models.Model):
-    stripe_id = models.CharField(max_length=255, unique=True)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:  # pylint: disable=E0012,C1001
-        abstract = True

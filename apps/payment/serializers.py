@@ -27,13 +27,15 @@ class InvoiceSerializer(serializers.ModelSerializer):
     hourly_items = serializers.SerializerMethodField()
     fixed_items = serializers.SerializerMethodField()
     invoice_items = InvoiceItemSerializer(many=True)
+    total_amount = serializers.SerializerMethodField()
+    loom_fee = serializers.SerializerMethodField()
 
     class Meta:
         model = Invoice
         fields = ('reference_id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
                   'invoice_items', 'sender_name', 'sender_email', 'sender_phone', 'sender_address', 'sender_address2', 'sender_location',
                   'recipient_name', 'recipient_email', 'recipient_phone', 'recipient_address', 'recipient_address2', 'recipient_location',
-                  'status', 'logo', 'recipient', 'sender', 'viewed', )
+                  'status', 'logo', 'recipient', 'sender', 'viewed', 'total_amount', 'application_fee', )
         lookup_field = 'reference_id'
 
     def get_hourly_items(self, obj):
@@ -43,6 +45,12 @@ class InvoiceSerializer(serializers.ModelSerializer):
     def get_fixed_items(self, obj):
         serializer = InvoiceItemSerializer(InvoiceItem.objects.filter(invoice=obj).exclude(rate__isnull=False), many=True)
         return serializer.data
+
+    def get_total_amount(self, obj):
+        return obj.total_amount
+
+    def get_loom_fee(self, obj):
+        return obj.loom_fee
 
     def create(self, validated_data):
         invoice_items = validated_data.pop('invoice_items')

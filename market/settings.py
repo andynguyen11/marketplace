@@ -405,7 +405,7 @@ WEBHOOK_BASE_URL = os.environ.get('WEBHOOK_BASE_URL', BASE_URL)
 MAX_FILE_SIZE = 5242880
 FILE_CONTENT_TYPES = security_settings.FILE_CONTENT_TYPES
 
-LOOM_FEE = 3
+LOOM_FEE = .1
 
 PRODUCTS = { 'connect_job': {'price': 99.00} }
 
