@@ -3,10 +3,15 @@
   height: 47px;
 
   ul {
+    height: 47px;
     padding: 0;
     margin: 0;
     display: flex;
-    overflow-x: scroll;
+
+    @media (max-width: @screen-md) {
+      height: 47px;
+      overflow-x: scroll;
+    }
   }
   ul li {
     display: inline-block;
@@ -16,6 +21,79 @@
 
     &.active {
       background: #2b3237;
+    }
+
+    &.account-nav-dropdown {
+      position: relative;
+      padding-right: 30px;
+
+      &.active,
+      &:hover {
+        background-color: rgba(123, 119, 134, 0.8);
+
+        > a {
+          color: #1EDDB2;
+        }
+
+        ul {
+          display: block;
+          height: inherit;
+          z-index: 1;
+        }
+      }
+
+      > a {
+        span {
+          padding: 0 30px 0 20px;
+
+          @media (max-width: @screen-md) {
+            padding: 0;
+          }
+        }
+      }
+
+      i {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        margin-top: -9px;
+        font-size: 18px;
+        color: #FF7B5C;
+        transition: transform 0.3s;
+
+        @media (max-width: @screen-md) {
+          display: none;
+        }
+      }
+
+      ul {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #7B7786;
+        display: none;
+
+        li {
+          padding: 0 10px;
+          margin: 5px 10px;
+        }
+      }
+
+      @media (min-width: @screen-md) {
+        &:hover,
+        &:active {
+          i {
+            font-size: 21px;
+            color: #FF7B5C;
+            transform: rotateZ(-180deg);
+          }
+
+          ul {
+            display: block;
+          }
+        }
+      }
     }
 
     a {

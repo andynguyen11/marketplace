@@ -29,6 +29,16 @@
         <li>
           <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Proposals</a>
         </li>
+        <li class="account-nav-dropdown">
+          <a class="{% add_active request 'view-bids' %}" href="{% url 'view-bids' %}">Invoices
+            <i class="fa fa-caret-down" aria-hidden="true"></i>
+          </a>
+          <ul>
+            <li><a href="{% url 'invoices-new' %}">New</a></li>
+            <li><a href="{% url 'invoices-sent' %}">Sent</a></li>
+            <li><a href="{% url 'invoices-received' %}">Received</a></li>
+          </ul>
+        </li>
         <li>
           <a class="{% add_active request 'view-skills' %}" href="{% url 'view-skills' %}">Skills Tests</a>
         </li>
