@@ -52,7 +52,7 @@ class StripePaymentSourceView(APIView):
         user = request.user
         stripe_token = request.data['stripe_token']
         data = stripe_helpers.add_source(user, stripe_token) if user.stripe else stripe_helpers.connect_customer(user, stripe_token)
-        return Response(status=201, data=data)
+        return Response(status=201, data=json.loads(json.dumps(data, indent=2)))
 
     def post(self, request):
         return self.add_card(request)
@@ -133,15 +133,19 @@ class InvoicePaymentViewset(ViewSet):
         if invoice.recipient != request.user:
             return Response(status=403)
         try:
-            token = stripe.Token.create(
-              customer = invoice.recipient.stripe,
-              stripe_account = invoice.sender.stripe_connect,
-            )
+            if request.data.get('token', None):
+                token = request.data['token']
+            else:
+                token = stripe.Token.create(
+                  customer = invoice.recipient.stripe,
+                  stripe_account = invoice.sender.stripe_connect,
+                )
+                token = token.id
             charge = stripe.Charge.create(
                 amount = int(invoice.total_amount * 100),
                 application_fee = int(invoice.application_fee * 100),
                 currency = "usd",
-                source = token.id,
+                source = token,
                 stripe_account = invoice.sender.stripe_connect
             )
         except stripe.StripeError as e:
