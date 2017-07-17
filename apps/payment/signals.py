@@ -2,7 +2,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import Signal, receiver
 
 from payment.models import Invoice
-from payment.tasks import invoice_notification_email
+from payment.tasks import invoice_notification_email, payment_notification_email
 
 
 def field_changed(instance, field, id_field='id'):
@@ -33,10 +33,10 @@ def invoice_notifications(sender, instance, created, **kwargs):
 
     # Invoice paid
     if old_instance.status == 'sent' and instance.status == 'paid':
-        invoice_notification_email('payment-sent', instance.sender_name, instance.recipient_email, instance.id)
+        payment_notification_email('payment-sent', instance.sender_name, instance.recipient_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))
         paid_invoices =  Invoice.objects.filter(sender=instance.sender, status='paid')
         number_of_invoices = len(paid_invoices)
         if number_of_invoices == 1:
-            return invoice_notification_email('first-payment-received', instance.recipient_name, instance.sender_email, instance.id)
+            return payment_notification_email('first-payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))
         else if number_of_invoices > 1:
-            return invoice_notification_email('payment-received', instance.recipient_name, instance.sender_email, instance.id)
+            return invoice_notification_email('payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))
