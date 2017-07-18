@@ -15,7 +15,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from market.celery import app as celery_app
 from accounts.models import Profile
-from business.models import Document, Project, Employee
+from business.models import Document, Project, Employee, NDA
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
@@ -80,36 +80,32 @@ def dev_contact_card_email(job_id):
     Pass
 
 @shared_task
-def nda_sent_email(job_id):
-    # TODO REFACTOR TO PASS IN PROPOSAL OR MESSAGE
-    #thread = Message.objects.get(job=job)
+def nda_sent_email(nda_id):
+    nda = NDA.objects.get(id=nda_id)
     merge_vars = {
-        'fname': 'first name',
-        'project': 'project title',
-        'email': 'freelancer email',
-        'thread': 'thread id',
+        'fname': nda.sender.name,
+        'project': nda.proposal.project.title,
+        'thread': nda.proposal.message.id,
     }
-    #send_mail('nda-sent', [job.contractor], merge_vars)
+    send_mail('nda-sent', [nda.receiver], merge_vars)
 
 @shared_task
-def nda_signed_entrepreneur_email(job_id):
-    #TODO REFACTOR
+def nda_signed_entrepreneur_email(nda_id):
+    nda = NDA.objects.get(id=nda_id)
     merge_vars = {
-        'fname': 'first name',
-        'project': 'project title',
-        'email': 'project manager email',
+        'fname': nda.receiver.name,
+        'project': nda.proposal.project.title
     }
-    #send_mail('nda-signed-entrepreneur', [job.project.project_manager], merge_vars)
+    send_mail('nda-signed-entrepreneur', [nda.sender], merge_vars)
 
 @shared_task
-def nda_signed_freelancer_email(job_id):
-    #TODO REFACTOR
+def nda_signed_freelancer_email(nda_id):
+    nda = NDA.objects.get(id=nda_id)
     merge_vars = {
-        'fname': 'first name',
-        'project': 'project title',
-        'email': 'freelancer email',
+        'fname': nda.sender.name,
+        'project': nda.proposal.project.title
     }
-    #send_mail('nda-signed-freelancer', [job.contractor], merge_vars)
+    send_mail('nda-signed-freelancer', [nda.receiver], merge_vars)
 
 @shared_task
 def terms_sent_email(job_id):

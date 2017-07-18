@@ -126,8 +126,12 @@ class ProposalViewSet(viewsets.ModelViewSet):
             proposal.message = conversation
             proposal.status = 'responded'
             proposal.save()
+            nda, created = NDA.objects.get_or_create(
+                sender=proposal.recipient,
+                receiver=proposal.submitter,
+                proposal=proposal
+            )
             serializer = self.get_serializer(data=proposal)
             serializer.is_valid(raise_exception=False)
-            new_message_notification.delay(proposal.submitter.id, conversation.id)
             return Response({'message': conversation.id}, status=200)
         return Response(status=403)

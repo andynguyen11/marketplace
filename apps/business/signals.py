@@ -30,8 +30,7 @@ def nda_update_event(sender, instance, **kwargs):
             target=instance.proposal.project,
             type=u'ndaRequest'
         )
-        #TODO Refactor
-        #nda_sent_email.delay(job.id)
+        nda_sent_email.delay(instance.id)
 
     if instance.status != old_status and instance.status.lower() == 'signed':
         notify.send(
@@ -46,9 +45,8 @@ def nda_update_event(sender, instance, **kwargs):
         for alert in clear_alerts:
             alert.unread = False
             alert.save()
-        #TODO Refactor
-        #nda_signed_freelancer_email.delay(job.id)
-        #nda_signed_entrepreneur_email.delay(job.id)
+        nda_signed_freelancer_email.delay(instance.id)
+        nda_signed_entrepreneur_email.delay(instance.id)
 
 
 @receiver(pre_save, sender=Project)

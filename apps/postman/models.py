@@ -136,6 +136,7 @@ class MessageManager(models.Manager):
         else:
             lookups = models.Q(**filters)
         if option == OPTION_MESSAGES:
+            qs = qs.exclude(body__exact='')
             return qs.filter(lookups)
             # Adding a 'count' attribute, to be similar to the by-conversation case,
             # should not be necessary. Otherwise add:
@@ -151,6 +152,7 @@ class MessageManager(models.Manager):
                 self.filter(lookups, thread_id__isnull=False).values('thread').annotate(count=models.Count('pk')).annotate(id=models.Max('pk'))\
                     .values_list('id', 'count').order_by(),
             ))
+            qs = qs.exclude(body__exact='')
             return qs
 
     def inbox(self, user, related=True, **kwargs):
@@ -163,6 +165,7 @@ class MessageManager(models.Manager):
             'recipient_archived': False,
             'recipient_deleted_at__isnull': True,
             'moderation_status': STATUS_ACCEPTED,
+            'body__isnull': False
         })
         return self._folder(related, filters, **kwargs)
 
