@@ -111,17 +111,16 @@ class InvoiceViewSet(ModelViewSet):
             invoices = self.get_queryset().filter(recipient=request.user).exclude(status='draft')
         return Response(self.serializer_class(invoices, many=True).data)
 
-    @detail_route(methods=['patch', 'get'])
+    @detail_route(methods=['patch'])
     def totals(self, request, **kwargs):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
+        if request.data.get('invoice_items', None):
             total = 0
-            for item in serializer.validated_data['invoice_items']:
+            for item in request.data['invoice_items']:
                 total += item['amount']
             fee = round((float(total) * settings.LOOM_FEE), 2)
             return Response({'loom_fee': fee, 'total_amount': total}, status=200)
         else:
-            return Response(serializer.errors, status=400)
+            return Response(status=400)
 
 
 class InvoiceRecipientsView(generics.ListAPIView):
