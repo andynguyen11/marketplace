@@ -4,10 +4,12 @@ from datetime import datetime, date
 from decimal import Decimal
 
 from django.db import models
+from django.db.models.signals import pre_save
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.postgres.fields import JSONField
+from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
@@ -15,6 +17,7 @@ from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from payment.helpers import stripe_helpers
 from payment.enums import EU_ISO
+from payment.tasks import invoice_notification_email, payment_notification_email
 
 
 class Promo(models.Model):
@@ -139,3 +142,33 @@ class InvoiceItem(models.Model):
     hours = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
     rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
+
+#TODO figure out why if this lives in it's own payments/signals.py file it doesn't ever fire
+@receiver(pre_save, sender=Invoice)
+def invoice_notifications(sender, instance, **kwargs):
+    if not hasattr(instance, 'id') or instance.id is None:
+        return
+
+    old_instance = Invoice.objects.get(id=instance.id)
+
+    # Invoice sent
+    if old_instance.status == 'draft' and instance.status == 'sent':
+        invoice_notification_email.delay('invoice-received', instance.sender_name, instance.recipient_email, instance.reference_id)
+
+    # Invoice viewed
+    if not old_instance.viewed and instance.viewed:
+        invoice_notification_email.delay('invoice-read', instance.recipient_name, instance.sender_email, instance.reference_id)
+
+    # Invoice updated
+    if old_instance.status == 'sent' and instance.status == 'sent' and instance.viewed:
+        invoice_notification_email.delay('invoice-updated', instance.sender_name, instance.recipient_email, instance.reference_id)
+
+    # Invoice paid
+    if old_instance.status == 'sent' and instance.status == 'paid':
+        payment_notification_email.delay('payment-sent', instance.sender_name, instance.recipient_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))
+        paid_invoices =  Invoice.objects.filter(sender=instance.sender, status='paid')
+        number_of_invoices = len(paid_invoices)
+        if number_of_invoices == 1:
+            payment_notification_email.delay('first-payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))
+        elif number_of_invoices > 1:
+            payment_notification_email.delay('payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, invoice.total_amount, invoice.loom_fee, (invoice.total_amount - invoice.loom_fee))

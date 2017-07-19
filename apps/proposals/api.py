@@ -5,6 +5,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from business.models import NDA
 from generics.tasks import new_message_notification
 from postman.models import Message, Interaction
 from proposals.models import Question, Proposal

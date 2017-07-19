@@ -76,10 +76,6 @@ def new_message_notification(recipient_id, thread_id):
         thread.save()
 
 @shared_task
-def dev_contact_card_email(job_id):
-    Pass
-
-@shared_task
 def nda_sent_email(nda_id):
     nda = NDA.objects.get(id=nda_id)
     merge_vars = {
@@ -106,35 +102,6 @@ def nda_signed_freelancer_email(nda_id):
         'project': nda.proposal.project.title
     }
     send_mail('nda-signed-freelancer', [nda.receiver], merge_vars)
-
-@shared_task
-def terms_sent_email(job_id):
-    job = Job.objects.get(id=job_id)
-    thread = Message.objects.get(job=job)
-    send_mail('bid-accepted', [job.contractor], {
-        'entrepreneur': job.project.project_manager.first_name,
-        'developername': job.contractor.first_name,
-        'projectname': job.project.title,
-        'developertype': job.contractor.role.capitalize(),
-        'cash': job.cash if job.cash else 0,
-        'equity': simplejson.dumps(job.equity) if job.equity else 0,
-        'hours': job.hours,
-        'email': job.contractor.email,
-        'thread': thread.id,
-    })
-
-@shared_task
-def terms_approved_email(job_id):
-    #TODO REFACTOR
-    #thread = Message.objects.get(job=job)
-    merge_vars = {
-        'fname': 'first name',
-        'project': 'project title',
-        'email': 'project manager email',
-        'thread': 'thread id',
-    }
-    #send_mail('terms-approved', [job.project.project_manager], merge_vars)
-
 
 @shared_task
 def project_in_review(project_id):

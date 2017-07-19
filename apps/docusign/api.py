@@ -14,7 +14,6 @@ from .docusign import parse_webhook_update
 from .models import Template, Document, DocumentSigner
 from .serializers import TemplateSerializer, DocumentSerializer, SignerSerializer
 from business.models import Document as JobDocument
-from generics.tasks import dev_contact_card_email
 
 
 class TemplateAPI(generics.ListCreateAPIView):
