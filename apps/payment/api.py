@@ -111,6 +111,18 @@ class InvoiceViewSet(ModelViewSet):
             invoices = self.get_queryset().filter(recipient=request.user).exclude(status='draft')
         return Response(self.serializer_class(invoices, many=True).data)
 
+    @detail_route(methods=['patch', 'get'])
+    def totals(self, request, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            total = 0
+            for item in serializer.validated_data['invoice_items']:
+                total += item['amount']
+            fee = round((float(total) * settings.LOOM_FEE), 2)
+            return Response({'loom_fee': fee, 'total_amount': total}, status=200)
+        else:
+            return Response(serializer.errors, status=400)
+
 
 class InvoiceRecipientsView(generics.ListAPIView):
     serializer_class = ObfuscatedProfileSerializer
@@ -135,15 +147,20 @@ class InvoicePaymentViewset(ViewSet):
         try:
             if request.data.get('token', None):
                 token = request.data['token']
+                country = request.data['country']
             else:
+                customer = stripe.Customer.retrieve(invoice.recipient.stripe)
+                card = customer.sources.retrieve(customer.default_source)
+                country = card.country
                 token = stripe.Token.create(
                   customer = invoice.recipient.stripe,
                   stripe_account = invoice.sender.stripe_connect,
                 )
                 token = token.id
+            fee = invoice.application_fee(card_country=country)
             charge = stripe.Charge.create(
                 amount = int(invoice.total_amount * 100),
-                application_fee = int(invoice.application_fee * 100),
+                application_fee = int(fee * 100),
                 currency = "usd",
                 source = token,
                 stripe_account = invoice.sender.stripe_connect

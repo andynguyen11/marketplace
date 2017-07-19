@@ -1,10 +1,8 @@
-import json
+import stripe
 import uuid
-import traceback
 from datetime import datetime, date
 from decimal import Decimal
 
-import six
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -16,7 +14,7 @@ from rest_framework.exceptions import ValidationError
 from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from payment.helpers import stripe_helpers
-from payment.enums import *
+from payment.enums import EU_ISO
 
 
 class Promo(models.Model):
@@ -100,6 +98,9 @@ class Invoice(models.Model):
     recipient_location = models.CharField(max_length=255, blank=True, null=True)
     viewed = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-sent_date']
+
     @property
     def total_amount(self):
         """
@@ -118,12 +119,16 @@ class Invoice(models.Model):
         fee = round((float(self.total_amount) * settings.LOOM_FEE), 2)
         return fee
 
-    @property
-    def application_fee(self):
+    def application_fee(self, card_country='US'):
         """
         :return: Invoice app fee
         """
-        stripe_fee = (float(self.total_amount) * .029) + .30
+        rate = .029
+        connect = stripe.Account.retrieve(self.sender.stripe_connect)
+        #TODO Refactor with fee map
+        if connect.country == 'GB' and card_country in EU_ISO:
+            rate = .014
+        stripe_fee = (float(self.total_amount) * rate) + .30
         application_fee = round((self.loom_fee - stripe_fee), 2)
         return application_fee
 
