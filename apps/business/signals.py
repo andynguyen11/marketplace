@@ -66,7 +66,7 @@ def project_saved(sender, instance, created, **kwargs):
         complete_project.apply_async((instance.id, ), eta=today + timedelta(days=2))
 
 
-@receiver(pre_save, sender=Profile)
+#@receiver(pre_save, sender=Profile)
 def new_account(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
