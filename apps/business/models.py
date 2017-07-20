@@ -212,8 +212,8 @@ class Project(models.Model):
         return documents
 
     def nda_list(self):
-        documents = Document.objects.filter(job__project=self, type='NDA', status='signed')
-        nda_list = [document.job.contractor.id for document in documents]
+        ndas = NDA.objects.filter(proposal__project=self)
+        nda_list = [nda.receiver.id for nda in ndas]
         nda_list.append(self.project_manager.id)
         return nda_list
 

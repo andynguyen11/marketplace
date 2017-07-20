@@ -62,14 +62,15 @@ def new_message_notification(recipient_id, thread_id):
         id = thread_id
     )
     email_threshold = datetime.now() - timedelta(hours=6)
-    last_emailed = thread.last_emailed_bidder if recipient_id == thread.job.contractor.id else thread.last_emailed_owner
+    last_emailed = thread.last_emailed_bidder if recipient_id == thread.sender.id else thread.last_emailed_owner
     last_emailed = last_emailed if last_emailed else utc.localize(datetime.now() - timedelta(hours=7))
     if unread_messages.count() >= 1 and last_emailed < utc.localize(email_threshold):
+        proposal = Proposal.objects.get(message=thread)
         send_mail('message-received', [recipient], {
-            'projectname': thread.job.project.title,
+            'projectname': proposal.project.title,
             'email': recipient.email
         })
-        if recipient_id == thread.job.contractor.id:
+        if recipient_id == thread.sender.id:
             thread.last_emailed_bidder = datetime.now()
         else:
             thread.last_emailed_owner = datetime.now()
