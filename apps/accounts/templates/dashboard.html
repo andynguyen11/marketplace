@@ -173,14 +173,14 @@
                 <span class="text-muted small">Member since {{ request.user.date_joined }}</span>
               </div>
               <div class="flex-right">
-                <a class="flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Edit</a>
+                <a class="flex-align-center btn btn-brand--clear " href="{% url 'company-settings' %}">Edit</a>
               </div>
             {% else %}
               <p class="flex-left text-muted">
                 You are not associated with a company. <br />
                 This means you can compensate for work in cash only.
               </p>
-              <a class="flex-right flex-align-center btn btn-brand--clear " href="{% url 'settings' %}#/company">Add Company</a>
+              <a class="flex-right flex-align-center btn btn-brand--clear " href="{% url 'company-settings' %}">Add Company</a>
             {% endif %}
           </div>
         </div>
