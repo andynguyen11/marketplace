@@ -157,10 +157,10 @@ def invoice_notifications(sender, instance, **kwargs):
 
     # Invoice viewed
     if not old_instance.viewed and instance.viewed:
-        invoice_notification_email.delay('invoice-read', instance.recipient_name, instance.sender_email, instance.reference_id)
+        invoice_notification_email.delay('invoice-viewed', instance.recipient_name, instance.sender_email, instance.reference_id)
 
     # Invoice updated
-    if old_instance.status == 'sent' and instance.status == 'sent' and instance.viewed and not old_instance.viewed:
+    if old_instance.status == 'sent' and instance.status == 'sent' and instance.viewed and old_instance.viewed:
         invoice_notification_email.delay('invoice-updated', instance.sender_name, instance.recipient_email, instance.reference_id)
 
     # Invoice paid
