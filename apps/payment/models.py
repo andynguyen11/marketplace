@@ -166,10 +166,10 @@ def invoice_notifications(sender, instance, **kwargs):
     # Invoice paid
     if old_instance.status == 'sent' and instance.status == 'paid':
         invoice_net = round((float(instance.total_amount)-instance.loom_fee), 2)
-        payment_notification_email.delay('payment-sent', instance.sender_name, instance.recipient_email, instance.reference_id, instance.total_amount, instance.loom_fee, invoice_net)
+        payment_notification_email.delay('payment-sent', instance.sender_name, instance.recipient_email, instance.reference_id, '{0:.2f}'.format(instance.total_amount), '{0:.2f}'.format(invoice_net), '{0:.2f}'.format(instance.loom_fee))
         paid_invoices =  Invoice.objects.filter(sender=instance.sender, status='paid')
         number_of_invoices = len(paid_invoices)
         if number_of_invoices == 0:
-            payment_notification_email.delay('first-payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, instance.total_amount, instance.loom_fee, invoice_net)
+            payment_notification_email.delay('first-payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, '{0:.2f}'.format(instance.total_amount), '{0:.2f}'.format(invoice_net), '{0:.2f}'.format(instance.loom_fee))
         elif number_of_invoices > 0:
-            payment_notification_email.delay('payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, instance.total_amount, instance.loom_fee, invoice_net)
+            payment_notification_email.delay('payment-received', instance.recipient_name, instance.sender_email, instance.reference_id, '{0:.2f}'.format(instance.total_amount), '{0:.2f}'.format(invoice_net), '{0:.2f}'.format(instance.loom_fee))
