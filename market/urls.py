@@ -107,7 +107,17 @@ urlpatterns = [
     url(r'^onboard/about/$', TemplateView.as_view(template_name='spa.html'), name='onboard-about'),
     url(r'^onboard/company/$', TemplateView.as_view(template_name='spa.html'), name='onboard-company'),
     url(r'^onboard/employment/$', TemplateView.as_view(template_name='spa.html'), name='onboard-employment'),
-    url(r'^onboard/terms/$', TemplateView.as_view(template_name='spa.html'), name='onboard-terms')
+    url(r'^onboard/terms/$', TemplateView.as_view(template_name='spa.html'), name='onboard-terms'),
+    url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'),
+    url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/type/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/identity/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/company/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/account/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/review/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
@@ -116,16 +126,6 @@ if settings.DEBUG and settings.MEDIA_URL :
 
 if settings.DEBUG :
     urlpatterns.append(url(r'^patterns/', TemplateView.as_view(template_name='spa.html'), name='patterns'))
-    urlpatterns.append(url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'))
-    urlpatterns.append(url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/type/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/identity/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/company/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/account/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/review/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
-    urlpatterns.append(url(r'^profile/settings/bank/setup/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'))
 
 if settings.DEBUG:
     import debug_toolbar
