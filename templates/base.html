@@ -33,7 +33,6 @@
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
   <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
-  <link type="text/css" rel="stylesheet" href="{% static 'css/select2.css' %}" />
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
   <!-- Zendesk -->
@@ -78,8 +77,8 @@
             <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'view-projects' %}">Projects</a></li>
             <li><a href="{% url 'view-bids' %}">Proposals</a></li>
+            <li><a href="{% url 'invoices' %}">Invoices</a></li>
             <li><a href="{% url 'settings' %}">Settings</a></li>
-            <li><a href="{% url 'connections' %}">Connections</a></li>
             <li class="hide-desktop"><a href="{% url 'how' %}">How it Works</a></li>
             <li class="hide-desktop"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
             <li class="hide-desktop"><a href="/signup/">Post a Project</a></li>

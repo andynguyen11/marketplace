@@ -43,17 +43,17 @@
 		background-size: cover;
 	}
 
-    #home-hero-1 {
-      background-image: url("../images/home-hero-1.jpg");
-    }
+		#home-hero-1 {
+			background-image: url("../images/home-hero-1.jpg");
+		}
 
-    #home-hero-2 {
-      background-image: url("../images/home-hero-2.jpg");
-    }
+		#home-hero-2 {
+			background-image: url("../images/home-hero-2.jpg");
+		}
 
-    #home-hero-3 {
-      background-image: url("../images/home-hero-3.jpg");
-    }
+		#home-hero-3 {
+			background-image: url("../images/home-hero-3.jpg");
+		}
 
 	.hero-slide {
 		height: @home-hero-height;
@@ -77,7 +77,7 @@
 			}
 
 			@media (max-width: @screen-xs) {
-				font-size: 42px;
+				font-size: 38px;
 			}
 		}
 
@@ -95,7 +95,7 @@
 
 			@media (max-width: @screen-xs) {
 				font-size: 18px;
-				margin: 30px 0;
+				margin: 20px 0;
 			}
 		}
 
@@ -124,7 +124,7 @@
 			width: 260px;
 			background: url("../images/overlay-logo-pattern--left.svg") no-repeat right center;
 			background-size: 120%;
-            opacity: .65;
+						opacity: .65;
 
 			@media (max-width: @screen-sm) {
 				display: none;
@@ -140,7 +140,7 @@
 			width: 260px;
 			background: url("../images/overlay-logo-pattern--right.svg") no-repeat left center;
 			background-size: 120%;
-            opacity: .65;
+						opacity: .65;
 
 			@media (max-width: @screen-sm) {
 				display: none;
@@ -180,7 +180,7 @@
 	.how-content-list {
 		display: flex;
 		flex-direction: column;
-        font-family: @brand-font-bold;
+				font-family: @brand-font-bold;
 	}
 
 	.how-content-list-item {
@@ -223,7 +223,7 @@
 		background-image: url('../images/how-icon--bid.svg');
 	}
 	.how-icon--engage {
-		background-image: url('../images/how-icon--engage.svg');
+		background-image: url('../images/creditcard_icon.svg');
 	}
 
 	.how-content-learn-more {
@@ -233,8 +233,8 @@
 			display: inline-flex;
 			align-items: center;
 			color: @brand--accent;
-            font-family: @brand-font;
-            font-weight: 700;
+						font-family: @brand-font;
+						font-weight: 700;
 			font-size: 18px;
 
 			&:active, &:hover {
@@ -293,6 +293,17 @@
 
 .plates .home-dev-bigSelect {
 	padding-top: @gutter * 2;
+}
+
+.featured-cards {
+	background-color: #fff6f3;
+	padding: 60px 0 0;
+	margin-bottom: 60px;
+
+	@media (max-width: @screen-sm) {
+		padding: 0;
+		margin-bottom: 0;
+	}
 }
 
 .testimonials {
@@ -388,6 +399,93 @@
 		}
 		h6 {
 			margin: 0;
+		}
+	}
+}
+
+.featured-co-header {
+	text-align: center;
+	font-size: 21px;
+	font-family: @brand-font;
+	font-weight: 600;
+
+	@media (max-width: @screen-sm) {
+		font-size: 18px;
+	}
+}
+
+.featured-logos {
+
+	.featured-logos-inner {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 20px 0 40px;
+
+		@media (max-width: @screen-md) {
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+
+		@media (max-width: @screen-sm) {
+			flex-direction: column;
+			padding: 0;
+		}
+
+		span {
+			flex: 1;
+			margin: 0 20px;
+
+			@media (max-width: @screen-md) {
+				flex: inherit;
+			}
+
+			&.venmo-logo {
+				background-image: url("../images/venmo.svg");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 80% auto;
+				min-height: 100px;
+			}
+			&.dropbox-logo {
+				background-image: url("../images/dropbox.svg");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 90% auto;
+				min-height: 100px;
+			}
+			&.legalzoom-logo {
+				background-image: url("../images/legalzoom.svg");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 100% auto;
+				min-height: 100px;
+			}
+			&.salesforce-logo {
+				background-image: url("../images/salesforce.svg");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 75% auto;
+				min-height: 100px;
+			}
+			&.facebook-logo {
+				background-image: url("../images/facebook.svg");
+				background-repeat: no-repeat;
+				background-position: center;
+				background-size: 100% auto;
+				min-height: 100px;
+			}
+
+			@media (max-width: @screen-md) {
+				width: 180px;
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			@media (max-width: @screen-sm) {
+				flex-direction: column;
+				margin-top: 0;
+			}
 		}
 	}
 }

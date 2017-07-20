@@ -8,10 +8,9 @@ from rest_framework import serializers
 
 from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
-from business.serializers import DocumentSerializer, JobSerializer, NDASerializer
+from business.serializers import DocumentSerializer, NDASerializer
 from business.models import Document, NDA
 from generics.serializers import AttachmentSerializer
-from payment.models import ProductOrder
 from postman.models import Message, AttachmentInteraction
 from proposals.models import Proposal
 
@@ -88,34 +87,17 @@ def serialize_interaction(message):
                 content=message.body)
 
 
-
-def free_messages(thread, user, legacy=True):
-    if legacy:
-        total = settings.UNCONNECTED_THREAD_REPLY_LIMIT if thread.job.project.project_manager == user \
-                else settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1
-    else:
-        total = settings.UNCONNECTED_THREAD_REPLY_LIMIT + 1 if thread.job.project.project_manager == user \
-                else settings.UNCONNECTED_THREAD_REPLY_LIMIT
-    remaining = total - thread.get_participant_replies_count(user)
-    if remaining < 0:
-        remaining = 0
-    return dict(total=total, remaining=remaining)
-
 class ConversationSerializer(serializers.ModelSerializer):
     is_legacy = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
     nda = serializers.SerializerMethodField()
-    job = JobSerializer()
     current_user = serializers.SerializerMethodField()
     interactions = serializers.SerializerMethodField()
+    is_sender = serializers.SerializerMethodField()
     sender = serializers.SerializerMethodField()
     recipient = serializers.SerializerMethodField()
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
-    connection_status = serializers.SerializerMethodField()
     alerts = serializers.SerializerMethodField()
-
-    free_messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -124,23 +106,13 @@ class ConversationSerializer(serializers.ModelSerializer):
     def requesting_user(self, obj):
         return self.context['request'].user
 
-    def other_user(self, obj):
-        return obj.job.contractor if self.get_is_owner(obj) else obj.job.project.project_manager
-
-    def is_connected(self, obj):
-        return len(self.requesting_user(obj).connections.filter(id=self.other_user(obj).id))
-
     def set_profile(self, obj, user):
-        if self.is_connected(obj):
-            profile = ProfileSerializer(user, context={'request': self.context['request']}).data
-            fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country' ]
-            return { k: v for k, v in profile.items() if k in fields }
-        else:
-            profile = ObfuscatedProfileSerializer(user).data
-        return profile
+        profile = ProfileSerializer(user, context={'request': self.context['request']}).data
+        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'roles', 'city', 'state', 'country' ]
+        return { k: v for k, v in profile.items() if k in fields }
 
-    def get_is_owner(self, obj):
-        return self.requesting_user(obj) == obj.job.project.project_manager
+    def get_is_sender(self, obj):
+        return self.requesting_user(obj) == obj.sender
 
     def get_current_user(self, obj):
         return self.requesting_user(obj).id
@@ -152,9 +124,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         return self.set_profile(obj, obj.sender)
 
     def get_connection_contact_details(self, obj):
-        other_user = self.other_user(obj)
-        if self.is_connected(obj):
-            return ContactDetailsSerializer(self.other_user(obj).contact_details).data
+        return ContactDetailsSerializer(obj.recipient.contact_details).data
 
     def get_contact_details(self, obj):
         return ContactDetailsSerializer(self.requesting_user(obj).contact_details).data
@@ -176,18 +146,6 @@ class ConversationSerializer(serializers.ModelSerializer):
         mapped_interactions = map(serialize_interaction, interactions)
         serializer = InteractionSerializer(mapped_interactions, many=True)
         return serializer.data
-
-    def get_connection_status(self, obj):
-        if(obj.job.status != 'pending'):
-            return 'connected'
-        try:
-            if(ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=obj.job.id)):
-                return 'requested'
-        except ProductOrder.DoesNotExist:
-            pass
-
-    def get_free_messages(self, obj):
-        return free_messages(obj, self.requesting_user(obj), self.get_is_legacy(obj))
 
     def get_is_legacy(self, obj):
         try:

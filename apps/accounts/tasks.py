@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 
 from accounts.models import Profile
-from business.models import Job, Document
+from business.models import Document
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token
 from market.celery import app as celery_app
 
@@ -25,21 +25,6 @@ def generate_confirmation_url(user, instance, field,
     kwargs['token'] = create_auth_token(user)
     url = reverse(reverse_pattern % base_name, args=(instance.id,))
     return absolute_url(url, kwargs)
-
-@shared_task
-def pm_contact_card_email(job_id):
-    job = Job.objects.get(id=job_id)
-    document = Document.objects.get(job=job, type='MSA')
-    pm_context = {
-        'fname': job.contractor.first_name,
-        'lname': job.contractor.last_name,
-        'email': job.contractor.email,
-        'document': document.docusign_document.id,
-        'project': job.project.title,
-    }
-    pm_context['phone'] = job.contractor.phone if job.contractor.phone else ''
-    pm_context['role'] = job.contractor.roles if job.contractor.roles else ''
-    send_mail('new-contract-entrepreneur', [job.project.project_manager], pm_context)
 
 @shared_task
 def connection_request(this_id, that_id, thread_id, template):

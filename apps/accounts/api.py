@@ -14,8 +14,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
 from accounts.tasks import email_confirmation
-from business.models import Job, Project
-from payment.models import ProductOrder
+from business.models import Project
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
@@ -82,20 +81,6 @@ class ContactDetailsViewSet(ModelViewSet):
         request.data['profile'] = request.user.id
         return super(ContactDetailsViewSet, self).update(request, *args, **kwargs)
 
-    def update_orders_for_user(self, contact_details, role):
-        if role == 'freelancer':
-            related_ids = [j.id for j in Job.objects.filter(status='pending', contractor_id=contact_details.id)]
-        else:
-            project_ids = [p.id for p in Project.objects.filter(project_manager_id=contact_details.id)]
-            related_ids = [j.id for j in Job.objects.filter(status='pending', project_id__in=project_ids)]
-        orders = ProductOrder.objects.filter(
-                _product='connect_job',
-                request_status='%s_is_validating' % role,
-                related_object_id__in=related_ids)
-        for order in orders:
-            new_status = 'requested_by_%s' % role if order.requester == contact_details.profile else 'accepted'
-            order.change_status(new_status, contact_details.profile)
-
     @detail_route(methods=['get'])
     def send_confirmation_email(self, request, *args, **kwargs):
         details = self.get_object()
@@ -112,11 +97,6 @@ class ContactDetailsViewSet(ModelViewSet):
         contact_details = ContactDetails.objects.get(profile_id=pk)
         validate_confirmation_signature(contact_details, signature)
         cross_pollinate_email(contact_details, 'profile')
-
-        if contact_details.email_confirmed:
-            self.update_orders_for_user(contact_details, 'freelancer')
-            self.update_orders_for_user(contact_details, 'entrepreneur')
-
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
 

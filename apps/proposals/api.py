@@ -5,9 +5,9 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from business.models import Job
+from business.models import NDA
 from generics.tasks import new_message_notification
-from postman.models import Message
+from postman.models import Message, Interaction
 from proposals.models import Question, Proposal
 from proposals.permissions import ProposalPermission
 from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
@@ -116,25 +116,23 @@ class ProposalViewSet(viewsets.ModelViewSet):
     def respond(self, request, *args, **kwargs):
         proposal = self.get_object()
         if proposal.status == 'pending' and proposal.recipient == request.user:
-            # Deprecate
-            bid, created = Job.objects.get_or_create(
-                contractor = proposal.submitter,
-                project = proposal.project
-            )
             conversation = Message.objects.create(
                 sender = proposal.recipient,
                 recipient = proposal.submitter,
                 subject = proposal.project.title,
-                body = request.data['message'],
-                job = bid
+                body = '',
             )
             conversation.thread = conversation
             conversation.save()
             proposal.message = conversation
             proposal.status = 'responded'
             proposal.save()
+            nda, created = NDA.objects.get_or_create(
+                sender=proposal.recipient,
+                receiver=proposal.submitter,
+                proposal=proposal
+            )
             serializer = self.get_serializer(data=proposal)
             serializer.is_valid(raise_exception=False)
-            new_message_notification.delay(proposal.submitter.id, conversation.id)
-            return Response({'status': 'responded'}, status=200)
+            return Response({'message': conversation.id}, status=200)
         return Response(status=403)

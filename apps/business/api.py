@@ -13,9 +13,9 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions, DjangoObjectPermissions
 from rest_framework.response import Response
 
-from apps.api.permissions import BidPermission, ContractorBidPermission, ContracteeTermsPermission,  IsPrimary, IsJobOwnerPermission, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
+from apps.api.permissions import BidPermission, ContractorBidPermission,  IsPrimary, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
 from accounts.models import Skills
-from business.models import Job, Employee
+from business.models import Employee
 from business.products import products
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
@@ -84,16 +84,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         #TODO Add to serializer and permissions?
         if project.approved or request.user == project.project_manager or request.user.is_staff:
-            job = None
-            try:
-                if request.user.is_authenticated():
-                    job = Job.objects.get(project=project, contractor=request.user)
-                    if job:
-                        job = JobSerializer(job).data
-            except Job.DoesNotExist:
-                pass
             response_data = self.get_serializer(project).data
-            response_data['job'] = job
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)
         else:

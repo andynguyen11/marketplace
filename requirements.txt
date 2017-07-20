@@ -90,7 +90,7 @@ simplejson==3.8.2
 semantic-version==2.5.0
 six==1.10.0
 sorl-thumbnail==12.4a1
-stripe==1.23.0
+stripe==1.62.0
 texttable==0.8.4
 tini==3.0.1
 vine==1.1.3

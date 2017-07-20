@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="261px" height="91px" viewBox="0 0 261 91" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 45.1 (43504) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 6</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Submit-Proposal_Bank-Verification" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Freelancer_BankVerification_Individual_BankInfo_62817@2x-Copy" transform="translate(-644.000000, -238.000000)">
+            <g id="Group-6" transform="translate(644.000000, 238.000000)">
+                <rect id="Rectangle-7" fill="#A19EA8" x="0" y="0" width="261" height="91"></rect>
+                <rect id="Rectangle-7" fill="#DAD9DD" x="7" y="0" width="254" height="85"></rect>
+                <text id="Generic-name-bank-sa" font-family="ArialMT, Arial" font-size="8" font-weight="normal" fill="#423D51">
+                    <tspan x="22" y="9">Generic name bank savings and loan</tspan>
+                </text>
+                <text id="for" font-family="ArialMT, Arial" font-size="8" font-weight="normal" fill="#423D51">
+                    <tspan x="22" y="38">for</tspan>
+                </text>
+                <text id="123456789" font-family="Arial-BoldMT, Arial" font-size="8" font-weight="bold" fill="#423D51">
+                    <tspan x="22" y="75">123456789</tspan>
+                </text>
+                <text id="12345678889" font-family="Arial-BoldMT, Arial" font-size="8" font-weight="bold" fill="#A19EA8">
+                    <tspan x="76" y="75">12345678889</tspan>
+                </text>
+                <text id="012" font-family="Arial-BoldMT, Arial" font-size="8" font-weight="bold" fill="#A19EA8">
+                    <tspan x="140" y="75">012</tspan>
+                </text>
+                <text id="123-Bank-Lane,-Bankv" font-family="Arial-BoldMT, Arial" font-size="5" font-weight="bold" fill="#423D51">
+                    <tspan x="22" y="17">123 Bank Lane, Bankville  01234</tspan>
+                </text>
+                <path d="M33.5,38.25 L139.542444,38.25" id="Line" stroke="#423D51" stroke-width="0.5" stroke-linecap="square"></path>
+                <path d="M168.5,38.25 L260.000342,38.25" id="Line-Copy-4" stroke="#423D51" stroke-width="0.5" stroke-linecap="square"></path>
+                <path d="M18.25,68.5 L18.25,75.5" id="Line" stroke="#A19EA8" stroke-width="0.5" stroke-linecap="round"></path>
+                <path d="M20.25,73.9793094 L20.25,75.5" id="Line-Copy-2" stroke="#A19EA8" stroke-width="0.5" stroke-linecap="round"></path>
+                <path d="M20.25,68.9793094 L20.25,70.5" id="Line-Copy-3" stroke="#A19EA8" stroke-width="0.5" stroke-linecap="round"></path>
+                <path d="M65.25,68.5 L65.25,75.5" id="Line-Copy" stroke="#A19EA8" stroke-width="0.5" stroke-linecap="round"></path>
+                <ellipse id="Oval-4" stroke="#1EDDB2" cx="41" cy="71" rx="27" ry="16"></ellipse>
+            </g>
+        </g>
+    </g>
+</svg>

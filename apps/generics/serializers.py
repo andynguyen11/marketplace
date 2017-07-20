@@ -5,6 +5,7 @@ from generics.models import Attachment
 from generics.base_serializers import RelationalModelSerializer, ParentModelSerializer
 from generics.validators import file_validator
 
+
 def retrieve_content_object(source, known_keys=['id', 'file', 'tag', 'description', ]):
     additional = { k: v for k, v in source.items() if k not in known_keys }
     if len(additional.keys()) == 1:
@@ -50,5 +51,15 @@ class AttachmentSerializer(RelationalModelSerializer):
             content_type = ContentType.objects.get_for_model(content_object)
             data = {'defaults': data, 'tag': tag, 'content_type': content_type, 'object_id': content_object.id }
         return super(AttachmentSerializer, self).create_self(data, action, normalize=False)
+
+
+class JSONSerializerField(serializers.Field):
+    """ Serializer for JSONField -- required to make field writable"""
+
+    def to_internal_value(self, data):
+        return data
+
+    def to_representation(self, value):
+        return value
 
 

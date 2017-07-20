@@ -2,9 +2,13 @@
 {% load staticfiles %}
 {% load cache %}
 {% load thumbnail %}
+{% load random_hero %}
 
 {% block content %}
 {% cache 3600 home ENVIRONMENT %}
+
+{% random_slide_content as random_slide %}
+
 <div class="hero">
   <!--<div id="hero-carousel&#45;&#45;home" class="carousel slide" data-interval="10000" data-ride="carousel">-->
   <div id="hero-carousel--home" class="carousel slide">
@@ -21,24 +25,43 @@
       <div id="home-hero-1" class="item hero-item--home hero-item--home-post-project active">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand-bold">Build ideas<br class="hide-desktop"> with equity.</h2>
-          <h5 class="brand">Loom is the first ever work-for-equity platform that connects<br class="hide-mobile"/> entrepreneurs with developers to bring digital products to life.</h5>
-          <a href="/signup/" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          {% if random_slide == 1 %}
+            <h2 class="brand-bold">Hire technical freelancers.</h2>
+            <h5 class="brand">Loom is the first ever freelance platform that connects you with developers to<br class="hide-mobile"/> bring digital products to life in exchange for cash, equity or both. Win-win.</h5>
+            <a href="/signup/" class="btn btn-lg btn-brand btn-brand--attn">Post projects for free</a>
+          {% elif random_slide == 2 %}
+            <h2 class="brand-bold">Hire top<br class="hide-desktop"> freelance talent.</h2>
+            <h5 class="brand">Hire freelance developers to bring your project to life,<br class="hide-mobile"/> and compensate them in cash, equity, or a combination of both. Win-win.</h5>
+            <a href="/signup/" class="btn btn-lg btn-brand btn-brand--attn">Post projects for free</a>
+          {% elif random_slide == 3 %}
+            <h2 class="brand-bold">Bring your digital<br class="hide-desktop"> product to life.</h2>
+            <h5 class="brand">Easily connect with top freelance developers to build your project<br class="hide-mobile"/> with the option to pay them in cash, equity, or a combination of both. Win-win.</h5>
+            <a href="/signup/" class="btn btn-lg btn-brand btn-brand--attn">Post projects for free</a>
+          {% endif %}
         </div>
       </div>
       <div id="home-hero-2" class="item hero-item--home hero-item--home-post-project">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          <h2 class="brand-bold">Ship code. <br class="hide-desktop">Receive equity.</h2>
-          <h5 class="brand">On Loom, web developers can now share their talent in exchange for equity<br class="hide-mobile"/> in some of the world's biggest and best ideas.</h5>
+          {% if random_slide == 1 %}
+          <h2 class="brand-bold">Ship code. <br class="hide-desktop">Get paid.</h2>
+          <h5 class="brand">Send invoices and get cash payments directly through Loom’s secure payment system.<br class="hide-mobile"/> Low service fees mean you keep more of the money you earn.</h5>
           <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
+          {% elif random_slide == 2 %}
+          <h2 class="brand-bold">Earn cash. <br class="hide-desktop">And equity.</h2>
+          <h5 class="brand">On average, Loom has lower service fees than other freelance sites, while letting<br class="hide-mobile"/> you earn equity in the projects you build.</h5>
+          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
+          {% elif random_slide == 3 %}
+          <h2 class="brand-bold">Ship code for <br class="hide-desktop">cash + equity.</h2>
+          <h5 class="brand">Submit proposals for free on all freelance projects, and get paid in<br class="hide-mobile"/> cash, equity, or a combination of both. Win-win.</h5>
+          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
+          {% endif %}
         </div>
       </div>
       <div id="home-hero-3" class="item hero-item--home hero-item--home-post-project">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
           <h2 class="brand-bold">We're here <br class="hide-desktop">to help you.</h2>
-
           <h5 class="brand">Our goal is to connect bright, passionate people with<br class="hide-mobile"/> mutual interest in bringing the world's best ideas to life.</h5>
           <a href="{% url 'how' %}" class="btn btn-lg btn-brand btn-brand--attn">How Loom works</a>
         </div>
@@ -63,19 +86,19 @@
         <li class="how-content-list-item how-post">
           <div class="how-icon how-icon--post"></div>
           <p>
-            Post your project to our worldwide<br class="hide-medium"/> community of top tier developers.
+            Post a project for free to Loom's<br class="hide-medium"/> community of top-tier freelancers.
           </p>
         </li>
         <li class="how-content-list-item how-bid">
           <div class="how-icon how-icon--bid"></div>
           <p>
-            Receive proposals in equity and/or <br class="hide-medium">cash to bring your project to life.
+            Receive proposals for free in cash,<br class="hide-medium"> equity or both to build your project.
           </p>
         </li>
         <li class="how-content-list-item how-engage">
           <div class="how-icon how-icon--engage"></div>
           <p>
-            Pay a flat fee to connect with each <br class="hide-medium"/>developer that you want to engage.
+            Easily pay your freelancer through<br class="hide-medium"/> Loom's secure payment system.
           </p>
         </li>
       </ul>
@@ -90,16 +113,31 @@
   <div class="how-image"></div>
 </div>
 
-{% if featured %}
-<div class="plates plates--home page-content--medium">
-  <div class="plates-headcap">
-    <h3 class="plates-header brand-bold">Featured Projects</h3>
-    <a href="{% url 'project-gallery' %}" class="btn btn--clear btn-lg">View all</a>
+<div class="featured-co page-content--medium">
+  <p class="featured-co-header">Freelancers on Loom have built products for</p>
+  <div class="featured-logos">
+    <div class="featured-logos-inner">
+      <span class="venmo-logo"></span>
+      <span class="dropbox-logo"/></span>
+      <span class="legalzoom-logo"></span>
+      <span class="salesforce-logo"></span>
+      <span class="facebook-logo"></span>
+    </div>
   </div>
-  <div class="plates-inner projectCards">
-    {% for project in featured %}
-      {% include 'projectCard.html' with project=project %}
-    {% endfor %}
+</div>
+
+{% if featured %}
+<div class="page-content featured-cards">
+  <div class="plates plates--home page-content--medium">
+    <div class="plates-headcap">
+      <h3 class="plates-header brand-bold">Featured Projects</h3>
+      <a href="{% url 'project-gallery' %}" class="btn btn--clear btn-lg">View all</a>
+    </div>
+    <div class="plates-inner projectCards">
+      {% for project in featured %}
+        {% include 'projectCard.html' with project=project %}
+      {% endfor %}
+    </div>
   </div>
 </div>
 {% endif %}

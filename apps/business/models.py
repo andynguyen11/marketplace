@@ -99,54 +99,6 @@ class Company(models.Model):
     class Meta:
         verbose_name_plural = 'companies'
 
-def user_company(user):
-    return Employee.objects.get(profile=user, primary=True).company
-
-
-class Job(models.Model):
-    project = models.ForeignKey('business.Project')
-    contractor = models.ForeignKey('accounts.Profile')
-    attachments = GenericRelation(Attachment, related_query_name='job_attachments')
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_completed = models.DateTimeField(blank=True, null=True)
-    equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
-    cash = models.IntegerField(blank=True, null=True)
-    hours = models.IntegerField(blank=True, null=True)
-    status = models.CharField(max_length=100, blank=True, null=True, default='pending', choices=JOB_STATUS)
-    progress = models.IntegerField(default=0)
-    nda_signed = models.BooleanField(default=False)
-    start_date = models.DateField(blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
-
-    def __str__(self):
-        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
-
-    def __unicode__(self):
-        return '{0} - {1} {2}'.format(self.project, smart_str(self.contractor.first_name), smart_str(self.contractor.last_name))
-
-    @property
-    def conversation(self):
-        return Message.objects.get(job=self, sender=self.contractor)
-
-    @property
-    def owner(self):
-        return self.project.project_manager
-
-    def save(self, *args, **kwargs):
-        if (self.pk is None or self.status == 'pending') and self.contractor.is_connected(self.project.project_manager):
-            self.status = 'connected'
-        try:
-            terms = Terms.objects.get(job=self)
-            if terms.status != 'contracted' or terms.status != 'agreed':
-                terms.update_date = datetime.now()
-                terms.cash = self.cash
-                terms.equity = self.equity
-                terms.hours = self.hours
-                terms.save()
-        except Terms.DoesNotExist:
-            pass
-        super(Job, self).save(*args, **kwargs)
-
 
 class NDA(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
@@ -158,22 +110,9 @@ class NDA(models.Model):
 
 class Document(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
-    job = models.ForeignKey(Job)
     type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
     docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
     status = models.CharField(default='new', max_length=30, null=True)
-
-    @property
-    def project(self):
-        return self.job.project
-
-    @property
-    def contractor(self):
-        return self.job.contractor
-
-    @property
-    def manager(self):
-        return self.project.project_manager
 
     @property
     def signers(self):
@@ -265,50 +204,16 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     @property
-    def average_equity(self):
-        average = None
-        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(equity=0).exclude(cash__isnull=False)
-        equities = [bid.equity for bid in bids]
-        if equities:
-            average = round((sum(equities) / len(equities)), 2)
-        return average
-
-    @property
-    def average_cash(self):
-        average = None
-        bids = Job.objects.filter(project=self, ).exclude(cash__isnull=True).exclude(cash=0).exclude(equity__isnull=False)
-        cash = [bid.cash for bid in bids]
-        if cash:
-            average = int(round((sum(cash) / float(len(cash)))))
-        return average
-
-    @property
-    def average_combined(self):
-        average_cash = None
-        average_equity = None
-        bids = Job.objects.filter(project=self, ).exclude(equity__isnull=True).exclude(cash__isnull=True).exclude(equity=0).exclude(cash=0)
-        equities = [bid.equity for bid in bids]
-        cash = [bid.cash for bid in bids]
-        if cash and equities:
-            average_equity = round((sum(equities) / len(equities)), 2)
-            average_cash = int(round((sum(cash) / float(len(cash)))))
-        return { 'cash': average_cash, 'equity': average_equity }
-
-    @property
     def skills_str(self):
         return self.skills.get_tag_string()
-
-    def active_jobs(self):
-        jobs = Job.objects.filter(project=self).exclude(status__exact='completed')
-        return jobs
 
     def documents(self):
         documents = Document.objects.filter(project=self)
         return documents
 
     def nda_list(self):
-        documents = Document.objects.filter(job__project=self, type='NDA', status='signed')
-        nda_list = [document.job.contractor.id for document in documents]
+        ndas = NDA.objects.filter(proposal__project=self)
+        nda_list = [nda.receiver.id for nda in ndas]
         nda_list.append(self.project_manager.id)
         return nda_list
 
@@ -316,7 +221,6 @@ class Project(models.Model):
 class Terms(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(blank=True, null=True)
-    job = models.OneToOneField(Job)
     contractor = models.CharField(max_length=100)
     contractee = models.CharField(max_length=100)
     start_date = models.DateField()

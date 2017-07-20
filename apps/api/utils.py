@@ -40,6 +40,10 @@ def jwt_payload_handler(user):
     payload = {
         'user_id': user.pk,
         'company_id': user.company.id if user.company else None,
+        'connected': True if user.stripe_connect else False,
+        'verification': user.verification,
+        'payouts_enabled': user.payouts_enabled,
+        'payments_enabled': True if user.stripe else False,
         'email': user.email,
         'username': username,
         'photo': user.get_photo,

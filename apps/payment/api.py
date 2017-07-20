@@ -1,32 +1,39 @@
-import datetime, stripe
+import datetime
+import stripe
+import json
 from requests.exceptions import ConnectionError
 
 from django.shortcuts import redirect
-from rest_framework import generics
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.utils.encoding import smart_str
+from rest_framework import generics, status
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework import authentication, permissions, viewsets
-from apps.api.permissions import ProductOrderPermission
 from django.conf import settings
 
 from accounts.models import Profile
-from accounts.tasks import pm_contact_card_email
+from accounts.serializers import ObfuscatedProfileSerializer
 from generics.viewsets import ImmutableModelViewSet
-from business.models import Job, Document, Terms
+from business.models import Document, Terms
 from business.serializers import DocumentSerializer
 from docusign.models import Document as DocusignDocument
 from business.products import products
-from payment.models import ProductOrder, Order, Promo, get_promo
-from payment.serializers import OrderSerializer, ProductOrderSerializer, ensure_order_is_payable
+from payment.models import Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
-from postman.forms import build_payload
+from payment.permissions import InvoicePermissions
+from payment.serializers import InvoiceSerializer, StripeJSONSerializer, StripeWebhookSerializer
+from proposals.models import Proposal
 
 stripe.api_key = settings.STRIPE_KEY
 
+#refactor
 class StripePaymentSourceView(APIView):
     """
     API view handling create, update, and delete on stripe payment sources
@@ -45,7 +52,7 @@ class StripePaymentSourceView(APIView):
         user = request.user
         stripe_token = request.data['stripe_token']
         data = stripe_helpers.add_source(user, stripe_token) if user.stripe else stripe_helpers.connect_customer(user, stripe_token)
-        return Response(status=201, data=data)
+        return Response(status=201, data=json.loads(json.dumps(data, indent=2)))
 
     def post(self, request):
         return self.add_card(request)
@@ -68,127 +75,7 @@ class StripePaymentSourceView(APIView):
         cards = stripe.Customer.retrieve(request.user.stripe).sources.data if request.user.stripe else []
         return Response(status=200, data=cards)
 
-
-class CreditCardView(APIView):
-    """
-    API view handling creating and updating credit cards
-    """
-
-    def post(self, request):
-
-        stripe_customer = None
-        card = request.data['stripeToken']
-
-        if request.data['saveCard']:
-            if request.user.stripe:
-                try:
-                    stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-                    card = stripe_customer.sources.create(source=card)
-                except stripe.error.CardError, e:
-                    body = e.json_body
-                    error = body['error']['message']
-                    return Response(status=500, data={"error": error})
-            else:
-                try:
-                    # Create a Customer
-                    stripe_customer = stripe.Customer.create(
-                        source=card,
-                        description="{0}, {1} - {2}".format(
-                            request.user.last_name,
-                            request.user.first_name,
-                            request.user.company
-                        )
-                    )
-                    card=stripe_customer.sources.data[0].id
-                except stripe.error.CardError, e:
-                    body = e.json_body
-                    error = body['error']['message']
-                    return Response(status=500, data={"error": error})
-            user = request.user
-            user.stripe = stripe_customer.id
-            user.save()
-        message, url = self.send_payment(request, card, stripe_customer)
-        return Response(status=200, data={"message": message, "url": url})
-
-    def patch(self, request):
-        stripe.api_key = settings.STRIPE_KEY
-        stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-        if stripe_customer.id == request.data['customer']:
-            message, url = self.send_payment(request, request.data['card'], request.data['customer'])
-            return Response(status=200, data={"message": message, "url": url})
-        return Response(status=403)
-
-    def send_payment(self, request, card, customer=None):
-        order = self.build_order(request)
-
-        if order.status == 'paid':
-            return ("Already Paid", "/profile/dashboard/")
-
-        if order.can_pay(request.user):
-            order.pay(customer, card)
-            signer_url = self.generate_contract(request, order.job)
-            order.job.status = 'connected'
-            order.job.save()
-            return ("Success", signer_url)
-
-        return ("There was a problem processing your payment.", "/profile/dashboard/")
-
-    def build_order(self, request):
-        job = Job.objects.get(id=request.data['job'])
-        order, created = Order.objects.get_or_create(job=job)
-        order.add_promo(request.data.get('promo', None))
-        return order
-
-    def generate_contract(self, request, job):
-        terms = Terms.objects.get(job=job)
-        payload = build_payload(request.user, terms.job.contractor, terms)
-        serializer = DocumentSerializer(data=payload)
-        serializer.is_valid(raise_exception=True)
-        new_document = serializer.create(serializer.validated_data)
-        signer_url = DocusignDocument.objects.get(id=new_document.docusign_document.id).get_signer_url(request.user)
-        pm_contact_card_email.delay(job.id)
-        return signer_url
-
-    def get(self, request):
-        stripe.api_key = settings.STRIPE_KEY
-        cards = []
-        if request.user.stripe:
-            stripe_customer = stripe.Customer.retrieve(request.user.stripe)
-            cards = stripe_customer.sources.data
-        return Response(status=200, data=cards)
-
-
-class OrderListCreate(generics.ListCreateAPIView):
-    serializer_class = OrderSerializer
-    renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, )
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        try:
-            _ = (e for e in queryset)
-            serializer = self.get_serializer(queryset, many=True)
-        except TypeError:
-            serializer = self.get_serializer(queryset)
-        return Response(serializer.data)
-
-    def get_queryset(self):
-        profile = self.request.user
-        queryset = Order.objects.filter(job__project__project_manager=profile)
-        job_id = self.request.query_params.get('job', None)
-        if job_id is not None:
-            job = Job.objects.get(id=job_id)
-            queryset, created = Order.objects.get_or_create(job=job)
-        return queryset
-
-
-class OrderDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-    renderer_classes = (JSONRenderer, )
-    permission_classes = (IsAuthenticated, )
-
-
+#refactor
 class PromoCheck(APIView):
     " Simple Promo checking view "
     permission_classes = (IsAuthenticated, )
@@ -210,50 +97,166 @@ class PromoCheck(APIView):
         return self.get(request, code=request.data.get('promo', None))
 
 
-class ProductOrderViewSet(ImmutableModelViewSet):
-    queryset = ProductOrder.objects.all()
-    serializer_class = ProductOrderSerializer
-    permission_classes = (IsAuthenticated, ProductOrderPermission)
-
-    @property
-    def keys(self):
-        return dict(id=self.kwargs.get('id', self.kwargs.get('pk', None)))
+class InvoiceViewSet(ModelViewSet):
+    queryset = Invoice.objects.all()
+    serializer_class = InvoiceSerializer
+    permission_classes = (IsAuthenticated, InvoicePermissions)
+    lookup_field = 'reference_id'
 
     def list(self, request, **kwargs):
-        user_orders = self.get_queryset().filter(payer=request.user, status='paid', **self.request.query_params)
-        return Response(self.serializer_class(user_orders, many=True).data)
+        action = request.query_params.get('action', 'received')
+        if action == 'sent':
+            invoices = self.get_queryset().filter(sender=request.user)
+        if action == 'received':
+            invoices = self.get_queryset().filter(recipient=request.user).exclude(status='draft')
+        return Response(self.serializer_class(invoices, many=True).data)
 
-    def create(self, request, **kwargs):
-        request.data['requester'] = self.request.user.id
-        return super(ProductOrderViewSet, self).create(request, **kwargs)
-
-    def _update_status(self, order, user, data):
-        status = data.get('status', None)
-        stripe_token = data.get('stripe_token', None)
-        if(order.payer == user):
-            payable, details = ensure_order_is_payable(order, stripe_token=stripe_token)
-            if not payable:
-                return Response(status=400, data={'stripe_token': [
-                    'Payer has not specified a payment source for this Order',
-                    details ]})
-
-        updated = order.change_status(status, user)
-        data = ProductOrderSerializer(updated).data
-        return Response(status=204, data=data)
-
-    @detail_route(methods=['post'], permission_classes=(IsAuthenticated, ProductOrderPermission))
-    def update_status(self, request, **kwargs):
-        return self._update_status(order=self.get_object(), user=request.user, data=request.data)
-
-    @list_route(methods=['post'], permission_classes=(IsAuthenticated,))
-    def find_and_update_status(self, request, **kwargs):
-        related_object_id = request.data.get('related_object_id', None)
-        order = ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=related_object_id)
-        user = request.user
-
-        if not (user in order.involved_users):
-            raise PermissionDenied(detail='user not involved in order')
-
-        return self._update_status(order, user, request.data)
+    @detail_route(methods=['patch'])
+    def totals(self, request, **kwargs):
+        if request.data.get('invoice_items', None):
+            total = 0
+            for item in request.data['invoice_items']:
+                total += item['amount']
+            fee = round((float(total) * settings.LOOM_FEE), 2)
+            return Response({'loom_fee': fee, 'total_amount': total}, status=200)
+        else:
+            return Response(status=400)
 
 
+class InvoiceRecipientsView(generics.ListAPIView):
+    serializer_class = ObfuscatedProfileSerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        user = self.request.user
+        proposals = Proposal.objects.filter(submitter=user, status='responded')
+        recipients = [proposal.project.project_manager for proposal in proposals]
+        return set(recipients)
+
+
+class InvoicePaymentViewset(ViewSet):
+    permission_classes = (IsAuthenticated, )
+
+    def create(self, request):
+        invoice = Invoice.objects.get(reference_id=request.data['invoice'])
+        if invoice.status == 'paid':
+            return Response({u'Error': u'This invoice has already been paid.'}, status=400)
+        if invoice.recipient != request.user:
+            return Response(status=403)
+        try:
+            if request.data.get('token', None):
+                token = request.data['token']
+                country = request.data['country']
+            else:
+                customer = stripe.Customer.retrieve(invoice.recipient.stripe)
+                card = customer.sources.retrieve(customer.default_source)
+                country = card.country
+                token = stripe.Token.create(
+                  customer = invoice.recipient.stripe,
+                  stripe_account = invoice.sender.stripe_connect,
+                )
+                token = token.id
+            fee = invoice.application_fee(card_country=country)
+            charge = stripe.Charge.create(
+                amount = int(invoice.total_amount * 100),
+                application_fee = int(fee * 100),
+                currency = "usd",
+                source = token,
+                stripe_account = invoice.sender.stripe_connect
+            )
+        except stripe.StripeError as e:
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=400)
+        invoice.status = 'paid'
+        invoice.save()
+        return Response(status=200)
+
+      
+class StripeConnectViewSet(ViewSet):
+    """
+    Stripe Connect view that handles account creation and listing country spec
+    """
+    permission_classes = (IsAuthenticated, )
+
+    def update_stripe_account(self, user, stripe_account):
+        user.stripe_connect = stripe_account.id
+        user.verification = stripe_account.legal_entity.verification.status
+        if 'payouts_enabled' in stripe_account:
+            user.payouts_enabled = stripe_account.payouts_enabled
+        user.save()
+
+    def create(self, request):
+        try:
+            serializer = StripeJSONSerializer(data=request.data)
+            if serializer.is_valid():
+                stripe_token = serializer.data['data'].pop('external_account')
+                # Need to create, fetch, then update in order to trigger Stripe account update webhook
+                stripe_response = stripe.Account.create(
+                    type='custom',
+                    email=request.user.email,
+                    **serializer.data['data']
+                )
+                stripe_account = stripe.Account.retrieve(
+                    id=stripe_response.id
+                )
+                stripe_account.external_account = stripe_token
+                stripe_account = stripe_account.save()
+                self.update_stripe_account(request.user, stripe_account)
+                return Response(stripe_response, status=201)
+            else:
+                return Response(serializer.errors, status=400)
+        except stripe.StripeError as e:
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=400)
+
+    def list(self, request):
+        if request.user.stripe_connect:
+            account = stripe.Account.retrieve(request.user.stripe_connect)
+            return Response(status=200, data=json.loads(json.dumps(account, indent=2)))
+        else:
+            return Response(status=200)
+
+    @detail_route(methods=['get'])
+    def countryspec(self, request, pk=None):
+        spec = stripe.CountrySpec.retrieve(pk)
+        return Response(spec, status=200)
+
+
+class StripeWebhookView(APIView):
+    serializer_class = StripeWebhookSerializer
+
+    #TODO update to Stripe standard - https://stripe.com/docs/webhooks#signatures
+    def validate_webhook(self, webhook_data):
+        webhook_id = webhook_data.get('id', None)
+        webhook_type = webhook_data.get('type', None)
+        webhook_livemode = webhook_data.get('livemode', None)
+        is_valid = False
+
+        if webhook_id and webhook_type and webhook_livemode:
+            is_valid = True
+        return is_valid, webhook_id, webhook_type, webhook_livemode
+
+    @method_decorator(csrf_exempt)
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = self.serializer_class(data=request.data)
+
+            if serializer.is_valid():
+                validated_data = serializer.validated_data
+                is_webhook_valid, webhook_id, webhook_type, webhook_livemode = self.validate_webhook(validated_data)
+
+                if is_webhook_valid:
+                    stripe_account = validated_data['data']['object']
+                    profile = Profile.objects.get(stripe_connect=stripe_account['id'])
+                    profile.payouts_enabled = stripe_account['payouts_enabled']
+                    profile.verification = stripe_account['legal_entity']['verification']['status']
+                    profile.save()
+                    return Response(status=200)
+                else:
+                    error_data = {u'Error': u'Webhook must contain id, type and livemode.'}
+                    return Response(error_data, status=400)
+            else:
+                return Response(serializer.errors, status=400)
+        except stripe.StripeError as e:
+            error_data = {u'Error': smart_str(e) or u'Unknown error'}
+            return Response(error_data, status=400)

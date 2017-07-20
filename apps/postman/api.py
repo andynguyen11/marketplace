@@ -19,15 +19,14 @@ from rest_framework.decorators import permission_classes, list_route
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import Profile, Connection
-from business.models import Project, Job, Terms, Document
+from business.models import Project, Terms, Document
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
-from payment.models import ProductOrder, Promo
-from payment.serializers import ProductOrderSerializer, ensure_order_is_payable, default_error_details
+from payment.models import Promo
 from postman.models import Message, AttachmentInteraction, Interaction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
-from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction, free_messages
+from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
 
 def all_interactions(thread_id):
     return sorted(chain(*[
@@ -59,7 +58,6 @@ class ConversationDetail(generics.RetrieveAPIView):
     queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
     permission_classes = (IsAuthenticated, IsPartOfConversation)
-    #renderer_classes = (JSONRenderer, )
 
 
 class MessageAPI(APIView):
@@ -70,23 +68,14 @@ class MessageAPI(APIView):
         recipient = Profile.objects.get(id=request.data['recipient'])
         title = 'New message about {0}'.format(smart_str(request.data['title']))
         project = Project.objects.get(id=request.data['project'])
-        job, created = Job.objects.get_or_create(project=project, contractor=request.user )
         new_message = Message.objects.create(
             sender=request.user,
             recipient=recipient,
             body=body,
             subject=title,
         )
-        if created:
-            terms = Terms.objects.create(job=job)
-            nda = Document.objects.create(job=job, type='NDA', )
-            new_message.job = job
-            new_message.nda = nda
-            new_message.project = project
-            new_message.terms = terms
-            thread = new_message
-        else:
-            thread = Message.objects.get(job=job)
+        #TODO check if this will get the correct thread
+        thread = Message.objects.get(project=project)
         new_message.thread = thread
         new_message.save()
         new_message_notification.delay(recipient.id, new_message.id)
@@ -122,16 +111,10 @@ class MessageAPI(APIView):
             'interaction': new_interaction
         }
 
-    def passed_limit(self, thread, user):
-        legacy = thread.nda
-        return (thread.job.status == 'pending') and not free_messages(thread, user, legacy )['remaining']
-
     def patch(self, request, thread_id=None):
         thread = Message.objects.get(id = thread_id or request.data['thread'])
 
         if request.user == thread.sender or request.user == thread.recipient:
-            if self.passed_limit(thread, request.user):
-                return Response("Unconnected Thread Reply Limit Exceeded", status=403)
 
             if request.data.has_key('attachment'):
                 tag = request.data.get('tag', 'Attachment')
@@ -142,18 +125,6 @@ class MessageAPI(APIView):
                     interaction = attachment['interaction']
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
-
-            # messages updated, so passed message alerts possible
-            # we want to do this before serialization
-            if self.passed_limit(thread, request.user):
-                notify.send(
-                    interaction.recipient,
-                    recipient=request.user,
-                    verb=u'message limit reached for',
-                    action_object=thread,
-                    target=thread.project,
-                    type=u'messageLimitReached'
-                )
 
             serializer = ConversationSerializer(thread, context={'request': request})
             new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
@@ -211,70 +182,3 @@ class MessageAPI(APIView):
 
         interaction.save()
         return self.get(request, interaction.thread.id)
-
-
-class ConnectThreadAPI(APIView):
-
-    def get_or_create_order(self, request, thread):
-        try:
-            return (True, ProductOrder.objects.get(status='pending', _product='connect_job', related_object_id=thread.job.id))
-        except ProductOrder.DoesNotExist:
-            serializer = ProductOrderSerializer(data=dict(
-                requester=request.user.id,
-                _product='connect_job',
-                stripe_token=request.data.pop('stripe_token', None),
-                promo=request.data.pop('promoCode', None),
-                related_object_id=thread.job.id))
-            serializer.is_valid()
-            return (False, serializer.save())
-
-    def validate_order(self, request, order):
-        if order.status == 'failed':
-            try:
-                detail = json.loads(order.details)
-            except:
-                detail = order.details
-            raise ValidationError(detail)
-
-        if(order.payer == request.user):
-            payable, order.details = ensure_order_is_payable(order, stripe_token=request.data.pop('stripe_token', None))
-            if not payable:
-                default_error_details(order)
-                order.save()
-                raise ValidationError({ 'error': { 'message': order.details } })
-        return order
-
-    def update_order(self, request, thread):
-        created, order = self.get_or_create_order(request, thread)
-        promo_code = request.data.pop('promoCode', None)
-        # TODO This stuff is pretty brittle, revisit when refactoring for pay to respond to proposal
-        if promo_code:
-            promo = Promo.objects.get(code=promo_code)
-            if created:
-                order._promo = promo
-                order.save()
-            if promo.percent_off == 100:
-                if order.requester != request.user:
-                    order.product.change_status('paid', order, request.user)
-                return
-        self.validate_order(request, order)
-        if order.requester != request.user:
-            order.product.change_status('accepted', order, request.user)
-
-    def new_message(self, thread, user, body):
-        recipient = thread.sender if user == thread.recipient else thread.recipient
-        return Message.objects.create(
-            sender=user,
-            recipient=recipient,
-            thread=thread,
-            body=body,
-            subject=thread.subject
-        )
-
-    def post(self, request, thread_id):
-        thread = Message.objects.get(id = thread_id)
-        self.update_order(request, thread)
-        thread.refresh_from_db()
-        thread.job.refresh_from_db()
-        serializer = ConversationSerializer(thread, context={'request': request})
-        return Response(serializer.data)

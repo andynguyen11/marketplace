@@ -10,7 +10,6 @@ class Review(models.Model):
     deadlines = models.DecimalField(max_digits=2, decimal_places=1)
     communication = models.DecimalField(max_digits=2, decimal_places=1)
     notes = models.TextField(blank=True, null=True)
-    job = models.ForeignKey('business.Job')
 
     class Meta:
         abstract = True

@@ -77,11 +77,12 @@ class ContactDetailsSerializer(RelationalModelSerializer):
 
 
 class ObfuscatedProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=Profile()._meta.get_field('id'))
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Profile
-        fields = ('id', 'first_name', 'photo_url', 'roles', 'capacity', 'city', 'state', 'country', 'location')
+        fields = ('id', 'first_name', 'last_name', 'email', 'photo_url', 'roles', 'capacity', 'city', 'state', 'country', 'location')
 
     def get_photo_url(self, obj):
         return obj.get_photo
