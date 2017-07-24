@@ -233,6 +233,7 @@ AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_KEY', '')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
 AWS_PRELOAD_METADATA = True
 AWS_QUERYSTRING_AUTH = False
+AWS_IS_GZIPPED = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
