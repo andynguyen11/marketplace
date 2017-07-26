@@ -1,8 +1,20 @@
 from rest_framework import permissions
 
 class ProposalPermission(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        if view.action == 'retrieve':
-            return obj.submitter == request.user or obj.project.project_manager == request.user
+    def can_view(self, request, obj):
+        return (request.method in permissions.SAFE_METHODS) and \
+               (request.user.id == obj.recipient.id or request.user.id == obj.submitter.id)
+
+    def can_patch(self, request, obj):
+        if request.user == obj.recipient:
+            payload = None
+            if 'status' in request.data:
+                payload = request.data.get('status', None)
+            if 'viewed' in request.data:
+                payload = request.data.get('viewed', None)
+            return len(request.data) == 1 and payload
         else:
-            return view.action not in ['update', 'partial_update'] or obj.project.project_manager == request.user
+            return request.user == obj.submitter
+
+    def has_object_permission(self, request, view, obj):
+        return self.can_view(request, obj) or self.can_patch(request, obj) or (request.user == obj.submitter)

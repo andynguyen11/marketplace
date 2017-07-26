@@ -17,6 +17,7 @@ class Proposal(models.Model):
     hours = models.IntegerField(blank=True, null=True)
     status = models.CharField(max_length=100, default='pending', choices=PROPOSAL_STATUS)
     message = models.ForeignKey('postman.Message', blank=True, null=True)
+    viewed = models.BooleanField(default=False)
 
     @property
     def answers(self):
