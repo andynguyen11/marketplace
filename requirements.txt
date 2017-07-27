@@ -12,7 +12,6 @@ arrow==0.6.0
 awscli==1.9.15
 awsebcli==3.7.4
 backports.ssl-match-hostname==3.4.0.2
-beautifulsoup4==4.4.1
 billiard==3.5.0.2
 blessed==1.9.5
 boto==2.39.0
@@ -98,10 +97,6 @@ wcwidth==0.1.6
 websocket-client==0.35.0
 wheel==0.24.0
 xmltodict==0.10.2
-
-# docusign
-pydocusign==0.13.1
-BeautifulSoup==3.2.1
 
 # testing
 django-rest-assured==0.2.0

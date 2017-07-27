@@ -108,34 +108,6 @@ class NDA(models.Model):
     proposal = models.ForeignKey('proposals.Proposal', blank=True, null=True)
 
 
-class Document(models.Model):
-    date_created = models.DateTimeField(auto_now_add=True)
-    type = models.CharField(max_length=100, choices=DOCUMENT_TYPES)
-    docusign_document = models.OneToOneField('docusign.Document', blank=True, null=True)
-    status = models.CharField(default='new', max_length=30, null=True)
-
-    @property
-    def signers(self):
-        return self.docusign_document and self.docusign_document.signers
-
-    def getstatus(self):
-        return self.docusign_document.status if self.docusign_document else self.status
-
-    @property
-    def signing_url(self):
-        return self.docusign_document and self.docusign_document.signing_url
-
-    @property
-    def current_signer(self):
-        if self.status not in ('completed', 'declined', 'voided') and self.signers:
-            for signer in self.signers:
-                if signer.status in (None, 'sent', 'delivered'):
-                    return signer.profile.id
-
-    def docusign_status(self):
-        return self.docusign_document.status
-
-
 class ProjectManager(models.Manager):
     def get_queryset(self):
         return super(ProjectManager, self).get_queryset().filter(deleted=False)
@@ -216,40 +188,6 @@ class Project(models.Model):
         nda_list = [nda.receiver.id for nda in ndas]
         nda_list.append(self.project_manager.id)
         return nda_list
-
-
-class Terms(models.Model):
-    create_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(blank=True, null=True)
-    contractor = models.CharField(max_length=100)
-    contractee = models.CharField(max_length=100)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    scope = models.TextField(blank=True, null=True)
-    deliverables = models.TextField(blank=True, null=True)
-    milestones = models.TextField(blank=True, null=True)
-    cash = models.IntegerField(blank=True, null=True)
-    equity = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
-    hours = models.IntegerField(blank=True, null=True)
-    schedule = models.CharField(max_length=255, default='50% upfront and 50% upon completion', blank=True, null=True, choices=COMPENSATION_SCHEDULE)
-    halfway = models.CharField(max_length=255, blank=True, null=True)
-    status = models.CharField(max_length=100, default='new')
-
-    def save(self, *args, **kwargs):
-        #TODO Add autopopulation back in after wysiwig removal
-        if not self.pk:
-            self.contractee = self.job.project.company.name if self.job.project.company else self.job.project.project_manager.name
-            self.contractor = '{0} {1}'.format(smart_str(self.job.contractor.first_name), smart_str(self.job.contractor.last_name))
-            self.update_date = datetime.now()
-            self.cash = self.job.cash
-            self.equity = self.job.equity
-            self.hours = self.job.hours
-            self.start_date = self.job.project.start_date
-            self.end_date = self.job.project.end_date
-            #self.scope = self.job.project.scope
-            #self.milestones = self.job.project.milestones
-            #self.deliverables = self.job.project.specs
-        super(Terms, self).save(*args, **kwargs)
 
 
 

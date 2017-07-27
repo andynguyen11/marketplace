@@ -22,14 +22,6 @@ PROJECT_TYPES = (
     (u'health', u'Health and Fitness'),
 )
 
-
-JOB_STATUS = (
-    (u'pending', u'Pending'),
-    (u'connected', u'Connected'),
-    (u'active', u'Active'),
-    (u'completed', u'Completed'),
-)
-
 COMPANY_TYPES = (
     (u'llc', u'Limited Liability Company (LLC)'),
     (u'inc', u'Corporation (Inc)'),

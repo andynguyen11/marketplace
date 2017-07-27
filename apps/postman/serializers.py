@@ -8,8 +8,8 @@ from rest_framework import serializers
 
 from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
-from business.serializers import DocumentSerializer, NDASerializer
-from business.models import Document, NDA
+from business.serializers import NDASerializer
+from business.models import NDA
 from generics.serializers import AttachmentSerializer
 from postman.models import Message, AttachmentInteraction
 from proposals.models import Proposal
@@ -156,8 +156,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def get_nda(self, obj):
         if self.get_is_legacy(obj):
-            serializer = DocumentSerializer(obj.nda)
-            return serializer.data
+            return None
         else:
             proposal = Proposal.objects.get(message=obj)
             nda, created = NDA.objects.get_or_create(

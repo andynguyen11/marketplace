@@ -9,16 +9,17 @@ from celery.schedules import crontab
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
-from django.db.models import Avg, Q
+from django.db.models import Avg, Q, Sum
 from django.utils.http import urlencode
 from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from market.celery import app as celery_app
 from accounts.models import Profile
-from business.models import Document, Project, Employee, NDA
+from business.models import Project, Employee, NDA
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
+from payment.models import Invoice
 from proposals.models import Proposal
 from postman.models import Message
 
@@ -159,14 +160,6 @@ def complete_project(project_id):
         })
 
 @shared_task
-def connection_made_freelancer(entrepreneur_id, thread_id):
-    entrepreneur = Profile.objects.get(id=entrepreneur_id)
-    send_mail('connection-made-freelancer', [entrepreneur], {
-        'fname': entrepreneur.first_name,
-        'thread_id': thread_id,
-    })
-
-@shared_task
 def project_approved_email(project_id):
     project = Project.objects.get(id=project_id)
     send_mail('project-approved', [project.project_manager], {
@@ -188,6 +181,7 @@ def calculate_date_ranges(field, start, end):
 #TODO This is a database read heavy task, optimize
 @celery_app.task
 def loom_stats_email():
+    #Date utilities
     yesterday = pendulum.yesterday()
     today = pendulum.today()
     week = yesterday.subtract(weeks=1)
@@ -202,16 +196,22 @@ def loom_stats_email():
     date_created = calculate_date_ranges('date_created', yesterday, today)
     sent_at = calculate_date_ranges('sent_at', yesterday, today)
     create_date = calculate_date_ranges('create_date', yesterday, today)
+    date_sent = calculate_date_ranges('sent_date', yesterday, today)
+    date_paid = calculate_date_ranges('date_paid', yesterday, today)
 
     week_date_joined = calculate_date_ranges('date_joined', start_week, end_week)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
     week_sent_at = calculate_date_ranges('sent_at', start_week, end_week)
     week_create_date = calculate_date_ranges('create_date', start_week, end_week)
+    week_date_sent = calculate_date_ranges('sent_date', start_week, end_week)
+    week_date_paid = calculate_date_ranges('date_paid', start_week, end_week)
 
     month_date_joined = calculate_date_ranges('date_joined', start_month, end_month)
     month_date_created = calculate_date_ranges('date_created', start_month, end_month)
     month_sent_at = calculate_date_ranges('sent_at', start_month, end_month)
     month_create_date = calculate_date_ranges('create_date', start_month, end_month)
+    month_date_sent = calculate_date_ranges('sent_date', start_month, end_month)
+    month_date_paid = calculate_date_ranges('date_paid', start_month, end_month)
 
     admins = Profile.objects.filter(is_superuser=True)
     developers = Profile.objects.exclude(roles=None)
@@ -236,7 +236,6 @@ def loom_stats_email():
     average_cash = projects_cash.aggregate(Avg('estimated_cash'))
 
     messages = Message.objects.all()
-    requests = ProductOrder.objects.all()
 
     proposals = Proposal.objects.all()
     proposals_mix = Proposal.objects.filter(cash=True, equity=True)
@@ -244,6 +243,15 @@ def loom_stats_email():
     proposals_equity = Proposal.objects.filter(cash=False, equity=True)
     rate = Proposal.objects.filter(hourly_rate__isnull=False).aggregate(Avg('hourly_rate'))
     hours = proposals.aggregate(Avg('hours'))
+
+    invoices = Invoice.objects.exclude(status='draft')
+    paid_invoices = Invoice.objects.filter(status='paid')
+    daily_paid_invoices = paid_invoices.filter(**date_paid)
+    week_paid_invoices = paid_invoices.filter(**week_date_paid)
+    month_paid_invoices = paid_invoices.filter(**month_date_paid)
+    invoices_cash = invoices.aggregate(Sum('invoice_items__amount'))
+    invoices_hours = invoices.aggregate(Sum('invoice_items__hours'))
+    invoices_fees = sum([invoice.application_fee() for invoice in paid_invoices])
 
     daily_developers = developers.filter(**date_joined).count()
     daily_entrepreneurs = entrepreneurs.filter(**date_joined).count()
@@ -253,12 +261,14 @@ def loom_stats_email():
     daily_projects_equity = projects_equity.filter(**date_created).count()
     daily_projects_mix = projects_mix.filter(**date_created).count()
     daily_messages = messages.filter(**sent_at).count()
-    daily_requests = requests.filter(**date_created).count()
-    daily_connections = connections.filter(**date_created).count()
     daily_proposals = proposals.filter(**create_date).count()
     daily_proposals_mix = proposals_mix.filter(**create_date).count()
     daily_proposals_cash = proposals_cash.filter(**create_date).count()
     daily_proposals_equity = proposals_equity.filter(**create_date).count()
+    daily_invoices = invoices.filter(**date_sent).count()
+    daily_invoices_cash = invoices.filter(**date_sent).aggregate(Sum('invoice_items__amount'))['invoice_items__amount__sum']
+    daily_invoices_hours = invoices.filter(**date_sent).aggregate(Sum('invoice_items__hours'))['invoice_items__hours__sum']
+    daily_invoices_fees = sum([invoice.application_fee() for invoice in daily_paid_invoices])
 
     # Last week daily average
     week_developers = developers.filter(**week_date_joined).count() / 7
@@ -269,12 +279,16 @@ def loom_stats_email():
     week_projects_equity = projects_equity.filter(**week_date_created).count() / 7
     week_projects_mix = projects_mix.filter(**week_date_created).count() / 7
     week_messages = messages.filter(**week_sent_at).count() / 7
-    week_requests = requests.filter(**week_date_created).count() / 7
-    week_connections = connections.filter(**week_date_created).count() / 7
     week_proposals = proposals.filter(**week_create_date).count() / 7
     week_proposals_mix = proposals_mix.filter(**week_create_date).count() / 7
     week_proposals_cash = proposals_cash.filter(**week_create_date).count() / 7
     week_proposals_equity = proposals_equity.filter(**week_create_date).count() / 7
+    week_invoices = invoices.filter(**week_date_sent).count() / 7
+    week_invoices_cash = invoices.filter(**week_date_sent).aggregate(Sum('invoice_items__amount'))
+    week_invoices_cash = week_invoices_cash['invoice_items__amount__sum'] / 7 if week_invoices_cash['invoice_items__amount__sum'] else 0
+    week_invoices_hours = invoices.filter(**week_date_sent).aggregate(Sum('invoice_items__hours'))
+    week_invoices_hours = week_invoices_hours['invoice_items__hours__sum'] / 7 if week_invoices_hours['invoice_items__hours__sum'] else 0
+    week_invoices_fees = sum([invoice.application_fee() for invoice in week_paid_invoices]) / 7
 
     # Last month daily average
     month_developers = developers.filter(**month_date_joined).count() / days_in_month
@@ -285,12 +299,16 @@ def loom_stats_email():
     month_projects_equity = projects_equity.filter(**month_date_created).count() / days_in_month
     month_projects_mix = projects_mix.filter(**month_date_created).count() / days_in_month
     month_messages = messages.filter(**month_sent_at).count() / days_in_month
-    month_requests = requests.filter(**month_date_created).count() / days_in_month
-    month_connections = connections.filter(**month_date_created).count() / days_in_month
     month_proposals = proposals.filter(**month_create_date).count() / days_in_month
     month_proposals_mix = proposals_mix.filter(**month_create_date).count() / days_in_month
     month_proposals_cash = proposals_cash.filter(**month_create_date).count() / days_in_month
     month_proposals_equity = proposals_equity.filter(**month_create_date).count() / days_in_month
+    month_invoices = invoices.filter(**month_date_sent).count() / days_in_month
+    month_invoices_cash = invoices.filter(**month_date_sent).aggregate(Sum('invoice_items__amount'))
+    month_invoices_cash =  month_invoices_cash['invoice_items__amount__sum'] / days_in_month if month_invoices_cash['invoice_items__amount__sum'] else 0
+    month_invoices_hours = invoices.filter(**month_date_sent).aggregate(Sum('invoice_items__hours'))
+    month_invoices_hours = month_invoices_hours['invoice_items__hours__sum'] / days_in_month if month_invoices_hours['invoice_items__hours__sum'] else 0
+    month_invoices_fees = sum([invoice.application_fee() for invoice in month_paid_invoices]) / days_in_month
     
     context = {
         'DAILY_DEVELOPERS': daily_developers,
@@ -301,12 +319,14 @@ def loom_stats_email():
         'DAILY_EQUITYPROJECTS': daily_projects_equity,
         'DAILY_MIXPROJECTS': daily_projects_mix,
         'DAILY_MESSAGES': daily_messages,
-        'DAILY_REQUESTS': daily_requests,
-        'DAILY_CONNECTIONS': daily_connections,
         'DAILY_PROPOSALS': daily_proposals,
         'DAILY_MIXPROPOSALS': daily_proposals_mix,
         'DAILY_CASHPROPOSALS': daily_proposals_cash,
         'DAILY_EQUITYPROPOSALS': daily_proposals_equity,
+        'DAILY_INVOICES': daily_invoices,
+        'DAILY_INVOICES_CASH': daily_invoices_cash,
+        'DAILY_INVOICES_HOURS': daily_invoices_hours,
+        'DAILY_INVOICES_FEES': daily_invoices_fees,
         'WOW_DEVELOPERS': round(week_developers, 2),
         'WOW_ENTREPRENEURS': round(week_entrepreneurs, 2),
         'WOW_COMPANIES':  round(week_company, 2),
@@ -315,12 +335,14 @@ def loom_stats_email():
         'WOW_EQUITYPROJECTS': round(week_projects_equity, 2),
         'WOW_MIXPROJECTS': round(week_projects_mix, 2),
         'WOW_MESSAGES':  round(week_messages, 2),
-        'WOW_REQUESTS':  round(week_requests, 2),
-        'WOW_CONNECTIONS': round(week_connections, 2),
         'WOW_PROPOSALS': round(week_proposals, 2),
         'WOW_CASHPROPOSALS': round(week_proposals_cash, 2),
         'WOW_EQUITYPROPOSALS': round(week_proposals_equity, 2),
         'WOW_MIXPROPOSALS': round(week_proposals_mix, 2),
+        'WOW_INVOICES': week_invoices,
+        'WOW_INVOICES_CASH': week_invoices_cash,
+        'WOW_INVOICES_HOURS': week_invoices_hours,
+        'WOW_INVOICES_FEES': week_invoices_fees,
         'MOM_DEVELOPERS': round(month_developers, 2),
         'MOM_ENTREPRENEURS': round(month_entrepreneurs, 2),
         'MOM_COMPANIES':  round(month_company, 2),
@@ -329,12 +351,14 @@ def loom_stats_email():
         'MOM_EQUITYPROJECTS': round(month_projects_equity, 2),
         'MOM_MIXPROJECTS': round(month_projects_mix, 2),
         'MOM_MESSAGES': round(month_messages, 2),
-        'MOM_REQUESTS': round(month_requests, 2),
-        'MOM_CONNECTIONS': round(month_connections, 2),
         'MOM_PROPOSALS':  round(month_proposals, 2),
         'MOM_MIXPROPOSALS':  round(month_proposals_mix, 2),
         'MOM_CASHPROPOSALS': round(month_proposals_cash, 2),
         'MOM_EQUITYPROPOSALS': round(month_proposals_equity, 2),
+        'MOM_INVOICES': month_invoices,
+        'MOM_INVOICES_CASH': month_invoices_cash,
+        'MOM_INVOICES_HOURS': month_invoices_hours,
+        'MOM_INVOICES_FEES': month_invoices_fees,
         'DEVELOPERS': developers.count(),
         'ENTREPRENEURS': entrepreneurs.count(),
         'COMPANIES': companies.count(),
@@ -346,14 +370,16 @@ def loom_stats_email():
         'CASH': '${0}'.format(average_cash['estimated_cash__avg']),
         'MIX': '${0}, {1}%'.format(average_mix['estimated_cash__avg'], average_mix['estimated_equity_percentage__avg']),
         'MESSAGES': messages.count(),
-        'REQUESTS': requests.count(),
-        'CONNECTIONS': connections.count(),
         'PROPOSALS': proposals.count(),
         'MIXPROPOSALS': proposals_mix.count(),
         'CASHPROPOSALS': proposals_cash.count(),
         'EQUITYPROPOSALS': proposals_equity.count(),
         'HOURLYRATE': '${0}/hour'.format(rate['hourly_rate__avg']),
         'HOURS': hours['hours__avg'],
+        'INVOICES': invoices.count(),
+        'INVOICES_CASH': '${0}'.format(invoices_cash),
+        'INVOICES_HOURS': invoices_hours,
+        'INVOICES_FEES': invoices_fees
     }
     send_mail('loom-stats', [admin for admin in admins], context)
 

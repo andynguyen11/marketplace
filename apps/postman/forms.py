@@ -28,8 +28,6 @@ from multiupload.fields import MultiFileField
 from notifications.signals import notify
 from rest_framework.parsers import JSONParser
 
-from business.models import Document
-from docusign.serializers import DocumentSerializer
 from postman.fields import CommaSeparatedUserField
 from postman.models import Message, get_user_name
 from postman.utils import WRAP_WIDTH
@@ -41,7 +39,6 @@ class BaseWriteForm(forms.ModelForm):
     """The base class for other forms."""
     attachments = MultiFileField(validators=[file_validator, ], required=False)
     nda = forms.BooleanField(required=False)
-    document = forms.BooleanField(required=False)
 
     class Meta:
         model = Message
@@ -127,7 +124,6 @@ class BaseWriteForm(forms.ModelForm):
         recipients = self.cleaned_data.get('recipients', [])
         attachments = self.cleaned_data.get('attachments')
         nda = self.cleaned_data.get('nda')
-        document = self.cleaned_data.get('document')
 
         if parent and not parent.thread_id:  # at the very first reply, make it a conversation
             parent.thread = parent
@@ -160,28 +156,6 @@ class BaseWriteForm(forms.ModelForm):
             if attachments:
                 for file in attachments:
                     new_attachement = Attachment.objects.create(content_object=m, file=file)
-            if nda:
-                new_nda, created = Document.objects.get_or_create(
-                    type='Non-Disclosure',
-                    job=self.instance.thread.job,
-                    project=self.instance.thread.project
-                )
-                notify.create(
-                    self.instance.recipient,
-                    recipient=self.instance.recipient,
-                    verb=u'received an NDA to sign',
-                    action_object=new_nda
-                )
-                m.nda = new_nda
-                m.save()
-            if document:
-                #TODO Refactor for new document workflow
-                payload = build_payload(self.instance.sender, self.instance.recipient, self.instance.thread.job)
-                serializer = DocumentSerializer(data=payload)
-                serializer.is_valid(raise_exception=True)
-                new_document = serializer.create(serializer.validated_data)
-                m.document = new_document
-                m.save()
             if self.instance.is_rejected():
                 is_successful = False
             self.instance.update_parent(initial_status)

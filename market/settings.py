@@ -385,7 +385,7 @@ def prefixed_env_var_getter(prefix):
 
 SYNC_RECORD_DELTA = datetime.timedelta(1)
 
-docusign_ = prefixed_env_var_getter('DOCUSIGN') 
+docusign_ = prefixed_env_var_getter('DOCUSIGN')
 DOCUSIGN = {
     'root_url': docusign_('ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
     'integrator_key': docusign_('API_KEY'),

@@ -19,7 +19,7 @@ from rest_framework.decorators import permission_classes, list_route
 from rest_framework.exceptions import ValidationError
 
 from accounts.models import Profile, Connection
-from business.models import Project, Terms, Document
+from business.models import Project
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator

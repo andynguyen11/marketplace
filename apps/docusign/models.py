@@ -8,9 +8,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericRelation
 from generics.models import Attachment
 
-from .docusign import create_envelope, Role, client, parse_exception
+from .docusign import create_envelope, Role, parse_exception
 from .tabs import TAB_TYPES, classify as classify_tab
-from business.models import Document as UserDocument
 
 
 DOCUMENT_STATUS = tuple(
@@ -133,8 +132,7 @@ class DocumentSigner(models.Model):
         envelope = pydocusign.Envelope(envelopeId=self.document.envelope_id)
         signing_url = envelope.post_recipient_view(
             recipient=Role(**self.to_dict()),
-            returnUrl=settings.BASE_URL + '/profile/dashboard/',
-            client=client
+            returnUrl=settings.BASE_URL + '/profile/dashboard/'
         )
         return signing_url
 
