@@ -13,7 +13,7 @@ from generics.utils import send_mail
 def proposal_updated_email(template, proposal_id):
     proposal = Proposal.objects.get(id=proposal_id)
     pm_context = {
-        'fname': proposal.project.project_manager.name,
+        'fname': proposal.project.project_manager.first_name,
         'project': proposal.project.title
     }
     send_mail(template, [proposal.submitter], pm_context)
@@ -32,4 +32,4 @@ def proposal_reminder(project_id):
     project = Project.objects.get(id=project_id)
     proposals = Proposal.objects.filter(project__project_manager=project.project_manager, status='pending')
     if proposals:
-        send_mail('pending-proposals', [user], context={})
+        send_mail('pending-proposals', [project.project_manager], context={})
