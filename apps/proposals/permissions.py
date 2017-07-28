@@ -16,5 +16,14 @@ class ProposalPermission(permissions.BasePermission):
         else:
             return request.user == obj.submitter
 
+    def can_post(self, request, obj):
+        payload = None
+        if 'proposal' in request.data and request.user == obj.recipient:
+            payload = request.data.get('proposal', None)
+        return len(request.data) == 1 and payload
+
     def has_object_permission(self, request, view, obj):
-        return self.can_view(request, obj) or self.can_patch(request, obj) or (request.user == obj.submitter)
+        return self.can_view(request, obj) \
+               or self.can_patch(request, obj) \
+               or self.can_post(request, obj) \
+               or (request.user == obj.submitter)
