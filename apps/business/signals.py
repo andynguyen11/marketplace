@@ -6,7 +6,7 @@ from notifications.models import Notification
 from notifications.signals import notify
 
 from accounts.models import Profile
-from business.models import Document, Terms, Project, NDA
+from business.models import Project, NDA
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email,\
     project_in_review, project_posted, account_confirmation, add_work_examples, add_work_history,\
     post_a_project, complete_project, project_approved_email

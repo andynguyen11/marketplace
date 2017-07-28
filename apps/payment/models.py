@@ -13,7 +13,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from business.products import products, ProductType, PRODUCT_CHOICES
 from generics.utils import percentage
 from payment.helpers import stripe_helpers
 from payment.enums import EU_ISO
@@ -80,11 +79,12 @@ class Invoice(models.Model):
     sender = models.ForeignKey('accounts.Profile', related_name='invoice_sender')
     recipient = models.ForeignKey('accounts.Profile', related_name='invoice_recipient')
     date_created = models.DateTimeField(auto_now_add=True)
+    date_paid = models.DateTimeField(blank=True, null=True)
     sent_date = models.DateField(blank=True, null=True)
     due_date = models.DateField(blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
-    status = models.CharField(max_length=100, default='pending')
+    status = models.CharField(max_length=100, default='draft')
     title = models.CharField(max_length=255, blank=True, null=True)
     logo = models.ImageField(blank=True, null=True, upload_to='invoice/logo')
     sender_name = models.CharField(max_length=255, blank=True, null=True)

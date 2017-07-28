@@ -27,11 +27,6 @@ class Migration(migrations.Migration):
             name='bid_message',
         ),
         migrations.AlterField(
-            model_name='document',
-            name='docusign_document',
-            field=models.OneToOneField(blank=True, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document', null=True),
-        ),
-        migrations.AlterField(
             model_name='project',
             name='type',
             field=models.CharField(choices=[('art', 'Art and Design'), ('technology', 'Technology'), ('gaming', 'Gaming'), ('nonprofit', 'Non-Profit'), ('social', 'Social'), ('news', 'News and Publishing'), ('music', 'Music and Media'), ('location', 'Location-Based'), ('health', 'Health and Fitness')], max_length=100, null=True),

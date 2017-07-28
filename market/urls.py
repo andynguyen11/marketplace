@@ -45,7 +45,6 @@ urlpatterns = [
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
     url(r'^confirmed/$', TemplateView.as_view(template_name='email_confirmed.html'), name='email_confirmed'),
     url(r'^api/', include('api.urls', namespace='api')),
-    url(r'^api/docusign/', include('docusign.urls', namespace='docusign')),
     url(r'^dashboard/connections/', TemplateView.as_view(template_name='spa.html'), name='connections'),
     url(r'^dashboard/project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-project'),
     url(r'^dashboard/projects/$', TemplateView.as_view(template_name='spa.html'), name='view-projects'),

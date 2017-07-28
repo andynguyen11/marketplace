@@ -1,12 +1,12 @@
 import os
 
-LOCAL_DB = False
+LOCAL_DB = True
 
 if LOCAL_DB:
     database = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'devquity',
-        'USER': '',
+        'USER': 'andynguyen',
         'PASSWORD': '',
         'HOST': ''
     }
@@ -19,7 +19,7 @@ else:
         'NAME': 'ebdb',
         'USER': 'unicron',
         'PASSWORD': '',
-        'HOST': 'aa4vxuy7zcrys7.cfpnncrmxp3u.us-west-2.rds.amazonaws.com'
+        'HOST': 'aa4vxuy7zcrys7.cfpnncrmxp3u.us-west-2.rds.amazonaws.com' #Dev
     }
     MEDIAFILES_LOCATION = 'media'
     MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)
@@ -47,20 +47,18 @@ LOCAL_DEV = True
 
 BASE_URL = 'localhost:8000'
 
-DOCUSIGN = {
-    'root_url': 'https://demo.docusign.net/restapi/v2',
-    'integrator_key': 'e5f0c77b-9ead-412f-9522-3783aea679a5',
-    'username': '5871a1ca-6d94-47c9-92c4-7f0c652fd93f',
-    'password': 'R41s31d34s512'
-}
-
-WEBHOOK_BASE_URL = ''
+WEBHOOK_BASE_URL = 'http://e1ff3e57.ngrok.io'
 
 CACHES = {
-    'default': {
+    "default": {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
-CELERY_ALWAYS_EAGER = True
 
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False
+
+BROKER_URL = 'redis://localhost:6379/0'
+
+THUMBNAIL_DEBUG = True
+
+GULP_DEVELOP_COMMAND = 'gulp dist-dev-local'

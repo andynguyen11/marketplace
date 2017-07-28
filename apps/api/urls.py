@@ -41,10 +41,6 @@ declared_router = DeclarativeRouter({
             }
         }
     },
-    'product': {
-        'view': ProductViewSet,
-        'base_name': 'product',
-    },
     'proposals': {
         'view': ProposalViewSet,
         'base_name': 'proprosals',

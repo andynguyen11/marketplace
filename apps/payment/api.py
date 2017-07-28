@@ -1,7 +1,6 @@
 import datetime
 import stripe
 import json
-from requests.exceptions import ConnectionError
 
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -20,11 +19,6 @@ from django.conf import settings
 
 from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
-from generics.viewsets import ImmutableModelViewSet
-from business.models import Document, Terms
-from business.serializers import DocumentSerializer
-from docusign.models import Document as DocusignDocument
-from business.products import products
 from payment.models import Promo, get_promo, Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
@@ -168,6 +162,7 @@ class InvoicePaymentViewset(ViewSet):
             error_data = {u'Error': smart_str(e) or u'Unknown error'}
             return Response(error_data, status=400)
         invoice.status = 'paid'
+        invoice.date_paid = datetime.datetime.now()
         invoice.save()
         return Response(status=200)
 

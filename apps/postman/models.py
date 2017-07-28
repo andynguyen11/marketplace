@@ -597,7 +597,6 @@ class Message(Interaction):
     subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
     body = models.TextField(_("body"), blank=True)
     attachments = GenericRelation('generics.Attachment', related_query_name='generics_attachments')
-    nda = models.ForeignKey('business.Document', blank=True, null=True, related_name='nda')
     last_emailed_owner = models.DateTimeField(null=True, blank=True)
     last_emailed_bidder = models.DateTimeField(null=True, blank=True)
 

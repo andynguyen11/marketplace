@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 
 from accounts.models import Profile
-from business.models import Document
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token
 from market.celery import app as celery_app
 

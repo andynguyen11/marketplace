@@ -11,9 +11,7 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Document, Project, Employee, Document, NDA
-from docusign.models import Template
-from docusign.serializers import TemplateSerializer, SignerSerializer, DocumentSerializer as DocusignDocumentSerializer
+from business.models import Company, Project, Employee, NDA
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
 from generics.utils import update_instance, field_names, send_mail
 from postman.models import Message
@@ -133,55 +131,6 @@ class ProjectSearchSerializer(HaystackSerializer):
             "state", "country", "remote", "first_name", "photo", "date_created",
             "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb"
         ]
-
-
-class DocumentSerializer(ParentModelSerializer):
-    template = serializers.PrimaryKeyRelatedField(required=False, write_only=True, queryset=Template.objects.all())
-    signers = SignerSerializer(many=True, required=False)
-    attachments = AttachmentSerializer(many=True, required=False)
-    docusign_document = DocusignDocumentSerializer(required=False, write_only=True, allow_null=True)
-    signing_url  = serializers.CharField(read_only=True)
-    status  = serializers.CharField()
-    current_signer  = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    def to_representation(self, instance):
-        ret = super(DocumentSerializer, self).to_representation(instance)
-        for k, v in ret.items():
-            if v is None:
-                ret.pop(k)
-        return ret
-
-    class Meta:
-        model = Document
-        fields = field_names(Document) + ('template', 'docusign_document', 'signers', 'attachments', 'signing_url', 'status', 'current_signer')
-        sibling_fields = ('docusign_document',)
-
-    def signer(self, data, role, role_name=None):
-        return {
-            'role_name': role_name or role,
-            'profile': getattr(data['job'], role),
-        }
-
-    def default_template(self, document_type):
-        try:
-            return Template.objects.get(description=document_type)
-        except Template.DoesNotExist, e:
-            return None
-
-    def resolve_relations(self, data):
-        if not data.has_key('docusign_document'):
-            template = data.pop('template', self.default_template(data['type']))
-            if template:
-                signers = data.pop('signers', [
-                    self.signer(data, 'contractor'),
-                    self.signer(data, 'owner')])
-
-                data['docusign_document'] = { 'template': template, 'signers': signers }
-
-                attachments = data.pop('attachments', None)
-                if attachments:
-                    data['docusign_document']['attachments'] = attachments
-        return data
 
 
 class EmployeeSerializer(serializers.ModelSerializer):

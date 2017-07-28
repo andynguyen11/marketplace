@@ -36,7 +36,7 @@ class ProposalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Proposal
-        fields = ('submitter', 'submitter_profile', 'project_details', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message', 'questions_and_answers')
+        fields = ('viewed', 'submitter', 'submitter_profile', 'project_details', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message', 'questions_and_answers')
 
     def get_project_details(self, obj):
         return { 'title': obj.project.title, 'id': obj.project.id }
