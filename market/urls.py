@@ -110,13 +110,13 @@ urlpatterns = [
     url(r'^profile/settings/payments/$', TemplateView.as_view(template_name='spa.html'), name='payments-settings'),
     url(r'^profile/settings/billing/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
     url(r'^profile/settings/bank/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/type/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/identity/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/company/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/account/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/review/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
-    url(r'^profile/settings/bank/setup/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='billing-history'),
+    url(r'^profile/settings/bank/setup/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup'),
+    url(r'^profile/settings/bank/setup/type/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-type'),
+    url(r'^profile/settings/bank/setup/(individual|business)/identity/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-identity'),
+    url(r'^profile/settings/bank/setup/(individual|business)/account/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-account'),
+    url(r'^profile/settings/bank/setup/(individual|business)/review/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-review'),
+    url(r'^profile/settings/bank/setup/business/company/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-company'),
+    url(r'^profile/settings/bank/setup/(individual|business)/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-confirmation')
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
