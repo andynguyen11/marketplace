@@ -64,6 +64,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     proposals = serializers.SerializerMethodField()
     message = serializers.SerializerMethodField()
     skills = SkillsSerializer(many=True)
+    private_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -121,6 +122,11 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     def get_questions(self, obj):
         questions = Question.objects.filter(project=obj, active=True).order_by('ordering')
         return QuestionSerializer(questions, many=True).data
+
+    def get_private_info(self, obj):
+        if self.context['request'].user.id in obj.nda_list:
+            return obj.private_info
+        return None
 
 
 class ProjectSearchSerializer(HaystackSerializer):

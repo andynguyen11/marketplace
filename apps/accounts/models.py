@@ -148,6 +148,7 @@ class Connection(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=100)
+    field = models.CharField(max_length=100, blank=True, null=True)
     years = models.IntegerField(null=True)
 
 

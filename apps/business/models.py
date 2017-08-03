@@ -146,6 +146,9 @@ class Project(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     city = models.CharField(max_length=255, blank=True, null=True)
     state = models.CharField(max_length=255, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+    country_code = models.CharField(max_length=100, blank=True, null=True)
+    location = models.CharField(max_length=150, blank=True, null=True)
     status = models.CharField(max_length=100, blank=True, null=True)
     remote = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
@@ -159,6 +162,9 @@ class Project(models.Model):
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     role = models.CharField(max_length=100, blank=True, null=True)
+    years_experience = models.IntegerField(blank=True, null=True)
+    employment_type = models.CharField(max_length=100, default='freelance')
+
 
     objects = ProjectManager()
 
@@ -179,10 +185,7 @@ class Project(models.Model):
     def skills_str(self):
         return self.skills.get_tag_string()
 
-    def documents(self):
-        documents = Document.objects.filter(project=self)
-        return documents
-
+    @property
     def nda_list(self):
         ndas = NDA.objects.filter(proposal__project=self)
         nda_list = [nda.receiver.id for nda in ndas]
