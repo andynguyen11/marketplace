@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 from django.contrib.auth import authenticate, login
 from django.shortcuts import redirect
-from django.contrib import messages
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import AuthenticationFailed
@@ -14,8 +13,6 @@ def check_token(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
         request_token = request.GET.get('token', '')
         if not request_token:
-            messages.add_message(request, messages.ERROR,
-                                 'The page you are trying to reach has expired. Please log in again.')
             return redirect('login')
 
         try:
@@ -24,13 +21,9 @@ def check_token(view_func):
             if request.user.is_authenticated():
                 return view_func(request, *args, **kwargs)
             else:
-                messages.add_message(request, messages.ERROR,
-                                     'The page you are trying to reach has expired. Please log in again.')
                 return redirect('login')
 
         if not token.user.is_active:
-            messages.add_message(request, messages.ERROR,
-                                 'The page you are trying to reach has expired. Please log in again.')
             return redirect('login')
 
         # This is required for the time comparison
@@ -39,8 +32,6 @@ def check_token(view_func):
 
         if token.created < utc_now - timedelta(hours=48):
             token.delete()
-            messages.add_message(request, messages.ERROR,
-                                 'The page you are trying to reach has expired. Please log in again.')
             return redirect('login')
 
         token.user.backend = 'django.contrib.auth.backends.ModelBackend'
