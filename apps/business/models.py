@@ -130,7 +130,7 @@ class Project(models.Model):
     company = models.ForeignKey(Company, blank=True, null=True)
     project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255, unique=True)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=255)
     video_url = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
     category = tagulous.models.TagField(to=Category, blank=True, null=True) # not really in the mockup
