@@ -249,8 +249,8 @@ def loom_stats_email():
     daily_paid_invoices = paid_invoices.filter(**date_paid)
     week_paid_invoices = paid_invoices.filter(**week_date_paid)
     month_paid_invoices = paid_invoices.filter(**month_date_paid)
-    invoices_cash = invoices.aggregate(Sum('invoice_items__amount'))
-    invoices_hours = invoices.aggregate(Sum('invoice_items__hours'))
+    invoices_cash = invoices.aggregate(Sum('invoice_items__amount'))['invoice_items__amount__sum']
+    invoices_hours = invoices.aggregate(Sum('invoice_items__hours'))['invoice_items__hours__sum']
     invoices_fees = sum([invoice.application_fee() for invoice in paid_invoices])
 
     daily_developers = developers.filter(**date_joined).count()
@@ -366,18 +366,18 @@ def loom_stats_email():
         'CASHPROJECTS': projects_cash.count(),
         'EQUITYPROJECTS': projects_equity.count(),
         'MIXPROJECTS': projects_mix.count(),
-        'EQUITY': '{0}%'.format(average_equity['estimated_equity_percentage__avg']),
-        'CASH': '${0}'.format(average_cash['estimated_cash__avg']),
-        'MIX': '${0}, {1}%'.format(average_mix['estimated_cash__avg'], average_mix['estimated_equity_percentage__avg']),
+        'EQUITY': '{0}%'.format(round(average_equity['estimated_equity_percentage__avg'], 2)),
+        'CASH': '${0}'.format(round(average_cash['estimated_cash__avg'], 2)),
+        'MIX': '${0}, {1}%'.format(round(average_mix['estimated_cash__avg'], 2), round(average_mix['estimated_equity_percentage__avg'], 2)),
         'MESSAGES': messages.count(),
         'PROPOSALS': proposals.count(),
         'MIXPROPOSALS': proposals_mix.count(),
         'CASHPROPOSALS': proposals_cash.count(),
         'EQUITYPROPOSALS': proposals_equity.count(),
-        'HOURLYRATE': '${0}/hour'.format(rate['hourly_rate__avg']),
+        'HOURLYRATE': '${0}/hour'.format(round(rate['hourly_rate__avg'], 2)),
         'HOURS': hours['hours__avg'],
         'INVOICES': invoices.count(),
-        'INVOICES_CASH': '${0}'.format(invoices_cash),
+        'INVOICES_CASH': '${0}'.format(invoices_cash) if invoices_cash else 0,
         'INVOICES_HOURS': invoices_hours,
         'INVOICES_FEES': invoices_fees
     }
