@@ -141,3 +141,15 @@ def percentage(base=None, percent=0, operation='of'):
     else:
         raise TypeError('operation must be one of { raw, of, removed, added }')
     return round(result, 2)
+
+
+def calculate_date_ranges(field, start, end):
+    """
+    Calculates date ranges to use in queryset
+
+    :return: dict
+    """
+    range = {}
+    range['{0}__gte'.format(field)] = start
+    range['{0}__lt'.format(field)] = end
+    return range

@@ -182,6 +182,10 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     @property
+    def location(self):
+        return self.city if self.city else self.project_manager.city
+
+    @property
     def skills_str(self):
         return self.skills.get_tag_string()
 
