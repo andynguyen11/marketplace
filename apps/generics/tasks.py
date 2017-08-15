@@ -18,7 +18,7 @@ from accounts.models import Profile
 from business.models import Project, Employee, NDA
 from expertratings.models import SkillTestResult
 from generics.models import Attachment
-from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token
+from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token, calculate_date_ranges
 from payment.models import Invoice
 from proposals.models import Proposal
 from postman.models import Message
@@ -166,17 +166,6 @@ def project_approved_email(project_id):
         'fname': project.project_manager.first_name,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
     })
-
-def calculate_date_ranges(field, start, end):
-    """
-    Calculates date ranges to use in queryset
-
-    :return: dict
-    """
-    range = {}
-    range['{0}__gte'.format(field)] = start
-    range['{0}__lt'.format(field)] = end
-    return range
 
 #TODO This is a database read heavy task, optimize
 @celery_app.task
