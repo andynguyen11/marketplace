@@ -30,16 +30,16 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
     class Meta:
         model = Project
-        fields = ("title", "slug", "skills", "description", "role", "city",
+        fields = ("title", "slug", "skills", "description", "category", "role", "city",
                   "state", "country", "remote", "first_name", "photo", "date_created",
                   "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb" )
 
     def prepare(self, obj):
         self.prepared_data = super(ProjectIndex, self).prepare(obj)
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
-        self.prepared_data['city'] = obj.company.city if obj.company else obj.project_manager.city
-        self.prepared_data['state'] = obj.company.state if obj.company else obj.project_manager.state
-        self.prepared_data['country'] = obj.company.country if obj.company else obj.project_manager.country
+        self.prepared_data['city'] = obj.city if obj.city else obj.project_manager.city
+        self.prepared_data['state'] = obj.state if obj.state else obj.project_manager.state
+        self.prepared_data['country'] = obj.country if obj.country else obj.project_manager.country
         return self.prepared_data
 
     def index_queryset(self, using=None):

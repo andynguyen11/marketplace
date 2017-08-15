@@ -4,6 +4,7 @@ from celery import shared_task
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
+from haystack.query import SearchQuerySet
 
 from accounts.models import Profile
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token, calculate_date_ranges
@@ -72,26 +73,26 @@ def freelancer_project_matching():
     users = Profile.objects.exclude(roles=None)
     for user in users:
         roles = [role.name for role in user.roles]
-        yesterday = pendulum.yesterday()
-        week = yesterday.subtract(weeks=1)
-        start_week = week.start_of('week')
-        end_week = week.end_of('week').add(days=1)
+        end_week = pendulum.today()
+        start_week = end_week.subtract(days=7)
         week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-        projects = Project.objects.filter(role__in=roles, approved=True, published=True, deleted=False, **week_date_created)
+        projects = SearchQuerySet.filter(role__in=roles, **week_date_created)
         if projects:
             projects_list = []
             for project in projects:
                 project = {
                     'title': project.title,
-                    'fname': project.project_manager.first_name,
-                    'image': project.project_manager.get_photo,
-                    'location': project.location,
+                    'fname': project.first_name,
+                    'image': project.photo,
+                    'city': project.city,
+                    'state': project.state,
+                    'country': project.country,
                     'description': project.short_blurb,
                     'url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
                 }
-                projects_list.append(project)
-            send_mail('project-matching', [user], context={
-                'projects': projects_list
-            })
+            projects_list.append(project)
+            #send_mail('project-matching', [user], context={
+            #    'projects': projects_list
+            #})y
 
 

@@ -133,7 +133,7 @@ class ProjectSearchSerializer(HaystackSerializer):
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
         fields = [
-            "title", "slug", "skills", "description", "role", "city",
+            "title", "slug", "skills", "description", "category", "role", "city",
             "state", "country", "remote", "first_name", "photo", "date_created",
             "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb"
         ]
