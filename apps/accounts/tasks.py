@@ -70,29 +70,32 @@ def password_updated(user_id):
 
 @celery_app.task
 def freelancer_project_matching():
-    users = Profile.objects.exclude(roles=None)
-    for user in users:
-        roles = [role.name for role in user.roles]
-        end_week = pendulum.today()
-        start_week = end_week.subtract(days=7)
-        week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-        projects = SearchQuerySet.filter(role__in=roles, **week_date_created)
-        if projects:
-            projects_list = []
-            for project in projects:
-                project = {
-                    'title': project.title,
-                    'fname': project.first_name,
-                    'image': project.photo,
-                    'city': project.city,
-                    'state': project.state,
-                    'country': project.country,
-                    'description': project.short_blurb,
-                    'url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
-                }
-            projects_list.append(project)
-            #send_mail('project-matching', [user], context={
-            #    'projects': projects_list
-            #})y
+    end_week = pendulum.today()
+    start_week = end_week.subtract(days=7)
+    week_date_created = calculate_date_ranges('date_created', start_week, end_week)
+    projects = SearchQuerySet().filter(**week_date_created)
+    if projects:
+        user_list = {}
+        for project in projects:
+            users = Profile.objects.filter(roles__name__in=[project.role])
+            project = {
+                'project_title': project.title,
+                'fname': project.first_name,
+                'image': project.photo,
+                'city': project.city,
+                'state': project.state,
+                'country': project.country,
+                'description': project.short_blurb,
+                'skills': project.skills,
+                'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
+            }
+            for user in users:
+                if user not in user_list.keys():
+                    user_list[user] = [project, ]
+                else:
+                    user_list[user].append(project)
 
-
+    for user, projects in user_list.items():
+        send_mail('project-matching', [user], context={
+            'projects': projects
+        }, language='handlebars')

@@ -64,11 +64,12 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     proposals = serializers.SerializerMethodField()
     message = serializers.SerializerMethodField()
     skills = SkillsSerializer(many=True)
-    private_info = serializers.SerializerMethodField()
+    show_private_info = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
         parent_key = 'project'
+        extra_kwargs = {'private_info': {'write_only': True}}
 
     def create(self, validated_data):
         skills = validated_data.pop('skills')
@@ -123,7 +124,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
         questions = Question.objects.filter(project=obj, active=True).order_by('ordering')
         return QuestionSerializer(questions, many=True).data
 
-    def get_private_info(self, obj):
+    def get_show_private_info(self, obj):
         if self.context['request'].user.id in obj.nda_list:
             return obj.private_info
         return None

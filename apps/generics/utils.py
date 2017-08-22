@@ -94,12 +94,13 @@ def normalized_subdict(d, keys):
 
 
 API_KEY = settings.MANDRILL_API_KEY
-def send_to_emails(template_name, emails=[], context={}):
+def send_to_emails(template_name, emails=[], context={}, language="mailchimp"):
     " send template to the given emails, with the given context "
     logger = logging.getLogger()
     mandrill_client = mandrill.Mandrill(API_KEY)
     message = {
         'to': [{'email': email} for email in set(emails)],
+        'merge_language': language,
         'global_merge_vars': [
             {'name': k, 'content': v}
             for k, v in context.iteritems()] }
@@ -108,9 +109,9 @@ def send_to_emails(template_name, emails=[], context={}):
     except (mandrill.Error, JSONDecodeError) as e:
         logger.error('Mandrill Error | %s - %s' % (e.__class__, e))
 
-def send_mail(template_name, users, context):
+def send_mail(template_name, users, context, language="mailchimp"):
     emails = [user.email for user in users if user.email_notifications]
-    send_to_emails(template_name, emails=emails, context=context)
+    send_to_emails(template_name, emails=emails, context=context, language=language)
 
 def sign_data(**kwargs):
     return signing.dumps(kwargs)

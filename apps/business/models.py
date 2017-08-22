@@ -128,7 +128,7 @@ class Project(models.Model):
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
     category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
     short_blurb = models.CharField(max_length=255, blank=True, null=True)
-    start_date = models.DateField()
+    start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
     deleted = models.BooleanField(default=False)
