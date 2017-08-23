@@ -21,22 +21,16 @@ def add_ordering(questions):
         question['ordering'] = index
     return questions
 
-def is_update(user, old_question, question):
-    return (old_question.text != question['text'] and 
-            old_question.project.id == question['project'] and 
-            old_question.project.project_manager == user )
+def is_update(user, current_question, question):
+    return (current_question.text != question['text'] and
+            current_question.project.id == question['project'] and
+            current_question.project.project_manager == user )
 
-def apply_update(old_question, question, order):
-    old_question.active = False
-    old_question.save()
-    if question['text']:
-        new_question = {
-                'text': question['text'],
-                'project': question['project'],
-                'ordering': order
-        }
-        return new_question
-    return None
+def apply_update(current_question, question, order):
+    current_question.text = question['text']
+    current_question.order = order
+    updated_question = current_question.save()
+    return updated_question
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """
@@ -49,33 +43,34 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         if not request.data:
-            return Response(status=200)
-        new_questions = []
+            return Response(status=200, data=[])
         project = list(set(question['project'] for question in request.data))
         if len(project) != 1:
             return Response(status=403)
         project_id = project[0]
+        current_ids = [question.id for question in Question.objects.filter(project=project_id, active=True)]
+        updated_ids = []
         for order, question in enumerate(request.data):
-            # TODO I think it might be better to key off of active=True && ordering=index, instead of having always changing id
             try:
-                old_question = Question.objects.get(id=question['id'])
-                if is_update(request.user, old_question, question):
-                    new_question = apply_update(old_question, question, order)
-                    if new_question:
-                        new_questions.append(new_question)
+                current_question = Question.objects.get(id=question['id'])
+                if is_update(request.user, current_question, question):
+                    updated_question = apply_update(current_question, question, order)
+                updated_ids.append(question['id'])
             except KeyError:
                 if question['text']:
-                    new_question = {
+                    question_data = {
                         'text': question['text'],
                         'project': question['project'],
                         'ordering': order,
                         'active': True
                     }
-                    new_questions.append(new_question)
-        if new_questions:
-            create_serializer = self.get_serializer(data=new_questions, many=isinstance(new_questions,list))
-            create_serializer.is_valid(raise_exception=True)
-            self.perform_create(create_serializer)
+                    new_question = Question.objects.create(**question_data)
+                    updated_ids.append(new_question.id)
+        inactive_ids = [id for id in current_ids if id not in updated_ids]
+        for id in inactive_ids:
+            inactive_question = Question.objects.get(id=id)
+            inactive_question.active = False
+            inactive_question.save()
         questions = Question.objects.filter(project=project_id, active=True).order_by('ordering')
         serializer = self.get_serializer(data=questions, many=True)
         serializer.is_valid(raise_exception=False)
