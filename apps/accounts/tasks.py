@@ -7,6 +7,7 @@ from django.utils.http import urlencode
 from haystack.query import SearchQuerySet
 
 from accounts.models import Profile
+from business.models import Project
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token, calculate_date_ranges
 from market.celery import app as celery_app
 
@@ -73,11 +74,11 @@ def freelancer_project_matching():
     end_week = pendulum.today()
     start_week = end_week.subtract(days=7)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-    projects = SearchQuerySet().filter(**week_date_created)
+    projects = SearchQuerySet().filter(**week_date_created).models(Project)
     if projects:
         user_list = {}
         for project in projects:
-            users = Profile.objects.filter(roles__name__in=[project.role])
+            users = SearchQuerySet().filter(roles__in=[project.role]).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
             project = {
                 'project_title': project.title,
                 'fname': project.first_name,
