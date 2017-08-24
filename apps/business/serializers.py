@@ -17,6 +17,7 @@ from generics.utils import update_instance, field_names, send_mail
 from postman.models import Message
 from proposals.models import Proposal, Question
 from proposals.serializers import ProposalSerializer, QuestionSerializer
+from django.template.defaultfilters import truncatechars
 
 
 class CompanySerializer(serializers.ModelSerializer):
@@ -131,13 +132,18 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 
 class ProjectSearchSerializer(HaystackSerializer):
+    scope = serializers.SerializerMethodField()
+
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
         fields = [
             "title", "slug", "skills", "description", "category", "role", "city",
             "state", "country", "remote", "first_name", "photo", "date_created",
-            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb"
+            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope"
         ]
+
+    def get_scope(self, obj):
+        return truncatechars(obj.scope, 158)
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
