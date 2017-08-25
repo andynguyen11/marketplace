@@ -60,7 +60,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     photo = indexes.CharField()
 
     def prepare(self, obj):
-        self.prepared_data = super(ProjectIndex, self).prepare(obj)
+        self.prepared_data = super(UserIndex, self).prepare(obj)
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
         self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
