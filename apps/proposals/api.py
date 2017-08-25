@@ -5,7 +5,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from business.models import NDA
+from business.models import NDA, Project
 from generics.tasks import new_message_notification
 from postman.models import Message, Interaction
 from proposals.models import Question, Proposal
@@ -48,6 +48,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         if len(project) != 1:
             return Response(status=403)
         project_id = project[0]
+        project = Project.objects.get(id=project_id)
         current_ids = [question.id for question in Question.objects.filter(project=project_id, active=True)]
         updated_ids = []
         for order, question in enumerate(request.data):
@@ -60,7 +61,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
                 if question['text']:
                     question_data = {
                         'text': question['text'],
-                        'project': question['project'],
+                        'project': project,
                         'ordering': order,
                         'active': True
                     }
