@@ -124,10 +124,8 @@ class Project(models.Model):
     project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255)
-    video_url = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
     category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
-    short_blurb = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
@@ -149,7 +147,6 @@ class Project(models.Model):
     background = models.TextField(blank=True, null=True)
     progress = models.TextField(blank=True, null=True)
     scope = models.TextField(blank=True, null=True)
-    milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
     published = models.BooleanField(default=False)
