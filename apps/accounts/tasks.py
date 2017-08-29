@@ -86,7 +86,7 @@ def freelancer_project_matching():
                 'city': project.city,
                 'state': project.state,
                 'country': project.country,
-                'description': project.short_blurb,
+                'description': project.scope,
                 'skills': project.skills,
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
@@ -98,5 +98,6 @@ def freelancer_project_matching():
 
     for user, projects in user_list.items():
         send_mail('project-matching', [user], context={
+            'fname': user.first_name,
             'projects': projects
         }, language='handlebars')
