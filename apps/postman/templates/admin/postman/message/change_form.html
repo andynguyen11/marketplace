@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrahead %}{{ block.super }}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+  <style>
+    .interaction {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+    .interaction.interaction-currentUser {
+      -webkit-box-pack: end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
+    }
+    .interaction.interaction-currentUser .interaction-avatar {
+      margin-right: 0;
+      margin-left: 10px;
+      -webkit-box-ordinal-group: 3;
+      -ms-flex-order: 2;
+      order: 2;
+    }
+    .interaction.interaction-currentUser .interaction-content {
+      -webkit-box-align: end;
+      -ms-flex-align: end;
+      align-items: flex-end;
+   }
+    a, a:active, a:focus, a:hover, a:visited {
+        color: #ff7b5c;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    a:link, a:visited {
+      color: #ff7b5c;
+      text-decoration: none;
+    }
+    .interaction-avatar {
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 50%;
+      -ms-flex-negative: 0;
+      flex-shrink: 0;
+      background-size: cover;
+      background-position: 50%;
+      background-repeat: no-repeat;
+      text-indent: -999em;
+      overflow: hidden;
+    }
+    .interaction-avatar .generic-profile-photo {
+      width: 100%;
+      padding-bottom: 100%;
+    }
+    .generic-profile-photo.generic-profile-photo--circle {
+      border-radius: 100%;
+    }
+    .generic-profile-photo {
+      background-color: #efefef;
+      background-size: cover;
+      background-position: 50%;
+      background-repeat: no-repeat;
+    }
+    .interaction-content {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-align: start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+    }
+    .interaction-message {
+      padding: 10px;
+      border: 1px solid #e2e2e2;
+      border-radius: 5px;
+      font-size: 12px;
+      background: #f3f3f3;
+      margin: 0;
+      line-height: 1.2;
+      color: #423d51;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .interaction-meta {
+      font-size: 12px;
+      color: #a19ea8;
+      padding-top: 2px;
+      padding-bottom: 2px;
+    }
+    #content-main {
+      width: 779px;
+    }
+  </style>
+{% endblock %}
+
+{% block coltype %}colM{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-form{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+&rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+&rsaquo; {{ original|truncatewords:"18" }}
+</div>
+{% endblock %}
+
+{% block messages %}
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+{% for message in messages %}
+  <div class="interaction {% if message.sender != message.thread.sender %}interaction-currentUser{% endif %}">
+				<a class="interaction-avatar" href="/profile/{{ message.sender.id }}"><div class="generic-profile-photo generic-profile-photo--circle" style="background-image: url({{ message.sender.get_photo }});"></div></a>
+				<div class="interaction-content">
+          <pre class="interaction-message">{{ message.body }}</pre>
+					<div class="interaction-meta">
+						<a href="/profile/{{ message.sender.id }}">{{ message.sender.name }} ({{ message.sender.email }})</a> - {{ message.sent_at }}
+					</div>
+				</div>
+			</div>
+{% endfor %}
+</div>
+{% endblock %}

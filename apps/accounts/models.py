@@ -5,6 +5,7 @@ import os
 from uuid import uuid4
 from PIL import Image
 
+import tagulous.models
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
@@ -148,7 +149,7 @@ class Connection(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=100)
-    field = models.CharField(max_length=100, blank=True, null=True)
+    category = models.CharField(max_length=100, blank=True, null=True)
     years = models.IntegerField(null=True)
 
 

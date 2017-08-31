@@ -16,12 +16,6 @@ from business.enums import *
 from accounts.enums import ROLE_TYPES
 
 
-class Category(tagulous.models.TagModel):
-
-    class TagMeta:
-        autocomplete_view = 'api:company-category'
-
-
 class Employee(models.Model):
     company = models.ForeignKey('business.Company')
     profile = models.ForeignKey('accounts.Profile')
@@ -56,7 +50,6 @@ class Company(models.Model):
     logo = models.ImageField(blank=True, null=True, upload_to='provider/logo')
     description = models.TextField(blank=True, null=True)
     long_description = models.TextField(blank=True, null=True)
-    category = tagulous.models.TagField(to=Category, blank=True)
     type = models.CharField(max_length=100, choices=COMPANY_TYPES, blank=True, null=True)
     filing_location = models.CharField(max_length=100, blank=True, null=True)
     incorporation_date = models.DateField(blank=True, null=True)
@@ -131,11 +124,9 @@ class Project(models.Model):
     project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255)
-    video_url = models.CharField(max_length=255, blank=True, null=True)
     type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
-    category = tagulous.models.TagField(to=Category, blank=True, null=True) # not really in the mockup
-    short_blurb = models.CharField(max_length=255, blank=True, null=True)
-    start_date = models.DateField()
+    category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
+    start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
     deleted = models.BooleanField(default=False)
@@ -156,13 +147,12 @@ class Project(models.Model):
     background = models.TextField(blank=True, null=True)
     progress = models.TextField(blank=True, null=True)
     scope = models.TextField(blank=True, null=True)
-    milestones = models.TextField(blank=True, null=True)
     specs = models.TextField(blank=True, null=True)
     private_info = models.TextField(blank=True, null=True)
     published = models.BooleanField(default=False)
     approved = models.BooleanField(default=False)
     role = models.CharField(max_length=100, blank=True, null=True)
-    years_experience = models.IntegerField(blank=True, null=True)
+    years = models.IntegerField(blank=True, null=True)
     employment_type = models.CharField(max_length=100, default='freelance')
 
 

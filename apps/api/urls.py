@@ -12,7 +12,6 @@ from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount
 from proposals.api import QuestionViewSet, ProposalViewSet
 from reviews.api import ReviewListCreate
-from business.models import Category
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
 
 
@@ -68,7 +67,6 @@ declared_router = DeclarativeRouter({
 urlpatterns = [
     url(r'^jwt/$', refresh_jwt_token),
     url(r'^company/$', view=CompanyListCreate.as_view(), name='company'),
-    url(r'^category/$', tagulous.views.autocomplete, {'tag_model': Category}, name='company-category', ),
     url(r'^company/(?P<pk>[0-9]+)/$', view=CompanyDetail.as_view(), name='company-detail'),
     url(r'^employee/$', view=EmployeeListCreate.as_view(), name='employee'),
     url(r'^employee/(?P<pk>[0-9]+)/$', view=EmployeeDetail.as_view(), name='employee-detail'),
