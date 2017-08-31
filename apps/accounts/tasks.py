@@ -97,7 +97,6 @@ def freelancer_project_matching():
                     user_list[user.email]['projects'] = [project, ]
                 else:
                     user_list[user.email]['projects'].append(project)
-
     for key, value in user_list.items():
         send_mail('project-matching', [value['user']], context={
             'fname': value['user'].first_name,
