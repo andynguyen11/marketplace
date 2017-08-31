@@ -91,13 +91,15 @@ def freelancer_project_matching():
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
             for user in users:
-                if user not in user_list.keys():
-                    user_list[user] = [project, ]
+                if user.email not in user_list.keys():
+                    user_list[user.email] = {}
+                    user_list[user.email]['user'] = user
+                    user_list[user.email]['projects'] = [project, ]
                 else:
-                    user_list[user].append(project)
+                    user_list[user.email]['projects'].append(project)
 
-    for user, projects in user_list.items():
-        send_mail('project-matching', [user], context={
-            'fname': user.first_name,
-            'projects': projects
+    for key, value in user_list.items():
+        send_mail('project-matching', [value['user']], context={
+            'fname': value['user'].first_name,
+            'projects': value['projects']
         }, language='handlebars')
