@@ -1,8 +1,10 @@
 {% load thumbnail %}
+{% load humanize %}
+{% load pretty_role %}
 
 <a href="{% url 'project' project.slug %}" class="projectCard">
   <div class="projectCard-role {{ project.category }}">
-    {{ project.role }}
+    {% readable_role project.role %}
   </div>
   <div class="projectCard-details">
     <h2 class="projectCard-title">{{ project.title|truncatechars:70 }}</h2>
@@ -28,7 +30,7 @@
     {% endif %}
     {% if project.estimated_cash %}
       <div class="projectCard-budget-item{% if not project.estimated_equity_percentage %} projectCard-budget-item--only{% endif %}">
-        <div class="projectCard-budget-item-amount">${{ project.estimated_cash }}</div>
+        <div class="projectCard-budget-item-amount">${{ project.estimated_cash|intcomma }}</div>
         <div class="projectCard-budget-item-type">Cash</div>
       </div>
     {% endif %}

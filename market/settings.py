@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.flatpages',
     'django_celery_beat',
+    'django.contrib.humanize',
     'debug_toolbar',
     'sorl.thumbnail',
     'guardian',
