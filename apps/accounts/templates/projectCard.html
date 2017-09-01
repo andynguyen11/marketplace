@@ -1,30 +1,16 @@
 {% load thumbnail %}
 
 <a href="{% url 'project' project.slug %}" class="projectCard">
-  <div class="projectCard-title">
-    {{ project.title|truncatechars:70 }}
+  <div class="projectCard-role {{ project.category }}">
+    {{ project.role }}
   </div>
   <div class="projectCard-details">
-    <div class="projectCard-owner">
-      {% thumbnail project.project_manager.get_photo "200" as image %}
-      <div class="projectCard-owner-avatar" style="background-image: url('{{ image.url }}');"></div>
-      {% endthumbnail %}
-      <div class="projectCard-owner-meta">
-        <div class="projectCard-owner-name">{{ project.project_manager.first_name }}</div>
-        <div class="projectCard-owner-location">
-          {% if project.company %}
-            {{ project.company.city }}{% if project.company.state %}, {{ project.company.state }}{% endif %}
-          {% else %}
-            {{ project.project_manager.city }}{% if project.project_manager.state %}, {{ project.project_manager.state }}{% else %}, {{ project.project_manager.country }}{% endif %}
-          {% endif %}
-        </div>
-      </div>
-    </div>
+    <h2 class="projectCard-title">{{ project.title|truncatechars:70 }}</h2>
     <div class="projectCard-description">
       {{ project.scope|truncatechars:158 }}
     </div>
   </div>
-  <div class="projectCard-budget">
+  <div class="projectCard-budget {{ project.category }}">
     {% if project.estimated_equity_percentage %}
       <div class="projectCard-budget-item{% if not project.estimated_cash %} projectCard-budget-item--only{% endif %}">
         <div class="projectCard-budget-item-amount">{{ project.estimated_equity_percentage }}%</div>
