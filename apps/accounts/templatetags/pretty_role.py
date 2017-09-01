@@ -14,6 +14,7 @@ def readable_role(role):
       'software': 'Software Developer',
       'game': 'Game Developer',
       'devops': 'Dev ops Engineer',
+      'dev-ops': 'Dev ops Engineer',
       'database': 'Database Engineer',
       'qa': 'QA Engineer',
       'graphic-designer': 'Graphic Designer',
@@ -30,7 +31,7 @@ def readable_role(role):
       'packaging-designer': 'Packaging Designer'
     }
 
-    if roles[role]:
+    if role in roles:
         return roles[role]
 
     return ''
