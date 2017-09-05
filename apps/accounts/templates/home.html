@@ -3,6 +3,7 @@
 {% load cache %}
 {% load thumbnail %}
 {% load random_hero %}
+{% load pretty_role %}
 
 {% block content %}
 {% cache 3600 home ENVIRONMENT %}
@@ -171,7 +172,7 @@
         <div class='plate--dev-info'>
             <div class="plate--dev-info-profile-photo" style="background-image: url('{{ image.url }}')"></div>
             <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
-            <div class='plate--dev-type'>{{ developer.roles.first.name }}</div>
+            <div class='plate--dev-type'>{% readable_role developer.roles.first.name %}</div>
             <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
             <div class="plate--dev-info-hire-button btn btn-white--clear">View Profile</div>
         </div>
