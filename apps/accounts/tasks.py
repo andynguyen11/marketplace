@@ -87,7 +87,7 @@ def freelancer_project_matching():
                 'state': project.state,
                 'country': project.country,
                 'description': project.scope,
-                'skills': project.skills,
+                'skills': ', '.join(project.skills),
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
             for user in users:
