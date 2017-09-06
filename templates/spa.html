@@ -21,7 +21,7 @@
 	
 	<link rel="shortcut icon" href="{% static 'spa/favicon.ico' %}">
 
-	<link href="{% static 'spa/styles.b8a52c00d4de194ea49a.css' %}" rel="stylesheet">
+	<link href="{% static 'spa/styles.dbcdef2c21e6b1422ce1.css' %}" rel="stylesheet">
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -77,11 +77,28 @@
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyd78XYiY4lLjVmmq3bBSq7nH1RE919TE&libraries=places"></script>
 
+{% if ENVIRONMENT == 'prod' %}
+<!-- Facebook Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+fbq('init', '208488146232969');
+fbq('track', "PageView");</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=208488146232969&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Facebook Pixel Code -->
+{% endif %}
+
 {% if ENVIRONMENT == 'local' %}
 <script src="http://localhost:8001/bundle.js"></script>
 {% else %}
-<script src="{% static 'spa/vendor.ba93e17bb161542d6e07.js' %}"></script>
-<script src="{% static 'spa/app.b8a52c00d4de194ea49a.js' %}"></script>
+<script src="{% static 'spa/vendor.96f30078fd0129c0a2c2.js' %}"></script>
+<script src="{% static 'spa/app.dbcdef2c21e6b1422ce1.js' %}"></script>
 {% endif %}
 
 <script src="https://use.fontawesome.com/3cdb773842.js"></script>
