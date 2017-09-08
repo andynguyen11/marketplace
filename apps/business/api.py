@@ -89,6 +89,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(status=403)
 
+    @detail_route(methods=['POST'])
+    def activate(self, request, *args, **kwargs):
+        project = self.get_object()
+        if request.user == project.project_manager:
+            project = project.activate()
+            response_data = self.get_serializer(project).data
+            return Response(response_data, status=200)
+        return Response(status=403)
+
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 12

@@ -4,6 +4,7 @@ import pendulum
 import pytz
 import simplejson
 
+import stripe
 from celery import shared_task
 from celery.schedules import crontab
 from django.conf import settings
@@ -16,13 +17,14 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from market.celery import app as celery_app
 from accounts.models import Profile
 from business.models import Project, Employee, NDA
-from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token, calculate_date_ranges
+from payment.helpers import get_source
 from payment.models import Invoice
 from proposals.models import Proposal
 from postman.models import Message
 
+stripe.api_key = settings.STRIPE_KEY
 utc=pytz.UTC
 
 
@@ -113,7 +115,15 @@ def project_in_review(project_id):
 
 @shared_task
 def project_posted(project_id):
+    """
+    Dispatches project posted notification to admin
+    Creates preauth charge for project posting
+
+    :param project_id:
+
+    """
     project = Project.objects.get(id=project_id)
+    project.preauth()
     admin = Profile.objects.get(username='admin')
     send_mail('project-posted', [admin], {
         'project': project.title,
@@ -162,6 +172,7 @@ def complete_project(project_id):
 @shared_task
 def project_approved_email(project_id):
     project = Project.objects.get(id=project_id)
+    project.activate()
     send_mail('project-approved', [project.project_manager], {
         'fname': project.project_manager.first_name,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),

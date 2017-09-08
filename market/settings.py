@@ -79,6 +79,7 @@ INSTALLED_APPS = (
     'expertratings',
     'payment',
     'postman',
+    'product',
     'proposals',
     'reviews',
     'fixture_magic',
