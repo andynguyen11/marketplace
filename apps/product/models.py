@@ -21,7 +21,7 @@ class Order(models.Model):
     stripe_charge = models.CharField(max_length=128)
     status = models.CharField(max_length=50)
     card_type = models.CharField(max_length=20)
-    card_last_4 = models.IntegerField()
+    card_last_4 = models.CharField(max_length=4)
     user = models.ForeignKey('accounts.Profile')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()

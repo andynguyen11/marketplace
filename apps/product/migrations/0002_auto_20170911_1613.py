@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='order',
             name='card_last_4',
-            field=models.IntegerField(default=0, max_length=4),
+            field=models.CharField(default='4242', max_length=4),
             preserve_default=False,
         ),
         migrations.AddField(
