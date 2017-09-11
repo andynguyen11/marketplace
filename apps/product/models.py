@@ -20,6 +20,8 @@ class Order(models.Model):
     product = models.ForeignKey('product.Product')
     stripe_charge = models.CharField(max_length=128)
     status = models.CharField(max_length=50)
+    card_type = models.CharField(max_length=20)
+    card_last_4 = models.IntegerField()
     user = models.ForeignKey('accounts.Profile')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -28,6 +30,9 @@ class Order(models.Model):
     def capture(self):
         try:
             charge = stripe.Charge.retrieve(self.stripe_charge)
+            self.card_type = charge.source.brand
+            self.card_last_4 = charge.source.last4
+            self.save()
             return charge.capture()
         except stripe.error.CardError as e:
             body = e.json_body

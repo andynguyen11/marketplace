@@ -94,6 +94,10 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if request.user == project.project_manager:
             project = project.activate()
+            send_mail('project-renewal', [project.project_manager], {
+                'fname': project.project_manager.first_name,
+                'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+            })
             response_data = self.get_serializer(project).data
             return Response(response_data, status=200)
         return Response(status=403)

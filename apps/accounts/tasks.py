@@ -9,6 +9,7 @@ from haystack.query import SearchQuerySet
 from accounts.models import Profile
 from business.models import Project
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token, calculate_date_ranges
+from generics.tasks import queue_mail
 from market.celery import app as celery_app
 
 
@@ -28,29 +29,6 @@ def generate_confirmation_url(user, instance, field,
     kwargs['token'] = create_auth_token(user)
     url = reverse(reverse_pattern % base_name, args=(instance.id,))
     return absolute_url(url, kwargs)
-
-@shared_task
-def connection_request(this_id, that_id, thread_id, template):
-    this_user = Profile.objects.get(id=this_id)
-    that_user = Profile.objects.get(id=that_id)
-    send_mail(template, [this_user], {
-        'fname': that_user.first_name,
-        'thread_id': thread_id,
-    })
-
-@shared_task
-def connection_made(this_id, that_id, thread_id, order_context=None):
-    template = 'connection-made-freelancer'
-    this_user = Profile.objects.get(id=this_id)
-    that_user = Profile.objects.get(id=that_id)
-    context = {
-        'fname': that_user.first_name,
-        'thread_id': thread_id,
-    }
-    if order_context:
-        context.update(order_context)
-        template = 'connection-made-entrepreneur'
-    send_mail(template, [this_user], context)
 
 @shared_task
 def send_email_confirmation(template, email, context):
@@ -98,7 +76,8 @@ def freelancer_project_matching():
                 else:
                     user_list[user.email]['projects'].append(project)
     for key, value in user_list.items():
-        send_mail('project-matching', [value['user']], context={
+        context={
             'fname': value['user'].first_name,
             'projects': value['projects']
-        }, language='handlebars')
+        }
+        queue_mail.delay('project-matching', value['user'].id, context, 'handlebars')
