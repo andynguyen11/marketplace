@@ -75,9 +75,9 @@ def freelancer_project_matching():
                     user_list[user.email]['projects'] = [project, ]
                 else:
                     user_list[user.email]['projects'].append(project)
-    for key, value in user_list.items():
-        context={
-            'fname': value['user'].first_name,
-            'projects': value['projects']
-        }
-        queue_mail.delay('project-matching', value['user'].id, context, 'handlebars')
+        for key, value in user_list.items():
+            context={
+                'fname': value['user'].first_name,
+                'projects': value['projects']
+            }
+            queue_mail.delay('project-matching', value['user'].id, context, 'handlebars')

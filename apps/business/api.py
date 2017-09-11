@@ -1,6 +1,7 @@
 import re
 import simplejson as json
 
+from django.conf import settings
 from django.http import HttpResponseForbidden, Http404, HttpResponse
 from drf_haystack.viewsets import HaystackViewSet
 from drf_haystack.filters import HaystackFilter
@@ -19,6 +20,7 @@ from business.models import Employee
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
+from product.models import Order
 
 
 # TODO Permissions update
@@ -94,9 +96,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if request.user == project.project_manager:
             project = project.activate()
-            send_mail('project-renewal', [project.project_manager], {
+            order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
+            send_mail('project-renewed', [project.project_manager], {
                 'fname': project.project_manager.first_name,
+                'title': project.title,
                 'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+                'date': order.date_created.strftime("%m/%d/%Y"),
+                'card_type': order.card_type,
+                'card_last_4': order.card_last_4,
+                'description': order.product.description,
+                'price': order.product.price / float(100)
             })
             response_data = self.get_serializer(project).data
             return Response(response_data, status=200)

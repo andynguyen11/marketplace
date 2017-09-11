@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from accounts.enums import ROLE_TYPES
 from business.enums import *
 from generics.models import Attachment
+from generics.utils import send_mail
 from product.models import Product, Order
 from postman.models import Message
 
@@ -159,7 +160,7 @@ class Project(models.Model):
     role = models.CharField(max_length=100, blank=True, null=True)
     years = models.IntegerField(blank=True, null=True)
     employment_type = models.CharField(max_length=100, default='freelance')
-    autorenew = models.BooleanField(default=True)
+    autorenew = models.BooleanField(default=False)
 
 
     objects = ProjectManager()
@@ -179,7 +180,7 @@ class Project(models.Model):
 
     def preauth(self):
         today = datetime.now().date()
-        if not self.expire_date or self.expire_date < today:
+        if not self.expire_date or self.expire_date <= today:
             product = Product.objects.get(sku='P2P-30')
             charge = stripe.Charge.create(
                 amount = product.price,
@@ -205,21 +206,29 @@ class Project(models.Model):
         except Order.DoesNotExist:
             order = self.preauth()
         order.capture()
-        order.status = 'active'
         order.save()
         today = datetime.now().date()
         self.expire_date = today + timedelta(days=30)
+        self.status = 'active'
+        self.published = True
         self.save()
         return self
 
     def deactivate(self):
         today = datetime.now().date()
-        if self.expire_date and self.expire_date < today:
+        if self.expire_date and self.expire_date <= today:
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
             order.status = 'expired'
             order.save()
+            self.status = 'expired'
             self.published = False
             self.save()
+            send_mail('project-expired', [self.project_manager], {
+                'fname': self.project_manager.first_name,
+                'title': self.title,
+                'url': '{0}/project/{1}/'.format(settings.BASE_URL, self.slug)
+            })
+        return self
 
     @property
     def content_type(self):

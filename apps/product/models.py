@@ -32,6 +32,7 @@ class Order(models.Model):
             charge = stripe.Charge.retrieve(self.stripe_charge)
             self.card_type = charge.source.brand
             self.card_last_4 = charge.source.last4
+            self.status = 'active'
             self.save()
             return charge.capture()
         except stripe.error.CardError as e:
