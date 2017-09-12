@@ -38,7 +38,7 @@ import accounts.signals
 
 # TODO Break down into app level url confs
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^internal/admin/', include(admin.site.urls)),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', accounts_views.home, name='home'),
     url(r'^status/$', health, name='health'),
@@ -96,7 +96,7 @@ urlpatterns = [
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
     url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
-    url(r'^project/(?P<project_slug>[-\w]+)/renewal/?$', TemplateView.as_view(template_name='spa.html'), name='project'),
+    url(r'^project/(?P<project_slug>[-\w]+)/renewal/?$', TemplateView.as_view(template_name='spa.html'), name='project-renewal'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/confirmation/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal-confirmation'),
     url(r'^projects/$',  TemplateView.as_view(template_name='spa.html'), name='project-gallery'),

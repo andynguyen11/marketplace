@@ -7,6 +7,7 @@ from django.conf import settings
 from accounts.models import Profile
 from business.models import Project
 from generics.utils import send_mail
+from product.models import Order
 from market.celery import app as celery_app
 
 
@@ -69,8 +70,9 @@ def project_approved_email(project_id):
     project = Project.objects.get(id=project_id)
     project.activate()
     order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
-    send_mail('project-approved', [project.project_manager], {
+    send_mail('project-approved-receipt', [project.project_manager], {
         'fname': project.project_manager.first_name,
+        'title': project.title,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
         'date': order.date_created.strftime("%m/%d/%Y"),
         'card_type': order.card_type,

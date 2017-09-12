@@ -226,7 +226,7 @@ class Project(models.Model):
             send_mail('project-expired', [self.project_manager], {
                 'fname': self.project_manager.first_name,
                 'title': self.title,
-                'url': '{0}/project/{1}/'.format(settings.BASE_URL, self.slug)
+                'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
             })
         return self
 
