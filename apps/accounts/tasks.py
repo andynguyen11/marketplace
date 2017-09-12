@@ -80,4 +80,4 @@ def freelancer_project_matching():
                 'fname': value['user'].first_name,
                 'projects': value['projects']
             }
-            queue_mail.delay('project-matching', value['user'].id, context, 'handlebars')
+            queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
