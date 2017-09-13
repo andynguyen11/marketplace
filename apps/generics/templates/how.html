@@ -7,10 +7,10 @@
     <div class="hero-overlay--logo-mark hero-overlay--logo-mark--orange"></div>
     <div class="hero-slide">
       <h2 class="brand large">How Loom Works</h2>
-      <h4 class="slim">Our goal is to help employers hire <br class="hide-medium"/>
-        talented freelancers for cash and equity, <br class="hide-medium"/>
-        and to provide tools that make getting<br class="hide-medium"/>
-        work done easier and more efficient.</h4>
+      <h4 class="slim">We help employers hire talented freelancers <br class="hide-medium"/>
+        for cash and equity, and provide tools <br class="hide-medium"/>
+        that make getting work done easier <br class="hide-medium"/>
+        and more efficient.</h4>
     </div>
   </div>
 </div>
@@ -32,6 +32,7 @@
           <p>Sign up and get started by posting a project.</p>
           <p>Describe your project and specify the skills you're looking for in a freelancer.</p>
           <p>Protect confidential project and company details behind an NDA-protected tab.</p>
+          <p>We recommend your project to freelancers with skills that match your project's needs.</p>
         </div>
         <div class="how-tile-image how-tile-image--post">
           <img src="/static/images/Post-Project-Illustration.png" alt="">
@@ -66,27 +67,32 @@
 
       <div class="how-pricing page-content--alternate">
         <div class="page-content">
-          <div class="how-pricing-header">
-            <h2 class="brand">Pricing and payments on Loom</h2>
-            <h3 class="brand">Employers don't pay any fees on cash payments made to freelancers</h3>
+          <div class="how-pricing-header how-pricing-entreprenuer">
+            <h2 class="brand">Pricing for employers</h2>
+            <h3 class="brand">Pay a flat fee to post your project and reach thousands of talented creators</h3>
+            <h4 class="brand-bold">Bonus: your posting fee is refunded when you hire and pay your freelancer through Loom</h4>
           </div>
           <div class="page-content--medium">
-            <div class="how-pricing-row">
-              <div class="how-pricing-item how-pricing-item--messaging">
-                <h4>CASH-ONLY PROJECTS</h4>
-                <h2 class="brand">10%</h2>
-                <p>fee deducted from cash payments to freelancers</p>
+            <div class="how-pricing-details">
+              <div class="how-pricing-item">
+                <h4>30-day project posting</h4>
+                <h2 class="brand">$200/post</h2>
+                <ul>
+                  <li>freelancer matching</li>
+                  <li>unlimited proposals</li>
+                  <li>freelancer messaging</li>
+                </ul>
+                <ul>
+                  <li>unlimited file sharing</li>
+                  <li>easy work payments</li>
+                  <li>no processing fees</li>
+                </ul>
               </div>
-              <div class="how-pricing-item how-pricing-item--attachments">
-                <h4>CASH + EQUITY PROJECTS</h4>
-                <h2 class="brand">10%</h2>
-                <p>fee deducted from cash payments to freelancers</p>
-              </div>
-              <div class="how-pricing-item how-pricing-item--contact">
-                <h4>EQUITY-ONLY PROJECTS</h4>
-                <h2 class="brand">$500</h2>
-                <p>ﬂat fee paid by employers when a freelancer is hired</p>
-              </div>
+              {% if request.user.is_authenticated %}
+                <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+              {% else %}
+                <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -151,7 +157,11 @@
           <div class="cta-content cta-content--how">
             Let's bring your ideas to life.<br class="hide-mobile"/> Posting projects is <span class="highlight">quick and easy</span>.
           </div>
-          <a href="/signup/" class="btn btn-brand btn-brand--attn">Post your project</a>
+          {% if request.user.is_authenticated %}
+            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          {% else %}
+            <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+          {% endif %}
         </div>
 
     </div>
@@ -162,9 +172,9 @@
         <div class="how-tile">
           <div class="how-tile-content">
             <h3 class="brand">Discover interesting projects</h3>
-            <p>Sign up and create a freelancer profile.</p>
-            <p>Showcase your experience with work examples and skills tests.</p>
+            <p>Create a profile that showcases your experience, skills and work examples.</p>
             <p>Easily filter projects that are relevant to your role and skills.</p>
+            <p>We send you personalized project recommendations based on your skills.</p>
           </div>
           <div class="how-tile-image how-tile-image--post">
             <img src="/static/images/Post-Project-Illustration.png" alt="">
@@ -199,7 +209,7 @@
       <div class="how-pricing page-content--alternate">
         <div class="page-content">
           <div class="how-pricing-header">
-            <h2 class="brand">Pricing and payments on Loom</h2>
+            <h2 class="brand">Pricing for freelancers</h2>
             <h3 class="brand">Low fees for freelancers. Keep more of the money you earn.</h3>
           </div>
           <div class="page-content--medium">
@@ -216,8 +226,8 @@
               </div>
               <div class="how-pricing-item how-pricing-item--contact">
                 <h4>EQUITY-ONLY PROJECTS</h4>
-                <h2 class="brand">$500</h2>
-                <p>service fee paid by employer when you’re hired</p>
+                <h2 class="brand">FREE</h2>
+                <p>fees for equity projects are paid by employers only</p>
               </div>
             </div>
           </div>
