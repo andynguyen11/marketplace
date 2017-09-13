@@ -29,27 +29,15 @@
           {% if random_slide == 1 %}
             <h2 class="brand-bold">Hire top<br class="hide-desktop"> freelance talent.</h2>
             <h5 class="brand">Loom is the only freelance platform that lets you hire developers<br class="hide-mobile"/> and designers for cash, equity or both. Win-win.</h5>
-            {% if request.user.is_authenticated %}
-              <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% else %}
-              <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% endif %}
+            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
           {% elif random_slide == 2 %}
             <h2 class="brand-bold">Bring your<br class="hide-desktop"> project to life.</h2>
             <h5 class="brand">Hire freelance developers and designers to bring your project to life,<br class="hide-mobile"/> and compensate them in cash, equity, or a combination of both.</h5>
-            {% if request.user.is_authenticated %}
-              <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% else %}
-              <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% endif %}
+            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
           {% elif random_slide == 3 %}
             <h2 class="brand-bold">Build products<br class="hide-desktop"> with freelancers.</h2>
             <h5 class="brand">On Loom, you discover top freelancers to design and build your<br class="hide-mobile"/> products for cash, equity, or a combination of both. Win-win.</h5>
-            {% if request.user.is_authenticated %}
-              <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% else %}
-              <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-            {% endif %}
+            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
           {% endif %}
         </div>
       </div>
@@ -200,11 +188,7 @@
     <div class="cta-content">
       Let’s bring your project to life.<br/> Posting projects is <span class="highlight">quick and easy.</span>
     </div>
-    {% if request.user.is_authenticated %}
-      <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-    {% else %}
-      <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-    {% endif %}
+    <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
 </div>
 
 {% comment %}

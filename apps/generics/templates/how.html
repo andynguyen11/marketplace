@@ -87,11 +87,7 @@
                   <li>no processing fees</li>
                 </ul>
               </div>
-              {% if request.user.is_authenticated %}
-                <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-              {% else %}
-                <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-              {% endif %}
+              <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
             </div>
           </div>
         </div>
@@ -156,11 +152,7 @@
           <div class="cta-content cta-content--how">
             Let's bring your ideas to life.<br class="hide-mobile"/> Posting projects is <span class="highlight">quick and easy</span>.
           </div>
-          {% if request.user.is_authenticated %}
-            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-          {% else %}
-            <a href="/signup/#employer" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-          {% endif %}
+          <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
         </div>
 
     </div>
