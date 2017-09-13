@@ -7,6 +7,7 @@ from rest_framework_jwt.views import refresh_jwt_token
 from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate
 from business.api import *
 from payment.api import StripePaymentSourceView, PromoCheck, InvoiceViewSet, InvoiceRecipientsView, StripeConnectViewSet, StripeWebhookView, InvoicePaymentViewset
+from product.api import OrderViewSet
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount
@@ -39,6 +40,10 @@ declared_router = DeclarativeRouter({
                 'skilltest': SkillTestViewSet,
             }
         }
+    },
+    'order': {
+        'view': OrderViewSet,
+        'base_name': 'order'
     },
     'proposals': {
         'view': ProposalViewSet,

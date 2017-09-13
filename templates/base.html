@@ -56,7 +56,7 @@
         <ul class="header-links hide-mobile">
           <li><a class="{% add_active request 'how' %}" href="{% url 'how' %}">How it Works</a></li>
           <li><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
-          <li><a href="{% url 'create-project' %}">Post a Project</a></li>
+          <li><a href="{% url 'project-pricing' %}">Post a Project</a></li>
         </ul>
 
         <div class="header-icons">
@@ -81,7 +81,7 @@
             <li><a href="{% url 'settings' %}">Settings</a></li>
             <li class="hide-desktop"><a href="{% url 'how' %}">How it Works</a></li>
             <li class="hide-desktop"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
-            <li class="hide-desktop"><a href="/signup/">Post a Project</a></li>
+            <li class="hide-desktop"><a href="{% url 'project-pricing' %}">Post a Project</a></li>
             <li><a href="{% url 'logout' %}">Log Out</a></li>
           </ul>
 
@@ -92,7 +92,7 @@
       <ul class="header-links">
         <li class="hide-mobile {% add_active request 'how' %}"><a href="{% url 'how' %}">How it Works</a></li>
         <li class="hide-mobile"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
-        <li class="hide-mobile"><a href="/signup/#employer">Post a Project</a></li>
+        <li class="hide-mobile"><a href="{% url 'project-pricing' %}">Post a Project</a></li>
         <li class="hide-medium"><a href="{% url 'signup' %}#freelancer">Become a Freelancer</a></li>
         <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
         <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign Up</a></li>
@@ -292,12 +292,6 @@ $(document).ready(function() {
   {% endblock %}
 
   {% block ad_pixel %}
-  <!-- Segment Pixel - Loom - Retargeting Pixel - DO NOT MODIFY -->
-  <img src="https://secure.adnxs.com/seg?add=6166186&t=2" width="1" height="1" />
-  <!-- End of Segment Pixel -->
-  <!-- Conversion Pixel - Loom Conversion Pixel - DO NOT MODIFY -->
-  <img src="https://secure.adnxs.com/px?id=756522&t=2" width="1" height="1" />
-  <!-- End of Conversion Pixel -->
   {% endblock %}
 </div>
 {% endif %}

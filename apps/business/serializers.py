@@ -1,4 +1,5 @@
 import simplejson
+from datetime import datetime
 from decimal import Decimal
 
 from notifications.signals import notify
@@ -65,6 +66,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     message = serializers.SerializerMethodField()
     skills = SkillsSerializer(many=True)
     show_private_info = serializers.SerializerMethodField()
+    days_to_expire = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -127,6 +129,13 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     def get_show_private_info(self, obj):
         if self.context['request'].user.id in obj.nda_list:
             return obj.private_info
+        return None
+
+    def get_days_to_expire(self, obj):
+        if obj.expire_date:
+            today = datetime.now().date()
+            delta = obj.expire_date - today
+            return delta.days if delta.days >= 0 else 0
         return None
 
 

@@ -143,7 +143,12 @@ class InvoiceItem(models.Model):
     rate = models.DecimalField(max_digits=8, decimal_places=2, blank=True, null=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
 
-#TODO figure out why if this lives in it's own payments/signals.py file it doesn't ever fire
+
+
+
+
+# TODO figure out why if this lives in it's own payments/signals.py file it doesn't ever fire
+# Circular import?
 @receiver(pre_save, sender=Invoice)
 def invoice_notifications(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:

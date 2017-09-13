@@ -3,6 +3,7 @@ from uuid import uuid4
 from datetime import datetime, timedelta
 
 import tagulous.models
+import stripe
 from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -10,11 +11,15 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
 from django.contrib.contenttypes.models import ContentType
 
-from postman.models import Message
-from generics.models import Attachment
-from business.enums import *
 from accounts.enums import ROLE_TYPES
+from business.enums import *
+from generics.models import Attachment
+from generics.utils import send_mail
+from product.models import Product, Order
+from postman.models import Message
 
+
+stripe.api_key = settings.STRIPE_KEY
 
 class Employee(models.Model):
     company = models.ForeignKey('business.Company')
@@ -128,6 +133,7 @@ class Project(models.Model):
     category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
+    expire_date = models.DateField(blank=True, null=True)
     skills = tagulous.models.TagField(to='accounts.Skills', blank=True, null=True)
     deleted = models.BooleanField(default=False)
     estimated_hours = models.IntegerField(blank=True, null=True)
@@ -154,6 +160,7 @@ class Project(models.Model):
     role = models.CharField(max_length=100, blank=True, null=True)
     years = models.IntegerField(blank=True, null=True)
     employment_type = models.CharField(max_length=100, default='freelance')
+    autorenew = models.BooleanField(default=False)
 
 
     objects = ProjectManager()
@@ -170,6 +177,62 @@ class Project(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Project, self).save(*args, **kwargs)
+
+    def preauth(self):
+        today = datetime.now().date()
+        if not self.expire_date or self.expire_date <= today:
+            product = Product.objects.get(sku='P2P-30')
+            charge = stripe.Charge.create(
+                amount = product.price,
+                customer = self.project_manager.stripe,
+                description = product.description,
+                currency = 'usd',
+                capture = False
+            )
+            order = Order(
+                content_object = self,
+                product = product,
+                stripe_charge = charge.id,
+                user = self.project_manager,
+                status = 'preauth'
+            )
+            order.save()
+            return order
+        return None
+
+    def activate(self):
+        try:
+            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
+        except Order.DoesNotExist:
+            order = self.preauth()
+        order.capture()
+        order.save()
+        today = datetime.now().date()
+        self.expire_date = today + timedelta(days=30)
+        self.status = 'active'
+        self.published = True
+        self.save()
+        return self
+
+    def deactivate(self):
+        today = datetime.now().date()
+        if self.expire_date and self.expire_date <= today:
+            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
+            order.status = 'expired'
+            order.save()
+            self.status = 'expired'
+            self.published = False
+            self.save()
+            send_mail('project-expired', [self.project_manager], {
+                'fname': self.project_manager.first_name,
+                'title': self.title,
+                'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
+            })
+        return self
+
+    @property
+    def content_type(self):
+        return ContentType.objects.get_for_model(self)
 
     @property
     def location(self):

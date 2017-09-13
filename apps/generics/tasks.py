@@ -4,6 +4,7 @@ import pendulum
 import pytz
 import simplejson
 
+import stripe
 from celery import shared_task
 from celery.schedules import crontab
 from django.conf import settings
@@ -16,13 +17,14 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from market.celery import app as celery_app
 from accounts.models import Profile
 from business.models import Project, Employee, NDA
-from expertratings.models import SkillTestResult
 from generics.models import Attachment
 from generics.utils import send_mail, send_to_emails, sign_data, parse_signature, create_auth_token, calculate_date_ranges
+from payment.helpers import get_source
 from payment.models import Invoice
 from proposals.models import Proposal
 from postman.models import Message
 
+stripe.api_key = settings.STRIPE_KEY
 utc=pytz.UTC
 
 
@@ -106,25 +108,6 @@ def nda_signed_freelancer_email(nda_id):
     send_mail('nda-signed-freelancer', [nda.receiver], merge_vars)
 
 @shared_task
-def project_in_review(project_id):
-    project = Project.objects.get(id=project_id)
-    send_mail('project-in-review', [project.project_manager], {})
-
-
-@shared_task
-def project_posted(project_id):
-    project = Project.objects.get(id=project_id)
-    admin = Profile.objects.get(username='admin')
-    send_mail('project-posted', [admin], {
-        'project': project.title,
-        'date': simplejson.dumps(datetime.now().isoformat()),
-        'entrepreneur': project.project_manager.name,
-        'email': project.project_manager.email,
-        'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
-    })
-
-
-@shared_task
 def add_work_examples(profile_id):
     examples = Attachment.objects.filter(
                 content_type= ContentType.objects.get_for_model(Profile),
@@ -134,7 +117,6 @@ def add_work_examples(profile_id):
         profile = Profile.objects.get(id=profile_id)
         send_mail('add-work-examples', [profile], {})
 
-
 @shared_task
 def add_work_history(profile_id):
     history = Employee.objects.filter(profile=profile_id)
@@ -142,30 +124,10 @@ def add_work_history(profile_id):
         profile = Profile.objects.get(id=profile_id)
         send_mail('add-work-history', [profile], {})
 
-
 @shared_task
-def post_a_project(profile_id):
-    user = Profile.objects.get(id=profile_id)
-    project = Project.objects.filter(project_manager=user)
-    if not len(project):
-        send_mail('post-a-project', [user], {})
-
-
-@shared_task
-def complete_project(project_id):
-    project = Project.objects.get(id=project_id)
-    if not project.published and not project.deleted:
-        send_mail('complete-project', [project.project_manager], {
-            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
-        })
-
-@shared_task
-def project_approved_email(project_id):
-    project = Project.objects.get(id=project_id)
-    send_mail('project-approved', [project.project_manager], {
-        'fname': project.project_manager.first_name,
-        'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
-    })
+def queue_mail(template, user_id, context, language='mailchimp'):
+    user = Profile.objects.get(id=user_id)
+    send_mail(template, [user], context=context, language=language)
 
 #TODO This is a database read heavy task, optimize
 @celery_app.task
