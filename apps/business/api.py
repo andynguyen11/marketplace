@@ -81,6 +81,17 @@ class ProjectViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, project)
         return project
 
+    def update(self, request, *args, **kwargs):
+        if request.data.get('sku', False):
+            sku = request.data.pop('sku')
+            is_publishing = request.data.get('published', False)
+            project = self.get_object()
+            order = Order.objects.filter(content_type__pk=project.content_type.id, object_id=project.id, status='active')
+            if is_publishing and project.project_manager.stripe not project.approved and not order:
+                project.preauth(sku=sku)
+        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+
+
     def retrieve(self, request, slug_or_id=None):
         project = self.get_object()
         #TODO Add to serializer and permissions?

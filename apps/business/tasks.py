@@ -33,13 +33,11 @@ def project_in_review(project_id):
 def project_posted(project_id):
     """
     Dispatches project posted notification to admin
-    Creates preauth charge for project posting
 
     :param project_id:
 
     """
     project = Project.objects.get(id=project_id)
-    project.preauth()
     admin = Profile.objects.get(username='admin')
     send_mail('project-posted', [admin], {
         'project': project.title,

@@ -178,10 +178,10 @@ class Project(models.Model):
         self.slug = slugify(self.title)
         super(Project, self).save(*args, **kwargs)
 
-    def preauth(self):
+    def preauth(self, sku='P2P-30'):
         today = datetime.now().date()
         if not self.expire_date or self.expire_date <= today:
-            product = Product.objects.get(sku='P2P-30')
+            product = Product.objects.get(sku=sku)
             charge = stripe.Charge.create(
                 amount = product.price,
                 customer = self.project_manager.stripe,
