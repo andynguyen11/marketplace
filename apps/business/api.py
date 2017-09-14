@@ -87,7 +87,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             is_publishing = request.data.get('published', False)
             project = self.get_object()
             order = Order.objects.filter(content_type__pk=project.content_type.id, object_id=project.id, status='active')
-            if is_publishing and project.project_manager.stripe not project.approved and not order:
+            if is_publishing and project.project_manager.stripe and not project.approved and not order:
                 project.preauth(sku=sku)
         return super(ProjectViewSet, self).update(request, *args, **kwargs)
 

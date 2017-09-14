@@ -208,7 +208,7 @@ class Project(models.Model):
         order.capture()
         order.save()
         today = datetime.now().date()
-        self.expire_date = today + timedelta(days=30)
+        self.expire_date = today + timedelta(days=order.product.interval)
         self.status = 'active'
         self.published = True
         self.save()
