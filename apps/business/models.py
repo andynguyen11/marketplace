@@ -161,6 +161,7 @@ class Project(models.Model):
     years = models.IntegerField(blank=True, null=True)
     employment_type = models.CharField(max_length=100, default='freelance')
     autorenew = models.BooleanField(default=False)
+    sku = models.CharField(max_length=50, blank=True, null=True)
 
 
     objects = ProjectManager()
@@ -178,10 +179,10 @@ class Project(models.Model):
         self.slug = slugify(self.title)
         super(Project, self).save(*args, **kwargs)
 
-    def preauth(self, sku='P2P-30'):
+    def preauth(self):
         today = datetime.now().date()
         if not self.expire_date or self.expire_date <= today:
-            product = Product.objects.get(sku=sku)
+            product = Product.objects.get(sku=self.sku)
             charge = stripe.Charge.create(
                 amount = product.price,
                 customer = self.project_manager.stripe,
