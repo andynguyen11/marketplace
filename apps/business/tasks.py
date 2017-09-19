@@ -78,6 +78,6 @@ def project_approved_email(project_id):
         'date': order.date_created.strftime("%m/%d/%Y"),
         'card_type': order.card_type,
         'card_last_4': order.card_last_4,
-        'description': order.product.description,
+        'description': order.product.name,
         'price': order.product.price / float(100)
     })

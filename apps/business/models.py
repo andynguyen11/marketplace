@@ -183,20 +183,23 @@ class Project(models.Model):
         today = datetime.now().date()
         if not self.expire_date or self.expire_date <= today:
             product = Product.objects.get(sku=self.sku)
-            charge = stripe.Charge.create(
-                amount = product.price,
-                customer = self.project_manager.stripe,
-                description = product.description,
-                currency = 'usd',
-                capture = False
-            )
-            order = Order(
-                content_object = self,
-                product = product,
-                stripe_charge = charge.id,
-                user = self.project_manager,
-                status = 'preauth'
-            )
+            try:
+                order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
+            except Order.DoesNotExist:
+                charge = stripe.Charge.create(
+                    amount = product.price,
+                    customer = self.project_manager.stripe,
+                    description = product.description,
+                    currency = 'usd',
+                    capture = False
+                )
+                order = Order(
+                    content_object = self,
+                    product = product,
+                    stripe_charge = charge.id,
+                    user = self.project_manager,
+                    status = 'preauth'
+                )
             order.save()
             return order
         return None
@@ -212,6 +215,7 @@ class Project(models.Model):
         self.expire_date = today + timedelta(days=order.product.interval)
         self.status = 'active'
         self.published = True
+        self.approved = True
         self.save()
         return self
 
