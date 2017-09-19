@@ -12,6 +12,7 @@ class Product(models.Model):
     description = models.CharField(max_length=255)
     price = models.IntegerField()
     sku = models.CharField(max_length=50)
+    interval = models.IntegerField(blank=True, null=True)
 
 
 class Order(models.Model):

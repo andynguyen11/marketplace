@@ -1,4 +1,5 @@
 import simplejson
+import time
 from datetime import datetime, timedelta
 
 from celery import shared_task
@@ -38,6 +39,7 @@ def project_posted(project_id):
     :param project_id:
 
     """
+    time.sleep(10) #TODO Hacky way to run preauth and ensure sku on project has been saved
     project = Project.objects.get(id=project_id)
     project.preauth()
     admin = Profile.objects.get(username='admin')
@@ -77,6 +79,6 @@ def project_approved_email(project_id):
         'date': order.date_created.strftime("%m/%d/%Y"),
         'card_type': order.card_type,
         'card_last_4': order.card_last_4,
-        'description': order.product.description,
+        'description': order.product.name,
         'price': order.product.price / float(100)
     })

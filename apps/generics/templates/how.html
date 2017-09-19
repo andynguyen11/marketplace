@@ -68,26 +68,55 @@
         <div class="page-content">
           <div class="how-pricing-header how-pricing-entreprenuer">
             <h2 class="brand">Pricing for employers</h2>
-            <h3 class="brand">Pay a flat fee to post your project and reach thousands of talented creators</h3>
-            <h4 class="brand-bold">Bonus: your posting fee is refunded when you hire and pay your freelancer through Loom</h4>
+            <h3>Pay a flat fee to post your project and reach thousands of talented creators</h3>
+            <h4>Bonus: your posting fee is refunded when you hire and pay your freelancer through Loom</h4>
           </div>
           <div class="page-content--medium">
-            <div class="how-pricing-details">
-              <div class="how-pricing-item">
+            <div class="project-pricing-cards">
+              <div class="project-pricing-card">
+                <h4>60-day project posting</h4>
+                <h2 class="brand-bold">$300/posting</h2>
+                {% if request.user.is_authenticated %}
+                  <a href="/project/create/p2p-60/" class="btn btn-brand btn-brand--attn">Post 60-day project</a>
+                {% else %}
+                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
+                {% endif %}
+              </div>
+              <div class="project-pricing-card recommened-price">
+                <div class="recommended-header">Recommended</div>
                 <h4>30-day project posting</h4>
-                <h2 class="brand">$200/post</h2>
-                <ul>
-                  <li>freelancer matching</li>
-                  <li>unlimited proposals</li>
-                  <li>freelancer messaging</li>
-                </ul>
-                <ul>
-                  <li>unlimited file sharing</li>
-                  <li>easy work payments</li>
-                  <li>no processing fees</li>
-                </ul>
+                <h2 class="brand-bold">$200/posting</h2>
+                {% if request.user.is_authenticated %}
+                  <a href="/project/create/p2p-30/" class="btn btn-brand btn-brand--attn">Post 30-day project</a>
+                {% else %}
+                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
+                {% endif %}
+              </div>
+              <div class="project-pricing-card">
+                <h4>10-day project posting</h4>
+                <h2 class="brand-bold">$150/posting</h2>
+                {% if request.user.is_authenticated %}
+                  <a href="/project/create/p2p-10/" class="btn btn-brand btn-brand--attn">Post 10-day project</a>
+                {% else %}
+                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
+                {% endif %}
               </div>
               <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
+            </div>
+            <div class="project-pricing-points">
+              <h3>All project postings include:</h3>
+              <ul>
+                <li>freelancer matching</li>
+                <li>unlimited proposals</li>
+              </ul>
+              <ul>
+                <li>unlimited file sharing</li>
+                <li>freelancer messaging</li>
+              </ul>
+              <ul>
+                <li>easy work payments</li>
+                <li>no processing fees</li>
+              </ul>
             </div>
           </div>
         </div>
