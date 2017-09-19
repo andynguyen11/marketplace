@@ -34,6 +34,7 @@ def project_in_review(project_id):
 def project_posted(project_id):
     """
     Dispatches project posted notification to admin
+    Creates preauth charge for project posting
 
     :param project_id:
 
