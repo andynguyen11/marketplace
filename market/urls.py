@@ -95,6 +95,7 @@ urlpatterns = [
     url(r'^project/pricing/', TemplateView.as_view(template_name='spa.html'), name='project-pricing'),
     url(r'^project/create/', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit/', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
+    url(r'^project/(?P<project_slug>[-\w]+)', TemplateView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/(?P<project_slug>[-\w]+)/renewal/?$', TemplateView.as_view(template_name='spa.html'), name='project-renewal'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal'),

@@ -50,9 +50,9 @@ def password_updated(user_id):
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
-    start_week = end_week.subtract(days=7)
+    start_week = end_week.subtract(days=14)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-    projects = SearchQuerySet().filter(**week_date_created).models(Project)
+    projects = SearchQuerySet().filter(**week_date_created).models(Project).order_by('-date_created')
     if projects:
         user_list = {}
         for project in projects:
@@ -75,6 +75,7 @@ def freelancer_project_matching():
                     user_list[user.email]['projects'] = [project, ]
                 else:
                     user_list[user.email]['projects'].append(project)
+
         for key, value in user_list.items():
             context={
                 'fname': value['user'].first_name,
