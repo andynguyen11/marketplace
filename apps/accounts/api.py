@@ -266,7 +266,7 @@ class ProfileSearchViewSet(HaystackViewSet):
     * `foo+bar #=> foo AND bar`
     * `foo,bar #=> foo OR bar`
 
-    example search: [?featured=true&type=technology,finance&text=titleword+descriptionword](http://localhost:8000/api/search/project?featured=true&type=technology,finance&text=titleword+descriptionword)
+    example search: [?text=python&city=austin&state=texas&country=)
 
 
     """

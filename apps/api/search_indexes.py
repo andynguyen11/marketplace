@@ -55,6 +55,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
 
 class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
+    text = indexes.CharField(document=True, use_template=True)
     skills = indexes.MultiValueField(boost=2)
     roles = indexes.MultiValueField(boost=2)
     photo = indexes.CharField()
@@ -82,4 +83,4 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Profile
         fields = ("id", "first_name", "last_name", "email", "location", "photo",
                   "roles", "skills", "email_notifications", "city", "state", "country",
-                  "long_description", "job_descriptions", "job_titles", )
+                  "long_description", "job_descriptions", "job_titles", "text", )
