@@ -55,12 +55,17 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
 
 class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    skills = indexes.MultiValueField()
-    roles = indexes.MultiValueField()
+    skills = indexes.MultiValueField(boost=2)
+    roles = indexes.MultiValueField(boost=2)
     photo = indexes.CharField()
+    job_descriptions = indexes.MultiValueField()
+    job_titles = indexes.MultiValueField()
 
     def prepare(self, obj):
         self.prepared_data = super(UserIndex, self).prepare(obj)
+        jobs = obj.employee_set.all()
+        self.prepared_data['job_descriptions'] = [job.description for job in jobs]
+        self.prepared_data['job_titles'] = [job.title for job in jobs]
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
         self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
@@ -75,4 +80,6 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
     class Meta:
         model = Profile
-        fields = ("id", "first_name", "last_name", "email", "location", "photo", "roles", "skills", "email_notifications", )
+        fields = ("id", "first_name", "last_name", "email", "location", "photo",
+                  "roles", "skills", "email_notifications", "city", "state", "country",
+                  "long_description", "job_descriptions", "job_titles", )

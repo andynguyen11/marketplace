@@ -4,7 +4,7 @@ from django.conf.urls import include, patterns, url
 from rest_framework_nested import routers
 from rest_framework_jwt.views import refresh_jwt_token
 
-from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate
+from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate, ProfileSearchViewSet
 from business.api import *
 from payment.api import StripePaymentSourceView, PromoCheck, InvoiceViewSet, InvoiceRecipientsView, StripeConnectViewSet, StripeWebhookView, InvoicePaymentViewset
 from product.api import OrderViewSet
@@ -52,6 +52,10 @@ declared_router = DeclarativeRouter({
     'search/project': {
         'view': ProjectSearchViewSet,
         'base_name': 'project-search',
+    },
+    'search/profile': {
+        'view': ProfileSearchViewSet,
+        'base_name': 'profile-search',
     },
     'skills': {
         'view': SkillViewSet,

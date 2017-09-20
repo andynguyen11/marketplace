@@ -2,20 +2,22 @@ from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
+from drf_haystack.viewsets import HaystackViewSet
+from drf_haystack.filters import HaystackFilter
 from notifications.models import Notification
-from rest_condition import Not
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.decorators import permission_classes, list_route, detail_route
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
 from accounts.tasks import email_confirmation
 from business.models import Project
-from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer
+from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, ProfileSearchSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
@@ -249,3 +251,25 @@ class NotificationUpdate(generics.UpdateAPIView):
             return Response(serializer.data)
         else:
             return Response(status=403)
+
+
+#TODO Redundant with project search
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12
+
+
+class ProfileSearchViewSet(HaystackViewSet):
+    """
+    supports [drf-haystack queries](https://drf-haystack.readthedocs.io/en/latest/01_intro.html#query-time):
+    url encoding in general
+
+    * `foo+bar #=> foo AND bar`
+    * `foo,bar #=> foo OR bar`
+
+    example search: [?featured=true&type=technology,finance&text=titleword+descriptionword](http://localhost:8000/api/search/project?featured=true&type=technology,finance&text=titleword+descriptionword)
+
+
+    """
+    index_models = [Profile]
+    serializer_class = ProfileSearchSerializer
+    pagination_class = StandardResultsSetPagination
