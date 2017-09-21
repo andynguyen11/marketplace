@@ -61,6 +61,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     photo = indexes.CharField()
     job_descriptions = indexes.MultiValueField()
     job_titles = indexes.MultiValueField()
+    profile_id = indexes.IntegerField()
 
     def prepare(self, obj):
         self.prepared_data = super(UserIndex, self).prepare(obj)
@@ -70,6 +71,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
         self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
+        self.prepared_data['profile_id'] = obj.pk
         return self.prepared_data
 
     def index_queryset(self, using=None):
@@ -81,6 +83,6 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
     class Meta:
         model = Profile
-        fields = ("id", "first_name", "last_name", "email", "location", "photo",
+        fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
                   "roles", "skills", "email_notifications", "city", "state", "country",
                   "long_description", "job_descriptions", "job_titles", "text", )
