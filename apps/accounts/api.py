@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
+from accounts.permissions import IsSubscribed
 from accounts.tasks import email_confirmation
 from business.models import Project
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, ProfileSearchSerializer
@@ -273,3 +274,4 @@ class ProfileSearchViewSet(HaystackViewSet):
     index_models = [Profile]
     serializer_class = ProfileSearchSerializer
     pagination_class = StandardResultsSetPagination
+    permission_classes = [IsAuthenticated, IsSubscribed]
