@@ -6,8 +6,8 @@ from rest_framework_jwt.views import refresh_jwt_token
 
 from accounts.api import ProfileViewSet, ContactDetailsViewSet, SkillViewSet, SkillTestViewSet, VerificationTestViewSet, NotificationUpdate, ProfileSearchViewSet
 from business.api import *
-from payment.api import StripePaymentSourceView, PromoCheck, InvoiceViewSet, InvoiceRecipientsView, StripeConnectViewSet, StripeWebhookView, InvoicePaymentViewset
-from product.api import OrderViewSet
+from payment.api import StripePaymentSourceView, InvoiceViewSet, InvoiceRecipientsView, StripeConnectViewSet, StripeWebhookView, InvoicePaymentViewset
+from product.api import OrderViewSet, PromoCheck
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
 from postman.api import ConversationDetail, MessageAPI, MessageCount
@@ -85,6 +85,7 @@ urlpatterns = [
     url(r'^nda/(?P<pk>[0-9]+)/$', view=NDAUpdate.as_view(), name='nda-update'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
     url(r'^paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
+    url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^questions/$', view=QuestionViewSet.as_view({
         'post': 'create',
         'patch': 'partial_update'

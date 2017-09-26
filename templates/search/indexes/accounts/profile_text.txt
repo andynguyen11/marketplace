@@ -12,7 +12,7 @@
 {% endif %}
 {% if object.roles %}
     {% for role in object.roles.all %}
-        {{ role }}
+        {{ role.name }}
     {% endfor %}
 {% endif %}
 {% if object.skills %}

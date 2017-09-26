@@ -91,6 +91,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(status=403)
 
+    def update(self, request, *args, **kwargs):
+        # preauth if not approved but published and not published before
+        # pull promo code to pass to preauth
+        published = request.data.get('published', False)
+        promo = request.data.get('promo', None)
+        project = Project.objects.get(id=request.data['id'])
+        if published and not project.published and not project.approved:
+            project.preauth( promo=promo)
+        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
         project = self.get_object()

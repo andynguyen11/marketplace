@@ -179,28 +179,25 @@ class Project(models.Model):
         self.slug = slugify(self.title)
         super(Project, self).save(*args, **kwargs)
 
-    def preauth(self):
+    def preauth(self, promo=None):
         today = datetime.now().date()
         if not self.expire_date or self.expire_date <= today:
             product = Product.objects.get(sku=self.sku)
             try:
                 order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
             except Order.DoesNotExist:
-                charge = stripe.Charge.create(
-                    amount = product.price,
-                    customer = self.project_manager.stripe,
-                    description = product.description,
-                    currency = 'usd',
-                    capture = False
-                )
+                if promo:
+                    promo = Promo.objects.get(code=promo)
                 order = Order(
                     content_object = self,
                     product = product,
                     stripe_charge = charge.id,
                     user = self.project_manager,
-                    status = 'preauth'
+                    status = 'preauth',
+                    promo = promo
                 )
-            order.save()
+                order.save()
+                order.charge()
             return order
         return None
 

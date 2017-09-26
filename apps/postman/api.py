@@ -23,7 +23,6 @@ from business.models import Project
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
-from payment.models import Promo
 from postman.models import Message, AttachmentInteraction, Interaction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
 from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction

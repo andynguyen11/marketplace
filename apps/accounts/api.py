@@ -269,7 +269,6 @@ class ProfileSearchViewSet(HaystackViewSet):
 
     example search: [?text=python&city=austin&state=texas&country=)
 
-
     """
     index_models = [Profile]
     serializer_class = ProfileSearchSerializer
