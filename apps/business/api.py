@@ -98,7 +98,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         promo = request.data.get('promo', None)
         project = self.get_object()
         if published and not project.published and not project.approved:
-            project.preauth( promo=promo)
+            project.preauth(promo=promo)
         return super(ProjectViewSet, self).update(request, *args, **kwargs)
 
     @detail_route(methods=['POST'])

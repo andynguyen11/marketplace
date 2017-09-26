@@ -61,7 +61,7 @@ class Promo(models.Model):
     def apply_to(self, amount):
         amount = Decimal(amount)
         if self.cents_off:
-            amount = amount - self.cents_off
+            amount = ((amount*100) - self.cents_off)/100
         elif self.percent_off:
             amount = percentage(base=amount, percent=self.percent_off, operation='removed')
         return amount if amount > 0 else 0.00
