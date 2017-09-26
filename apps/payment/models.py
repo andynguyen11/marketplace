@@ -1,7 +1,5 @@
 import stripe
 import uuid
-from datetime import datetime, date
-from decimal import Decimal
 
 from django.db import models
 from django.db.models.signals import pre_save
@@ -13,7 +11,6 @@ from django.dispatch import receiver
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from generics.utils import percentage
 from payment.helpers import stripe_helpers
 from payment.enums import EU_ISO
 from payment.tasks import invoice_notification_email, payment_notification_email

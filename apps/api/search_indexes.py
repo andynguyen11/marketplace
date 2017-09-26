@@ -79,7 +79,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
             tos=True,
             is_active=True,
             email_confirmed=True
-        ).exclude(roles_set=None)
+        ).exclude(roles=None)
 
     class Meta:
         model = Profile

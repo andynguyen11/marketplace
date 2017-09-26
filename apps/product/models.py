@@ -1,15 +1,20 @@
+from datetime import date
+from decimal import Decimal
+
 import stripe
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from generics.utils import percentage
+
 
 stripe.api_key = settings.STRIPE_KEY
 
 def get_promo(code):
     try:
-        return Promo.objects.get(code=code)
+        return Promo.objects.get(code=code.lower())
     except Promo.DoesNotExist:
         return None
 
@@ -25,7 +30,7 @@ class Promo(models.Model):
 
     @property
     def value_off(self):
-        return str(self.percent_off) + '%' if self.percent_off else '$' + str(self.dollars_off)
+        return str(self.percent_off) + '%' if self.percent_off else '$' + str(self.cents_off)
 
     def __str__(self):
         return self.code

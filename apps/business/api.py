@@ -96,7 +96,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         # pull promo code to pass to preauth
         published = request.data.get('published', False)
         promo = request.data.get('promo', None)
-        project = Project.objects.get(id=request.data['id'])
+        project = self.get_object()
         if published and not project.published and not project.approved:
             project.preauth( promo=promo)
         return super(ProjectViewSet, self).update(request, *args, **kwargs)

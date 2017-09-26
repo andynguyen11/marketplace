@@ -85,7 +85,7 @@ urlpatterns = [
     url(r'^nda/(?P<pk>[0-9]+)/$', view=NDAUpdate.as_view(), name='nda-update'),
     url(r'^notifications/(?P<pk>[0-9]+)/$', view=NotificationUpdate.as_view(), name='notification-update'),
     url(r'^paymentsource/$', view=StripePaymentSourceView.as_view(), name='paymentsource'),
-    url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
+    url(r'^promo/?$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^questions/$', view=QuestionViewSet.as_view({
         'post': 'create',
         'patch': 'partial_update'
