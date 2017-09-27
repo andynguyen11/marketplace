@@ -55,24 +55,30 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
 
 
 class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
-    skills = indexes.MultiValueField()
-    roles = indexes.MultiValueField()
+    text = indexes.CharField(document=True, use_template=True)
+    skills = indexes.MultiValueField(boost=2)
+    roles = indexes.MultiValueField(boost=2)
     photo = indexes.CharField()
+    job_descriptions = indexes.MultiValueField()
+    job_titles = indexes.MultiValueField()
+    profile_id = indexes.IntegerField()
 
     def prepare(self, obj):
         self.prepared_data = super(UserIndex, self).prepare(obj)
+        jobs = obj.employee_set.all()
+        self.prepared_data['job_descriptions'] = [job.description for job in jobs]
+        self.prepared_data['job_titles'] = [job.title for job in jobs]
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
         self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
+        self.prepared_data['profile_id'] = obj.pk
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.filter(
-            tos=True,
-            is_active=True,
-            email_confirmed=True
-        )
+        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(roles__isnull=True)
 
     class Meta:
         model = Profile
-        fields = ("id", "first_name", "last_name", "email", "location", "photo", "roles", "skills", "email_notifications", )
+        fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
+                  "roles", "skills", "email_notifications", "city", "state", "country",
+                  "long_description", "job_descriptions", "job_titles", "text", )

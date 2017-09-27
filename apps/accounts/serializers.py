@@ -5,9 +5,11 @@ from html_json_forms.serializers import JSONFormSerializer
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from drf_haystack.serializers import HaystackSerializer
 from notifications.models import Notification
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest, Role
+from apps.api.search_indexes import UserIndex
 from business.models import Employee
 from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
@@ -231,3 +233,15 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ('unread', )
+
+
+class ProfileSearchSerializer(HaystackSerializer):
+
+    class Meta:
+        index_classes = [UserIndex]
+        fields = [
+            "profile_id", "first_name", "location", "photo",
+            "roles", "skills", "email_notifications", "city", "state", "country",
+            "long_description", "job_descriptions", "job_titles",
+        ]
+        ignore_fields = ["text", "job_descriptions", "job_titles", ]

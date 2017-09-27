@@ -19,7 +19,7 @@ from django.conf import settings
 
 from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
-from payment.models import Promo, get_promo, Invoice, InvoiceItem
+from payment.models import Invoice, InvoiceItem
 from payment.helpers import stripe_helpers
 from payment.permissions import InvoicePermissions
 from payment.serializers import InvoiceSerializer, StripeJSONSerializer, StripeWebhookSerializer
@@ -89,27 +89,6 @@ class StripePaymentSourceView(APIView):
             err  = body['error']
             return Response(status=400, data={'error':err['message']})
         return Response(status=200, data=cards)
-
-#refactor
-class PromoCheck(APIView):
-    " Simple Promo checking view "
-    permission_classes = (IsAuthenticated, )
-
-    def get(self, request, code=None):
-        promo = get_promo(code or request.query_params.get('code', None))
-        if not promo:
-            return Response(status=400, data='This promo code is invalid.')
-
-        if promo.is_valid_for(request.user):
-            if promo.not_expired():
-                return Response(status=200, data={'is_valid': True, 'value': promo.value_off})
-            else:
-                return Response(status=400, data='This promo code has expired.')
-        else:
-            return Response(status=400, data='This promo code has already been used.')
-
-    def post(self, request):
-        return self.get(request, code=request.data.get('promo', None))
 
 
 class InvoiceViewSet(ModelViewSet):

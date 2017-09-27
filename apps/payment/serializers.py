@@ -8,7 +8,7 @@ from accounts.models import Profile
 from accounts.serializers import ObfuscatedProfileSerializer
 from generics.serializers import JSONSerializerField
 from payment.helpers import stripe_helpers
-from payment.models import Promo, Invoice, InvoiceItem
+from payment.models import Invoice, InvoiceItem
 
 
 class InvoiceItemSerializer(serializers.ModelSerializer):

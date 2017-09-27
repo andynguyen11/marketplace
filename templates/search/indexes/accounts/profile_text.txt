@@ -1,1 +1,32 @@
-{{ object.id }}
+{% if object.city %}
+    {{ object.city }}
+{% endif %}
+{% if object.state %}
+    {{ object.state }}
+{% endif %}
+{% if object.country %}
+    {{ object.country }}
+{% endif %}
+{% if object.long_description %}
+    {{ object.long_description }}
+{% endif %}
+{% if object.roles %}
+    {% for role in object.roles.all %}
+        {{ role.name }}
+    {% endfor %}
+{% endif %}
+{% if object.skills %}
+    {% for skill in object.skills.all %}
+        {{ skill }}
+    {% endfor %}
+{% endif %}
+{% if object.job_descriptions.all %}
+    {% for description in object.job_descriptions %}
+        {{ description }}
+    {% endfor %}
+{% endif %}
+{% if object.job_titles.all %}
+    {% for title in object.job_titles %}
+        {{ title }}
+    {% endfor %}
+{% endif %}

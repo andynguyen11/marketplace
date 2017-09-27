@@ -8,6 +8,7 @@ from rest_framework_jwt.compat import get_username, get_username_field
 from rest_framework_jwt.settings import api_settings
 
 from accounts.serializers import ProfileSerializer
+from business.models import Project
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -50,6 +51,8 @@ def jwt_payload_handler(user):
         'last_name': user.last_name,
         'email_confirmed': user.email_confirmed,
         'tos': user.tos,
+        #TODO subscribed flag hits db every time, refactor later
+        'subscribed': True if Project.objects.filter(project_manager=user, status='active') else False,
         'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
     }
     if isinstance(user.pk, uuid.UUID):

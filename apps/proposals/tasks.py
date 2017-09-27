@@ -30,6 +30,7 @@ def proposal_received_email(proposal_id):
 @shared_task
 def proposal_reminder(project_id):
     project = Project.objects.get(id=project_id)
-    proposals = Proposal.objects.filter(project__project_manager=project.project_manager, status='pending')
-    if proposals:
-        send_mail('pending-proposals', [project.project_manager], context={})
+    if project.published:
+        proposals = Proposal.objects.filter(project__project_manager=project.project_manager, status='pending')
+        if proposals:
+            send_mail('pending-proposals', [project.project_manager], context={})
