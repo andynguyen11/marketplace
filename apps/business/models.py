@@ -187,7 +187,7 @@ class Project(models.Model):
                 order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
             except Order.DoesNotExist:
                 if promo:
-                    promo = Promo.objects.get(code=promo)
+                    promo = Promo.objects.get(code=promo.lower())
                 order = Order(
                     content_object = self,
                     product = product,
