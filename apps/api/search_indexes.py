@@ -75,11 +75,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.filter(
-            tos=True,
-            is_active=True,
-            email_confirmed=True
-        ).exclude(roles=None)
+        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(roles__isnull=True)
 
     class Meta:
         model = Profile

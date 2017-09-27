@@ -15,7 +15,7 @@ from accounts.enums import ROLE_TYPES
 from business.enums import *
 from generics.models import Attachment
 from generics.utils import send_mail
-from product.models import Product, Order
+from product.models import Product, Order, Promo
 from postman.models import Message
 
 
@@ -191,7 +191,6 @@ class Project(models.Model):
                 order = Order(
                     content_object = self,
                     product = product,
-                    stripe_charge = charge.id,
                     user = self.project_manager,
                     status = 'preauth',
                     promo = promo

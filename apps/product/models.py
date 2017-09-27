@@ -88,17 +88,20 @@ class Order(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     promo = models.ForeignKey('product.Promo', blank=True, null=True)
+    amount_charged = models.IntegerField(blank=True, null=True)
 
     def charge(self, capture=False):
         price = self.product.price - self.promo.apply_to(self.product.price) if self.promo else self.product.price
         charge = stripe.Charge.create(
-                    amount = price,
+                    amount = int(price),
                     customer = self.user.stripe,
                     description = self.product.description,
                     currency = 'usd',
                     capture = capture
                 )
         self.stripe_charge = charge.id
+        if self.promo:
+            self.promo.mark_used_by(self.user)
         self.save()
         return charge
 
@@ -108,6 +111,7 @@ class Order(models.Model):
             self.card_type = charge.source.brand
             self.card_last_4 = charge.source.last4
             self.status = 'active'
+            self.amount_charged = charge.amount
             self.save()
             return charge.capture()
         except stripe.error.CardError as e:

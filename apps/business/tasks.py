@@ -78,5 +78,5 @@ def project_approved_email(project_id):
         'card_type': order.card_type,
         'card_last_4': order.card_last_4,
         'description': order.product.name,
-        'price': order.product.price / float(100)
+        'price': order.amount_charged / float(100)
     })
