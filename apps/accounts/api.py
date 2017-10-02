@@ -170,19 +170,6 @@ class ProfileViewSet(ModelViewSet):
                     t['results'] = [{'result': 'INPROGRESS'}]
         return Response(summary)
 
-    @list_route(methods=['get'], url_path="connections")
-    def connections(self, request, *args, **kwargs):
-        user = request.user
-        connections = ProfileSerializer(user.connections, context={'request': request}, many=True).data
-        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country', 'contact_details' ]
-        return Response([
-            { k: v for k, v in connection.items() if k in fields }
-            for connection in connections ])
-
-    @detail_route(methods=['get'], url_path="connections")
-    def _connections(self, request, *args, **kwargs):
-        return self.connections(request, *args, **kwargs)
-
     @detail_route(methods=['get'])
     def send_confirmation_email(self, request, *args, **kwargs):
         user = self.get_object()
@@ -208,6 +195,19 @@ class ProfileViewSet(ModelViewSet):
         elif (not profile.roles): # is entrepreneur
             return HttpResponseRedirect(request.query_params.get('next', '/onboard/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
+
+    @detail_route(methods=['POST'])
+    def invite(self, request, *args, **kwargs):
+        # if already invited or new project
+        # invite only relevant project
+        # expired vs new project
+        profile = self.get_object()
+        if request.user.subscribed:
+            profile.invite(sender=request.user)
+            return Response(status=201)
+        else:
+            return Response(status=403)
+
 
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()

@@ -7,7 +7,4 @@ from business.models import Project
 class IsSubscribed(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        active_projects = Project.objects.filter(project_manager=request.user, status='active')
-        if active_projects:
-            return True
-        return False
+        return request.user.subscribed

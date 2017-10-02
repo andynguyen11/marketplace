@@ -10,7 +10,7 @@ from notifications.models import Notification
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest, Role
 from apps.api.search_indexes import UserIndex
-from business.models import Employee
+from business.models import Employee, Invite
 from business.serializers import EmployeeSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from expertratings.models import SkillTest as ERSkillTest
@@ -100,8 +100,8 @@ class ProfileSerializer(serializers.ModelSerializer):
     skills_test = serializers.SerializerMethodField()
     work_history = serializers.SerializerMethodField()
     work_examples = serializers.SerializerMethodField()
-    is_connected = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
+    invited = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -112,10 +112,17 @@ class ProfileSerializer(serializers.ModelSerializer):
                 'title', 'roles', 'biography', 'capacity',
                 'work_history', 'work_examples', 'long_description',
                 'photo_url', 'photo' 'featured', 'skills', 'id',
-                'my_skills', 'skills_test', 'is_connected')
+                'my_skills', 'skills_test', 'invited')
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
         }
+
+    def get_invited(self, obj):
+        try:
+            invited = Invite.objects.get(recipient=obj, sender=self.context['request'].user)
+        except Invite.DoesNotExist:
+            invited = False
+        return True
 
     def get_photo_url(self, obj):
         return obj.get_photo
@@ -157,13 +164,6 @@ class ProfileSerializer(serializers.ModelSerializer):
             details = ContactDetailsSerializer(obj.contact_details).data
             details.pop('profile')
             return details
-
-    def get_is_connected(self, obj):
-        request = self.context.get('request', None)
-        user = request.user if request else None
-        if not user or not user.is_authenticated():
-            return False
-        return bool(user and len(user.connections.filter(id=obj.id)))
 
     def update_roles(self, roles, instance):
         instance.roles.clear()
