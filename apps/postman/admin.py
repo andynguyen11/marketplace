@@ -11,7 +11,7 @@ class MessageAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         qs = super(MessageAdmin, self).get_queryset(request)
-        return qs.filter(id=F('thread'))
+        return qs.filter(id=F('thread')).exclude(body__exact='')
 
     def change_view(self, request, object_id, form_url='', extra_context=None):
         to_field = request.GET.get('_to_field')
