@@ -118,11 +118,13 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def get_invited(self, obj):
-        try:
-            invited = Invite.objects.get(recipient=obj, sender=self.context['request'].user)
-        except Invite.DoesNotExist:
-            invited = False
-        return True
+        if self.context['request'].user.is_authenticated():
+            try:
+                invited = Invite.objects.get(recipient=obj, sender=self.context['request'].user)
+                return True
+            except Invite.DoesNotExist:
+                return False
+        return False
 
     def get_photo_url(self, obj):
         return obj.get_photo
