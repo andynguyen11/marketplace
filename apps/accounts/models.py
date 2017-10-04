@@ -9,6 +9,7 @@ import tagulous.models
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.contenttypes.fields import GenericRelation
 from django.utils.deconstruct import deconstructible
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
@@ -181,6 +182,7 @@ class Profile(AbstractUser):
     email_confirmed = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     tos = models.BooleanField(default=False)
+    work_examples = GenericRelation('generics.Attachment')
 
     @property
     def name(self):
@@ -246,7 +248,7 @@ class Profile(AbstractUser):
     @property
     def subscribed(self):
         active_projects = Project.objects.filter(project_manager=self, status='active')
-        if active_projects:
+        if len(active_projects) > 0:
             return True
         return False
 

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models import Count
 from django.template.defaultfilters import truncatechars
 from haystack import indexes
 
@@ -75,7 +76,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(roles__isnull=True)
+        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None, long_description=None)
 
     class Meta:
         model = Profile

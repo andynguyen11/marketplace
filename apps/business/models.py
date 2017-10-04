@@ -23,7 +23,7 @@ stripe.api_key = settings.STRIPE_KEY
 
 class Employee(models.Model):
     company = models.ForeignKey('business.Company')
-    profile = models.ForeignKey('accounts.Profile')
+    profile = models.ForeignKey('accounts.Profile', related_name='employee')
     primary = models.BooleanField(default=False)
     title = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)

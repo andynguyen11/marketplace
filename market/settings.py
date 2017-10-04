@@ -75,7 +75,6 @@ INSTALLED_APPS = (
     'accounts',
     'business',
     'api',
-    'docusign',
     'expertratings',
     'payment',
     'postman',
@@ -387,14 +386,6 @@ def prefixed_env_var_getter(prefix):
 
 SYNC_RECORD_DELTA = datetime.timedelta(1)
 
-docusign_ = prefixed_env_var_getter('DOCUSIGN')
-DOCUSIGN = {
-    'root_url': docusign_('ROOT_URL', 'https://demo.docusign.net/restapi/v2'),
-    'integrator_key': docusign_('API_KEY'),
-    'username': docusign_('USERNAME'),
-    'password': docusign_('PASSWORD')
-}
-
 expert_rating_ = prefixed_env_var_getter('EXPERT_RATING') 
 EXPERT_RATING = {
     'root_url': expert_rating_('ROOT_URL', 'http://www.expertrating.com/loom/webservices'),
@@ -412,8 +403,6 @@ FILE_CONTENT_TYPES = security_settings.FILE_CONTENT_TYPES
 LOOM_FEE = .1
 
 UNCONNECTED_THREAD_REPLY_LIMIT = 5
-
-DOCUSIGN_TEMPLATE_ID = os.environ.get('DOCUSIGN_TEMPLATE_ID', '054c2981-9e38-42ac-8451-f8b43230ccea')
 
 CORS_ORIGIN_WHITELIST = (
     'www.loom.co',

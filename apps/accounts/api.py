@@ -196,7 +196,7 @@ class ProfileViewSet(ModelViewSet):
             return HttpResponseRedirect(request.query_params.get('next', '/onboard/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
 
-    @detail_route(methods=['POST'])
+    @detail_route(methods=['POST'], permission_classes=[IsAuthenticated],)
     def invite(self, request, *args, **kwargs):
         # if already invited or new project
         # invite only relevant project

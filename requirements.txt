@@ -74,7 +74,6 @@ pyOpenSSL==16.0.0
 pyasn1==0.1.9
 pycparser==2.14
 pycurl==7.43.0
-pydocusign==0.13.1
 python-dateutil==2.5.1
 python-magic==0.4.12
 python-openid==2.2.5

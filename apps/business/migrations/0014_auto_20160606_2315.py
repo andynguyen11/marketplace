@@ -11,7 +11,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('docusign', '__first__'),
         ('business', '0013_auto_20160606_2054'),
     ]
 
@@ -46,10 +45,5 @@ class Migration(migrations.Migration):
             model_name='documentsigner',
             name='profile',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='documentsigner',
-            name='role',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='docusign.DocumentTemplateRole'),
         ),
     ]
