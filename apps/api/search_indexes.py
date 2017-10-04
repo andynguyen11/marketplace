@@ -76,7 +76,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None, long_description=None)
+        return Profile.objects.annotate(examples=Count('work_examples')).filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None, long_description=None).order_by('-examples')
 
     class Meta:
         model = Profile
