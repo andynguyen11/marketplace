@@ -4,9 +4,7 @@ from haystack.backends.elasticsearch_backend import ElasticsearchSearchEngine
 from elasticsearch.exceptions import ConnectionError
 
 def expand_query(query_string):
-    return query_string\
-            .replace('\/','/')\
-            .replace('\\\\\~','~2')
+    return query_string.replace('\/','/').replace('\\\\\~','~2')
 
 def mute_error(f):      
     def error_wrapper(*args, **kwargs):  
@@ -23,7 +21,6 @@ def mute_error(f):
 class FuzzyBackend(ElasticsearchSearchBackend):
     def build_search_kwargs(self, query_string, **kwargs):
         query_string = expand_query(query_string)
-        print query_string, kwargs
         search_kwargs = super(FuzzyBackend, self).build_search_kwargs(
                 query_string, **kwargs)
         return search_kwargs

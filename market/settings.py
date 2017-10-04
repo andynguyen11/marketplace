@@ -352,7 +352,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 ES_ENDPOINTS = {
-    'local': 'http://127.0.0.1:9200/',
+    'local': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
     'dev': 'https://search-loom-dev-lydon2zaqlaojkniwkudkhbjou.us-west-2.es.amazonaws.com/',
     'prod': 'https://search-loom-prod-o62javcxrwn3zwyfgslhjfp5ri.us-west-2.es.amazonaws.com/'
 }

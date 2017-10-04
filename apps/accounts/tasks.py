@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.utils.http import urlencode
 from haystack.query import SearchQuerySet
 
-from accounts.models import Profile
+from accounts.models import Profile, Role
 from business.models import Project
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token, calculate_date_ranges
 from generics.tasks import queue_mail
@@ -46,6 +46,35 @@ def email_confirmation(user, instance=None, email_field='email', template='verif
 def password_updated(user_id):
     user = Profile.objects.get(id=user_id)
     send_mail('password-updated', [user], context={})
+
+@shared_task
+def project_invite(sender_id, recipient_id):
+    recipient = Profile.objects.get(id=recipient_id)
+    sender = Profile.objects.get(id=sender_id)
+    projects = Project.objects.filter(project_manager=sender, status='active')
+    discipline_list = [role.category for role in recipient.roles.all()]
+    if not discipline_list:
+        return False
+    project_list = [project for project in projects if project.category in discipline_list]
+    if not project_list:
+        project_list = [project for project in projects]
+    context = {
+        'talent': recipient.first_name,
+        'employer': sender.name,
+        'projects': []
+    }
+    for project in project_list:
+        skills = [skill.name for skill in project.skills.all()]
+        project = {
+                'project_title': project.title,
+                'description': project.scope,
+                'skills': ', '.join(skills),
+                'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
+            }
+        context['projects'].append(project)
+    template = 'project-invite' if len(project_list) == 1 else 'projects-invite'
+    queue_mail.delay(template, recipient.pk, context, 'handlebars')
+
 
 @celery_app.task
 def freelancer_project_matching():

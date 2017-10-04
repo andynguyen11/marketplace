@@ -63,6 +63,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     job_descriptions = indexes.MultiValueField()
     job_titles = indexes.MultiValueField()
     profile_id = indexes.IntegerField()
+    examples = indexes.IntegerField()
 
     def prepare(self, obj):
         self.prepared_data = super(UserIndex, self).prepare(obj)
@@ -73,13 +74,14 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
         self.prepared_data['profile_id'] = obj.pk
+        self.prepared_data['examples'] = len(obj.work_examples.all())
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.annotate(examples=Count('work_examples')).filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None, long_description=None).order_by('-examples')
+        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(long_description=None)
 
     class Meta:
         model = Profile
         fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
                   "roles", "skills", "email_notifications", "city", "state", "country",
-                  "long_description", "job_descriptions", "job_titles", "text", )
+                  "long_description", "job_descriptions", "job_titles", "text", "examples", )

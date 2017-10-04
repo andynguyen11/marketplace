@@ -1,5 +1,6 @@
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
+from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from drf_haystack.viewsets import HaystackViewSet
@@ -16,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
 from accounts.permissions import IsSubscribed
-from accounts.tasks import email_confirmation
+from accounts.tasks import email_confirmation, project_invite
 from business.models import Project
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, ProfileSearchSerializer
 from apps.api.utils import set_jwt_token
@@ -204,6 +205,7 @@ class ProfileViewSet(ModelViewSet):
         profile = self.get_object()
         if request.user.subscribed:
             profile.invite(sender=request.user)
+            project_invite.delay(request.user.id, profile.id)
             return Response(status=201)
         else:
             return Response(status=403)
@@ -273,4 +275,23 @@ class ProfileSearchViewSet(HaystackViewSet):
     index_models = [Profile]
     serializer_class = ProfileSearchSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [IsAuthenticated, IsSubscribed]
+    permission_classes = [IsAuthenticated, IsSubscribed, IsAdminUser]
+
+    def get_queryset(self, index_models=[]):
+        """
+        Get the list of items for this view.
+        Returns ``self.queryset`` if defined and is a ``self.object_class``
+        instance.
+
+        @:param index_models: override `self.index_models`
+        """
+        if self.queryset is not None and isinstance(self.queryset, self.object_class):
+            queryset = self.queryset.all()
+        else:
+            queryset = self.object_class()._clone()
+            if len(index_models):
+                queryset = queryset.models(*index_models)
+            elif len(self.index_models):
+                queryset = queryset.models(*self.index_models)
+        #queryset = queryset.order_by('-examples', 'score')
+        return queryset
