@@ -17,7 +17,7 @@
 
 <!-- Nav tabs -->
 <ul class="nav nav-tabs how-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#how-entrepreneurs" aria-controls="how-entrepreneurs" role="tab" data-toggle="tab">I'm hiring freelancers</a></li>
+  <li role="presentation" class="active"><a href="#how-entrepreneurs" aria-controls="how-entrepreneurs" role="tab" data-toggle="tab">I'm an employer</a></li>
   <li role="presentation"><a href="#how-freelancers" aria-controls="how-freelancers" role="tab" data-toggle="tab">I'm a freelancer</a></li>
 </ul>
 
@@ -30,8 +30,8 @@
         <div class="how-tile-content">
           <h3 class="brand">Find top designers &amp; developers</h3>
           <p>Sign up and get started by posting a project.</p>
-          <p>Describe your project and specify the skills you're looking for in a freelancer.</p>
           <p>We recommend your project to freelancers with skills that match your project's needs.</p>
+          <p>Search the Loom talent database and invite freelancers to your project.</p>
         </div>
         <div class="how-tile-image how-tile-image--post">
           <img src="/static/images/Post-Project-Illustration.png" alt="">
@@ -68,8 +68,8 @@
         <div class="page-content">
           <div class="how-pricing-header how-pricing-entreprenuer">
             <h2 class="brand">Pricing for employers</h2>
-            <h3>Pay a flat fee to post your project and reach thousands of talented creators</h3>
-            <h4>Bonus: your posting fee is refunded when you hire and pay your freelancer through Loom</h4>
+            <h3>Pay a flat fee to post your project and access Loom's freelancer search.</h3>
+            <h4>Bonus: your posting fee is refunded when you pay any freelancer through Loom.</h4>
           </div>
           <div class="page-content--medium">
             <div class="project-pricing-cards">
@@ -77,7 +77,7 @@
                 <h4>60-day project posting</h4>
                 <h2 class="brand-bold">$300/posting</h2>
                 {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-60/" class="btn btn-brand btn-brand--attn">Post 60-day project</a>
+                  <a href="/project/create/p2p-60/" class="btn btn-brand btn-brand--attn">Get started</a>
                 {% else %}
                   <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
                 {% endif %}
@@ -87,7 +87,7 @@
                 <h4>30-day project posting</h4>
                 <h2 class="brand-bold">$200/posting</h2>
                 {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-30/" class="btn btn-brand btn-brand--attn">Post 30-day project</a>
+                  <a href="/project/create/p2p-30/" class="btn btn-brand btn-brand--attn">Get started</a>
                 {% else %}
                   <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
                 {% endif %}
@@ -96,7 +96,7 @@
                 <h4>10-day project posting</h4>
                 <h2 class="brand-bold">$150/posting</h2>
                 {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-10/" class="btn btn-brand btn-brand--attn">Post 10-day project</a>
+                  <a href="/project/create/p2p-10/" class="btn btn-brand btn-brand--attn">Get started</a>
                 {% else %}
                   <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
                 {% endif %}
@@ -107,12 +107,8 @@
               <ul>
                 <li>freelancer matching</li>
                 <li>unlimited proposals</li>
-              </ul>
-              <ul>
-                <li>unlimited file sharing</li>
+                <li>freelancer search</li>
                 <li>freelancer messaging</li>
-              </ul>
-              <ul>
                 <li>easy work payments</li>
                 <li>no processing fees</li>
               </ul>
