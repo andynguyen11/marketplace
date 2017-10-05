@@ -78,10 +78,10 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         return self.prepared_data
 
     def index_queryset(self, using=None):
-        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(long_description=None)
+        return Profile.objects.filter(tos=True, is_active=True, email_confirmed=True).exclude(roles=None).exclude(long_description=None).exclude(skills=None)
 
     class Meta:
         model = Profile
         fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
                   "roles", "skills", "email_notifications", "city", "state", "country",
-                  "long_description", "job_descriptions", "job_titles", "text", "examples", )
+                  "long_description", "job_descriptions", "job_titles", "featured", "text", "examples", )

@@ -7,4 +7,4 @@ from business.models import Project
 class IsSubscribed(permissions.BasePermission):
 
     def has_permission(self, request, view):
-        return request.user.subscribed
+        return request.user.subscribed or request.user.is_superuser

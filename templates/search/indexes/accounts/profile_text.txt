@@ -45,6 +45,21 @@
         {{ role.name }}
     {% endfor %}
 {% endif %}
+{% if object.roles %}
+    {% for role in object.roles.all %}
+        {{ role.name }}
+    {% endfor %}
+{% endif %}
+{% if object.roles %}
+    {% for role in object.roles.all %}
+        {{ role.name }}
+    {% endfor %}
+{% endif %}
+{% if object.roles %}
+    {% for role in object.roles.all %}
+        {{ role.name }}
+    {% endfor %}
+{% endif %}
 {% if object.skills %}
     {% for skill in object.skills.all %}
         {{ skill }}

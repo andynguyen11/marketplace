@@ -244,6 +244,6 @@ class ProfileSearchSerializer(HaystackSerializer):
         fields = [
             "profile_id", "first_name", "location", "photo",
             "roles", "skills", "email_notifications", "city", "state", "country",
-            "long_description", "job_descriptions", "job_titles", "text", "examples", "score"
+            "long_description", "job_descriptions", "job_titles", "text", "examples", "featured"
         ]
-        ignore_fields = ["text", "job_descriptions", "job_titles", "examples", ]
+        ignore_fields = ["text", "job_descriptions", "job_titles", "examples", "featured",]

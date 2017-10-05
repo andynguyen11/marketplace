@@ -275,7 +275,7 @@ class ProfileSearchViewSet(HaystackViewSet):
     index_models = [Profile]
     serializer_class = ProfileSearchSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [IsAuthenticated, IsSubscribed, IsAdminUser]
+    permission_classes = [IsAuthenticated, IsSubscribed, ]
 
     def get_queryset(self, index_models=[]):
         """
@@ -293,5 +293,6 @@ class ProfileSearchViewSet(HaystackViewSet):
                 queryset = queryset.models(*index_models)
             elif len(self.index_models):
                 queryset = queryset.models(*self.index_models)
-        #queryset = queryset.order_by('-examples', 'score')
+        if not self.request.query_params.get('text', None):
+            queryset = queryset.order_by('-featured', '-examples')
         return queryset
