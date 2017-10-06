@@ -9,7 +9,6 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('docusign', '0015_auto_20160720_1747'),
         ('postman', '0007_auto_20160720_1010'),
     ]
 
@@ -17,10 +16,5 @@ class Migration(migrations.Migration):
         migrations.AlterModelOptions(
             name='message',
             options={'ordering': ['-sent_at', '-id'], 'verbose_name': 'message', 'verbose_name_plural': 'messages'},
-        ),
-        migrations.AddField(
-            model_name='message',
-            name='document',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document'),
         ),
     ]

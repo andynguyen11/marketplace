@@ -1,5 +1,6 @@
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth import login, authenticate
+from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404
 from django.utils.decorators import method_decorator
 from drf_haystack.viewsets import HaystackViewSet
@@ -16,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
 from accounts.permissions import IsSubscribed
-from accounts.tasks import email_confirmation
+from accounts.tasks import email_confirmation, project_invite
 from business.models import Project
 from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, ProfileSearchSerializer
 from apps.api.utils import set_jwt_token
@@ -170,19 +171,6 @@ class ProfileViewSet(ModelViewSet):
                     t['results'] = [{'result': 'INPROGRESS'}]
         return Response(summary)
 
-    @list_route(methods=['get'], url_path="connections")
-    def connections(self, request, *args, **kwargs):
-        user = request.user
-        connections = ProfileSerializer(user.connections, context={'request': request}, many=True).data
-        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'role', 'city', 'state', 'country', 'contact_details' ]
-        return Response([
-            { k: v for k, v in connection.items() if k in fields }
-            for connection in connections ])
-
-    @detail_route(methods=['get'], url_path="connections")
-    def _connections(self, request, *args, **kwargs):
-        return self.connections(request, *args, **kwargs)
-
     @detail_route(methods=['get'])
     def send_confirmation_email(self, request, *args, **kwargs):
         user = self.get_object()
@@ -208,6 +196,21 @@ class ProfileViewSet(ModelViewSet):
         elif (not profile.roles): # is entrepreneur
             return HttpResponseRedirect(request.query_params.get('next', '/onboard/'))
         return HttpResponseRedirect(request.query_params.get('next', '/profile/'))
+
+    @detail_route(methods=['POST'], permission_classes=[IsAuthenticated],)
+    def invite(self, request, *args, **kwargs):
+        # if already invited or new project
+        # invite only relevant project
+        # expired vs new project
+        profile = self.get_object()
+        if request.user.subscribed:
+            invite_sent = profile.invite(sender=request.user)
+            if invite_sent:
+                project_invite.delay(request.user.id, profile.id)
+            return Response(status=201)
+        else:
+            return Response(status=403)
+
 
 class SkillTestViewSet(NestedModelViewSet):
     queryset = SkillTest.objects.all()
@@ -273,4 +276,24 @@ class ProfileSearchViewSet(HaystackViewSet):
     index_models = [Profile]
     serializer_class = ProfileSearchSerializer
     pagination_class = StandardResultsSetPagination
-    permission_classes = [IsAuthenticated, IsSubscribed]
+    permission_classes = [IsAuthenticated, IsSubscribed, ]
+
+    def get_queryset(self, index_models=[]):
+        """
+        Get the list of items for this view.
+        Returns ``self.queryset`` if defined and is a ``self.object_class``
+        instance.
+
+        @:param index_models: override `self.index_models`
+        """
+        if self.queryset is not None and isinstance(self.queryset, self.object_class):
+            queryset = self.queryset.all()
+        else:
+            queryset = self.object_class()._clone()
+            if len(index_models):
+                queryset = queryset.models(*index_models)
+            elif len(self.index_models):
+                queryset = queryset.models(*self.index_models)
+        if not self.request.query_params.get('text', None):
+            queryset = queryset.order_by('-featured', '-examples')
+        return queryset

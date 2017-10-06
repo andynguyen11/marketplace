@@ -9,13 +9,14 @@ import tagulous.models
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.contenttypes.fields import GenericRelation
 from django.utils.deconstruct import deconstructible
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from tagulous.models.tagged import TaggedManager as CastTaggedUserManager
 from social.apps.django_app.default.models import UserSocialAuth
 from expertratings.models import SkillTestResult
 
-from business.models import Employee
+from business.models import Employee, Project, Invite
 from accounts.enums import ROLE_TYPES
 
 
@@ -181,15 +182,7 @@ class Profile(AbstractUser):
     email_confirmed = models.BooleanField(default=False)
     featured = models.BooleanField(default=False)
     tos = models.BooleanField(default=False)
-
-    connections = models.ManyToManyField('self', through='Connection', symmetrical=False, related_name='reverse_connections+')
-
-    def connect(self, to_profile):
-        Connection.objects.create(from_profile=self, to_profile=to_profile)
-        Connection.objects.create(to_profile=self, from_profile=to_profile)
-
-    def is_connected(self, profile):
-        return self in profile.connections.all()
+    work_examples = GenericRelation('generics.Attachment')
 
     @property
     def name(self):
@@ -251,6 +244,19 @@ class Profile(AbstractUser):
                     # TODO Manually serialize card, circular import error if using api serializer
                     return card
         return None
+
+    @property
+    def subscribed(self):
+        active_projects = Project.objects.filter(project_manager=self, status='active')
+        if len(active_projects) > 0:
+            return True
+        return False
+
+    def invite(self, sender):
+        invite, created = Invite.objects.get_or_create(recipient=self, sender=sender)
+        if created:
+            return True
+        return False
 
 
 Profile._meta.get_field('username').max_length = 75

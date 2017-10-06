@@ -18,9 +18,4 @@ class Migration(migrations.Migration):
             name='status',
             field=models.CharField(default=b'new', max_length=100),
         ),
-        migrations.AlterField(
-            model_name='document',
-            name='docusign_document',
-            field=models.OneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='docusign.Document'),
-        ),
     ]

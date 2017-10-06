@@ -16,10 +16,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RemoveField(
             model_name='document',
-            name='docusign_document',
-        ),
-        migrations.RemoveField(
-            model_name='document',
             name='job',
         ),
         migrations.RemoveField(
