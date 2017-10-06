@@ -255,9 +255,8 @@ class Profile(AbstractUser):
     def invite(self, sender):
         invite, created = Invite.objects.get_or_create(recipient=self, sender=sender)
         if created:
-            #send email
-            pass
-        return invite
+            return True
+        return False
 
 
 Profile._meta.get_field('username').max_length = 75

@@ -204,8 +204,9 @@ class ProfileViewSet(ModelViewSet):
         # expired vs new project
         profile = self.get_object()
         if request.user.subscribed:
-            profile.invite(sender=request.user)
-            project_invite.delay(request.user.id, profile.id)
+            invite_sent = profile.invite(sender=request.user)
+            if invite_sent:
+                project_invite.delay(request.user.id, profile.id)
             return Response(status=201)
         else:
             return Response(status=403)
