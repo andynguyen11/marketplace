@@ -63,28 +63,19 @@ def new_project_posted(sender, instance, **kwargs):
 def project_saved(sender, instance, created, **kwargs):
     if created:
         today = datetime.utcnow()
-        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=2))
+        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
 
 
-#@receiver(pre_save, sender=Profile)
+@receiver(pre_save, sender=Profile)
 def new_account(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
     old_profile = Profile.objects.get(pk=instance.id)
 
     if not old_profile.tos and instance.tos and instance.email_confirmed:
-        account_confirmation.delay(
-                instance.id,
-                bool(instance.roles)
-            )
-
-        if instance.roles:
+        if not instance.work_examples:
             today = datetime.utcnow()
-            add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=1))
-            add_work_history.apply_async((instance.id, ), eta=today + timedelta(days=2))
-        else:
-            today = datetime.utcnow()
-            post_a_project.apply_async((instance.id, ), eta=today + timedelta(days=5))
+            add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=7))
 
 
 @receiver(pre_save, sender=Project)
