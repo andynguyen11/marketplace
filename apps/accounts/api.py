@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest
 from accounts.decorators import check_token
+from accounts.enums import DISCIPLINES, ROLES
 from accounts.permissions import IsSubscribed
 from accounts.tasks import email_confirmation, project_invite
 from business.models import Project
@@ -58,6 +59,7 @@ def cross_pollinate_email(instance, key):
         if instance.email == related.email:
             related.email_confirmed = True
             related.save()
+
 
 class ContactDetailsViewSet(ModelViewSet):
     serializer_class = ContactDetailsSerializer
@@ -210,6 +212,14 @@ class ProfileViewSet(ModelViewSet):
             return Response(status=201)
         else:
             return Response(status=403)
+
+    @list_route(methods=['GET'], )
+    def roles(self, request, *args, **kwargs):
+        response_data = {
+            'disciplines': DISCIPLINES,
+            'roles': ROLES
+        }
+        return Response(response_data, status=200)
 
 
 class SkillTestViewSet(NestedModelViewSet):

@@ -11,7 +11,6 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
 from django.contrib.contenttypes.models import ContentType
 
-from accounts.enums import ROLE_TYPES
 from business.enums import *
 from generics.models import Attachment
 from generics.utils import send_mail
