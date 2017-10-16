@@ -56,6 +56,7 @@ class SkillsSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    display_name = serializers.CharField(required=False)
 
     class Meta:
         model = Role
