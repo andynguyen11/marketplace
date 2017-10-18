@@ -11,6 +11,7 @@ from drf_haystack.serializers import HaystackSerializer
 from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.models import Profile, Skills
+from accounts.enums import ROLES
 from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Project, Employee, NDA
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
@@ -140,6 +141,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
 
 class ProjectSearchSerializer(HaystackSerializer):
+    role = serializers.SerializerMethodField()
 
     class Meta(ProjectSerializer.Meta):
         index_classes = [ProjectIndex]
@@ -148,6 +150,11 @@ class ProjectSearchSerializer(HaystackSerializer):
             "state", "country", "remote", "first_name", "photo", "date_created",
             "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope"
         ]
+
+    def get_role(self, obj):
+        if obj.category in ROLES and obj.role in ROLES[obj.category]:
+            return ROLES[obj.category][obj.role]
+        return None
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
