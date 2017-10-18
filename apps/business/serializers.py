@@ -10,6 +10,7 @@ from rest_framework.utils import model_meta
 from drf_haystack.serializers import HaystackSerializer
 from html_json_forms.serializers import JSONFormSerializer
 
+from accounts.enums import ROLES
 from accounts.models import Profile, Skills
 from accounts.enums import ROLES
 from apps.api.search_indexes import ProjectIndex
@@ -137,6 +138,19 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
             today = datetime.now().date()
             delta = obj.expire_date - today
             return delta.days if delta.days >= 0 else 0
+        return None
+
+
+class ProjectDisplaySerializer(ProjectSerializer):
+    role = serializers.SerializerMethodField()
+
+    def get_role(self, obj):
+        if obj.category in ROLES and obj.role in ROLES[obj.category]:
+            role = {
+                'name': obj.role,
+                'display_name': ROLES[obj.category][obj.role]
+            }
+            return role
         return None
 
 

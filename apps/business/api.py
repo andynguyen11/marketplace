@@ -51,6 +51,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = (PublicReadProjectOwnerEditPermission, )
     lookup_field = 'slug_or_id'
 
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return ProjectDisplaySerializer
+        return self.serializer_class
+
     def get_queryset(self):
         queryset = Project.objects.filter(project_manager=self.request.user, deleted=False)
         return queryset
