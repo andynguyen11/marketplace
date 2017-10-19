@@ -96,6 +96,15 @@ class ProjectViewSet(viewsets.ModelViewSet):
         else:
             return Response(status=403)
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
+        headers = self.get_success_headers(serializer.data)
+        display_serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request})
+        display_serializer.is_valid()
+        return Response(display_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def update(self, request, *args, **kwargs):
         # preauth if not approved but published and not published before
         # pull promo code to pass to preauth
@@ -104,7 +113,11 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if published and not project.published and not project.approved:
             project.preauth(promo=promo)
-        return super(ProjectViewSet, self).update(request, *args, **kwargs)
+        obj_update = super(ProjectViewSet, self).update(request, *args, **kwargs)
+        instance = self.get_object()
+        serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.data)
 
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
