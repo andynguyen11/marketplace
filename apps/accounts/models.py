@@ -17,7 +17,6 @@ from social.apps.django_app.default.models import UserSocialAuth
 from expertratings.models import SkillTestResult
 
 from business.models import Employee, Project, Invite
-from accounts.enums import ROLE_TYPES
 
 
 # TODO Hacky way to bypass makemigrations error
@@ -150,6 +149,7 @@ class Connection(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=100)
+    display_name = models.CharField(max_length=100)
     category = models.CharField(max_length=100, blank=True, null=True)
     years = models.IntegerField(null=True)
 

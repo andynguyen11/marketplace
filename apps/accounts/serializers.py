@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from drf_haystack.serializers import HaystackSerializer
 from notifications.models import Notification
 
+from accounts.enums import ROLES
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest, Role
 from apps.api.search_indexes import UserIndex
 from business.models import Employee, Invite
@@ -55,6 +56,7 @@ class SkillsSerializer(serializers.ModelSerializer):
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    display_name = serializers.CharField(required=False)
 
     class Meta:
         model = Role
@@ -172,6 +174,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         for role in roles:
             if 'years' not in role:
                 role['years'] = None
+            role['display_name'] = ROLES[role['category']][role['name']]
             new_role, created = Role.objects.get_or_create(**role)
             instance.roles.add(new_role)
         return instance

@@ -46,7 +46,7 @@ class ProposalSerializer(serializers.ModelSerializer):
             'id', 'first_name', 'capacity', 'city', 'state'
         ]}
         submitter['photo_url'] = obj.submitter.get_photo
-        submitter['roles'] =  [role.name for role in obj.submitter.roles.all()]
+        submitter['roles'] =  [role.display_name for role in obj.submitter.roles.all()]
         return submitter
 
     def get_questions_and_answers(self, obj):

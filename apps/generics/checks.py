@@ -1,6 +1,5 @@
 import logging
-import httplib
-import urllib
+import requests
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -9,17 +8,17 @@ from django.db.migrations.loader import MigrationLoader
 
 logger = logging.getLogger(__name__)
 
-def page_response(path, expected_status=httplib.OK):
+def page_response(path, expected_status=requests.codes.ok):
     """
     Make an internal (fake) HTTP request to check a page returns the expected
     status code.
     """
     #try:
-    response = urllib.urlopen('{0}{1}'.format(settings.BASE_URL, path))
+    response = requests.get('http://{0}{1}'.format(settings.BASE_URL, path))
     #except Exception as e:
     #    return False
 
-    result = response.getcode() == expected_status
+    result = response.status_code == expected_status
     #if not result:
     #    return False
     return result

@@ -62,8 +62,9 @@ def post_a_project(profile_id):
 def complete_project(project_id):
     project = Project.objects.get(id=project_id)
     if not project.published and not project.deleted:
-        send_mail('complete-project', [project.project_manager], {
-            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+        send_mail('promo-code', [project.project_manager], {
+            'fname': project.project_manager.first_name,
+            'url': '{0}/project/edit/{1}/'.format(settings.BASE_URL, project.slug),
         })
 
 @shared_task
