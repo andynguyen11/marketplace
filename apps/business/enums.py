@@ -1,15 +1,3 @@
-DOCUMENT_TYPES = (
-    (u'NDA', u'Non-Disclosure Agreement'),
-    (u'MSA', u'Contract Service Agreement'),
-    (u'NC', u'Non-Compete Agreement'),
-)
-
-INFO_TYPES = (
-    ('primary', 'Project Overview'),
-    ('public', 'Publicly Visible'),
-    ('private', 'Only visible to Project Participants'),
-)
-
 PROJECT_TYPES = (
     (u'art', u'Art and Design'),
     (u'technology', u'Technology'),
@@ -30,9 +18,3 @@ COMPANY_TYPES = (
     (u'llp', u'Limited Liability Partnership'),
     (u'nonprofit', u'Non-Profit'),
 )
-
-COMPENSATION_SCHEDULE = (
-    (u'50% upfront and 50% upon completion', u'50% upfront and 50% upon completion'),
-    (u'50% at a halfway milestone and 50% upon completion', u'50% at a halfway milestone and 50% upon completion'),
-)
-

@@ -85,7 +85,7 @@ def freelancer_project_matching():
     if projects:
         user_list = {}
         for project in projects:
-            users = SearchQuerySet().filter(roles__in=[project.role]).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
+            users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
             project = {
                 'project_title': project.title,
                 'fname': project.first_name,

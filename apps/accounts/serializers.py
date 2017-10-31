@@ -120,12 +120,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         }
 
     def get_invited(self, obj):
+        # TODO support multiple projects
         if self.context['request'].user.is_authenticated():
-            try:
-                invited = Invite.objects.get(recipient=obj, sender=self.context['request'].user)
-                return True
-            except Invite.DoesNotExist:
-                return False
+            invited = Invite.objects.filter(recipient=obj, sender=self.context['request'].user)
+            proposals = Proposal.objects.filter(submitter=obj, project__project_manager=self.context['request'].user)
+            return True if invited or proposals else False
         return False
 
     def get_photo_url(self, obj):

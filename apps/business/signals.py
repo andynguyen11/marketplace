@@ -61,7 +61,7 @@ def new_project_posted(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Project)
 def project_saved(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.sku != 'free':
         today = datetime.utcnow()
         complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
 
@@ -83,6 +83,8 @@ def project_approved(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
     old_project = Project.objects.get(pk=instance.id)
+    # if sku free - activate but not subscribe
+    # if sku paid - activate and subscribe
     if not old_project.approved and instance.approved:
         project_approved_email.delay(
             instance.id

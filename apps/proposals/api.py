@@ -10,7 +10,7 @@ from generics.tasks import new_message_notification
 from postman.models import Message, Interaction
 from proposals.models import Question, Proposal
 from proposals.permissions import ProposalPermission
-from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer
+from proposals.serializers import QuestionSerializer, ProposalSerializer, AnswerSerializer, RedactedProposalSerializer
 from proposals.tasks import proposal_reminder
 
 def add_ordering(questions):
@@ -83,6 +83,12 @@ class ProposalViewSet(viewsets.ModelViewSet):
     queryset = Proposal.objects.all()
     serializer_class = ProposalSerializer
     permission_classes = (IsAuthenticated, ProposalPermission, )
+
+    def get_serializer_class(self):
+        proposal = self.get_object()
+        if self.action == 'retrieve' and proposal.project.sku == 'free':
+            return RedactedProposalSerializer
+        return self.serializer_class
 
     def list(self, request, *args, **kwargs):
         queryset = Proposal.objects.filter(submitter=self.request.user)

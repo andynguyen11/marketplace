@@ -54,3 +54,9 @@ class ProposalSerializer(serializers.ModelSerializer):
         serializer = QASerializer(answers, many=True)
         return serializer.data
 
+
+class RedactedProposalSerializer(ProposalSerializer):
+    cover_letter = serializers.SerializerMethodField()
+
+    def get_cover_letter(self, obj):
+        return obj.redacted_cover_letter

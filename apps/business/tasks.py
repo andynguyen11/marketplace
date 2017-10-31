@@ -70,7 +70,11 @@ def complete_project(project_id):
 @shared_task
 def project_approved_email(project_id):
     project = Project.objects.get(id=project_id)
-    project.activate()
+    # TODO Strange place to have activate / subscribe
+    if project.sku == 'free':
+        project.activate()
+    else:
+        project.subscribe()
     order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
     send_mail('project-approved-receipt', [project.project_manager], {
         'fname': project.project_manager.first_name,

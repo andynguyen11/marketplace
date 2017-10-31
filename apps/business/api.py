@@ -120,10 +120,31 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     @detail_route(methods=['POST'])
+    def upgrade(self, request, *args, **kwargs):
+        project = self.get_object()
+        if request.user == project.project_manager:
+            promo = request.data.get('promo', None)
+            order = project.preauth(promo=promo)
+            project = project.subscribe()
+            send_mail('project-upgraded', [project.project_manager], {
+                'fname': project.project_manager.first_name,
+                'title': project.title,
+                'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+                'date': order.date_created.strftime("%m/%d/%Y"),
+                'card_type': order.card_type,
+                'card_last_4': order.card_last_4,
+                'description': order.product.description,
+                'price': order.product.price / float(100)
+            })
+            response_data = self.get_serializer(project).data
+            return Response(response_data, status=200)
+        return Response(status=403)
+
+    @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
         project = self.get_object()
         if request.user == project.project_manager:
-            project = project.activate()
+            project = project.subscribe()
             order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
             send_mail('project-renewed', [project.project_manager], {
                 'fname': project.project_manager.first_name,

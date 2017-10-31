@@ -200,18 +200,21 @@ class Project(models.Model):
         return None
 
     def activate(self):
+        self.expire_date = today + timedelta(days=order.product.interval)
+        self.status = 'active'
+        self.published = True
+        self.approved = True
+        self.save()
+        return self
+
+    def subscribe(self):
+        self.activate()
         try:
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
         except Order.DoesNotExist:
             order = self.preauth()
         order.capture()
         order.save()
-        today = datetime.now().date()
-        self.expire_date = today + timedelta(days=order.product.interval)
-        self.status = 'active'
-        self.published = True
-        self.approved = True
-        self.save()
         return self
 
     def deactivate(self):
