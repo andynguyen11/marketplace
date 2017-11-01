@@ -22,6 +22,7 @@ from generics.utils import update_instance, field_names
 from generics.serializers import ParentModelSerializer, AttachmentSerializer
 from generics.validators import image_validator
 from generics.base_serializers import RelationalModelSerializer
+from proposals.models import Proposal
 
 
 class PaymentSerializer(serializers.Serializer):

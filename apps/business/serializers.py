@@ -103,7 +103,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_proposals(self, obj):
         if self.context['request'].user == obj.project_manager:
-            proposals = Proposal.objects.filter(project=obj).exclude(status__exact='declined')
+            proposals = Proposal.objects.filter(project=obj, approved=True).exclude(status__exact='declined')
             return ProposalSerializer(proposals, many=True).data
         else:
             return None

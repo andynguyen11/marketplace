@@ -5,6 +5,13 @@ from __future__ import unicode_literals
 from django.db import migrations, models
 
 
+def approve_current_proposals(apps, schema_editor):
+    Proposal = apps.get_model('proposals', 'Proposal')
+    for proposal in Proposal.objects.all():
+        proposal.approved = True
+        proposal.redacted_cover_letter = proposal.cover_letter
+        proposal.save()
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -22,4 +29,5 @@ class Migration(migrations.Migration):
             name='redacted_cover_letter',
             field=models.TextField(blank=True, null=True),
         ),
+        migrations.RunPython(approve_current_proposals),
     ]

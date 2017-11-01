@@ -84,11 +84,12 @@ class ProposalViewSet(viewsets.ModelViewSet):
     serializer_class = ProposalSerializer
     permission_classes = (IsAuthenticated, ProposalPermission, )
 
-    def get_serializer_class(self):
+    def retrieve(self, request, *args, **kwargs):
         proposal = self.get_object()
-        if self.action == 'retrieve' and proposal.project.sku == 'free':
-            return RedactedProposalSerializer
-        return self.serializer_class
+        serializer = self.get_serializer(proposal)
+        if self.request.user == proposal.project.project_manager and proposal.project.sku == 'free':
+            serializer = RedactedProposalSerializer(proposal)
+        return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
         queryset = Proposal.objects.filter(submitter=self.request.user)
