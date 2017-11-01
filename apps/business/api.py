@@ -86,10 +86,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, project)
         return project
 
+    def increment_view(self, request, project):
+        if request.user != project.project_manager:
+            project.views = project.views + 1
+            project.save()
+
     def retrieve(self, request, slug_or_id=None):
         project = self.get_object()
         #TODO Add to serializer and permissions?
         if project.approved or request.user == project.project_manager or request.user.is_staff:
+            self.increment_view(request, project)
             response_data = self.get_serializer(project).data
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)

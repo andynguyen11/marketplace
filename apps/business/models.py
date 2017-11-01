@@ -161,6 +161,7 @@ class Project(models.Model):
     employment_type = models.CharField(max_length=100, default='freelance')
     autorenew = models.BooleanField(default=False)
     sku = models.CharField(max_length=50, blank=True, null=True)
+    views = models.IntegerField(default=0)
 
 
     objects = ProjectManager()
