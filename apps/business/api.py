@@ -123,6 +123,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        project = self.get_object()
+        project.deleted = True
+        project.save()
+        return Response(status=202)
+
     @detail_route(methods=['POST'])
     def upgrade(self, request, *args, **kwargs):
         project = self.get_object()
