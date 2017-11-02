@@ -112,16 +112,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(display_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        # preauth if not approved but published and not published before
-        # pull promo code to pass to preauth
         published = request.data.get('published', False)
         promo = request.data.get('promo', None)
         project = self.get_object()
-        if published and not project.published and not project.approved:
+        if published and not project.published and not project.approved and project.sku != 'free':
             project.preauth(promo=promo)
         obj_update = super(ProjectViewSet, self).update(request, *args, **kwargs)
         instance = self.get_object()
-        serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request})
+        serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request}, partial=True)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 

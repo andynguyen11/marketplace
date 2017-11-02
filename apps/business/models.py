@@ -201,7 +201,9 @@ class Project(models.Model):
         return None
 
     def activate(self):
-        self.expire_date = today + timedelta(days=order.product.interval)
+        today = datetime.now().date()
+        product = Product.objects.get(sku=self.sku)
+        self.expire_date = today + timedelta(days=product.interval)
         self.status = 'active'
         self.published = True
         self.approved = True
@@ -221,17 +223,19 @@ class Project(models.Model):
     def deactivate(self):
         today = datetime.now().date()
         if self.expire_date and self.expire_date <= today:
-            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
-            order.status = 'expired'
-            order.save()
+            if self.sku != 'free':
+                order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
+                order.status = 'expired'
+                order.save()
             self.status = 'expired'
             self.published = False
             self.save()
-            send_mail('project-expired', [self.project_manager], {
-                'fname': self.project_manager.first_name,
-                'title': self.title,
-                'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
-            })
+            if not self.deleted:
+                send_mail('project-expired', [self.project_manager], {
+                    'fname': self.project_manager.first_name,
+                    'title': self.title,
+                    'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
+                })
         return self
 
     @property

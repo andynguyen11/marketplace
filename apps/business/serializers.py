@@ -73,6 +73,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     class Meta:
         model = Project
         parent_key = 'project'
+        read_only_fields = ('approved',)
         extra_kwargs = {'private_info': {'write_only': True}}
 
     def create(self, validated_data):

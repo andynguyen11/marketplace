@@ -118,7 +118,7 @@ class ProposalViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['POST'])
     def respond(self, request, *args, **kwargs):
         proposal = self.get_object()
-        if proposal.status == 'pending' and proposal.recipient == request.user:
+        if proposal.status == 'pending' and proposal.recipient == request.user and proposal.sku != 'free':
             conversation = Message.objects.create(
                 sender = proposal.recipient,
                 recipient = proposal.submitter,
