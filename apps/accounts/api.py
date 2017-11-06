@@ -31,6 +31,7 @@ from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from postman.serializers import ConversationSerializer
 from generics.utils import parse_signature
 from django.shortcuts import redirect, get_object_or_404
+from collections import OrderedDict
 
 
 check_token_m = method_decorator(check_token)
