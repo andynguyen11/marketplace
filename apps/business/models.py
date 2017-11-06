@@ -181,7 +181,6 @@ class Project(models.Model):
 
     def preauth(self, promo=None):
         today = datetime.now().date()
-        print(self.expire_date, today)
         if not self.expire_date or self.expire_date <= today:
             product = Product.objects.get(sku=self.sku)
             try:
