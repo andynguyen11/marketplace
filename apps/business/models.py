@@ -181,6 +181,7 @@ class Project(models.Model):
 
     def preauth(self, promo=None):
         today = datetime.now().date()
+        print(self.expire_date, today)
         if not self.expire_date or self.expire_date <= today:
             product = Product.objects.get(sku=self.sku)
             try:
@@ -211,12 +212,12 @@ class Project(models.Model):
         return self
 
     def subscribe(self, promo=None):
-        self.activate()
         try:
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
         except Order.DoesNotExist:
             order = self.preauth(promo=promo)
         order.capture()
+        self.activate()
         return self
 
     def deactivate(self):
