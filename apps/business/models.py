@@ -210,14 +210,13 @@ class Project(models.Model):
         self.save()
         return self
 
-    def subscribe(self):
+    def subscribe(self, promo=None):
         self.activate()
         try:
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
         except Order.DoesNotExist:
-            order = self.preauth()
+            order = self.preauth(promo=promo)
         order.capture()
-        order.save()
         return self
 
     def deactivate(self):
@@ -231,10 +230,12 @@ class Project(models.Model):
             self.published = False
             self.save()
             if not self.deleted:
-                send_mail('project-expired', [self.project_manager], {
+                template = 'project-expired-free' if self.sku == 'free' else 'project-expired'
+                url = '{0}/project/{1}/upgrade/'.format(settings.BASE_URL, self.slug) if self.sku == 'free' else '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
+                send_mail(template, [self.project_manager], {
                     'fname': self.project_manager.first_name,
                     'title': self.title,
-                    'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
+                    'url': url
                 })
         return self
 

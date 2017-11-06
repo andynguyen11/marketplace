@@ -132,8 +132,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['POST'])
     def upgrade(self, request, *args, **kwargs):
         project = self.get_object()
+        #TODO Revisit if there is an upgrade path beyond free projects
         if request.user == project.project_manager:
             promo = request.data.get('promo', None)
+            sku = request.data.get('sku', None)
+            if not sku:
+                return Response(status=400)
+            project.sku = sku
+            project.save()
             order = project.preauth(promo=promo)
             project = project.subscribe()
             send_mail('project-upgraded', [project.project_manager], {
@@ -152,7 +158,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
+        sku = request.data.get('sku', None)
+        if not sku:
+            return Response(status=400)
         project = self.get_object()
+        project.sku = sku
+        project.save()
         if request.user == project.project_manager:
             project = project.subscribe()
             order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')

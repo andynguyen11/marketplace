@@ -73,7 +73,12 @@ def project_approved_email(project_id):
     # TODO Strange place to have activate / subscribe
     if project.sku == 'free':
         project.activate()
-        # send project approved email for free
+        send_mail('project-approved-free', [project.project_manager], {
+            'fname': project.project_manager.first_name,
+            'title': project.title,
+            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+            'date': order.date_created.strftime("%m/%d/%Y"),
+        })
     else:
         project.subscribe()
         order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
