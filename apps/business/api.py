@@ -139,7 +139,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             if not sku:
                 return Response(status=400)
             project.sku = sku
-            project.save()
+            project = project.save()
             order = project.preauth(promo=promo)
             project = project.subscribe()
             send_mail('project-upgraded', [project.project_manager], {
@@ -163,7 +163,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(status=400)
         project = self.get_object()
         project.sku = sku
-        project.save()
+        project = project.save()
         if request.user == project.project_manager:
             project = project.subscribe()
             order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')

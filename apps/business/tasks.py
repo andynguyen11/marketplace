@@ -76,7 +76,7 @@ def project_approved_email(project_id):
         send_mail('project-approved-free', [project.project_manager], {
             'fname': project.project_manager.first_name,
             'title': project.title,
-            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+            'url': '{0}/project/{1}/upgrade/'.format(settings.BASE_URL, project.slug),
             'date': order.date_created.strftime("%m/%d/%Y"),
         })
     else:
