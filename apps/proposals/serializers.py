@@ -39,7 +39,7 @@ class ProposalSerializer(serializers.ModelSerializer):
         fields = ('viewed', 'submitter', 'submitter_profile', 'project_details', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message', 'questions_and_answers')
 
     def get_project_details(self, obj):
-        return { 'title': obj.project.title, 'id': obj.project.id }
+        return { 'title': obj.project.title, 'id': obj.project.id, 'sku': obj.project.sku }
 
     def get_submitter_profile(self, obj):
         submitter = { k: getattr(obj.submitter, k) for k in [
