@@ -37,6 +37,7 @@ class Proposal(models.Model):
     def save(self, *args, **kwargs):
         if not self.redacted_cover_letter:
             self.redacted_cover_letter = self.cover_letter
+        #TODO Revisit hardcoded skus
         if self.project.sku != 'free':
             self.approved = True
         super(Proposal, self).save(*args, **kwargs)
