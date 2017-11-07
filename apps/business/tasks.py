@@ -77,7 +77,7 @@ def project_approved_email(project_id):
             'fname': project.project_manager.first_name,
             'title': project.title,
             'url': '{0}/project/{1}/upgrade/'.format(settings.BASE_URL, project.slug),
-            'date': order.date_created.strftime("%m/%d/%Y"),
+            'date': project.date_created.strftime("%m/%d/%Y"),
         })
     else:
         project.subscribe()

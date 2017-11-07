@@ -180,25 +180,22 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     def preauth(self, promo=None):
-        today = datetime.now().date()
-        if not self.expire_date or self.expire_date <= today:
-            product = Product.objects.get(sku=self.sku)
-            try:
-                order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
-            except Order.DoesNotExist:
-                if promo:
-                    promo = Promo.objects.get(code=promo.lower())
-                order = Order(
-                    content_object = self,
-                    product = product,
-                    user = self.project_manager,
-                    status = 'preauth',
-                    promo = promo
-                )
-                order.save()
-                order.charge()
-            return order
-        return None
+        product = Product.objects.get(sku=self.sku)
+        try:
+            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
+        except Order.DoesNotExist:
+            if promo:
+                promo = Promo.objects.get(code=promo.lower())
+            order = Order(
+                content_object = self,
+                product = product,
+                user = self.project_manager,
+                status = 'preauth',
+                promo = promo
+            )
+            order.save()
+            order.charge()
+        return order
 
     def activate(self):
         today = datetime.now().date()
@@ -215,6 +212,10 @@ class Project(models.Model):
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
         except Order.DoesNotExist:
             order = self.preauth(promo=promo)
+        if order.product.sku != self.sku:
+            product = Product.objects.get(sku=self.sku)
+            order.product = product
+            order.save()
         order.capture()
         self.activate()
         return self
