@@ -68,51 +68,83 @@
         <div class="page-content">
           <div class="how-pricing-header how-pricing-entreprenuer">
             <h2 class="brand">Pricing for employers</h2>
-            <h3>Pay a flat fee to post your project and access Loom's freelancer search.</h3>
-            <h4>Bonus: your posting fee is refunded when you pay any freelancer through Loom.</h4>
+            <h3>Post a job for free and start receiving proposals today.</h3>
           </div>
+          
           <div class="page-content--medium">
             <div class="project-pricing-cards">
               <div class="project-pricing-card">
-                <h4>60-day project posting</h4>
-                <h2 class="brand-bold">$300/posting</h2>
-                {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-60/" class="btn btn-brand btn-brand--attn">Get started</a>
-                {% else %}
-                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
-                {% endif %}
+                <div class="project-pricing-card-content">
+                  <div class="project-pricing-card-price">
+                    <h4>FREE </h4>
+                    <h2>$0</h2>
+                  </div>
+                  <div>
+                    {% if request.user.is_authenticated %}
+                      <a href="/project/create/free/" class="btn btn-brand">Get started</a>
+                    {% else %}
+                       <a href="{% url 'signup' %}" class="btn btn-brand">Sign up to post</a>
+                    {% endif %}
+                    <p>Post your project for free today and start receiving proposals from talented, passionate freelancers.</p>
+                  </div>
+                  <span class="feature-asterisk">*no credit card required</span>
+                </div>
+                <span class="feature-asterisk">*no credit card required</span>
               </div>
-              <div class="project-pricing-card recommened-price">
-                <div class="recommended-header">Recommended</div>
-                <h4>30-day project posting</h4>
-                <h2 class="brand-bold">$200/posting</h2>
-                {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-30/" class="btn btn-brand btn-brand--attn">Get started</a>
-                {% else %}
-                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
-                {% endif %}
-              </div>
+
               <div class="project-pricing-card">
-                <h4>10-day project posting</h4>
-                <h2 class="brand-bold">$150/posting</h2>
-                {% if request.user.is_authenticated %}
-                  <a href="/project/create/p2p-10/" class="btn btn-brand btn-brand--attn">Get started</a>
-                {% else %}
-                  <a href="{% url 'signup' %}" class="btn btn-brand btn-brand--attn">Sign up to post</a>
-                {% endif %}
+                <div class="project-pricing-card-content">
+                  <div class="project-pricing-card-price">
+                    <h4>standard</h4>
+                    <h2>$150</h2>
+                  </div>
+                  <div>
+                    {% if request.user.is_authenticated %}
+                      <a href="/project/create/standard/" class="btn btn-brand">Get started</a>
+                    {% else %}
+                       <a href="{% url 'signup' %}" class="btn btn-brand">Sign up to post</a>
+                    {% endif %}
+                    <p>Post your project, receive proposals and start having conversations with talented freelancers.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="project-pricing-card">
+                <div class="project-pricing-card-content">
+                  <div class="project-pricing-card-price">
+                    <h4>premium</h4>
+                    <h2>$200</h2>
+                  </div>
+                  <div>
+                    {% if request.user.is_authenticated %}
+                      <a href="/project/create/premium/" class="btn btn-brand">Get started</a>
+                    {% else %}
+                       <a href="{% url 'signup' %}" class="btn btn-brand">Sign up to post</a>
+                    {% endif %}
+                    <p>Take advantage of Loom’s full suite of hiring tools like Freelancer Search and Dedicated Support.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="project-pricing-card">
+                <div class="project-pricing-card-content project-pricing-card-content--fulltime">
+                  <div class="project-pricing-card-price">
+                    <h4>Full-Time</h4>
+                    <h2>10%</h2>
+                    <span>FIRST YEAR SALARY</span>
+                  </div>
+                  <div>
+                    <a href="mailto:info@loom.co" class="btn btn-brand btn-secondary">Contact us</a>
+                    <p>Looking to hire someone full-time? Look no further. We’ll get you in front of our massive talent pool.</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="project-pricing-points">
-              <h3>All project postings include:</h3>
-              <ul>
-                <li>freelancer matching</li>
-                <li>unlimited proposals</li>
-                <li>freelancer search</li>
-                <li>freelancer messaging</li>
-                <li>easy work payments</li>
-                <li>no processing fees</li>
-              </ul>
-            </div>
+          </div>
+
+          <div class="how-pricing-footer">
+            <h2 class="brand">Learn more about what you get:</h2>
+            <a href="/project/pricing/" class="btn btn-brand">Compare posting options</a>
           </div>
         </div>
       </div>
