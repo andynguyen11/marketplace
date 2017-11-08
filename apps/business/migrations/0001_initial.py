@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255, unique=True)),
                 ('slug', models.SlugField(max_length=255)),
-                ('type', models.CharField(choices=[('art', 'Art and Design'), ('technology', 'Technology'), ('gaming', 'Gaming'), ('nonprofit', 'Non-Profit'), ('social', 'Social'), ('news', 'News and Publishing'), ('music', 'Music and Media'), ('location', 'Location-Based'), ('health', 'Health and Fitness')], max_length=100, null=True)),
+                ('type', models.CharField(choices=[('art', 'Art and Design'), ('technology', 'Technology'), ('gaming', 'Gaming'), ('nonprofit', 'Non-Profit'), ('social', 'Social'), ('news', 'News and Publishing'), ('music', 'Music and Media'), ('location', 'Location-Based'), ('health', 'Health and Fitness')], max_length=100, null=True, blank=True)),
                 ('category', models.CharField(blank=True, max_length=100, null=True)),
                 ('start_date', models.DateField(blank=True, null=True)),
                 ('end_date', models.DateField(blank=True, null=True)),

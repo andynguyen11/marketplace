@@ -128,8 +128,8 @@ class Project(models.Model):
     project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255)
-    type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
-    category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
+    type = models.CharField(max_length=100, choices=PROJECT_TYPES, blank=True, null=True)
+    category = models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     expire_date = models.DateField(blank=True, null=True)
@@ -232,7 +232,7 @@ class Project(models.Model):
             self.save()
             if not self.deleted:
                 template = 'project-expired-free' if self.sku == 'free' else 'project-expired'
-                url = '{0}/project/{1}/upgrade/'.format(settings.BASE_URL, self.slug) if self.sku == 'free' else '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
+                url = '{0}/project/upgrade/{1}/'.format(settings.BASE_URL, self.slug) if self.sku == 'free' else '{0}/project/renew/{1}/'.format(settings.BASE_URL, self.slug)
                 send_mail(template, [self.project_manager], {
                     'fname': self.project_manager.first_name,
                     'title': self.title,
