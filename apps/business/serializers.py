@@ -73,6 +73,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     class Meta:
         model = Project
         parent_key = 'project'
+        read_only_fields = ('approved', 'status', )
         extra_kwargs = {'private_info': {'write_only': True}}
 
     def create(self, validated_data):
@@ -103,7 +104,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
 
     def get_proposals(self, obj):
         if self.context['request'].user == obj.project_manager:
-            proposals = Proposal.objects.filter(project=obj).exclude(status__exact='declined')
+            proposals = Proposal.objects.filter(project=obj, approved=True).exclude(status__exact='declined')
             return ProposalSerializer(proposals, many=True).data
         else:
             return None
@@ -161,7 +162,7 @@ class ProjectSearchSerializer(HaystackSerializer):
         index_classes = [ProjectIndex]
         fields = [
             "title", "slug", "skills", "description", "category", "role", "city",
-            "state", "country", "remote", "first_name", "photo", "date_created",
+            "state", "country", "remote", "first_name", "photo", "date_created", "views",
             "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope"
         ]
 

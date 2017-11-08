@@ -8,7 +8,7 @@ from proposals.tasks import proposal_received_email, proposal_updated_email
 
 @receiver(post_save, sender=Proposal)
 def proposal_received(sender, instance, created, **kwargs):
-    if created:
+    if created and instance.approved:
         proposal_received_email.delay(instance.id)
         notify.send(
             instance.submitter,
@@ -18,6 +18,7 @@ def proposal_received(sender, instance, created, **kwargs):
             target=instance.project,
             type=u'proposalReceived'
         )
+
 
 @receiver(pre_save, sender=Proposal)
 def proposal_updated(sender, instance, **kwargs):
@@ -32,5 +33,17 @@ def proposal_updated(sender, instance, **kwargs):
             verb=u'Your proposal was declined',
             target=instance.project
         )
+
     if not old_instance.viewed and instance.viewed:
         proposal_updated_email.delay('proposal-viewed', instance.id)
+
+    if not old_instance.approved and instance.approved and instance.project.sku == 'free':
+        proposal_received_email.delay(instance.id)
+        notify.send(
+            instance.submitter,
+            recipient=instance.project.project_manager,
+            verb=u'submited a proposal for',
+            action_object=instance,
+            target=instance.project,
+            type=u'proposalReceived'
+        )

@@ -31,6 +31,7 @@ from generics.viewsets import NestedModelViewSet, assign_crud_permissions
 from postman.serializers import ConversationSerializer
 from generics.utils import parse_signature
 from django.shortcuts import redirect, get_object_or_404
+from collections import OrderedDict
 
 
 check_token_m = method_decorator(check_token)
@@ -143,17 +144,12 @@ class ProfileViewSet(ModelViewSet):
         return { k: v for k, v in profile_dict.items() if k in self.serializer_class.Meta.public_fields }
 
     def list(self, request, *args, **kwargs): # TODO: This is really slow
-        response = super(ProfileViewSet, self).list(request, *args, **kwargs)
-        response.data = map(self.public_view, response.data)
-        return response
+        return Response(status=403)
 
     def retrieve(self, request, *args, **kwargs):
         response = super(ProfileViewSet, self).retrieve(request, *args, **kwargs)
         if response.data['id'] != self.request.user.id:
             view = self.public_view(response.data)
-            if hasattr(self.request.user, 'connections') and len(self.request.user.connections.filter(id=view['id'])):
-                view['contact_details'] = response.data.get('contact_details', None)
-                view['last_name'] = response.data.get('last_name', None)
             response.data = view
         return response
 
@@ -216,8 +212,8 @@ class ProfileViewSet(ModelViewSet):
     @list_route(methods=['GET'], )
     def roles(self, request, *args, **kwargs):
         response_data = {
-            'disciplines': DISCIPLINES,
-            'roles': ROLES
+            'disciplines': OrderedDict(DISCIPLINES),
+            'roles': OrderedDict(ROLES)
         }
         return Response(response_data, status=200)
 

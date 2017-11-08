@@ -8,7 +8,7 @@ from rest_framework_jwt.compat import get_username, get_username_field
 from rest_framework_jwt.settings import api_settings
 
 from accounts.serializers import ProfileSerializer
-from business.models import Project
+from product.models import Order
 
 
 def jwt_response_payload_handler(token, user=None, request=None):
@@ -44,7 +44,7 @@ def jwt_payload_handler(user):
         'connected': True if user.stripe_connect else False,
         'verification': user.verification,
         'payouts_enabled': user.payouts_enabled,
-        'payments_enabled': True if user.stripe else False,
+        'payments_enabled': True if user.get_default_payment() else False,
         'email': user.email,
         'username': username,
         'photo': user.get_photo,
@@ -52,7 +52,7 @@ def jwt_payload_handler(user):
         'email_confirmed': user.email_confirmed,
         'tos': user.tos,
         #TODO subscribed flag hits db every time, refactor later
-        'subscribed': True if Project.objects.filter(project_manager=user, status='active') else False,
+        'subscribed': True if Order.objects.filter(user=user, status='active') else False,
         'exp': datetime.utcnow() + api_settings.JWT_EXPIRATION_DELTA
     }
     if isinstance(user.pk, uuid.UUID):

@@ -29,13 +29,14 @@ class InvoiceSerializer(serializers.ModelSerializer):
     invoice_items = InvoiceItemSerializer(many=True)
     total_amount = serializers.SerializerMethodField()
     loom_fee = serializers.SerializerMethodField()
+    internal = serializers.SerializerMethodField()
 
     class Meta:
         model = Invoice
         fields = ('reference_id', 'title', 'sent_date', 'start_date', 'end_date', 'due_date', 'hourly_items', 'fixed_items',
                   'invoice_items', 'sender_name', 'sender_email', 'sender_phone', 'sender_address', 'sender_address2', 'sender_location',
                   'recipient_name', 'recipient_email', 'recipient_phone', 'recipient_address', 'recipient_address2', 'recipient_location',
-                  'status', 'logo', 'recipient', 'sender', 'viewed', 'total_amount', 'loom_fee', )
+                  'status', 'logo', 'recipient', 'sender', 'viewed', 'total_amount', 'loom_fee', 'internal', )
         lookup_field = 'reference_id'
 
     def get_hourly_items(self, obj):
@@ -51,6 +52,9 @@ class InvoiceSerializer(serializers.ModelSerializer):
 
     def get_loom_fee(self, obj):
         return obj.loom_fee
+
+    def get_internal(self, obj):
+        return obj.sender.is_superuser
 
     def create(self, validated_data):
         invoice_items = validated_data.pop('invoice_items')

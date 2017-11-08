@@ -128,8 +128,8 @@ class Project(models.Model):
     project_manager = models.ForeignKey('accounts.Profile')
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255)
-    type = models.CharField(max_length=100, choices=PROJECT_TYPES, null=True) # type vs category?
-    category = models.CharField(max_length=100, blank=True, null=True) # not really in the mockup
+    type = models.CharField(max_length=100, choices=PROJECT_TYPES, blank=True, null=True)
+    category = models.CharField(max_length=100, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(blank=True, null=True)
     expire_date = models.DateField(blank=True, null=True)
@@ -161,6 +161,7 @@ class Project(models.Model):
     employment_type = models.CharField(max_length=100, default='freelance')
     autorenew = models.BooleanField(default=False)
     sku = models.CharField(max_length=50, blank=True, null=True)
+    views = models.IntegerField(default=0)
 
 
     objects = ProjectManager()
@@ -179,55 +180,64 @@ class Project(models.Model):
         super(Project, self).save(*args, **kwargs)
 
     def preauth(self, promo=None):
-        today = datetime.now().date()
-        if not self.expire_date or self.expire_date <= today:
-            product = Product.objects.get(sku=self.sku)
-            try:
-                order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
-            except Order.DoesNotExist:
-                if promo:
-                    promo = Promo.objects.get(code=promo.lower())
-                order = Order(
-                    content_object = self,
-                    product = product,
-                    user = self.project_manager,
-                    status = 'preauth',
-                    promo = promo
-                )
-                order.save()
-                order.charge()
-            return order
-        return None
-
-    def activate(self):
+        product = Product.objects.get(sku=self.sku)
         try:
             order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
         except Order.DoesNotExist:
-            order = self.preauth()
-        order.capture()
-        order.save()
+            if promo:
+                promo = Promo.objects.get(code=promo.lower())
+            order = Order(
+                content_object = self,
+                product = product,
+                user = self.project_manager,
+                status = 'preauth',
+                promo = promo
+            )
+            order.save()
+            order.charge()
+        return order
+
+    def activate(self):
         today = datetime.now().date()
-        self.expire_date = today + timedelta(days=order.product.interval)
+        product = Product.objects.get(sku=self.sku)
+        self.expire_date = today + timedelta(days=product.interval)
         self.status = 'active'
         self.published = True
         self.approved = True
         self.save()
         return self
 
+    def subscribe(self, promo=None):
+        try:
+            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='preauth')
+        except Order.DoesNotExist:
+            order = self.preauth(promo=promo)
+        if order.product.sku != self.sku:
+            product = Product.objects.get(sku=self.sku)
+            order.product = product
+            order.save()
+        order.capture()
+        self.activate()
+        return self
+
     def deactivate(self):
         today = datetime.now().date()
         if self.expire_date and self.expire_date <= today:
-            order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
-            order.status = 'expired'
-            order.save()
+            if self.sku != 'free':
+                order = Order.objects.get(content_type__pk=self.content_type.id, object_id=self.id, status='active')
+                order.status = 'expired'
+                order.save()
             self.status = 'expired'
             self.published = False
             self.save()
-            send_mail('project-expired', [self.project_manager], {
-                'fname': self.project_manager.first_name,
-                'title': self.title,
-                'url': '{0}/project/{1}/renewal/'.format(settings.BASE_URL, self.slug)
-            })
+            if not self.deleted:
+                template = 'project-expired-free' if self.sku == 'free' else 'project-expired'
+                url = '{0}/project/upgrade/{1}/'.format(settings.BASE_URL, self.slug) if self.sku == 'free' else '{0}/project/renew/{1}/'.format(settings.BASE_URL, self.slug)
+                send_mail(template, [self.project_manager], {
+                    'fname': self.project_manager.first_name,
+                    'title': self.title,
+                    'url': url
+                })
         return self
 
     @property

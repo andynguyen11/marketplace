@@ -86,10 +86,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         self.check_object_permissions(self.request, project)
         return project
 
+    def increment_view(self, request, project):
+        if request.user != project.project_manager:
+            project.views = project.views + 1
+            project.save()
+
     def retrieve(self, request, slug_or_id=None):
         project = self.get_object()
         #TODO Add to serializer and permissions?
         if project.approved or request.user == project.project_manager or request.user.is_staff:
+            self.increment_view(request, project)
             response_data = self.get_serializer(project).data
             response_data['is_project_manager'] = request.user == project.project_manager
             return Response(response_data, status=200)
@@ -106,24 +112,60 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return Response(display_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def update(self, request, *args, **kwargs):
-        # preauth if not approved but published and not published before
-        # pull promo code to pass to preauth
         published = request.data.get('published', False)
         promo = request.data.get('promo', None)
         project = self.get_object()
-        if published and not project.published and not project.approved:
+        if published and not project.published and not project.approved and project.sku != 'free':
             project.preauth(promo=promo)
         obj_update = super(ProjectViewSet, self).update(request, *args, **kwargs)
         instance = self.get_object()
-        serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request})
+        serializer = ProjectDisplaySerializer(instance, data=request.data, context={'request': request}, partial=True)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        project = self.get_object()
+        project.deleted = True
+        project.save()
+        return Response(status=202)
+
+    @detail_route(methods=['POST'])
+    def upgrade(self, request, *args, **kwargs):
+        project = self.get_object()
+        #TODO Revisit if there is an upgrade path beyond free projects
+        if request.user == project.project_manager:
+            promo = request.data.get('promo', None)
+            sku = request.data.get('sku', None)
+            if not sku:
+                return Response(status=400)
+            project.sku = sku
+            project.save()
+            order = project.preauth(promo=promo)
+            project = project.subscribe()
+            send_mail('project-upgraded', [project.project_manager], {
+                'fname': project.project_manager.first_name,
+                'title': project.title,
+                'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+                'date': order.date_created.strftime("%m/%d/%Y"),
+                'card_type': order.card_type,
+                'card_last_4': order.card_last_4,
+                'description': order.product.description,
+                'price': order.product.price / float(100)
+            })
+            response_data = self.get_serializer(project).data
+            return Response(response_data, status=200)
+        return Response(status=403)
+
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
+        sku = request.data.get('sku', None)
+        if not sku:
+            return Response(status=400)
         project = self.get_object()
+        project.sku = sku
+        project.save()
         if request.user == project.project_manager:
-            project = project.activate()
+            project = project.subscribe()
             order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
             send_mail('project-renewed', [project.project_manager], {
                 'fname': project.project_manager.first_name,
