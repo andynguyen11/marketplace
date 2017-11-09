@@ -102,7 +102,12 @@
 
   &.btn-secondary {
     color: @brand--accent;
-    background: #FFF;
+    background: transparent;
+
+    &:hover {
+      color: #FFF;
+      background-color:  @brand--accent;
+    }
   }
 
   &.btn-brand--fade {
