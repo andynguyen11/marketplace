@@ -71,7 +71,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         self.prepared_data['job_descriptions'] = [job.description for job in jobs]
         self.prepared_data['job_titles'] = [job.title for job in jobs]
         self.prepared_data['skills'] = [skill.name for skill in obj.skills.all()]
-        self.prepared_data['roles'] = [role.name for role in obj.roles.all()]
+        self.prepared_data['roles'] = [role.display_name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
         self.prepared_data['profile_id'] = obj.pk
         self.prepared_data['examples'] = len(obj.work_examples.all())
