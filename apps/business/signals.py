@@ -5,20 +5,16 @@ from django.dispatch import receiver
 from notifications.models import Notification
 from notifications.signals import notify
 
-from accounts.models import Profile
-from business.models import Project, NDA
-from business.tasks import project_in_review, project_posted, post_a_project, complete_project, project_approved_email
-from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email, account_confirmation, add_work_examples, add_work_history
-
-from postman.models import Message
+from business.tasks import project_in_review, project_posted, complete_project, project_approved_email
+from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email
 
 
-@receiver(pre_save, sender=NDA)
+@receiver(pre_save, sender='business.NDA')
 def nda_update_event(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
 
-    old_status = NDA.objects.get(id=instance.id).status
+    old_status = sender.objects.get(id=instance.id).status
     thread = instance.proposal.message
 
     if instance.status != old_status and instance.status.lower() == 'sent':
@@ -49,42 +45,27 @@ def nda_update_event(sender, instance, **kwargs):
         nda_signed_entrepreneur_email.delay(instance.id)
 
 
-@receiver(pre_save, sender=Project)
-def new_project_posted(sender, instance, **kwargs):
+@receiver(post_save, sender='business.Project')
+def project_post_save(sender, instance, created, **kwargs):
+    today = datetime.utcnow()
+    if created and instance.sku != 'free':
+        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
+    if instance.approved and instance.published and not instance.status and not instance.expire_date:
+        if instance.sku == 'free':
+            instance.activate()
+        else:
+            instance.subscribe()
+
+
+@receiver(pre_save, sender='business.Project')
+def project_pre_save(sender, instance, **kwargs):
     if not hasattr(instance, 'id') or instance.id is None:
         return
-    old_project = Project.objects.get(pk=instance.id)
+    old_project = sender.objects.get(pk=instance.id)
     if not old_project.approved and not old_project.published and instance.published:
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)
-
-
-@receiver(post_save, sender=Project)
-def project_saved(sender, instance, created, **kwargs):
-    if created and instance.sku != 'free':
-        today = datetime.utcnow()
-        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
-
-
-@receiver(pre_save, sender=Profile)
-def new_account(sender, instance, **kwargs):
-    if not hasattr(instance, 'id') or instance.id is None:
         return
-    old_profile = Profile.objects.get(pk=instance.id)
-
-    if not old_profile.tos and instance.tos and instance.email_confirmed:
-        if not instance.work_examples:
-            today = datetime.utcnow()
-            add_work_examples.apply_async((instance.id, ), eta=today + timedelta(days=7))
-
-
-@receiver(pre_save, sender=Project)
-def project_approved(sender, instance, **kwargs):
-    if not hasattr(instance, 'id') or instance.id is None:
-        return
-    old_project = Project.objects.get(pk=instance.id)
-    # if sku free - activate but not subscribe
-    # if sku paid - activate and subscribe
     if not old_project.approved and instance.approved:
         project_approved_email.delay(
             instance.id

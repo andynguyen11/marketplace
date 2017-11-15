@@ -33,7 +33,7 @@ FIXTURES_DIR = os.environ.get('FIXTURES_DIR', './fixtures')
 
 ALLOWED_HOSTS = ['*']
 
-ADMINS = ()
+ADMINS = ('info@loom.co', )
 INTERNAL_IPS = ('127.0.0.1',)
 SERVER_EMAIL = 'info@loom.co'
 

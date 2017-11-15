@@ -202,8 +202,6 @@ class Project(models.Model):
         product = Product.objects.get(sku=self.sku)
         self.expire_date = today + timedelta(days=product.interval)
         self.status = 'active'
-        self.published = True
-        self.approved = True
         self.save()
         return self
 

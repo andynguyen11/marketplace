@@ -1,7 +1,5 @@
 from rest_framework import permissions
 
-from business.models import Project
-
 
 #TODO subscribed permission hits db every time, refactor later
 class IsSubscribed(permissions.BasePermission):
