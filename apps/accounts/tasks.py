@@ -43,6 +43,21 @@ def email_confirmation(user, instance=None, email_field='email', template='verif
     })
 
 @shared_task
+def account_confirmation(user_id, roles=True):
+    user = Profile.objects.get(id=user_id)
+    email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
+    send_mail(email_template, [user], {
+        'fname': user.first_name,
+        'email': user.email
+    })
+
+@shared_task
+def profile_being_viewed(profile_id):
+    profile = Profile.objects.get(id=profile_id)
+    if not profile.work_examples:
+        send_mail('profile-being-viewed', [profile], {})
+
+@shared_task
 def password_updated(user_id):
     user = Profile.objects.get(id=user_id)
     send_mail('password-updated', [user], context={})
