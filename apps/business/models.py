@@ -199,6 +199,8 @@ class Project(models.Model):
 
     def activate(self):
         today = datetime.now().date()
+        if not self.sku:
+            self.sku = 'free'
         product = Product.objects.get(sku=self.sku)
         self.expire_date = today + timedelta(days=product.interval)
         self.status = 'active'
