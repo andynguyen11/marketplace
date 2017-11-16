@@ -3,11 +3,11 @@ import time
 from datetime import datetime, timedelta
 
 from celery import shared_task
+from django.db.models import signals
 from django.conf import settings
 
-from accounts.models import Profile
 from business.models import Project
-from generics.utils import send_mail
+from generics.utils import send_mail, send_to_emails
 from product.models import Order
 from market.celery import app as celery_app
 
@@ -41,21 +41,13 @@ def project_posted(project_id):
     """
     time.sleep(10) #TODO Hacky way to run preauth and ensure sku on project has been saved
     project = Project.objects.get(id=project_id)
-    admin = Profile.objects.get(username='admin')
-    send_mail('project-posted', [admin], {
+    send_to_emails('project-posted', settings.ADMINS, {
         'project': project.title,
         'date': simplejson.dumps(datetime.now().isoformat()),
         'entrepreneur': project.project_manager.name,
         'email': project.project_manager.email,
         'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
     })
-
-@shared_task
-def post_a_project(profile_id):
-    user = Profile.objects.get(id=profile_id)
-    project = Project.objects.filter(project_manager=user)
-    if not len(project):
-        send_mail('post-a-project', [user], {})
 
 
 @shared_task
@@ -70,22 +62,19 @@ def complete_project(project_id):
 @shared_task
 def project_approved_email(project_id):
     project = Project.objects.get(id=project_id)
-    # TODO Strange place to have activate / subscribe
     if project.sku == 'free':
-        project.activate()
         send_mail('project-approved-free', [project.project_manager], {
             'fname': project.project_manager.first_name,
             'title': project.title,
-            'url': '{0}/project/upgrade/{1}/'.format(settings.BASE_URL, project.slug),
+            'url': '{0}/dashboard/project/{1}/'.format(settings.BASE_URL, project.slug),
             'date': project.date_created.strftime("%m/%d/%Y"),
         })
     else:
-        project.subscribe()
         order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
         send_mail('project-approved-receipt', [project.project_manager], {
             'fname': project.project_manager.first_name,
             'title': project.title,
-            'url': '{0}/project/{1}/'.format(settings.BASE_URL, project.slug),
+            'url': '{0}/dashboard/project/{1}/'.format(settings.BASE_URL, project.slug),
             'date': order.date_created.strftime("%m/%d/%Y"),
             'card_type': order.card_type,
             'card_last_4': order.card_last_4,

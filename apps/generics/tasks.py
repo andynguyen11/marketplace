@@ -45,15 +45,6 @@ def validate_confirmation_signature(instance, signature, confirm_on_success='%s_
 
 
 @shared_task
-def account_confirmation(user_id, roles=True):
-    user = Profile.objects.get(id=user_id)
-    email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
-    send_mail(email_template, [user], {
-        'fname': user.first_name,
-        'email': user.email
-    })
-
-@shared_task
 def new_message_notification(recipient_id, thread_id):
     recipient = Profile.objects.get(id=recipient_id)
     unread_messages = Message.objects.filter(
@@ -70,6 +61,7 @@ def new_message_notification(recipient_id, thread_id):
     if unread_messages.count() >= 1 and last_emailed < utc.localize(email_threshold):
         proposal = Proposal.objects.get(message=thread)
         send_mail('message-received', [recipient], {
+            'fname': recipient.first_name,
             'projectname': proposal.project.title,
             'email': recipient.email
         })
@@ -106,23 +98,6 @@ def nda_signed_freelancer_email(nda_id):
         'project': nda.proposal.project.title
     }
     send_mail('nda-signed-freelancer', [nda.receiver], merge_vars)
-
-@shared_task
-def add_work_examples(profile_id):
-    examples = Attachment.objects.filter(
-                content_type= ContentType.objects.get_for_model(Profile),
-                object_id=profile_id
-            )
-    if not examples:
-        profile = Profile.objects.get(id=profile_id)
-        send_mail('add-work-examples', [profile], {})
-
-@shared_task
-def add_work_history(profile_id):
-    history = Employee.objects.filter(profile=profile_id)
-    if not history:
-        profile = Profile.objects.get(id=profile_id)
-        send_mail('add-work-history', [profile], {})
 
 @shared_task
 def queue_mail(template, user_id, context, language='mailchimp'):

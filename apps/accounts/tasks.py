@@ -43,6 +43,21 @@ def email_confirmation(user, instance=None, email_field='email', template='verif
     })
 
 @shared_task
+def account_confirmation(user_id, roles=True):
+    user = Profile.objects.get(id=user_id)
+    email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
+    send_mail(email_template, [user], {
+        'fname': user.first_name,
+        'email': user.email
+    })
+
+@shared_task
+def profile_being_viewed(profile_id):
+    profile = Profile.objects.get(id=profile_id)
+    if not profile.work_examples:
+        send_mail('profile-being-viewed', [profile], {})
+
+@shared_task
 def password_updated(user_id):
     user = Profile.objects.get(id=user_id)
     send_mail('password-updated', [user], context={})
@@ -79,7 +94,7 @@ def project_invite(sender_id, recipient_id):
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
-    start_week = end_week.subtract(days=14)
+    start_week = end_week.subtract(days=7)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
     projects = SearchQuerySet().filter(**week_date_created).models(Project).order_by('-date_created')
     if projects:

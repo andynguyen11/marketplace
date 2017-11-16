@@ -108,6 +108,9 @@ class Order(models.Model):
     def capture(self):
         try:
             charge = stripe.Charge.retrieve(self.stripe_charge)
+            price_check = self.product.price - self.promo.apply_to(self.product.price) if self.promo else self.product.price
+            if int(charge.amount) != int(price_check):
+                charge.amount = price_check
             self.card_type = charge.source.brand
             self.card_last_4 = charge.source.last4
             self.status = 'active'
