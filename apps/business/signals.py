@@ -51,7 +51,7 @@ def project_post_save(sender, instance, created, **kwargs):
     if created and instance.sku != 'free':
         complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
     if instance.approved and instance.published and not instance.status and not instance.expire_date:
-        if instance.sku == 'free':
+        if instance.sku == 'free' or not instance.sku:
             instance.activate()
         else:
             instance.subscribe()
