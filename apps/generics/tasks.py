@@ -61,6 +61,7 @@ def new_message_notification(recipient_id, thread_id):
     if unread_messages.count() >= 1 and last_emailed < utc.localize(email_threshold):
         proposal = Proposal.objects.get(message=thread)
         send_mail('message-received', [recipient], {
+            'fname': recipient.first_name,
             'projectname': proposal.project.title,
             'email': recipient.email
         })

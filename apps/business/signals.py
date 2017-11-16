@@ -55,6 +55,9 @@ def project_post_save(sender, instance, created, **kwargs):
             instance.activate()
         else:
             instance.subscribe()
+        project_approved_email.delay(
+            instance.id
+        )
 
 
 @receiver(pre_save, sender='business.Project')
@@ -66,7 +69,3 @@ def project_pre_save(sender, instance, **kwargs):
         project_in_review.delay(instance.id)
         project_posted.delay(instance.id)
         return
-    if not old_project.approved and instance.approved:
-        project_approved_email.delay(
-            instance.id
-        )
