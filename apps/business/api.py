@@ -87,7 +87,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         return project
 
     def increment_view(self, request, project):
-        if request.user != project.project_manager:
+        if request.user != project.project_manager and project.sku:
             project.views = project.views + 1
             project.save()
 
