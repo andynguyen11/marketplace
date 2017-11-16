@@ -1,7 +1,9 @@
+from datetime import datetime
+
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from accounts.models import Profile, ContactDetails
-from accounts.tasks import email_confirmation, password_updated
+from accounts.tasks import email_confirmation, password_updated, profile_being_viewed
 
 
 @receiver(post_save, sender=Profile)
