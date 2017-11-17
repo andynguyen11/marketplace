@@ -91,6 +91,10 @@ def project_invite(sender_id, recipient_id):
     queue_mail.delay(template, recipient.pk, context, 'handlebars')
 
 
+def freelancer_recommendations():
+    recommendations = SearchQuerySet().filter(**week_date_created).models(Profile)
+
+
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
