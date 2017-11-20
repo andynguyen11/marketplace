@@ -3,21 +3,23 @@ from accounts.models import Profile, Employee
 
 
 def account_analysis(profile):
-    baseline = 50
+    baseline = 65
     role_booster = 1
-    experience_booster = .1
+    experience_booster = .2
     bio_booster = .5
     skill_booster = .2
     work_history_booster = 1
     work_example_booster = 1
     description_booster = .5
     title_boosters = {
+        'head': .5,
+        'sr': .5,
         'director': .5,
         'senior': .5,
         'lead': .5,
-        'svp': 1,
-        'vp': 1,
-        'principal': 1,
+        'svp': .5,
+        'vp': .5,
+        'principal': .5,
         'partner': 1,
         'owner': 1,
         'chair': 1,
@@ -51,9 +53,9 @@ def account_analysis(profile):
         work_examples_points = work_example_booster * profile.work_examples.count()
 
         # Adjustments
-        work_history_points = 4 if work_history_points > 4 else work_history_points
-        title_points = 4 if title_points > 4 else title_points
-        description_points = 4 if description_points > 4 else description_points
+        work_history_points = 5 if work_history_points > 5 else work_history_points
+        title_points = 5 if title_points > 5 else title_points
+        description_points = 5 if description_points > 5 else description_points
         work_examples_points = 3 if work_examples_points > 3 else work_examples_points
 
         # Total
