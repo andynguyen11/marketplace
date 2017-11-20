@@ -183,6 +183,7 @@ class Profile(AbstractUser):
     featured = models.BooleanField(default=False)
     tos = models.BooleanField(default=False)
     work_examples = GenericRelation('generics.Attachment')
+    score = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
 
     @property
     def name(self):
