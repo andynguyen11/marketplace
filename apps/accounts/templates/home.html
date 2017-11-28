@@ -31,8 +31,8 @@
             <h5 class="brand">Whether you need a team to build a product, or a single freelancer<br class="hide-mobile"/> for a short-term project, Loom can help.</h5>
             <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
           {% elif random_slide == 2 %}
-            <h2 class="brand-bold">Hire your<br class="hide-desktop"> freelance dream team.</h2>
-            <h5 class="brand">Loom is the only freelance platform that lets you hire top-tier talent<br class="hide-mobile"/> for cash, equity or both. Win-win.</h5>
+            <h2 class="brand-bold">Top freelancers,<br class="hide-desktop"> delivered.</h2>
+            <h5 class="brand">Loom’s smart matching technology streamlines your freelancer search,<br class="hide-mobile"/> helping you hire the right freelancer for cash, equity or a combination of both.</h5>
             <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
           {% elif random_slide == 3 %}
             <h2 class="brand-bold">Build products<br class="hide-desktop"> with freelancers.</h2>
@@ -242,37 +242,54 @@
 {% endcache %}
 
 <div class="testimonials">
-  <div class="page-content--medium testimonials-inner">
-    <div class="testimonial">
-      <div class="testimonial-avatar testimonial-avatar--neill"></div>
-      <div class="testimonial-text">
-        We used a variety of services to engage freelancers. Within two days on Loom we had over ten responses, and within a week had a work-for-equity agreement. Loom is easy to use, effective, and importantly, has no overbearing contract to deal with. We'll use Loom again and recommend it to other entrepreneurs."
-      </div>
-      <div class="testimonial-signature">
-        <h4 class="brand-bold brand-color">Neill Groom</h4>
-        <h6>Founder &amp; CEO, WeVest</h6>
-      </div>
-    </div>
+  
+  <div id="testimonial-carousel--home" class="carousel slide testimonials-slider page-content--medium" data-interval="8000" data-ride="carousel">
 
-    <div class="testimonial">
-      <div class="testimonial-avatar testimonial-avatar--jermaine"></div>
-      <div class="testimonial-text">
-        Loom literally brought confidence back to our startup. I signed up in minutes, and within a day had over five bids from serious developers; some of which are now an integral part of our team as we get ready to launch next month, thanks to Loom. I couldn't possibly ask for a better platform to bring my ideas to life. I'm truly grateful."
-      </div>
-      <div class="testimonial-signature">
-        <h4 class="brand-bold brand-color">Jermaine Malcolm</h4>
-        <h6>Founder &amp; CEO, RecChanges</h6>
-      </div>
-    </div>
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#testimonial-carousel--home" data-slide-to="0" class="active"></li>
+      <li data-target="#testimonial-carousel--home" data-slide-to="1"></li>
+      <li data-target="#testimonial-carousel--home" data-slide-to="2"></li>
+      <li data-target="#testimonial-carousel--home" data-slide-to="3"></li>
+    </ol>
 
-    <div class="testimonial">
-      <div class="testimonial-avatar testimonial-avatar--juan"></div>
-      <div class="testimonial-text">
-        Loom has been instrumental in creating powerful connections across the world while building my businesses in exchange for technical talent and subject matter expertise. The team and platform provide a win-win for entrepreneurs and top developers to get ideas to market quickly and with excellent results."
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      <div class="item active">
+        <div class="testimonial-slide">
+          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/Alex_profile_photo.jpg"></div>
+          <div class="testimonial-quote">
+            <p>"Loom is the bee's knees! We found several great developers for our needs, easily, in a timely manner, and ended up hiring one of them who happens to be crushing it right now."</p>
+            <p class="quote-source"><strong>Alex Oberman</strong><br/> Co-founder, FloMusic</p>
+          </div>
+        </div>
       </div>
-      <div class="testimonial-signature">
-        <h4 class="brand-bold brand-color">Juan Felipe Campos</h4>
-        <h6>Founder &amp; CEO, NomadApp</h6>
+      <div class="item">
+        <div class="testimonial-slide">
+          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/319028588e354dd9a429d8c1a2b9c06d1729.jpg"></div>
+          <div class="testimonial-quote">
+            <p>"Within two days on Loom we had over ten responses, and within a week had a work-for-equity agreement. We’ll use Loom again and recommend it to other entrepreneurs."</p>
+            <p class="quote-source"><strong>Neill Groom</strong><br/> Founder & CEO, WeVest</p>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="testimonial-slide">
+          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/Jermaine-Malcolm-0066.jpg"></div>
+          <div class="testimonial-quote">
+            <p>"Loom brought confidence back to our startup. I signed up in minutes, and had over five bids from serious developers; some of which are now an integral part of our team."</p>
+            <p class="quote-source"><strong>Jermaine Malcolm</strong><br/> Founder & CEO, RecChanges</p>
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="testimonial-slide">
+          <div class="testimonial-photo" style="background-image: url(/static/images/juan.jpeg"></div>
+          <div class="testimonial-quote">
+            <p>"Loom has been instrumental in creating powerful connections. They provide a win-win for entrepreneurs and top talent to get ideas to market quickly and with excellent results."</p>
+            <p class="quote-source"><strong>Juan Felipe Campos</strong><br/> Founder & CEO, NomadApp</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>

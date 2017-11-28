@@ -307,11 +307,102 @@
 }
 
 .testimonials {
+	padding: 100px 0 130px;
 	background: #fff7f1; /* Old browsers */
 	background: -moz-linear-gradient(left, #fff7f1 0%, #fff5f3 100%); /* FF3.6-15 */
 	background: -webkit-linear-gradient(left, #fff7f1 0%, #fff5f3 100%); /* Chrome10-25,Safari5.1-6 */
 	background: linear-gradient(to right, #fff7f1 0%, #fff5f3 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
 	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff7f1', endColorstr='#fff5f3', GradientType=1); /* IE6-9 */
+
+	@media (max-width: @screen-sm) {
+		padding-top: 50px;
+	}
+
+	.testimonials-slider {
+
+		.carousel-indicators {
+			bottom: -80px;
+
+			li {
+				border: 1px solid #ff7b5c;
+				background-color: transparent;
+				position: relative;
+				display: inline-block;
+				height: 15px;
+				width: 15px;
+				margin: 0 5px;
+				padding: 0;
+				cursor: pointer;
+
+				&:hover,
+				&.active {
+					background-color: rgba(254, 193, 178, 0.75);
+				}
+			}
+		}
+
+		.testimonial-slide {
+			display: flex;
+			justify-content: space-between;
+			padding: 0 70px;
+
+			@media (max-width: @screen-sm) {
+				flex-direction: column;
+				padding: 20px 50px;
+			}
+
+			.testimonial-photo {
+				display: flex;
+				align-items: center;
+				width: 100%;
+				max-width: 300px;
+				height: 300px;
+				overflow: hidden;
+				border-radius: 5px;
+				background-size: cover;
+				background-position: center;
+
+				@media (max-width: @screen-sm) {
+					max-width: 200px;
+					height: 200px;
+				}
+
+				img {
+					width: 100%;
+				}
+			}
+
+			.testimonial-quote {
+				max-width: 500px;
+				display: flex;
+				margin-left: 40px;
+				flex-direction: column;
+				justify-content: space-between;
+
+				@media (max-width: @screen-sm) {
+					margin-left: 0;
+				}
+				
+				p {
+					font-family: @brand-font;
+					font-size: 26px;
+					font-weight: 700;
+
+					@media (max-width: @screen-sm) {
+						font-size: 18px;
+						margin-top: 30px;
+						line-height: 1.5;
+					}
+
+					&.quote-source {
+						font-weight: 400;
+						color: #ff7b5c;
+					}
+				}
+			}
+		}
+
+	}
 }
 
 .testimonials-inner {
