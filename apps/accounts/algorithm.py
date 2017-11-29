@@ -61,3 +61,24 @@ def account_analysis(profile):
         # Total
         profile_score = baseline + role_points + experience_points + bio_points + skill_points + work_examples_points + work_history_points + title_points + description_points
         return profile_score
+
+
+def scrape_angel():
+    soup = BeautifulSoup(open('/Users/andynguyen/Desktop/angel.htm'))
+    listings = soup.find_all('div', attrs={"class":"browse_startups_table_row"})
+    companies = []
+    for listing in listings:
+        company_name = listing.find('a', attrs={"class":"startup-link"}).contents[0].encode('utf8', 'replace') if listing.find('a', attrs={"class":"startup-link"}) else ''
+        try:
+            link = listing.find('a', attrs={"class":"website-link"}).contents[0].encode('utf8', 'replace') if listing.find('a', attrs={"class":"website-link"}) else ''
+        except IndexError:
+            link = ''
+        team = listing.find_all('a', attrs={"class":"profile-link"})
+        people = [person.contents[0].encode('utf8', 'replace') for person in team] if team else None
+        row = [company_name, link]
+        row.append(people)
+        companies.append(row)
+
+    with open('angel_contract_companies.csv', 'wb') as f:
+        writer = csv.writer(f)
+        writer.writerows(row for row in companies if row)
