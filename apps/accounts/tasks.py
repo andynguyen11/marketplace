@@ -54,8 +54,8 @@ def account_confirmation(user_id, roles=True):
 @shared_task
 def profile_being_viewed(profile_id):
     profile = Profile.objects.get(id=profile_id)
-    if not profile.work_examples:
-        send_mail('profile-being-viewed', [profile], {})
+    if not len(profile.work_examples.all()):
+        send_mail('profile-being-viewed', [profile], {'fname': profile.first_name})
 
 @shared_task
 def password_updated(user_id):
@@ -91,42 +91,64 @@ def project_invite(sender_id, recipient_id):
     queue_mail.delay(template, recipient.pk, context, 'handlebars')
 
 
-def freelancer_recommendations():
-    recommendations = SearchQuerySet().filter(**week_date_created).models(Profile)
+def freelancer_recommendations(profile_id):
+    profile = Profile.objects.get(id=profile_id)
+    projects = Projects.objects.filter(project_manager=profile, status='active')
+    for project in projects:
+        recomendations = []
+        if project.city:
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, city=project.city).models(Profile).order_by('-score')
+            recommendations.append(profiles)
+        if len(recommendations) < 6 and project.state:
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, state=project.state).models(Profile).order_by('-score')
+            recommendations.append(profiles)
+        if len(recommendations) < 6 and project.country:
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, country=project.country).models(Profile).order_by('-score')
+            recommendations.append(profiles)
+        if len(recommendations) < 6:
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills).models(Profile).order_by('-score')
+            recommendations.append(profiles)
+        if len(recommendations) < 6:
+            return
 
 
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
-    start_week = end_week.subtract(days=7)
+    start_week = end_week.subtract(days=8)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-    projects = SearchQuerySet().filter(**week_date_created).models(Project).order_by('-date_created')
+    projects = Project.objects.filter(approved=True, **week_date_created).order_by('-date_created')
     if projects:
         user_list = {}
         for project in projects:
-            users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
+            if project.country:
+                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), country=project.country).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
+            else:
+                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all())
             project = {
                 'project_title': project.title,
-                'fname': project.first_name,
-                'image': project.photo,
-                'city': project.city,
-                'state': project.state,
-                'country': project.country,
+                'fname': project.project_manager.first_name,
+                'image': project.project_manager.get_photo,
+                'city': project.city if project.city else project.project_manager.city,
+                'state': project.state if project.state else project.project_manager.state,
+                'country': project.country if project.country else project.project_manager.country,
                 'description': project.scope,
-                'skills': ', '.join(project.skills),
+                'skills': ', '.join([skill.name for skill in project.skills.all()]),
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
             for user in users:
-                if user.email not in user_list.keys():
-                    user_list[user.email] = {}
-                    user_list[user.email]['user'] = user
-                    user_list[user.email]['projects'] = [project, ]
-                else:
-                    user_list[user.email]['projects'].append(project)
+                if user.score > 69:
+                    if user.email not in user_list.keys():
+                        user_list[user.email] = {}
+                        user_list[user.email]['user'] = user
+                        user_list[user.email]['projects'] = [project, ]
+                    else:
+                        user_list[user.email]['projects'].append(project)
 
-        for key, value in user_list.items():
-            context={
-                'fname': value['user'].first_name,
-                'projects': value['projects']
-            }
-            queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
+            for key, value in user_list.items():
+                context={
+                    'fname': value['user'].first_name,
+                    'projects': value['projects']
+                }
+                queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
+

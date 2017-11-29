@@ -83,5 +83,5 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
         model = Profile
         fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
-                  "roles", "skills", "email_notifications", "city", "state", "country",
+                  "roles", "skills", "email_notifications", "city", "state", "country", "score",
                   "long_description", "job_descriptions", "job_titles", "featured", "text", "examples", )
