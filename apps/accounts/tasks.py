@@ -54,8 +54,8 @@ def account_confirmation(user_id, roles=True):
 @shared_task
 def profile_being_viewed(profile_id):
     profile = Profile.objects.get(id=profile_id)
-    if not profile.work_examples:
-        send_mail('profile-being-viewed', [profile], {})
+    if not len(profile.work_examples.all()):
+        send_mail('profile-being-viewed', [profile], {'fname': profile.first_name})
 
 @shared_task
 def password_updated(user_id):
