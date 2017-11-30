@@ -119,36 +119,36 @@ def freelancer_project_matching():
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
     projects = Project.objects.filter(approved=True, **week_date_created).order_by('-date_created')
     if projects:
-    user_list = {}
-    for project in projects:
-        if project.country:
-            users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), country=project.country).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
-        else:
-            users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all())
-        project = {
-            'project_title': project.title,
-            'fname': project.project_manager.first_name,
-            'image': project.project_manager.get_photo,
-            'city': project.city if project.city else project.project_manager.city,
-            'state': project.state if project.state else project.project_manager.state,
-            'country': project.country if project.country else project.project_manager.country,
-            'description': project.scope,
-            'skills': ', '.join([skill.name for skill in project.skills.all()]),
-            'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
-        }
-        for user in users:
-            if user.score > 69:
-                if user.email not in user_list.keys():
-                    user_list[user.email] = {}
-                    user_list[user.email]['user'] = user
-                    user_list[user.email]['projects'] = [project, ]
-                else:
-                    user_list[user.email]['projects'].append(project)
-
-        for key, value in user_list.items():
-            context={
-                'fname': value['user'].first_name,
-                'projects': value['projects']
+        user_list = {}
+        for project in projects:
+            if project.country:
+                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), country=project.country).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
+            else:
+                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all())
+            project = {
+                'project_title': project.title,
+                'fname': project.project_manager.first_name,
+                'image': project.project_manager.get_photo,
+                'city': project.city if project.city else project.project_manager.city,
+                'state': project.state if project.state else project.project_manager.state,
+                'country': project.country if project.country else project.project_manager.country,
+                'description': project.scope,
+                'skills': ', '.join([skill.name for skill in project.skills.all()]),
+                'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
-            queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
+            for user in users:
+                if user.score > 69:
+                    if user.email not in user_list.keys():
+                        user_list[user.email] = {}
+                        user_list[user.email]['user'] = user
+                        user_list[user.email]['projects'] = [project, ]
+                    else:
+                        user_list[user.email]['projects'].append(project)
+
+            for key, value in user_list.items():
+                context={
+                    'fname': value['user'].first_name,
+                    'projects': value['projects']
+                }
+                queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
 
