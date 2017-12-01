@@ -137,7 +137,7 @@ def freelancer_project_matching():
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
             for user in users:
-                if user.score > 69:
+                if user.grade > 69:
                     if user.email not in user_list.keys():
                         user_list[user.email] = {}
                         user_list[user.email]['user'] = user

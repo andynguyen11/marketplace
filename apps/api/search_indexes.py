@@ -64,6 +64,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     job_titles = indexes.MultiValueField()
     profile_id = indexes.IntegerField()
     examples = indexes.IntegerField()
+    grade = indexes.DecimalField()
 
     def prepare(self, obj):
         self.prepared_data = super(UserIndex, self).prepare(obj)
@@ -74,6 +75,7 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
         self.prepared_data['roles'] = [role.display_name for role in obj.roles.all()]
         self.prepared_data['photo'] = obj.get_photo
         self.prepared_data['profile_id'] = obj.pk
+        self.prepared_data['grade'] = obj.score
         self.prepared_data['examples'] = len(obj.work_examples.all())
         return self.prepared_data
 
@@ -83,5 +85,5 @@ class UserIndex(indexes.ModelSearchIndex, indexes.Indexable):
     class Meta:
         model = Profile
         fields = ("profile_id", "first_name", "last_name", "email", "location", "photo",
-                  "roles", "skills", "email_notifications", "city", "state", "country", "score",
+                  "roles", "skills", "email_notifications", "city", "state", "country", "grade",
                   "long_description", "job_descriptions", "job_titles", "featured", "text", "examples", )
