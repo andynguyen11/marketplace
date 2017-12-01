@@ -11,12 +11,13 @@ from notifications.signals import notify
 from rest_framework.serializers import ModelSerializer
 from rest_framework import generics
 from rest_framework.views import APIView
-from rest_framework.viewsets import ViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.decorators import permission_classes, list_route
 from rest_framework.exceptions import ValidationError
+from rest_framework.pagination import PageNumberPagination
 
 from accounts.models import Profile, Connection
 from business.models import Project
@@ -25,7 +26,7 @@ from generics.tasks import new_message_notification
 from generics.validators import file_validator
 from postman.models import Message, AttachmentInteraction, Interaction, STATUS_PENDING, STATUS_ACCEPTED
 from postman.permissions import IsPartOfConversation
-from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction
+from postman.serializers import ConversationSerializer, InteractionSerializer, MessageInteraction, FileInteraction, serialize_interaction, InboxSerializer
 
 def all_interactions(thread_id):
     return sorted(chain(*[
@@ -45,12 +46,26 @@ def get_interaction(interaction_id):
         return Message.objects.get(id=interaction_id)
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'limit'
+
+
 class MessageCount(APIView):
     permission_classes = (IsAuthenticated, )
 
     def get(self, request):
         count = Message.objects.inbox_unread_count(request.user)
         return Response({'message_count': count})
+
+
+class MessageInbox(ModelViewSet):
+    serializer_class = InboxSerializer
+    pagination_class = StandardResultsSetPagination
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        return Message.objects.inbox(self.request.user)
 
 
 class ConversationDetail(generics.RetrieveAPIView):

@@ -53,6 +53,22 @@ class MessageSerializer(serializers.ModelSerializer):
         model = Message
 
 
+class InboxSerializer(serializers.Serializer):
+    id = serializers.SerializerMethodField()
+    body = serializers.CharField()
+    subject = serializers.CharField()
+    sender = ObfuscatedProfileSerializer(required=False, allow_null=True)
+    sent_at = serializers.DateTimeField(format='iso-8601')
+    is_new = serializers.BooleanField()
+
+    class Meta:
+        model = Message
+        fields = ('id', 'sender', 'subject', 'sent_at', 'body', 'is_new' )
+
+    def get_id(self, obj):
+        return obj.thread_id
+
+
 class InteractionSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     interactionType = serializers.CharField(max_length=100)

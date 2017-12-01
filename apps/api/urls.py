@@ -10,7 +10,7 @@ from payment.api import StripePaymentSourceView, InvoiceViewSet, InvoiceRecipien
 from product.api import OrderViewSet, PromoCheck
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
-from postman.api import ConversationDetail, MessageAPI, MessageCount
+from postman.api import ConversationDetail, MessageAPI, MessageCount, MessageInbox
 from proposals.api import QuestionViewSet, ProposalViewSet
 from reviews.api import ReviewListCreate
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
@@ -70,6 +70,10 @@ declared_router = DeclarativeRouter({
     'stripe-connect': {
         'view':  StripeConnectViewSet,
         'base_name': 'stripe-connect'
+    },
+    'messages/inbox': {
+        'view': MessageInbox,
+        'base_name': 'messages-inbox',
     }
 })
 
