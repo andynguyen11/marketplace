@@ -61,7 +61,7 @@
         </ul>
 
         <div class="header-icons">
-          <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
+          <a href="{% url 'messages-inbox' %}" class="header-icon-messages hide-mobile">
             <img src="{% static 'images/Chat_icon.svg' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
@@ -69,7 +69,7 @@
           <div class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-image: url('{{ request.user.get_photo }}');"></div>
           <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
-             <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+             <li class="hide-desktop"><a href="{% url 'messages-inbox' %}" class="header-icon-messages hide-desktop">
               Messages
               {% if unread_count %}({{ unread_count }}){% endif %}
             </a></li>

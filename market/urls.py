@@ -53,6 +53,7 @@ urlpatterns = [
     url(r'^dashboard/proposal/(?P<proposal_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-proposal'),
     url(r'^dashboard/proposals', TemplateView.as_view(template_name='spa.html'), name='view-bids'),
     url(r'^dashboard/skills/', TemplateView.as_view(template_name='spa.html'), name='view-skills'),
+    url(r'^dashboard/messages/inbox', TemplateView.as_view(template_name='spa.html'), name='messages-inbox'),
     url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
     url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^login/$', accounts_views.user_login, name='login'),
