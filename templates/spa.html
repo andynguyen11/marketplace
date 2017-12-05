@@ -22,7 +22,7 @@
 	<link rel="shortcut icon" href="{% static 'spa/favicon.ico' %}">
 
 	{% if ENVIRONMENT != 'local' %}
-	<link href="{% static 'spa/styles.ef1b7c8a31bef906b3ab.css' %}" rel="stylesheet">
+	<link href="{% static 'spa/styles.0a972ebd36231208a644.css' %}" rel="stylesheet">
 	{% endif %}
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -71,7 +71,6 @@
 </head>
 <body>
 
-<!-- HAVE FUN: Your app lives here -->
 <span id="app">
 	<div class="preloader"></div>
 </span>
@@ -100,8 +99,8 @@ src="https://www.facebook.com/tr?id=208488146232969&ev=PageView&noscript=1"
 {% if ENVIRONMENT == 'local' %}
 <script src="http://localhost:8001/bundle.js"></script>
 {% else %}
-<script src="{% static 'spa/vendor.bf7e7e5c8ba5f26cea37.js' %}"></script>
-<script src="{% static 'spa/app.ef1b7c8a31bef906b3ab.js' %}"></script>
+<script src="{% static 'spa/vendor.cf3df11a3a08eb709b06.js' %}"></script>
+<script src="{% static 'spa/app.0a972ebd36231208a644.js' %}"></script>
 {% endif %}
 
 
