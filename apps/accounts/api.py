@@ -7,6 +7,7 @@ from drf_haystack.viewsets import HaystackViewSet
 from drf_haystack.filters import HaystackFilter
 from notifications.models import Notification
 from rest_framework import status, generics
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from rest_framework.decorators import permission_classes, list_route, detail_route
@@ -20,7 +21,7 @@ from accounts.enums import DISCIPLINES, ROLES
 from accounts.permissions import IsSubscribed
 from accounts.tasks import email_confirmation, project_invite
 from business.models import Project
-from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, ProfileSearchSerializer
+from accounts.serializers import ProfileSerializer, ContactDetailsSerializer, SkillsSerializer, SkillTestSerializer, VerificationTestSerializer, NotificationSerializer, NotificationsSerializer, ProfileSearchSerializer
 from apps.api.utils import set_jwt_token
 from apps.api.permissions import (
         IsCurrentUser, IsOwnerOrIsStaff, CreateReadOrIsCurrentUser,
@@ -244,6 +245,28 @@ class SkillTestViewSet(NestedModelViewSet):
         request.data['expertratings_test'] = str(request.query_params.get('expertratings_test', None))
         create_response = self.create(request, *args, **kwargs)
         return redirect(create_response.data['ticket_url'])
+
+
+class NotificationResultsSetPagination(PageNumberPagination):
+    page_size = 12
+    page_size_query_param = 'limit'
+
+
+class NotificationsList(generics.ListAPIView):
+    serializer_class = NotificationsSerializer
+    pagination_class = NotificationResultsSetPagination
+    permission_classes = ( IsAuthenticated, )
+
+    def get_queryset(self):
+        return self.request.user.notifications.all()
+
+
+class UnreadNotificationCount(APIView):
+    permission_classes = (IsAuthenticated, )
+
+    def get(self, request):
+        count = request.user.notifications.unread().count()
+        return Response({'unread_count': count})
 
 
 class NotificationUpdate(generics.UpdateAPIView):

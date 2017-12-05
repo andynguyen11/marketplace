@@ -172,6 +172,13 @@ class ProjectSearchSerializer(HaystackSerializer):
         return None
 
 
+class ProjectNotificationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Project
+        fields = ('id', 'title', 'slug', )
+
+
 class EmployeeSerializer(serializers.ModelSerializer):
     company = CompanySerializer(read_only=True)
     company_name = serializers.CharField(write_only=True)
