@@ -65,7 +65,7 @@ class MessageInbox(ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return Message.objects.inbox(self.request.user)
+        return Message.objects.inbox_as_thread(self.request.user)
 
 
 class ConversationDetail(generics.RetrieveAPIView):
