@@ -423,6 +423,8 @@ NOTIFICATIONS_USE_JSONFIELD = True
 
 NOTIFICATIONS_USE_JSONFIELD = True
 
+VL_API_KEY = 'Z8ZI1QdkRwJR0JFXqDcyhNtDQB0'
+
 try:
     from local_settings import *
 except ImportError:

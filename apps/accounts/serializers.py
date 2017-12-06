@@ -118,6 +118,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 'my_skills', 'skills_test', 'invited')
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
+            'referral_code': {'write_only': True, 'required': False},
         }
 
     def get_invited(self, obj):

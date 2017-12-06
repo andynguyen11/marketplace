@@ -184,6 +184,7 @@ class Profile(AbstractUser):
     tos = models.BooleanField(default=False)
     work_examples = GenericRelation('generics.Attachment')
     score = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
+    referral_code = models.CharField(max_length=50, blank=True, null=True)
 
     @property
     def name(self):

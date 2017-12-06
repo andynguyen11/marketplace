@@ -7,9 +7,11 @@ from django.utils.http import urlencode
 from haystack.query import SearchQuerySet
 
 from accounts.models import Profile, Role
+from accounts.serializers import ProfileSearchSerializer
 from business.models import Project
 from generics.utils import send_mail, send_to_emails, sign_data, create_auth_token, calculate_date_ranges
 from generics.tasks import queue_mail
+from product.models import Order
 from market.celery import app as celery_app
 
 
@@ -43,12 +45,11 @@ def email_confirmation(user, instance=None, email_field='email', template='verif
     })
 
 @shared_task
-def account_confirmation(user_id, roles=True):
+def welcome_email(user_id):
     user = Profile.objects.get(id=user_id)
-    email_template = 'welcome-developer' if roles else 'welcome-entrepreneur'
+    email_template = 'welcome-talent' if user.roles.all() else 'welcome-employer'
     send_mail(email_template, [user], {
-        'fname': user.first_name,
-        'email': user.email
+        'fname': user.first_name
     })
 
 @shared_task
@@ -93,29 +94,34 @@ def project_invite(sender_id, recipient_id):
 
 def freelancer_recommendations(profile_id):
     profile = Profile.objects.get(id=profile_id)
-    projects = Projects.objects.filter(project_manager=profile, status='active')
+    projects = Project.objects.filter(project_manager=profile, status='active')
+
     for project in projects:
-        recomendations = []
         if project.city:
-            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, city=project.city).models(Profile).order_by('-score')
-            recommendations.append(profiles)
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), city=project.city, grade__gte=70).models(Profile).order_by('-grade')
         if len(recommendations) < 6 and project.state:
-            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, state=project.state).models(Profile).order_by('-score')
-            recommendations.append(profiles)
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), state=project.state, grade__gte=70).models(Profile).order_by('-grade')
         if len(recommendations) < 6 and project.country:
-            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills, country=project.country).models(Profile).order_by('-score')
-            recommendations.append(profiles)
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), country=project.country, grade__gte=70).models(Profile).order_by('-grade')
         if len(recommendations) < 6:
-            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills).models(Profile).order_by('-score')
-            recommendations.append(profiles)
+            profiles = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), grade__gte=70).models(Profile).order_by('-score')
         if len(recommendations) < 6:
             return
+        context = {
+            'fname': profile.first_name,
+            'project_title': project.title,
+            'freelancers': ProfileSearchSerializer(profiles, many=True).data,
+            'subscribed': True if Order.objects.filter(user=profile, status='active') else False,
+            'search_url': '{0}/project/search/profiles'.format(settings.BASE_URL),
+            'projects_url': '{0}/project/dashboard/projects'.format(settings.BASE_URL),
+        }
+        queue_mail.delay('freelancer-recommendations', profile.id, context, 'handlebars')
 
 
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
-    start_week = end_week.subtract(days=8)
+    start_week = end_week.subtract(days=6)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
     projects = Project.objects.filter(approved=True, **week_date_created).order_by('-date_created')
     if projects:
@@ -137,7 +143,7 @@ def freelancer_project_matching():
                 'project_url': '{0}/project/{1}'.format(settings.BASE_URL, project.slug)
             }
             for user in users:
-                if user.grade > 69:
+                if user.score > 70:
                     if user.email not in user_list.keys():
                         user_list[user.email] = {}
                         user_list[user.email]['user'] = user
