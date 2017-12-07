@@ -125,7 +125,8 @@ urlpatterns = [
     url(r'^profile/settings/bank/setup/business/company/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-company'),
     url(r'^profile/settings/bank/setup/(individual|business)/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-confirmation'),
     url(r'^search/profiles/?$', TemplateView.as_view(template_name='spa.html'), name='search-profiles'),
-    url(r'^notifications', TemplateView.as_view(template_name='spa.html'), name='notifications')
+    url(r'^notifications', TemplateView.as_view(template_name='spa.html'), name='notifications'),
+    url(r'^invite-friends', TemplateView.as_view(template_name='spa.html'), name='referrals')
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
