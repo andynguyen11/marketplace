@@ -59,9 +59,6 @@ def project_post_save(sender, instance, created, **kwargs):
         project_approved_email.delay(
             instance.id
         )
-        if instance.project_manager.referral_code:
-            conversion(instance.project_manager)
-
 
 
 @receiver(pre_save, sender='business.Project')

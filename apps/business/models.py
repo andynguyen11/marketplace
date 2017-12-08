@@ -11,6 +11,7 @@ from django.template.defaultfilters import slugify
 from django.utils.encoding import smart_str
 from django.contrib.contenttypes.models import ContentType
 
+from accounts.referral import conversion
 from business.enums import *
 from generics.models import Attachment
 from generics.utils import send_mail
@@ -217,6 +218,8 @@ class Project(models.Model):
             order.product = product
             order.save()
         order.capture()
+        if self.project_manager.referral_code:
+            conversion(self.project_manager)
         self.activate()
         return self
 

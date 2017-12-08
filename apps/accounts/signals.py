@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from accounts.models import Profile, ContactDetails
-from accounts.tasks import email_confirmation, password_updated, profile_being_viewed
+from accounts.tasks import email_confirmation, password_updated, profile_being_viewed, welcome_email
 
 
 @receiver(post_save, sender=Profile)
