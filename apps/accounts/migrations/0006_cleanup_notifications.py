@@ -8,7 +8,7 @@ from notifications.models import Notification
 
 def remove_legacy_notifications(apps, schema_editor):
     for notification in Notification.objects.filter(data__isnull=False):
-        if notification.data['type'] in ['connectionRequest', 'messageLimitReceived', 'connectionAccepted']:
+        if notification.data['type'] in ['connectionRequest', 'messageLimitReached', 'connectionAccepted', 'connectionRequestExpired']:
             notification.delete()
 
 

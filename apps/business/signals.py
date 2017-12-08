@@ -5,7 +5,6 @@ from django.dispatch import receiver
 from notifications.models import Notification
 from notifications.signals import notify
 
-from accounts.referral import conversion
 from business.tasks import project_in_review, project_posted, complete_project, project_approved_email
 from generics.tasks import nda_sent_email, nda_signed_freelancer_email, nda_signed_entrepreneur_email
 

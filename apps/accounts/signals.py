@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from accounts.models import Profile, ContactDetails
+from accounts.referral import vl_register
 from accounts.tasks import email_confirmation, password_updated, profile_being_viewed, welcome_email
 
 
@@ -25,4 +26,5 @@ def profile_pre_save(sender, instance, **kwargs):
     if not old_profile.tos and instance.tos and instance.email_confirmed:
         today = datetime.utcnow()
         profile_being_viewed.apply_async((instance.id, ), eta=today + timedelta(days=7))
+        vl_register(instance)
         welcome_email.delay(instance.id)
