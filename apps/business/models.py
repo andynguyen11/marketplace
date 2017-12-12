@@ -219,7 +219,7 @@ class Project(models.Model):
             order.save()
         order.capture()
         if self.project_manager.referral_code:
-            vl_conversion(self.project_manager)
+            response = vl_conversion(self.project_manager)
         self.activate()
         return self
 

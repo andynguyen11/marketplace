@@ -26,5 +26,6 @@ def profile_pre_save(sender, instance, **kwargs):
     if not old_profile.tos and instance.tos and instance.email_confirmed:
         today = datetime.utcnow()
         profile_being_viewed.apply_async((instance.id, ), eta=today + timedelta(days=7))
-        vl_register(instance)
+        if instance.referral_code:
+            response = vl_register(instance)
         welcome_email.delay(instance.id)

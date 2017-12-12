@@ -8,20 +8,21 @@ vlapi = {
 
 def vl_register(user):
     payload = {
-        'apiToken': settings.VL_API_KEY,
-        'params': {
-            'event': 'registration',
-            'user': {
-                'firstname': user.first_name,
-                'lastname': user.last_name,
-                'email': user.email
+        "params": {
+            "event": "registration",
+            "user": {
+                "firstname": user.first_name,
+                "lastname": user.last_name,
+                "email": user.email
             },
-            'referrer': {
-                'referralCode': user.referral_code
+            "referrer": {
+                "referralCode": user.referral_code
             },
         },
+        "apiToken": settings.VL_API_KEY
     }
-    return requests.post(vlapi['event'], data=payload)
+    headers = {'Content-Type': 'application/json'}
+    return requests.post(vlapi['event'], json=payload)
 
 
 def vl_conversion(user):
@@ -38,4 +39,4 @@ def vl_conversion(user):
         },
 
     }
-    return requests.post(vlapi['event'], data=payload)
+    return requests.post(vlapi['event'], json=payload)
