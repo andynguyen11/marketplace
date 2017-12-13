@@ -14,7 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from accounts.referral import vl_conversion
 from business.enums import *
 from generics.models import Attachment
-from generics.utils import send_mail
+from generics.utils import send_mail, send_to_emails
 from product.models import Product, Order, Promo
 from postman.models import Message
 
@@ -220,6 +220,15 @@ class Project(models.Model):
         order.capture()
         if self.project_manager.referral_code:
             response = vl_conversion(self.project_manager)
+            context = {
+                'name': self.project_manager.name,
+                'title': self.title,
+                'email': self.project_manager.email,
+                'location': self.project_manager.location,
+                'referral_code': self.project_manager.referral_code,
+                'url': settings.VL_CAMPAIGN_URL
+            }
+            send_to_emails('referral-conversion', settings.ADMINS, context)
         self.activate()
         return self
 

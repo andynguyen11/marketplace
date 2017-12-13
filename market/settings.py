@@ -425,6 +425,8 @@ NOTIFICATIONS_USE_JSONFIELD = True
 
 VL_API_KEY = 'Z8ZI1QdkRwJR0JFXqDcyhNtDQB0'
 
+VL_CAMPAIGN_URL = 'https://app.viral-loops.com/#/campaigns/14140/dashboard'
+
 try:
     from local_settings import *
 except ImportError:
