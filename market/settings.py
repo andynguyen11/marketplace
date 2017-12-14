@@ -423,9 +423,9 @@ NOTIFICATIONS_USE_JSONFIELD = True
 
 NOTIFICATIONS_USE_JSONFIELD = True
 
-VL_API_KEY = 'Z8ZI1QdkRwJR0JFXqDcyhNtDQB0'
+VL_API_KEY = os.environ.get('VL_API_KEY', 'Z8ZI1QdkRwJR0JFXqDcyhNtDQB0')
 
-VL_CAMPAIGN_URL = 'https://app.viral-loops.com/#/campaigns/14140/dashboard'
+VL_CAMPAIGN_URL = 'https://app.viral-loops.com/#/campaigns/{0}/dashboard'.format(os.environ.get('VL_CAMPAIGN', '14140'))
 
 try:
     from local_settings import *
