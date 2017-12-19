@@ -65,7 +65,7 @@ class MessageInbox(ModelViewSet):
     permission_classes = (IsAuthenticated, )
 
     def get_queryset(self):
-        return Message.objects.inbox(self.request.user)
+        return Message.objects.inbox_as_thread(self.request.user)
 
 
 class ConversationDetail(generics.RetrieveAPIView):
@@ -92,7 +92,7 @@ class MessageAPI(APIView):
         thread = Message.objects.get(project=project)
         new_message.thread = thread
         new_message.save()
-        new_message_notification.delay(recipient.id, new_message.id)
+        new_message_notification.apply_async((recipient.id, new_message.id), eta=today + timedelta(minutes=15))
         return Response(status=200)
 
     def new_message(self, thread, user, body):
@@ -141,7 +141,7 @@ class MessageAPI(APIView):
                 interaction = self.new_message(thread, request.user, request.data['body'])
 
             serializer = ConversationSerializer(thread, context={'request': request})
-            new_message_notification.delay(interaction.recipient.id, interaction.thread.id)
+            new_message_notification.apply_async((recipient.id, new_message.id), eta=today + timedelta(minutes=15))
             return Response(serializer.data)
         else:
             return Response(status=403)

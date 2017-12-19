@@ -47,14 +47,16 @@ urlpatterns = [
     url(r'^how/$', TemplateView.as_view(template_name='how.html'), name='how'),
     url(r'^confirmed/$', TemplateView.as_view(template_name='email_confirmed.html'), name='email_confirmed'),
     url(r'^api/', include('api.urls', namespace='api')),
+    url(r'^notifications', TemplateView.as_view(template_name='spa.html'), name='notifications-index'),
     url(r'^dashboard/connections/', TemplateView.as_view(template_name='spa.html'), name='connections'),
     url(r'^dashboard/project/(?P<project_slug>[-\w]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-project'),
     url(r'^dashboard/projects', TemplateView.as_view(template_name='spa.html'), name='view-projects'),
     url(r'^dashboard/proposal/(?P<proposal_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-proposal'),
     url(r'^dashboard/proposals', TemplateView.as_view(template_name='spa.html'), name='view-bids'),
     url(r'^dashboard/skills/', TemplateView.as_view(template_name='spa.html'), name='view-skills'),
+    url(r'^dashboard/messages/inbox', TemplateView.as_view(template_name='spa.html'), name='messages-inbox'),
     url(r'^dashboard/messages/(?P<thread_id>[\d]+)/$', TemplateView.as_view(template_name='spa.html'), name='view-conversation'),
-    url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
+    # url(r'^dashboard/messages/', include('postman.urls', namespace='postman', app_name='postman')),
     url(r'^login/$', accounts_views.user_login, name='login'),
     url(r'^logout/$', accounts_views.logout, name='logout'),
     url(r'', include('password_reset.urls')),
@@ -85,9 +87,9 @@ urlpatterns = [
     url(r'^invoices/(?P<invoice_id>[-\w\d]+)/edit/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='invoice-edit-confirm'),
     url(r'^profile/?$', TemplateView.as_view(template_name='spa.html'), name='profile'),
     url(r'^profile/(?P<user_id>[0-9]+)/$', TemplateView.as_view(template_name='spa.html'), name='public-profile'),
-    url(r'^profile/dashboard/$', accounts_views.dashboard, name='dashboard'),
-    url(r'^profile/dashboard/freelancer/$', accounts_views.dashboard, name='freelancer-dashboard'),
-    url(r'^profile/dashboard/entrepreneur/$', accounts_views.dashboard, name='entrepreneur-dashboard'),
+    url(r'^profile/dashboard/$', TemplateView.as_view(template_name='spa.html'), name='dashboard'),
+    url(r'^profile/dashboard/freelancer/$', TemplateView.as_view(template_name='spa.html'), name='freelancer-dashboard'),
+    url(r'^profile/dashboard/entrepreneur/$', TemplateView.as_view(template_name='spa.html'), name='entrepreneur-dashboard'),
     url(r'^profile/settings', TemplateView.as_view(template_name='spa.html'), name='settings'),
     url(r'^profile/settings/account', TemplateView.as_view(template_name='spa.html'), name='account-settings'),
     url(r'^profile/settings/company', TemplateView.as_view(template_name='spa.html'), name='company-settings'),
@@ -122,7 +124,9 @@ urlpatterns = [
     url(r'^profile/settings/bank/setup/(individual|business)/review/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-review'),
     url(r'^profile/settings/bank/setup/business/company/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-company'),
     url(r'^profile/settings/bank/setup/(individual|business)/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-confirmation'),
-    url(r'^search/profiles/?$', TemplateView.as_view(template_name='spa.html'), name='search-profiles')
+    url(r'^search/profiles/?$', TemplateView.as_view(template_name='spa.html'), name='search-profiles'),
+    url(r'^notifications', TemplateView.as_view(template_name='spa.html'), name='notifications'),
+    url(r'^invite-friends', TemplateView.as_view(template_name='spa.html'), name='referrals')
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :

@@ -71,7 +71,8 @@ def project_approved_email(project_id):
         })
     else:
         order = Order.objects.get(content_type__pk=project.content_type.id, object_id=project.id, status='active')
-        send_mail('project-approved-receipt', [project.project_manager], {
+        template = 'project-approved-referral' if project.project_manager.referral_code else 'project-approved-receipt'
+        send_mail(template, [project.project_manager], {
             'fname': project.project_manager.first_name,
             'title': project.title,
             'url': '{0}/dashboard/project/{1}/'.format(settings.BASE_URL, project.slug),

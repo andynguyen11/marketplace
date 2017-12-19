@@ -18,9 +18,8 @@
   <title>{% block title %}Loom - Hire Freelancers & Find Freelance Projects{% endblock %}</title>
 
   <meta name="google-site-verification" content="ExfBA5V7ESCmEcJNCrInhbpqaZucRyN619LhZc4eM5o" />
-
   <meta name="author" content="{% block meta_author %}{% endblock %}" />
-  <meta name="description" content="Loom is the first platform that lets you hire freelancers and get hired for cash and equity." />
+  <meta name="description" content="{% block metadescription%}Loom is the first platform that lets you hire freelancers and get hired for cash and equity.{% endblock metadescription %}" />
   <meta name="keywords" content="loom, freelance, startups, equity" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 
@@ -61,7 +60,7 @@
         </ul>
 
         <div class="header-icons">
-          <a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-mobile">
+          <a href="{% url 'messages-inbox' %}" class="header-icon-messages hide-mobile">
             <img src="{% static 'images/Chat_icon.svg' %}" />
             {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
           </a>
@@ -69,17 +68,18 @@
           <div class="dropdown-toggle profile-image img-circle hide-mobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-image: url('{{ request.user.get_photo }}');"></div>
           <div class="header-hamburger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></div>
           <ul class="dropdown-menu dropdown-menu-right">
-             <li class="hide-desktop"><a href="{% url 'postman:inbox' %}" class="header-icon-messages hide-desktop">
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li class="hide-desktop"><a href="{% url 'messages-inbox' %}" class="header-icon-messages hide-desktop">
               Messages
               {% if unread_count %}({{ unread_count }}){% endif %}
             </a></li>
-            <li class="hide-desktop"><a id="help-mobile" href="#" class="hide-desktop">Help</a></li>
-            <li><a href="{% url 'profile' %}">Profile</a></li>
-            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
             <li><a href="{% url 'view-projects' %}">Projects</a></li>
             <li><a href="{% url 'view-bids' %}">Proposals</a></li>
             <li><a href="{% url 'invoices' %}">Invoices</a></li>
+            <li><a href="{% url 'referrals' %}">Invite friends 💵</a></li>
             <li><a href="{% url 'settings' %}">Settings</a></li>
+            <li class="hide-desktop"><a id="help-mobile" href="#" class="hide-desktop">Help</a></li>
             <li class="hide-desktop"><a href="{% url 'how' %}">How it Works</a></li>
             <li class="hide-desktop"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
             <li class="hide-desktop"><a href="{% url 'project-pricing' %}">Post a Project</a></li>
@@ -252,6 +252,12 @@ $(document).ready(function() {
     });
 });
 </script>
+
+{% if request.GET.referralCode %}
+<script type="text/javascript">
+  window.localStorage.setItem('loomReferralCode', '{{ request.GET.referralCode }}')
+</script>
+{% endif %}
 
 {% if ENVIRONMENT == 'prod' %}
 <script type="text/javascript">

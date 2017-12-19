@@ -12,7 +12,7 @@ from accounts.enums import ROLES
 from accounts.models import Profile, ContactDetails, Skills, SkillTest, VerificationTest, Role
 from apps.api.search_indexes import UserIndex
 from business.models import Employee, Invite
-from business.serializers import EmployeeSerializer
+from business.serializers import EmployeeSerializer, ProjectNotificationSerializer
 from expertratings.serializers import SkillTestSerializer as ERSkillTestSerializer, SkillTestResultSerializer
 from expertratings.models import SkillTest as ERSkillTest
 from expertratings.exceptions import ExpertRatingsAPIException
@@ -118,6 +118,7 @@ class ProfileSerializer(serializers.ModelSerializer):
                 'my_skills', 'skills_test', 'invited')
         extra_kwargs = {
             'password': {'write_only': True, 'required': False},
+            'referral_code': {'write_only': True, 'required': False},
         }
 
     def get_invited(self, obj):
@@ -238,6 +239,28 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ('unread', )
+
+
+# TODO Update `target` to check instance types - not only projects
+class NotificationsSerializer(serializers.ModelSerializer):
+    actor = ObfuscatedProfileSerializer()
+    verb = serializers.CharField()
+    target = ProjectNotificationSerializer(read_only=True)
+    type = serializers.SerializerMethodField()
+    action_object = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = ('unread', 'actor', 'verb', 'target', 'timestamp', 'action_object', 'type' )
+
+    def get_type(self, obj):
+        if 'type' in obj.data:
+            return obj.data['type']
+
+        return None
+
+    def get_action_object(self, obj):
+        return {'id': obj.action_object.id}
 
 
 class ProfileSearchSerializer(HaystackSerializer):

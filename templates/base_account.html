@@ -18,7 +18,7 @@
         </li>
         <li>
           {{ postman_unread }}
-          <a class="{% add_active request 'postman:inbox' %}" href="{% url 'postman:inbox' %}">
+          <a class="{% add_active request 'messages-inbox' %}" href="{% url 'messages-inbox' %}">
             <span class="descriptor">Messages {% if unread_count %}</span>
             <span class="badge">{{ unread_count }}</span>{% endif %}
           </a>

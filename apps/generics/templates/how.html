@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
+{% block title %}Loom - How it works{% endblock %}
+{% block metadescription%}Loom uses machine learning to match employers with talented freelancers, and makes paying freelancers for work quick and easy.{% endblock metadescription %}
+
 {% block content %}
 <div class="hero hero-how">
   <div class="item">
@@ -95,7 +98,7 @@
                 <div class="project-pricing-card-content">
                   <div class="project-pricing-card-price">
                     <h4>standard</h4>
-                    <h2>$150</h2>
+                    <h2>$50</h2>
                   </div>
                   <div>
                     {% if request.user.is_authenticated %}
@@ -112,7 +115,7 @@
                 <div class="project-pricing-card-content">
                   <div class="project-pricing-card-price">
                     <h4>premium</h4>
-                    <h2>$200</h2>
+                    <h2>$75</h2>
                   </div>
                   <div>
                     {% if request.user.is_authenticated %}
@@ -269,11 +272,6 @@
                 <h4>CASH + EQUITY PROJECTS</h4>
                 <h2 class="brand">10%</h2>
                 <p>fee deducted from cash payments made to freelancers</p>
-              </div>
-              <div class="how-pricing-item how-pricing-item--contact">
-                <h4>EQUITY-ONLY PROJECTS</h4>
-                <h2 class="brand">FREE</h2>
-                <p>fees for equity projects are paid by employers only</p>
               </div>
             </div>
           </div>
