@@ -45,7 +45,7 @@
   <!--[if lt IE 7]>
   <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
-  {% if not request.COOKIES.notificationBanner %}
+  {% if not request.COOKIES.notificationBanner and 'login' not in reuqest.path %}
     <div class="notification-banner">
       Invite friends to Loom, you both earn cash. &nbsp;<a href="/invite-friends">Get started <i class="material-icons">arrow_forward</i></a>
       <i class="material-icons notification-banner-close">close</i>
