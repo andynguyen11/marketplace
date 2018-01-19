@@ -125,7 +125,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     def set_profile(self, obj, user):
         profile = ProfileSerializer(user, context={'request': self.context['request']}).data
-        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'roles', 'city', 'state', 'country' ]
+        fields = [ 'id', 'first_name', 'last_name', 'photo_url', 'roles', 'city', 'state', 'country', 'verification' ]
         return { k: v for k, v in profile.items() if k in fields }
 
     def get_is_sender(self, obj):
