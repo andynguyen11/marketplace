@@ -121,7 +121,7 @@ def freelancer_recommendations(profile_id):
 @celery_app.task
 def freelancer_project_matching():
     end_week = pendulum.today()
-    start_week = end_week.subtract(days=6)
+    start_week = end_week.subtract(days=7)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
     projects = Project.objects.filter(approved=True, **week_date_created).order_by('-date_created')
     if projects:

@@ -43,7 +43,7 @@ class ProposalSerializer(serializers.ModelSerializer):
 
     def get_submitter_profile(self, obj):
         submitter = { k: getattr(obj.submitter, k) for k in [
-            'id', 'first_name', 'capacity', 'city', 'state'
+            'id', 'first_name', 'capacity', 'city', 'state', 'verification'
         ]}
         submitter['photo_url'] = obj.submitter.get_photo
         submitter['roles'] =  [role.display_name for role in obj.submitter.roles.all()]

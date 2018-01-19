@@ -185,6 +185,9 @@ class Profile(AbstractUser):
     work_examples = GenericRelation('generics.Attachment')
     score = models.DecimalField(blank=True, null=True, max_digits=5, decimal_places=2)
     referral_code = models.CharField(max_length=50, blank=True, null=True)
+    full_time = models.BooleanField(default=True)
+    contract_to_hire = models.BooleanField(default=True)
+    freelance = models.BooleanField(default=True)
 
     @property
     def name(self):

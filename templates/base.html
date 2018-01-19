@@ -7,6 +7,8 @@
 {% load postman_tags %}
 {% load active_tag %}
 
+
+
 {% postman_unread as unread_count %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -31,6 +33,7 @@
 
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
   <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
@@ -42,7 +45,12 @@
   <!--[if lt IE 7]>
   <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
-
+  {% if not request.COOKIES.notificationBanner and 'login' not in request.path %}
+    <div class="notification-banner">
+      Invite friends to Loom, you both earn cash. &nbsp;<a href="/invite-friends">Get started <i class="material-icons">arrow_forward</i></a>
+      <i class="material-icons notification-banner-close">close</i>
+    </div>
+  {% endif %}
   <div class="header" class="{% block header_class %}{% endblock %}">
     <div class="header-inner page-content">
       <h1 class="logo">
@@ -251,6 +259,21 @@ $(document).ready(function() {
         }
     });
 });
+</script>
+
+<script type="text/javascript">
+  var banner = document.querySelector('.notification-banner');
+  var bannerCloseBtn = document.querySelector('.notification-banner-close');
+  bannerCloseBtn.addEventListener('click', removeNotificationBanner)
+
+  function removeNotificationBanner (e) {
+    var date = new Date()
+    var dayFromNow = 10
+    date.setTime(date.getTime() + (dayFromNow * 24 * 60 * 60 * 1000))
+
+    document.cookie = 'notificationBanner=closed;Expires=' + date.toGMTString() + ';';
+    banner.parentNode.removeChild(banner)
+  }
 </script>
 
 {% if request.GET.referralCode %}

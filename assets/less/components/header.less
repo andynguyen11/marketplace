@@ -1,5 +1,49 @@
 @header-height--desktop: 87px;
 
+.notification-banner {
+  background-color: #1eddb2;
+  color: #FFF;
+  text-align: center;
+  min-height: 40px;
+  font-size: 16px;
+  font-family: @brand-font;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.25px;
+  position: relative;
+
+   @media (max-width: @screen-md) {
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 5px 20px;
+    align-items: flex-start;
+    font-size: 14px;
+  }
+
+  a {
+    font-weight: 600;
+    color: #FFF;
+    display: inline-block;
+
+    i {
+      font-size: 18px;
+      display: inline-block;
+      vertical-align: middle;
+      font-weight: 600;
+    }
+  }
+
+  .notification-banner-close {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    margin-top: -12px;
+    cursor: pointer;
+    z-index: 1;
+  }
+}
+
 // HEADER
 .header {
   z-index: 2;
