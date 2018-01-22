@@ -159,8 +159,8 @@ class MessageAPI(APIView):
                     interaction = attachment['interaction']
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
-
             serializer = ConversationSerializer(thread, context={'request': request})
+            today = datetime.utcnow()
             new_message_notification.apply_async((interaction.recipient.id, interaction.id), eta=today + timedelta(minutes=15))
             return Response(serializer.data)
         else:
