@@ -10,7 +10,7 @@ from payment.api import StripePaymentSourceView, InvoiceViewSet, InvoiceRecipien
 from product.api import OrderViewSet, PromoCheck
 from generics.api import AttachmentViewSet
 from generics.routers import DeclarativeRouter
-from postman.api import ConversationDetail, MessageAPI, MessageCount, MessageInbox
+from postman.api import ConversationViewSet, MessageAPI, MessageCount, MessageInbox
 from proposals.api import QuestionViewSet, ProposalViewSet
 from reviews.api import ReviewListCreate
 from expertratings.views import ExpertRatingsXMLWebhook, SkillTestViewSet as ERSkillTestViewSet
@@ -71,9 +71,13 @@ declared_router = DeclarativeRouter({
         'view':  StripeConnectViewSet,
         'base_name': 'stripe-connect'
     },
-    'messages/inbox': {
+    'inbox': {
         'view': MessageInbox,
-        'base_name': 'messages-inbox',
+        'base_name': 'inbox',
+    },
+    'messages': {
+        'view': ConversationViewSet,
+        'base_name': 'messages',
     }
 })
 
@@ -97,7 +101,7 @@ urlpatterns = [
         'patch': 'partial_update'
     }), name='questions'),
     url(r'^thread/(?P<thread_id>[0-9]+|find)/$', view=MessageAPI.as_view(), name='view-thread'),
-    url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
+    #url(r'^messages/(?P<pk>[0-9]+)/$', view=ConversationDetail.as_view(), name='conversation-detail'),
     url(r'^promo/$', view=PromoCheck.as_view(), name='promo-check'),
     url(r'^review/$', view=ReviewListCreate.as_view(), name='review'),
     url(r'^search/skills/', view=skills_autocomplete, name='autocomplete'),
