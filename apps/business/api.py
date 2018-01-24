@@ -156,6 +156,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
             return Response(response_data, status=200)
         return Response(status=403)
 
+    @detail_route(methods=['POST', 'GET'])
+    def hire(self, request, *args, **kwargs):
+        project = self.get_object
+        if request.method == 'POST' and request.data.get('id', None):
+            profile = Profile.objects.get(id=request.data['id'])
+            hire = Hire.objects.get_or_create(project=project, freelancer=profile)
+            return Response(status=200)
+        if request.method == 'GET':
+            hires = Hire.objects.filter(project=project)
+            profiles = Profiles.objects.filter(id__in=[hire.profile.id for hire in hires])
+            response_data = ObfuscatedProfileSerializer(profiles, many=True).data
+            return Response(response_data, status=200)
+        return Response(status=400)
+
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):
         sku = request.data.get('sku', None)
