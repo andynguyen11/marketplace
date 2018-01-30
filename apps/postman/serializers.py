@@ -9,7 +9,7 @@ from rest_framework import serializers
 from accounts.models import ContactDetails
 from accounts.serializers import ObfuscatedProfileSerializer, ContactDetailsSerializer, ProfileSerializer
 from business.serializers import NDASerializer
-from business.models import NDA
+from business.models import NDA, Hire
 from generics.serializers import AttachmentSerializer
 from postman.models import Message, AttachmentInteraction
 from proposals.models import Proposal
@@ -115,6 +115,7 @@ class ConversationSerializer(serializers.ModelSerializer):
     connection_contact_details = serializers.SerializerMethodField()
     contact_details = serializers.SerializerMethodField()
     alerts = serializers.SerializerMethodField()
+    project = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -163,6 +164,14 @@ class ConversationSerializer(serializers.ModelSerializer):
         mapped_interactions = map(serialize_interaction, interactions)
         serializer = InteractionSerializer(mapped_interactions, many=True)
         return serializer.data
+
+    def get_project(self, obj):
+        try:
+            proposal = Proposal.objects.get(message=obj)
+            hires = [{'id': hire.profile.id, 'first_name': hire.profile.first_name} for hire in Hire.objects.filter(project=proposal.project)]
+            return {'id': proposal.project.id, 'slug': proposal.project.slug, 'slug': proposal.project.slug, 'hires': hires}
+        except Proposal.DoesNotExist:
+            return None
 
     def get_is_legacy(self, obj):
         try:

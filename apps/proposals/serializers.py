@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from proposals.models import Question, Answer, Proposal
+from business.models import Hire
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -39,7 +40,8 @@ class ProposalSerializer(serializers.ModelSerializer):
         fields = ('viewed', 'submitter', 'submitter_profile', 'project_details', 'cover_letter', 'equity', 'cash', 'hourly_rate', 'hours', 'status', 'id', 'project', 'create_date', 'message', 'questions_and_answers')
 
     def get_project_details(self, obj):
-        return { 'title': obj.project.title, 'id': obj.project.id, 'sku': obj.project.sku, 'slug': obj.project.slug, 'isPublished': obj.project.published }
+        hires = [{'id': hire.profile.id, 'first_name': hire.profile.first_name} for hire in Hire.objects.filter(project=obj.project)]
+        return { 'title': obj.project.title, 'id': obj.project.id, 'sku': obj.project.sku, 'slug': obj.project.slug, 'isPublished': obj.project.published, 'hires': hires }
 
     def get_submitter_profile(self, obj):
         submitter = { k: getattr(obj.submitter, k) for k in [

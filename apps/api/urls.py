@@ -78,6 +78,10 @@ declared_router = DeclarativeRouter({
     'messages': {
         'view': ConversationViewSet,
         'base_name': 'messages',
+    },
+    'awarded': {
+        'view': AwardedProjectViewSet,
+        'base_name': 'awarded',
     }
 })
 

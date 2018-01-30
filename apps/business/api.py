@@ -45,6 +45,16 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsAuthenticated, IsPrimary)
 
 
+class AwardedProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectDisplaySerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        hires = Hire.objects.filter(profile=self.request.user)
+        projects = Project.objects.filter(id__in=[hire.project.id for hire in hires])
+        return projects
+
+
 class ProjectViewSet(viewsets.ModelViewSet):
     ""
     serializer_class = ProjectSerializer
@@ -161,7 +171,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if request.method == 'POST' and request.data.get('id', None):
             profile = Profile.objects.get(id=request.data['id'])
-            hire = Hire.objects.get_or_create(project=project, freelancer=profile)
+            hire = Hire.objects.get_or_create(project=project, profile=profile)
             return Response(status=200)
         if request.method == 'GET':
             hires = Hire.objects.filter(project=project)
