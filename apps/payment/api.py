@@ -224,7 +224,7 @@ class StripeConnectViewSet(ViewSet):
 
             account = stripe.Account.retrieve(request.user.stripe_connect)
             return Response(status=200, data=json.loads(json.dumps(account, indent=2)))
-        return Response(status=200)
+        return Response(status=400)
 
     @detail_route(methods=['get'])
     def countryspec(self, request, pk=None):
