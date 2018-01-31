@@ -16,7 +16,7 @@ from rest_framework.response import Response
 
 from apps.api.permissions import BidPermission, ContractorBidPermission,  IsPrimary, PublicReadProjectOwnerEditPermission, AuthedCreateRead, IsProfile, IsSenderReceiver
 from accounts.models import Skills
-from business.models import Employee
+from business.models import Employee, Hire
 from business.serializers import *
 from generics.viewsets import NestedModelViewSet, CreatorPermissionsMixin
 from generics.utils import send_mail
@@ -43,6 +43,16 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = (IsAuthenticated, IsPrimary)
+
+
+class AwardedProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectDisplaySerializer
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        hires = Hire.objects.filter(profile=self.request.user)
+        projects = Project.objects.filter(id__in=[hire.project.id for hire in hires])
+        return projects
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -155,6 +165,20 @@ class ProjectViewSet(viewsets.ModelViewSet):
             response_data = self.get_serializer(project).data
             return Response(response_data, status=200)
         return Response(status=403)
+
+    @detail_route(methods=['POST', 'GET'])
+    def hire(self, request, *args, **kwargs):
+        project = self.get_object()
+        if request.method == 'POST' and request.data.get('id', None):
+            profile = Profile.objects.get(id=request.data['id'])
+            hire = Hire.objects.get_or_create(project=project, profile=profile)
+            return Response(status=200)
+        if request.method == 'GET':
+            hires = Hire.objects.filter(project=project)
+            profiles = Profile.objects.filter(id__in=[hire.profile.id for hire in hires])
+            response_data = ObfuscatedProfileSerializer(profiles, many=True).data
+            return Response(response_data, status=200)
+        return Response(status=400)
 
     @detail_route(methods=['POST'])
     def activate(self, request, *args, **kwargs):

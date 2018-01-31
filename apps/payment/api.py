@@ -1,6 +1,7 @@
 import datetime
 import stripe
 import json
+import requests
 
 from django.shortcuts import redirect
 from django.views.decorators.csrf import csrf_exempt
@@ -150,7 +151,7 @@ class InvoicePaymentViewset(ViewSet):
                   stripe_account = invoice.sender.stripe_connect,
                 )
                 token = token.id
-            fee = invoice.application_fee(card_country=country)
+            fee = invoice.loom_fee
             charge = stripe.Charge.create(
                 amount = int(invoice.total_amount * 100),
                 application_fee = int(fee * 100),
@@ -208,8 +209,22 @@ class StripeConnectViewSet(ViewSet):
         if request.user.stripe_connect:
             account = stripe.Account.retrieve(request.user.stripe_connect)
             return Response(status=200, data=json.loads(json.dumps(account, indent=2)))
-        else:
-            return Response(status=200)
+        elif request.GET.get('code',''):
+            stripe_data = requests.post('https://connect.stripe.com/oauth/token',
+                data = {
+                    'client_secret': settings.STRIPE_KEY,
+                    'code': request.GET['code'],
+                    'grant_type': 'authorization_code'
+                })
+            if stripe_data.status_code != 200:
+                error_data = {u'Error': smart_str(stripe_data.reason) or u'Unknown error'}
+                return Response(error_data, status=stripe_data.status_code)
+            request.user.stripe_connect = stripe_data.json()['stripe_user_id']
+            request.user.save()
+
+            account = stripe.Account.retrieve(request.user.stripe_connect)
+            return Response(status=200, data=json.loads(json.dumps(account, indent=2)))
+        return Response(status=400)
 
     @detail_route(methods=['get'])
     def countryspec(self, request, pk=None):

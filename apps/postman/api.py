@@ -20,7 +20,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
 
 from accounts.models import Profile, Connection
-from business.models import Project
+from business.models import Project, NDA
 from generics.models import Attachment
 from generics.tasks import new_message_notification
 from generics.validators import file_validator
@@ -68,10 +68,30 @@ class MessageInbox(ModelViewSet):
         return Message.objects.inbox_as_thread(self.request.user)
 
 
-class ConversationDetail(generics.RetrieveAPIView):
+class ConversationViewSet(ModelViewSet):
     queryset = Message.objects.all().order_by('sent_at')
     serializer_class = ConversationSerializer
     permission_classes = (IsAuthenticated, IsPartOfConversation)
+
+    def create(self, request, *args, **kwargs):
+        if request.user.subscribed:
+            recipient = Profile.objects.get(id=request.data['recipient'])
+            conversation, conversation_created = Message.objects.get_or_create(
+                sender = request.user,
+                recipient = recipient,
+                subject = '',
+                body = '',
+            )
+            if conversation_created:
+                conversation.thread = conversation
+                conversation.save()
+                nda, nda_created = NDA.objects.get_or_create(
+                    sender=request.user,
+                    receiver=recipient,
+                    proposal=None
+                )
+            return Response({'message': conversation.id}, status=200)
+        return Response(status=403)
 
 
 class MessageAPI(APIView):
@@ -139,9 +159,9 @@ class MessageAPI(APIView):
                     interaction = attachment['interaction']
             else:
                 interaction = self.new_message(thread, request.user, request.data['body'])
-
             serializer = ConversationSerializer(thread, context={'request': request})
-            new_message_notification.apply_async((recipient.id, new_message.id), eta=today + timedelta(minutes=15))
+            today = datetime.utcnow()
+            new_message_notification.apply_async((interaction.recipient.id, interaction.id), eta=today + timedelta(minutes=15))
             return Response(serializer.data)
         else:
             return Response(status=403)

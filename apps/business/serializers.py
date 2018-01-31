@@ -14,7 +14,7 @@ from accounts.enums import ROLES
 from accounts.models import Profile, Skills
 from accounts.enums import ROLES
 from apps.api.search_indexes import ProjectIndex
-from business.models import Company, Project, Employee, NDA
+from business.models import Company, Project, Employee, NDA, Hire
 from generics.serializers import ParentModelSerializer, RelationalModelSerializer, AttachmentSerializer
 from generics.utils import update_instance, field_names, send_mail
 from postman.models import Message
@@ -58,6 +58,18 @@ class SkillsSerializer(serializers.ModelSerializer):
         }
 
 
+class ObfuscatedProfileSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=Profile()._meta.get_field('id'))
+    photo_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'first_name', 'last_name', 'email', 'photo_url', 'roles', 'capacity', 'city', 'state', 'country', 'location')
+
+    def get_photo_url(self, obj):
+        return obj.get_photo
+
+
 class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     slug = serializers.CharField(read_only=True)
     published = serializers.BooleanField(default=False)
@@ -69,6 +81,7 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
     skills = SkillsSerializer(many=True)
     show_private_info = serializers.SerializerMethodField()
     days_to_expire = serializers.SerializerMethodField()
+    hires = serializers.SerializerMethodField()
 
     class Meta:
         model = Project
@@ -92,6 +105,11 @@ class ProjectSerializer(JSONFormSerializer, ParentModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+    def get_hires(self, obj):
+        hires = Hire.objects.filter(project=obj)
+        profiles = Profile.objects.filter(id__in=[hire.profile.id for hire in hires])
+        return ObfuscatedProfileSerializer(profiles, many=True).data
 
     def get_proposal(self, obj):
         try:
@@ -163,13 +181,14 @@ class ProjectSearchSerializer(HaystackSerializer):
         fields = [
             "title", "slug", "skills", "description", "category", "role", "city",
             "state", "country", "remote", "first_name", "photo", "date_created", "views",
-            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope"
+            "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope", "hires"
         ]
 
     def get_role(self, obj):
         if obj.category in ROLES and obj.role in ROLES[obj.category]:
             return ROLES[obj.category][obj.role]
         return None
+
 
 
 class ProjectNotificationSerializer(serializers.ModelSerializer):

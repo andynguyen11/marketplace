@@ -272,10 +272,12 @@ class Project(models.Model):
         return nda_list
 
 
+class Hire(models.Model):
+    project = models.ForeignKey('business.Project')
+    profile = models.ForeignKey('accounts.Profile')
+
+
 class Invite(models.Model):
     sender = models.ForeignKey('accounts.Profile', related_name='invite_sender')
     recipient = models.ForeignKey('accounts.Profile', related_name='invite_recipient')
     project = models.ForeignKey('business.Project', blank=True, null=True)
-
-
-
