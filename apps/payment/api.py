@@ -139,26 +139,34 @@ class InvoicePaymentViewset(ViewSet):
         if invoice.recipient != request.user:
             return Response(status=403)
         try:
-            if request.data.get('token', None):
-                token = request.data['token']
-                country = request.data['country']
-            else:
-                customer = stripe.Customer.retrieve(invoice.recipient.stripe)
-                card = customer.sources.retrieve(customer.default_source)
-                country = card.country
-                token = stripe.Token.create(
-                  customer = invoice.recipient.stripe,
-                  stripe_account = invoice.sender.stripe_connect,
+            if invoice.sender.is_superuser:
+                stripe.Charge.create(
+                    amount = int(invoice.total_amount * 100),
+                    customer = invoice.recipient.stripe,
+                    description = 'Loom Placement Fee',
+                    currency = 'usd',
                 )
-                token = token.id
-            fee = invoice.loom_fee
-            charge = stripe.Charge.create(
-                amount = int(invoice.total_amount * 100),
-                application_fee = int(fee * 100),
-                currency = "usd",
-                source = token,
-                stripe_account = invoice.sender.stripe_connect
-            )
+            else:
+                if request.data.get('token', None):
+                    token = request.data['token']
+                    country = request.data['country']
+                else:
+                    customer = stripe.Customer.retrieve(invoice.recipient.stripe)
+                    card = customer.sources.retrieve(customer.default_source)
+                    country = card.country
+                    token = stripe.Token.create(
+                      customer = invoice.recipient.stripe,
+                      stripe_account = invoice.sender.stripe_connect,
+                    )
+                    token = token.id
+                fee = invoice.loom_fee
+                charge = stripe.Charge.create(
+                    amount = int(invoice.total_amount * 100),
+                    application_fee = int(fee * 100),
+                    currency = "usd",
+                    source = token,
+                    stripe_account = invoice.sender.stripe_connect
+                )
         except stripe.StripeError as e:
             error_data = {u'Error': smart_str(e) or u'Unknown error'}
             return Response(error_data, status=400)
