@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 from business.models import NDA, Project
 from generics.tasks import new_message_notification
+from generics.utils import send_mail
 from postman.models import Message, Interaction
 from proposals.models import Question, Proposal
 from proposals.permissions import ProposalPermission
@@ -113,6 +114,11 @@ class ProposalViewSet(viewsets.ModelViewSet):
         request.data['submitter'] = request.user.id
         today = datetime.utcnow()
         proposal_reminder.apply_async((request.data['project'], ), eta=today + timedelta(days=2))
+        proposals = Proposal.objects.filter(submitter=request.user)
+        if not proposals and not request.user.stripe_connect:
+            send_mail('add-payment', [request.user], {'fname': request.user.first_name})
+        elif proposals.count() == 3 and not request.user.stripe_connect:
+            send_mail('add-payment-reminder', [request.user], {'fname': request.user.first_name})
         return super(ProposalViewSet, self).create(request, *args, **kwargs)
 
     @detail_route(methods=['POST'])
