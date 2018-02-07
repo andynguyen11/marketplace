@@ -48,8 +48,8 @@ def nda_update_event(sender, instance, **kwargs):
 @receiver(post_save, sender='business.Project')
 def project_post_save(sender, instance, created, **kwargs):
     today = datetime.utcnow()
-    if created and instance.sku != 'free':
-        complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
+    #if created and instance.sku != 'free':
+    #    complete_project.apply_async((instance.id, ), eta=today + timedelta(days=4))
     if instance.approved and instance.published and not instance.status and not instance.expire_date:
         if instance.sku == 'free' or not instance.sku:
             instance.activate()

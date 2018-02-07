@@ -11,7 +11,7 @@ from drf_haystack.serializers import HaystackSerializer
 from html_json_forms.serializers import JSONFormSerializer
 
 from accounts.enums import ROLES
-from accounts.models import Profile, Skills
+from accounts.models import Profile, Skills, Role
 from accounts.enums import ROLES
 from apps.api.search_indexes import ProjectIndex
 from business.models import Company, Project, Employee, NDA, Hire
@@ -58,9 +58,17 @@ class SkillsSerializer(serializers.ModelSerializer):
         }
 
 
+class RoleSerializer(serializers.ModelSerializer):
+    display_name = serializers.CharField(required=False)
+
+    class Meta:
+        model = Role
+
+
 class ObfuscatedProfileSerializer(serializers.ModelSerializer):
     id = serializers.ModelField(model_field=Profile()._meta.get_field('id'))
     photo_url = serializers.SerializerMethodField()
+    roles = RoleSerializer(many=True, required=False)
 
     class Meta:
         model = Profile
