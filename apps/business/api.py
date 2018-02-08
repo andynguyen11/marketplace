@@ -171,7 +171,16 @@ class ProjectViewSet(viewsets.ModelViewSet):
         project = self.get_object()
         if request.method == 'POST' and request.data.get('id', None):
             profile = Profile.objects.get(id=request.data['id'])
-            hire = Hire.objects.get_or_create(project=project, profile=profile)
+            hire, created = Hire.objects.get_or_create(project=project, profile=profile)
+            if created:
+                send_mail('awarded-employer', [project.project_manager], {
+                    'fname': project.project_manager.first_name,
+                })
+                send_mail('awarded-freelancer', [profile], {
+                    'fname': profile.first_name,
+                    'employer_name': project.project_manager.first_name,
+                    'project_title': project.title
+                })
             return Response(status=200)
         if request.method == 'GET':
             hires = Hire.objects.filter(project=project)
