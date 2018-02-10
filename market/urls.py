@@ -91,6 +91,7 @@ urlpatterns = [
     url(r'^profile/dashboard/$', TemplateView.as_view(template_name='spa.html'), name='dashboard'),
     url(r'^profile/dashboard/freelancer/$', TemplateView.as_view(template_name='spa.html'), name='freelancer-dashboard'),
     url(r'^profile/dashboard/entrepreneur/$', TemplateView.as_view(template_name='spa.html'), name='entrepreneur-dashboard'),
+    url(r'^settings', TemplateView.as_view(template_name='spa.html'), name='settings-index'),
     url(r'^profile/settings', TemplateView.as_view(template_name='spa.html'), name='settings'),
     url(r'^profile/settings/account', TemplateView.as_view(template_name='spa.html'), name='account-settings'),
     url(r'^profile/settings/company', TemplateView.as_view(template_name='spa.html'), name='company-settings'),
@@ -127,7 +128,9 @@ urlpatterns = [
     url(r'^profile/settings/bank/setup/(individual|business)/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='bank-setup-confirmation'),
     url(r'^search/profiles/?$', TemplateView.as_view(template_name='spa.html'), name='search-profiles'),
     url(r'^notifications', TemplateView.as_view(template_name='spa.html'), name='notifications'),
-    url(r'^invite-friends', TemplateView.as_view(template_name='spa.html'), name='referrals')
+    url(r'^invite-friends', TemplateView.as_view(template_name='spa.html'), name='referrals'),
+    url(r'^employer', TemplateView.as_view(template_name='spa.html'), name='referrals'),
+    url(r'^freelancer', TemplateView.as_view(template_name='spa.html'), name='referrals')
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS)
 
 if settings.DEBUG and settings.MEDIA_URL :
