@@ -126,25 +126,23 @@
     .header-link--auth {
       padding-left: 40px;
       a {
+        font-size: 14px !important;
         color: @brand--accent;
+        font-family: "Open Sans","Myriad Pro",Helvetica,Arial,sans-serif;
+        font-weight: 600;
+        letter-spacing: 0;
 
         &:hover {
           color: @brand--primary;
         }
-
-        @media (max-width: @screen-sm) {
-          margin: 0;
-          font-size: 14px !important;
-        }
       }
 
       a.btn-brand--clear {
+        border-radius: 3px;
+        min-height: 42px;
+
         &:hover {
           color: #fff;
-        }
-
-        @media (max-width: @screen-sm) {
-          padding: 3px 5px !important;
         }
       }
 
