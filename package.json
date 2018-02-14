@@ -23,6 +23,7 @@
     "glob": "^7.0.5",
     "gulp": "^3.9.1",
     "gulp-less-sourcemap": "^1.4.3",
+    "gulp-purifycss": "^0.2.0",
     "gulp-replace": "^0.5.4",
     "gulp-uglifycss": "1.0.6",
     "gulp-util": "^3.0.7",

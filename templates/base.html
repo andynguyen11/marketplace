@@ -7,13 +7,11 @@
 {% load postman_tags %}
 {% load active_tag %}
 
-
-
 {% postman_unread as unread_count %}
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
 <head>
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
@@ -23,7 +21,7 @@
   <meta name="author" content="{% block meta_author %}{% endblock %}" />
   <meta name="description" content="{% block metadescription%}Loom is the first platform that lets you hire freelancers and get hired for cash and equity.{% endblock metadescription %}" />
   <meta name="keywords" content="loom, freelance, startups, equity" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"" />
 
   <meta property="og:title" content="Hire top freelancers on Loom" />
   <meta property="og:description" content="Loom is the first platform that lets you hire freelancers and get hired for cash and equity." />
@@ -32,20 +30,34 @@
   <meta property="og:image:height" content="1200" />
 
   <link rel="icon" type="image/png" href="{% static 'images/favicon.ico' %}">
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}" />
+
+  <noscript>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rrel="stylesheet">
+  </noscript>
+
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
+
+  <link type="text/css" rel="stylesheet" href="{% static 'css/base.css' %}"/>
+
+  <script type="text/javascript">
+    !function(t){"use strict";t.loadCSS||(t.loadCSS=function(){});var e=loadCSS.relpreload={};if(e.support=function(){var e;try{e=t.document.createElement("link").relList.supports("preload")}catch(t){e=!1}return function(){return e}}(),e.bindMediaToggle=function(t){var e=t.media||"all";function a(){t.media=e}t.addEventListener?t.addEventListener("load",a):t.attachEvent&&t.attachEvent("onload",a),setTimeout(function(){t.rel="stylesheet",t.media="only x"}),setTimeout(a,3e3)},e.poly=function(){if(!e.support())for(var a=t.document.getElementsByTagName("link"),n=0;n<a.length;n++){var o=a[n];"preload"!==o.rel||"style"!==o.getAttribute("as")||o.getAttribute("data-loadcss")||(o.setAttribute("data-loadcss",!0),e.bindMediaToggle(o))}},!e.support()){e.poly();var a=t.setInterval(e.poly,500);t.addEventListener?t.addEventListener("load",function(){e.poly(),t.clearInterval(a)}):t.attachEvent&&t.attachEvent("onload",function(){e.poly(),t.clearInterval(a)})}"undefined"!=typeof exports?exports.loadCSS=loadCSS:t.loadCSS=loadCSS}("undefined"!=typeof global?global:this);
+  </script>
+  
   {% block css %}{% endblock %}
   {% block extrahead %}{% endblock %}
+  
   <!-- Zendesk -->
-  <script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(e){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","joinloom.zendesk.com");/*]]>*/</script>
+  <script>/*<![CDATA[*/window.zEmbed||function(e,t){var n,o,d,i,s,a=[],r=document.createElement("iframe");window.zEmbed=function(){a.push(arguments)},window.zE=window.zE||window.zEmbed,r.src="javascript:false",r.title="",r.role="presentation",(r.frameElement||r).style.cssText="display: none",d=document.getElementsByTagName("script"),d=d[d.length-1],d.parentNode.insertBefore(r,d),i=r.contentWindow,s=i.document;try{o=s}catch(e){n=document.domain,r.src='javascript:var d=document.open();d.domain="'+n+'";void(0);',o=s}o.open()._l=function(){var o=this.createElement("script");n&&(this.domain=n),o.id="js-iframe-async",o.src=e,this.t=+new Date,this.zendeskHost=t,this.zEQueue=a,this.body.appendChild(o)},o.write('<body onload="document._l();">'),o.close()}("https://assets.zendesk.com/embeddable_framework/main.js","joinloom.zendesk.com");/*]]>*/
+  </script>
 </head>
 
 <body class="{% block bodyclass %}customer-portal{% endblock %}" id="{% block bodyid %}{% endblock %}">
   <!--[if lt IE 7]>
   <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
-  {% if not request.COOKIES.notificationBanner and 'login' not in request.path %}
+  {% if not request.COOKIES.notificationBanner and 'login' not in request.path and 'signup' not in request.path %}
     <div class="notification-banner">
       Invite friends to Loom, you both earn cash. &nbsp;<a href="/invite-friends">Get started <i class="material-icons">arrow_forward</i></a>
       <i class="material-icons notification-banner-close">close</i>
@@ -104,8 +116,7 @@
         <li class="hide-mobile"><a href="{% url 'project-gallery' %}">Discover Projects</a></li>
         <li class="hide-mobile"><a href="{% url 'project-pricing' %}">Post a Project</a></li>
         <li class="hide-mobile"><a href="{% url 'search-profiles' %}">Discover Freelancers</a></li>
-        <li class="hide-medium"><a href="{% url 'signup' %}#freelancer">Become a Freelancer</a></li>
-        <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Sign In</a></li>
+        <li class="header-link--auth header-link--sign-up"><a href="{% url 'login' %}">Log In</a></li>
         <li class="header-link--auth header-link--sign-in"><a href="{% url 'signup' %}" class="btn btn-brand--clear">Sign Up</a></li>
       </ul>
 
@@ -144,9 +155,9 @@
           <ul>
             <li><a href="/about/">About</a></li>
             <li><a href="/careers/">Careers</a></li>
-            <li><a target="_blank" href="http://loom.totemapp.net/">Press</a></li>
-            <li><a target="_blank" href="http://blog.loom.co">Blog</a></li>
-            <li><a target="_blank" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
+            <li><a target="_blank" rel="noopener" href="http://loom.totemapp.net/">Press</a></li>
+            <li><a target="_blank" rel="noopener" href="http://blog.loom.co">Blog</a></li>
+            <li><a target="_blank" rel="noopener" href="https://joinloom.zendesk.com/hc/en-us">Support</a></li>
             <li><a href="/privacy/">Privacy Policy</a></li>
             <li><a href="/terms-of-service/">Terms of Service</a></li>
             <li><a href="/dmca/">DMCA Policy</a></li>
@@ -204,7 +215,7 @@
       </div>
       <!-- Begin MailChimp Signup Form -->
       <div id="mc_embed_signup" class="footer-newsletter">
-        <form action="//joinloom.us13.list-manage.com/subscribe/post?u=20280738ee079976d0dda6c8f&amp;id=f05175664a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+        <form action="//joinloom.us13.list-manage.com/subscribe/post?u=20280738ee079976d0dda6c8f&amp;id=f05175664a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" rel="noopener" novalidate>
           <div id="mc_embed_signup_scroll">
             <h5 class="footer-newsletter-header brand-bold">Sign up for our newsletter</h5>
             <input placeholder="name@company.com" type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" />
@@ -223,9 +234,9 @@
     <div class="footer-base">
       <div class="footer-logo"></div>
       <div class="footer-social">
-        <a href="https://twitter.com/joinloom" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
-        <a href="https://www.facebook.com/loom" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-        <a href="https://www.instagram.com/loom/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+        <a href="https://twitter.com/joinloom" target="_blank" rel="noopener"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+        <a href="https://www.facebook.com/loom" target="_blank" rel="noopener"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+        <a href="https://www.instagram.com/loom/" target="_blank" rel="noopener"><i class="fa fa-instagram" aria-hidden="true"></i></a>
       </div>
     </div>
   </div>
@@ -234,10 +245,10 @@
 
 <script src="https://use.fontawesome.com/3cdb773842.js"></script>
 <script type="text/javascript" src="https://js.stripe.com/v2/?sensor=false"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-2.2.4.min.js"
-  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
-  crossorigin="anonymous">
-</script>
+<script
+  src="https://code.jquery.com/jquery-3.0.0.min.js"
+  integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0="
+  crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script type="text/javascript">
 $(function () {

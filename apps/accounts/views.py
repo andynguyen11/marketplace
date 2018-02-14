@@ -62,6 +62,8 @@ def psa_redirect(request):
 def home(request):
     context = project_groups()
     context['developers'] = Profile.objects.filter(featured=1)
+    if request.user.is_authenticated():
+        return redirect('dashboard')
     return render_to_response('home.html', context, context_instance=RequestContext(request))
 
 def logout(request):
