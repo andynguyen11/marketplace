@@ -7,6 +7,7 @@ var replace = require('gulp-replace');
 
 var less = require('gulp-less-sourcemap');
 var uglifyCss = require('gulp-uglifycss');
+var purify = require('gulp-purifycss');
 var LessAutoprefix = require('less-plugin-autoprefix');
 var autoprefix = new LessAutoprefix({ browsers: ['>0%'] });
 var gutil = require('gulp-util');
@@ -20,6 +21,7 @@ gulp.task('less', function () {
 			.pipe(less({
 				plugins: [autoprefix]
 			}))
+			.pipe(purify(['./**/*.html']))
 			.on('error', gutil.log)
 			.pipe(uglifyCss())
 			.pipe(gulp.dest('./static/css/'));

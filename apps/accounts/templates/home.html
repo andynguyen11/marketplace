@@ -14,67 +14,16 @@
   <!--<div id="hero-carousel&#45;&#45;home" class="carousel slide" data-interval="10000" data-ride="carousel">-->
   <div id="hero-carousel--home" class="carousel slide">
 
-    <!-- Indicators -->
-    <ol class="carousel-indicators">
-      <li data-target="#hero-carousel--home" data-slide-to="0" class="active"></li>
-      <li data-target="#hero-carousel--home" data-slide-to="1"></li>
-      <li data-target="#hero-carousel--home" data-slide-to="2"></li>
-    </ol>
-
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
       <div id="home-hero-1" class="item hero-item--home hero-item--home-post-project active">
         <div class="hero-overlay--logo-mark"></div>
         <div class="hero-slide">
-          {% if random_slide == 1 %}
-            <h2 class="brand-bold">Hire top<br class="hide-desktop"> freelance talent.</h2>
-            <h5 class="brand">Whether you need a team to build a product, or a single freelancer<br class="hide-mobile"/> for a short-term project, Loom can help.</h5>
-            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-          {% elif random_slide == 2 %}
-            <h2 class="brand-bold">Top freelancers,<br class="hide-desktop"> delivered.</h2>
-            <h5 class="brand">Loom’s smart matching technology streamlines your freelancer search,<br class="hide-mobile"/> helping you hire the right freelancer for cash, or a combination of cash and equity.</h5>
-            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-          {% elif random_slide == 3 %}
-            <h2 class="brand-bold">Build products<br class="hide-desktop"> with freelancers.</h2>
-            <h5 class="brand">Assemble a team of freelance talent to bring your product to life,<br class="hide-mobile"/> and compensate them in cash and equity.</h5>
-            <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
-          {% endif %}
+          <h2 class="brand-bold">Connecting companies<br class="hide-mobile"> and top freelancers</h2>
+          <h5 class="brand">Loom's intelligent matching system helps<br class="hide-mobile"/> companies find the right freelancer for the job.</h5>
+          <a href="{% url 'project-pricing' %}" class="btn btn-lg btn-brand btn-brand--attn">Post your project</a>
         </div>
       </div>
-      <div id="home-hero-2" class="item hero-item--home hero-item--home-post-project">
-        <div class="hero-overlay--logo-mark"></div>
-        <div class="hero-slide">
-          {% if random_slide == 1 %}
-          <h2 class="brand-bold">Quickly find work. <br class="hide-desktop">Easily get paid.</h2>
-          <h5 class="brand">Send invoices and get cash payments directly through Loom's secure payment system.<br class="hide-mobile"/> Low service fees mean you keep more of the money you earn.</h5>
-          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
-          {% elif random_slide == 2 %}
-          <h2 class="brand-bold">Freelance for equity. <br class="hide-desktop">And cash.</h2>
-          <h5 class="brand">We use technology to match you with interesting projects seeking your skills<br class="hide-mobile"/> and send personalized recommendations to your inbox.</h5>
-          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
-          {% elif random_slide == 3 %}
-          <h2 class="brand-bold">Discover interesting<br class="hide-desktop"> product work</h2>
-          <h5 class="brand">Submit proposals for free on all freelance projects, and get paid in<br class="hide-mobile"/> cash, equity, or a combination of both. Win-win.</h5>
-          <a href="{% url 'signup' %}" class="btn btn-lg btn-brand btn-brand--attn">Sign up now</a>
-          {% endif %}
-        </div>
-      </div>
-      <div id="home-hero-3" class="item hero-item--home hero-item--home-post-project">
-        <div class="hero-overlay--logo-mark"></div>
-        <div class="hero-slide">
-          <h2 class="brand-bold">We're here <br class="hide-desktop">to help you.</h2>
-          <h5 class="brand">Our goal is to connect bright, passionate people with<br class="hide-mobile"/> mutual interest in bringing the world's best ideas to life.</h5>
-          <a href="{% url 'how' %}" class="btn btn-lg btn-brand btn-brand--attn">How Loom works</a>
-        </div>
-      </div>
-
-      <!-- Controls -->
-      <a class="left carousel-control" href="#hero-carousel--home" role="button" data-slide="prev">
-        <span class="sr-only">Previous</span>
-      </a>
-      <a class="right carousel-control" href="#hero-carousel--home" role="button" data-slide="next">
-        <span class="sr-only">Next</span>
-      </a>
     </div>
   </div>
 </div>
