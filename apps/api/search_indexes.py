@@ -35,7 +35,7 @@ class ProjectIndex(indexes.ModelSearchIndex, indexes.Indexable):
         model = Project
         fields = ("title", "slug", "skills", "description", "category", "role", "city",
                   "state", "country", "remote", "first_name", "photo", "date_created",
-                  "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope", )
+                  "estimated_cash", "estimated_equity_percentage", "mix", "short_blurb", "scope", "featured" )
 
     def prepare(self, obj):
         self.prepared_data = super(ProjectIndex, self).prepare(obj)

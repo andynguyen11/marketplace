@@ -252,7 +252,7 @@ class ProjectSearchViewSet(HaystackViewSet):
     serializer_class = ProjectSearchSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = (HaystackFilter, OrderingFilter,)
-    ordering_fields = ('date_created')
+    ordering_fields = ('featured', 'date_created')
     ordering = ('-date_created')
 
 
