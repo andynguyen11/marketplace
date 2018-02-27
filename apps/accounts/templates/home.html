@@ -11,10 +11,7 @@
 {% random_slide_content as random_slide %}
 
 <div class="hero">
-  <!--<div id="hero-carousel&#45;&#45;home" class="carousel slide" data-interval="10000" data-ride="carousel">-->
   <div id="hero-carousel--home" class="carousel slide">
-
-    <!-- Wrapper for slides -->
     <div class="carousel-inner">
       <div id="home-hero-1" class="item hero-item--home hero-item--home-post-project active">
         <div class="hero-overlay--logo-mark"></div>
@@ -117,9 +114,9 @@
       {% for developer in developers %}
       <a class='plate plate--dev' href="{% url 'public-profile' user_id=developer.id %}" >
         {% thumbnail developer.get_photo "200" as image %}
-        <div class='plate--dev-profile-overlay' style="background-image: url('{{ image.url }}');"></div>
+        <div class='plate--dev-profile-overlay lz-img' data-src="{{ image.url }}"></div>
         <div class='plate--dev-info'>
-            <div class="plate--dev-info-profile-photo" style="background-image: url('{{ image.url }}')"></div>
+            <div class="plate--dev-info-profile-photo lz-img" data-src="{{ image.url }}"></div>
             <h4 class="plate--dev-name">{{ developer.first_name }}</h4>
             <div class='plate--dev-type'>{{ developer.roles.first.display_name }}</div>
             <div class="plate--dev-info-availability">Avail: {{ developer.capacity }}hrs/week</div>
@@ -154,7 +151,7 @@
         <div class="plate-image"></div>
         <div class="plate-info">
           <div class="plate-info-profile">
-            {% if project.project_manager.get_photo %}<div class="plate-info-profile-photo" style="background-image: url('https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}');"></div>{% endif %}
+            {% if project.project_manager.get_photo %}<div class="plate-info-profile-photo lz-img" data-src="https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&resize_w=200&url={{ project.project_manager.get_photo }}"></div>{% endif %}
             <div class="plate-info-profile-name">
               <div class="plate-info-profile-name--primary">{{ project.project_manager.first_name }}</div>
               {% if project.company %}<div class="plate-info-profile-name--secondary">{{ project.company.name }}</div>{% endif %}
@@ -206,7 +203,7 @@
     <div class="carousel-inner">
       <div class="item active">
         <div class="testimonial-slide">
-          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/Alex_profile_photo.jpg"></div>
+          <div class="testimonial-photo lz-img" data-src="https://devquity.s3.amazonaws.com/media/profile-photos/Alex_profile_photo.jpg"></div>
           <div class="testimonial-quote">
             <p>"Loom is the bee's knees! We found several great developers for our needs, easily, in a timely manner, and ended up hiring one of them who happens to be crushing it right now."</p>
             <p class="quote-source"><strong>Alex Oberman</strong><br/> Co-founder, FloMusic</p>
@@ -215,7 +212,7 @@
       </div>
       <div class="item">
         <div class="testimonial-slide">
-          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/319028588e354dd9a429d8c1a2b9c06d1729.jpg"></div>
+          <div class="testimonial-photo lz-img" data-src="https://devquity.s3.amazonaws.com/media/profile-photos/319028588e354dd9a429d8c1a2b9c06d1729.jpg"></div>
           <div class="testimonial-quote">
             <p>"Within two days on Loom we had over ten responses, and within a week had a work-for-equity agreement. We’ll use Loom again and recommend it to other entrepreneurs."</p>
             <p class="quote-source"><strong>Neill Groom</strong><br/> Founder & CEO, WeVest</p>
@@ -224,7 +221,7 @@
       </div>
       <div class="item">
         <div class="testimonial-slide">
-          <div class="testimonial-photo" style="background-image: url(https://devquity.s3.amazonaws.com/media/profile-photos/Jermaine-Malcolm-0066.jpg"></div>
+          <div class="testimonial-photo lz-img" data-src="https://devquity.s3.amazonaws.com/media/profile-photos/Jermaine-Malcolm-0066.jpg"></div>
           <div class="testimonial-quote">
             <p>"Loom brought confidence back to our startup. I signed up in minutes, and had over five bids from serious developers; some of which are now an integral part of our team."</p>
             <p class="quote-source"><strong>Jermaine Malcolm</strong><br/> Founder & CEO, RecChanges</p>
@@ -233,7 +230,7 @@
       </div>
       <div class="item">
         <div class="testimonial-slide">
-          <div class="testimonial-photo" style="background-image: url(/static/images/juan.jpeg"></div>
+          <div class="testimonial-photo lz-img" data-src="/static/images/juan.jpeg"></div>
           <div class="testimonial-quote">
             <p>"Loom has been instrumental in creating powerful connections. They provide a win-win for entrepreneurs and top talent to get ideas to market quickly and with excellent results."</p>
             <p class="quote-source"><strong>Juan Felipe Campos</strong><br/> Founder & CEO, NomadApp</p>
