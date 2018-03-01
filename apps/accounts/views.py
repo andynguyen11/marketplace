@@ -19,7 +19,7 @@ from apps.api.utils import set_jwt_token
 def project_groups(**kwargs):
     new = Project.objects.filter(published=True, approved=True, **kwargs).order_by('-date_created')[:3]
     try:
-        featured = Project.objects.filter(featured=1, published=True, approved=True, **kwargs)[:3]
+        featured = Project.objects.filter(featured=1, published=True, approved=True, **kwargs).order_by('?')[:3]
     except Project.DoesNotExist, e:
         featured = new[0]
     return dict(new=new, featured=featured, categories=PROJECT_TYPES, **kwargs)
