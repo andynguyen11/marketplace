@@ -235,6 +235,9 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', '')
 AWS_PRELOAD_METADATA = True
 AWS_QUERYSTRING_AUTH = False
 AWS_IS_GZIPPED = True
+AWS_HEADERS = {
+    'Cache-Control': 'max-age=604800'
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -273,6 +276,7 @@ STATICFILES_DIRS = (
 STATICFILES_LOCATION = os.environ.get('STATIC_LOCATION', 'static-dev')
 STATICFILES_STORAGE = 'market.custom_storages.StaticStorage'
 STATIC_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', STATICFILES_LOCATION)
+CLOUDFRONT_URL = "https://%s/%s/" % ('d29tgthhvorllq.cloudfront.net', STATICFILES_LOCATION)
 
 MEDIAFILES_LOCATION = 'media'
 MEDIA_URL = "https://%s/%s/" % ('devquity.s3.amazonaws.com', MEDIAFILES_LOCATION)

@@ -31,6 +31,7 @@ from accounts.models import Skills
 from generics.views import health
 
 import accounts.views as accounts_views
+from business.views import ProjectsView
 from django.contrib.auth.decorators import login_required
 
 import business.signals
@@ -99,8 +100,7 @@ urlpatterns = [
     url(r'^project/pricing', TemplateView.as_view(template_name='spa.html'), name='project-pricing'),
     url(r'^project/create', TemplateView.as_view(template_name='spa.html'), name='create-project'),
     url(r'^project/edit', TemplateView.as_view(template_name='spa.html'), name='edit-project'),
-    url(r'^project/(?P<project_slug>[-\w]+)', TemplateView.as_view(template_name='spa.html'), name='project'),
-    url(r'^project/(?P<project_slug>[-\w]+)/?$', TemplateView.as_view(template_name='spa.html'), name='project'),
+    url(r'^project/(?P<project_slug>[-\w]+)/?$', ProjectsView.as_view(template_name='spa.html'), name='project'),
     url(r'^project/(?P<project_slug>[-\w]+)/renewal/?$', TemplateView.as_view(template_name='spa.html'), name='project-renewal'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/?$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal'),
     url(r'^project/(?P<project_slug>[-\w]+)/submit-proposal/confirmation/?$', TemplateView.as_view(template_name='spa.html'), name='submit-proposal-confirmation'),
