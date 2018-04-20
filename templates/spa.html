@@ -31,7 +31,7 @@
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" crossorigin>
 
 	{% if ENVIRONMENT != 'local' %}
-	<link href="{{CLOUDFRONT_URL}}spa/styles.bdbca3af501785c5294e.css" rel="stylesheet" >
+	<link href="{{CLOUDFRONT_URL}}spa/styles.0b9e4bc0dbe5baa48a4f.css" rel="stylesheet" >
 	{% endif %}
 	
 	<script type="text/javascript">
@@ -41,9 +41,6 @@
 <body>
 
 <span id="app">
-	{% if not request.COOKIES.notificationBanner and 'login' not in request.path %}
-		<div class="notification-banner">Invite friends to Loom, you both earn cash.</div>
-	{% endif %}
 	<header class="header {% block header_class %}{% endblock %}">
 		<div class="header-inner page-content">
 			<h1 class="header-logo"></h1>
@@ -85,8 +82,8 @@
 {% if ENVIRONMENT == 'local' %}
 <script src="http://localhost:8001/bundle.js"></script>
 {% else %}
-<script src="{{CLOUDFRONT_URL}}spa/vendor.4314bc71f50c1a45f9e5.js"></script>
-<script src="{{CLOUDFRONT_URL}}spa/app.bdbca3af501785c5294e.js"></script>
+<script src="{{CLOUDFRONT_URL}}spa/vendor.4db0edc2664fe36421ad.js"></script>
+<script src="{{CLOUDFRONT_URL}}spa/app.0b9e4bc0dbe5baa48a4f.js"></script>
 {% endif %}
 <script src="https://use.fontawesome.com/3cdb773842.js"></script>
 

@@ -61,12 +61,6 @@
   <!--[if lt IE 7]>
   <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
   <![endif]-->
-  {% if not request.COOKIES.notificationBanner and 'login' not in request.path and 'signup' not in request.path %}
-    <div class="notification-banner">
-      Invite friends to Loom, you both earn cash. &nbsp;<a href="/invite-friends">Get started <i class="material-icons">arrow_forward</i></a>
-      <i class="material-icons notification-banner-close">close</i>
-    </div>
-  {% endif %}
   <div class="header" class="{% block header_class %}{% endblock %}">
     <div class="header-inner page-content">
       <h1 class="logo">
@@ -101,7 +95,6 @@
             <li><a href="{% url 'view-projects' %}">Projects</a></li>
             <li><a href="{% url 'view-bids' %}">Proposals</a></li>
             <li><a href="{% url 'invoices' %}">Invoices</a></li>
-            <li><a href="{% url 'referrals' %}">Invite friends 💵</a></li>
             <li><a href="{% url 'settings' %}">Settings</a></li>
             <li class="hide-desktop"><a id="help-mobile" href="#" class="hide-desktop">Help</a></li>
             <li class="hide-desktop"><a href="{% url 'how' %}">How it Works</a></li>

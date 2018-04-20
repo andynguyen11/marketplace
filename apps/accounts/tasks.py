@@ -3,9 +3,11 @@ import pendulum
 from celery import shared_task
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.utils.http import urlencode
 from haystack.query import SearchQuerySet
 
+from accounts.algorithm import account_analysis
 from accounts.models import Profile, Role
 from accounts.serializers import ProfileSearchSerializer
 from business.models import Project
@@ -92,6 +94,14 @@ def project_invite(sender_id, recipient_id):
     queue_mail.delay(template, recipient.pk, context, 'handlebars')
 
 
+@celery_app.task
+def recalculate_profile_scores():
+    profiles = Profile.objects.filter(roles__isnull=False, long_description__isnull=False, tos=True)
+    for profile in profiles:
+        profile.score = account_analysis(profile)
+        profile.save()
+
+
 def freelancer_recommendations(profile_id):
     profile = Profile.objects.get(id=profile_id)
     projects = Project.objects.filter(project_manager=profile, status='active')
@@ -123,14 +133,14 @@ def freelancer_project_matching():
     end_week = pendulum.today()
     start_week = end_week.subtract(days=7)
     week_date_created = calculate_date_ranges('date_created', start_week, end_week)
-    projects = Project.objects.filter(approved=True, **week_date_created).order_by('-date_created')
+    projects = Project.objects.filter(approved=True, status='active', **week_date_created).order_by('-date_created')
     if projects:
         user_list = {}
         for project in projects:
             if project.country:
-                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all(), country=project.country).models(Profile)#Profile.objects.filter(roles__name__in=[project.role])
+                users = SearchQuerySet().filter(Q(roles__in=[project.role]) | Q(skills__in=project.skills.all()), country=project.country).models(Profile)
             else:
-                users = SearchQuerySet().filter(roles__in=[project.role], skills__in=project.skills.all())
+                users = SearchQuerySet().filter(Q(roles__in=[project.role]) | Q(skills__in=project.skills.all()))
             project = {
                 'project_title': project.title,
                 'fname': project.project_manager.first_name,
@@ -151,10 +161,10 @@ def freelancer_project_matching():
                     else:
                         user_list[user.email]['projects'].append(project)
 
-            for key, value in user_list.items():
-                context={
-                    'fname': value['user'].first_name,
-                    'projects': value['projects']
-                }
-                queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
+    for key, value in user_list.items():
+        context={
+            'fname': value['user'].first_name,
+            'projects': value['projects']
+        }
+        queue_mail.delay('project-matching', value['user'].pk, context, 'handlebars')
 

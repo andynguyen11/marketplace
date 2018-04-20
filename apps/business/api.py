@@ -248,7 +248,6 @@ class ProjectSearchViewSet(HaystackViewSet):
 
     """
     index_models = [Project]
-    permission_classes = [IsAuthenticated]
     serializer_class = ProjectSearchSerializer
     pagination_class = StandardResultsSetPagination
     filter_backends = (HaystackFilter, OrderingFilter,)
