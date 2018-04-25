@@ -18,7 +18,7 @@ class Proposal(models.Model):
     status = models.CharField(max_length=100, default='pending', choices=PROPOSAL_STATUS)
     message = models.ForeignKey('postman.Message', blank=True, null=True)
     viewed = models.BooleanField(default=False)
-    approved = models.BooleanField(default=False)
+    approved = models.BooleanField(default=True)
     redacted_cover_letter = models.TextField(blank=True, null=True)
 
     @property
