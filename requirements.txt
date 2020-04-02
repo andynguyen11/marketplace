@@ -70,7 +70,7 @@ pathspec==0.3.3
 pendulum==1.2.1
 psutil==4.1.0
 psycopg2==2.6.1
-pyOpenSSL==16.0.0
+pyOpenSSL==17.5.0
 pyasn1==0.1.9
 pycparser==2.14
 pycurl==7.43.0
