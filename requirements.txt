@@ -3,7 +3,7 @@ Django==1.9.4
 Markdown==2.6.2
 Pillow==2.9.0
 PyJWT==1.4.0
-PyYAML==3.11
+PyYAML==5.1
 Werkzeug==0.11.10
 amqp==1.4.9
 ansicolors==1.0.2
