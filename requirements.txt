@@ -111,7 +111,7 @@ django-haystack==2.5.dev2
 drf-haystack==1.6.1
 elasticsearch==2.3.0
 requests-aws4auth==0.9
-urllib3==1.20
+urllib3==1.24.2
 
 # frontend
 django-gulp==2.4.0
