@@ -62,7 +62,7 @@ ipaddress==1.0.16
 jmespath==0.9.0
 jsonfield==1.0.3
 kombu==4.0.2
-lxml==3.6.0
+lxml==4.9.1
 mandrill==1.0.57
 ndg-httpsclient==0.4.0
 oauthlib==1.0.3
